@@ -1,0 +1,31 @@
+[project]
+name = "cactus-compute-prototype"
+version = "0.1.0"
+description = "Local Cactus Gemma + Needle 2 tool-routing prototype with Postgres/pgvector."
+requires-python = ">=3.10"
+dependencies = [
+  "pgvector>=0.3.6",
+  "psycopg[binary]>=3.2.3",
+  "python-dotenv>=1.0.1",
+  "requests>=2.32.3",
+  "rich>=13.9.4",
+]
+
+[project.optional-dependencies]
+needle = ["cactus-needle>=2.0.0"]
+cactus = ["cactus-compute", "cmake>=4.0", "ninja>=1.13"]
+dev = ["ruff>=0.8.0"]
+
+[tool.uv.sources]
+cactus-compute = { path = "vendor/cactus/python", editable = true }
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = ["vendor", ".venv"]
+
+[tool.ruff.lint]
+ignore = ["BLE001"]

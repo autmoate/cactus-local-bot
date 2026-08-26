@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: ${PGVECTOR_IMAGE:-pgvector/pgvector:pg16}
+    container_name: cactus-postgres
+    environment:
+      POSTGRES_DB: cactus
+      POSTGRES_USER: cactus
+      POSTGRES_PASSWORD: cactus
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cactus -d cactus"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  postgres-data:
