@@ -9,15 +9,13 @@ dependencies = [
   "python-dotenv>=1.0.1",
   "requests>=2.32.3",
   "rich>=13.9.4",
+  "transformers>=5.16.1",
 ]
 
 [project.optional-dependencies]
 needle = ["cactus-needle>=2.0.0"]
 cactus = ["cactus-compute", "cmake>=4.0", "ninja>=1.13"]
 dev = ["ruff>=0.8.0"]
-
-[tool.uv.sources]
-cactus-compute = { path = "vendor/cactus/python", editable = true }
 
 [tool.uv]
 package = false

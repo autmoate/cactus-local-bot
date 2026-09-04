@@ -22,18 +22,37 @@ class Proposal:
 
 class NeedleRouter:
     def __init__(self, tools, threshold: float, tool_index_path: str):
+        self.tools = tools
         self.threshold = threshold
+        self.tool_index_path = tool_index_path
         self.ready = False
         self.agent = None
         self.error = None
-        if needle:
-            try:
-                self.agent = needle.Needle(tools=tools, tool_index_path=tool_index_path)
-                self.ready = True
-            except Exception as exc:
-                self.error = str(exc)
+        self._system: str | None = None
 
-    def propose(self, text: str) -> Proposal:
+    def _build(self, system: str | None) -> None:
+        if not needle:
+            self.ready = False
+            return
+        if self.agent is not None and self._system == system:
+            return
+        self._system = system
+        try:
+            self.agent = needle.Needle(
+                tools=self.tools, system=system or "", tool_index_path=self.tool_index_path
+            )
+            self.ready = True
+            self.error = None
+        except Exception as exc:
+            self.agent = None
+            self.ready = False
+            self.error = str(exc)
+
+    def seed(self) -> None:
+        self._build(None)
+
+    def propose(self, text: str, system: str | None = None) -> Proposal:
+        self._build(system)
         if self.agent:
             self.agent.reset()
             response = self.agent.complete(text)
@@ -42,7 +61,11 @@ class NeedleRouter:
                 return Proposal(None, {}, response.get("confidence"), response.get("reasoning", ""), response)
             call = calls[0]
             return Proposal(
-                call.get("name"), call.get("arguments", {}), response.get("confidence"), response.get("reasoning", ""), response
+                call.get("name"),
+                call.get("arguments", {}),
+                response.get("confidence"),
+                response.get("reasoning", ""),
+                response,
             )
         return self._heuristic(text)
 

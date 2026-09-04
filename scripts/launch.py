@@ -9,9 +9,10 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(cmd: list[str], check: bool = True, background: bool = False):
+def run(cmd: list[str], check: bool = True, background: bool = False, out=None):
     if background:
-        return subprocess.Popen(cmd, cwd=ROOT)
+        return subprocess.Popen(cmd, cwd=ROOT, stdout=out or subprocess.DEVNULL,
+                                stderr=(out or subprocess.DEVNULL))
     return subprocess.run(cmd, cwd=ROOT, check=check)
 
 
@@ -52,9 +53,12 @@ def start_cactus_if_requested():
         return None
     model = os.getenv("CACTUS_MODEL", "./models/gemma-4-e2b")
     try:
+        log_file = open("/tmp/cactus_serve.log", "ab", buffering=0)
         return run(
-            ["cactus", "serve", model, "--host", "127.0.0.1", "--port", "8080", "--no-cloud-handoff"],
+            ["cactus", "serve", model, "--host", "127.0.0.1", "--port", "8080",
+             "--no-cloud-handoff", "--no-access-log"],
             background=True,
+            out=log_file,
         )
     except FileNotFoundError:
         print("CACTUS_AUTO_START=1, but 'cactus' is not available on PATH.")

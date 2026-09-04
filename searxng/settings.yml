@@ -1,0 +1,35 @@
+use_default_settings: true
+server:
+  secret_key: "cactus-local-secret-dev"
+  limiter: false
+  image_proxy: false
+search:
+  formats:
+    - html
+    - json
+  default_lang: auto
+  safe_search: 0
+  autocomplete: ""
+engines:
+  - name: wikipedia
+    disabled: false
+  - name: wikidata
+    disabled: false
+  - name: mojeek
+    disabled: false
+  - name: wiby
+    disabled: false
+  - name: marginalia
+    disabled: false
+  - name: qwant
+    disabled: false
+  - name: startpage
+    disabled: true
+  - name: google
+    disabled: true
+  - name: bing
+    disabled: true
+  - name: duckduckgo
+    disabled: true
+  - name: brave
+    disabled: true
