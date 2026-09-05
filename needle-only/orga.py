@@ -172,7 +172,10 @@ class Orga:
                     lines.append(f"ERINNERUNG NEU: {title} ({_when(due)})")
                     exec_ops.append({"kind": "rem_add", "title": title, "start": due})
             elif tool == "cancel_event":
+                # Suche zuerst Termine, dann Erinnerungen
                 hit = self._find_event(title)
+                if not hit:
+                    hit = self._find_reminder(title)
                 if hit:
                     lines.append(f"ABSAGEN: {hit[1]} ({_when(hit[2])})")
                     exec_ops.append({"kind": "cancel", "id": hit[0], "title": hit[1]})
@@ -329,17 +332,18 @@ class Orga:
         what_map = {"termine": "appointment", "erinnerungen": "reminder",
                     "todos": "task", "aufgaben": "task", "tasks": "task"}
         target = what_map.get(what.lower(), "appointment")
+        # NUR aktive Einträge zeigen (abgesagte/erledigte ausblenden)
         rows = self._q(
             "select kind, title, start_at, status from entries "
-            "where kind = %s and start_at >= %s and start_at < %s "
+            "where kind = %s and status = 'active' "
+            "and start_at >= %s and start_at < %s "
             "order by start_at",
             (target, start, end))
         if not rows:
-            return f"Keine {what} in den nächsten {days} Tagen."
+            return f"Keine aktiven {what} in den nächsten {days} Tagen."
         lines = []
         for kind, title, start_at, status in rows:
-            mark = " ✓" if status == "done" else (" ✗" if status == "cancelled" else "")
-            lines.append(f"  {_when(start_at)}  {title}{mark}")
+            lines.append(f"  {_when(start_at)}  {title}")
         return f"{what.title()} ({horizon}):\n" + "\n".join(lines)
 
     def free_slots(self, horizon: str = "woche") -> str:

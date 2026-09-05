@@ -143,6 +143,14 @@ def draft_calls(agent, fns, text: str, lang: str = "de") -> list[dict]:
             title = str(args.get("title") or "").strip()
             if title:
                 name, args = "cancel_event", {"title": title}
+        # Intent-Korrektur: "termin" im Text aber needle wählte upsert_reminder → upsert_event
+        elif name == "upsert_reminder" and re.search(
+                r"\btermin\b", text.lower()) and not re.search(
+                r"\b(erinner|erinnere)\b", text.lower()):
+            name = "upsert_event"
+            # due_at → start_at mappen
+            if "due_at" in args:
+                args["start_at"] = args.pop("due_at")
         fixed.append({"tool": name, "arguments": fix_args(text, name, args, fns)})
     return fixed
 

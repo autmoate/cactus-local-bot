@@ -81,6 +81,33 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(tools.orga.status())
 
 
+async def cmd_delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """/delete <titel> — Eintrag hart löschen (Needle-Bypass)."""
+    if not _is_owner(update):
+        return
+    title = " ".join(context.args) if context.args else ""
+    if not title:
+        await update.message.reply_text(
+            "Verwendung: /delete <titel>\nBeispiel: /delete zahnarzt")
+        return
+    # Suche in Terminen UND Erinnerungen
+    hit = tools.orga._find_event(title) or tools.orga._find_reminder(title)
+    if not hit:
+        await update.message.reply_text(f"❌ '{title}' nicht gefunden.")
+        return
+    tools.orga._q("delete from entries where id = %s", (hit[0],))
+    await update.message.reply_text(f"🗑️ Gelöscht: {hit[1]}")
+
+
+async def cmd_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """/list [termine|erinnerungen|notizen] — Liste anzeigen (Needle-Bypass)."""
+    if not _is_owner(update):
+        return
+    what = context.args[0] if context.args else "termine"
+    result = tools.orga.list_entries(what, "woche")
+    await update.message.reply_text(result)
+
+
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not _is_owner(update):
         return
@@ -99,7 +126,10 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Notizen:\n"
         f"  merk dir: feuerholz kostet 8 euro\n"
         f"  was weißt du über feuerholz?\n\n"
-        f"Commands: /status /help")
+        f"Commands:\n"
+        f"  /delete <titel> — hart löschen\n"
+        f"  /list [termine|erinnerungen] — auflisten\n"
+        f"  /status — Zähler")
 
 
 # ---------- Message Handling ----------
@@ -118,6 +148,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     loop = asyncio.get_event_loop()
     calls = await loop.run_in_executor(
         None, lambda: draft_calls(agent, fns, text))
+
+    if not calls:
+        # Needle hat nichts verstanden → hilfreiche Fehlermeldung
+        await update.message.reply_text(
+            f"⚠️ Konnte nichts extrahieren.\n\n"
+            f"Versuche:\n"
+            f"  erstelle einen termin zahnarzt am 10.9. 10 uhr\n"
+            f"  sage zahnarzt ab\n"
+            f"  erinnere mich in 10 min an wasser\n"
+            f"  was steht diese woche an?\n"
+            f"  lösche zahnarzt")
+        return
 
     reads, writes = [], []
     for call in calls:
@@ -150,6 +192,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if reads:
         await update.message.reply_text("\n".join(r for r in reads if r))
+    else:
+        # Needle hat Calls geliefert aber nichts gelesen oder geplant
+        await update.message.reply_text(
+            f"⚠️ Konnte nichts extrahieren. Versuche /help für Beispiele.")
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -262,6 +308,8 @@ def main():
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("status", cmd_status))
     app.add_handler(CommandHandler("help", cmd_help))
+    app.add_handler(CommandHandler("delete", cmd_delete))
+    app.add_handler(CommandHandler("list", cmd_list))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(CallbackQueryHandler(handle_callback))
     app.add_error_handler(error_handler)
