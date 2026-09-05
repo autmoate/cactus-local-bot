@@ -1,6 +1,7 @@
-"""Needle-only v3.1 „Plan-Werkstatt": Needle extrahiert Ops → Planner normalisiert
-(add⟷move, Reihenfolge, Endzustand-Kollision, Fuzzy-Titel) → EIN Approval pro Turn
-(y/n/e/q) → atomare Ausführung. `e` = Freitext-Korrektur → neue Needle-Runde.
+"""Needle-only v4.0 „Merge": entries-DB (eine Tabelle), Tool-Oberfläche v3.1.
+Needle extrahiert Ops → Planner normalisiert (add⟷move, Endzustand-Kollision,
+Fuzzy-Titel via pg_trgm) → EIN Approval pro Turn (y/n/e/q) → atomare Ausführung
+mit Audit-Trail. `e` = Freitext-Korrektur → neue Needle-Runde.
 Alles in LOCAL-Zeit gerendert. Kein serve, keine Embeddings.
 Start: uv run python needle-only/run.py"""
 import os
@@ -23,7 +24,8 @@ from orga import Orga, _norm_dt  # noqa: E402
 from tools import MiniTools  # noqa: E402
 
 LOG_ON = True
-WRITE = {"upsert_event", "cancel_event", "upsert_reminder", "complete_reminder", "remember_note"}
+WRITE = {"upsert_event", "cancel_event", "upsert_reminder",
+         "complete_reminder", "remember_note"}
 _console = Console()
 
 
@@ -33,17 +35,19 @@ def _log(line: str) -> None:
 
 
 def build():
+    """Tools, Needle-Agent und Tool-Funktionen aufsetzen."""
     cfg = load_config()
     tools = MiniTools(Orga(cfg.database_url))
     fns = tools.build()
     index = os.environ.get("NEEDLE_TOOL_INDEX", ".cache/needle-index-v3")
-    system = (f"current date: {datetime.now().strftime('%Y-%m-%d %H:%M')}. locale: de-DE. "
-              "tool calls must be short and literal.")
+    system = (f"current date: {datetime.now().strftime('%Y-%m-%d %H:%M')}. "
+              "locale: de-DE. tool calls must be short and literal.")
     agent = needle.Needle(tools=fns, tool_index_path=index, system=system)
     return tools, agent, fns
 
 
-def allowed_args(name: str, fns: list) -> set[str] | None:
+def allowed_args(name: str, fns: list) -> set | None:
+    """Welche Parameter hat das Tool? (für Whitelist)"""
     import inspect
     for fn in fns:
         if fn.__name__ == name:
@@ -52,6 +56,7 @@ def allowed_args(name: str, fns: list) -> set[str] | None:
 
 
 def resolve_flexible(text: str):
+    """Flexible Zeit-Auflösung: 'in 10 min', 'morgen um 9', '14 uhr', etc."""
     from modules.timesync import now as tz_now
     resolved = resolve_dt(text)
     if resolved:
@@ -61,28 +66,15 @@ def resolve_flexible(text: str):
         hour = int(tm.group(1))
         if not 0 <= hour <= 23:
             return None
-        import datetime as _dt
-        from modules.timesync import now as tz_now
-        cand = tz_now().replace(hour=hour,
-                                minute=int(tm.group(2)) if tm.lastindex == 2 else 0,
-                                second=0, microsecond=0)
-        return cand + _dt.timedelta(days=1) if cand < tz_now() else cand
+        minute = int(tm.group(2)) if tm.lastindex == 2 else 0
+        cand = tz_now().replace(hour=hour, minute=minute, second=0, microsecond=0)
+        return cand + __import__("datetime").timedelta(days=1) if cand < tz_now() else cand
     return None
 
 
-def _normalized_text(text: str) -> str:
-    low = (text or "").lower()
-    for en, de in (("day after tomorrow", "übermorgen"), ("next week", "kommende woche"),
-                   ("monday", "montag"), ("tuesday", "dienstag"), ("wednesday", "mittwoch"),
-                   ("thursday", "donnerstag"), ("friday", "freitag"), ("saturday", "samstag"),
-                   ("sunday", "sonntag"), ("tomorrow", "morgen"), ("today", "heute")):
-        low = low.replace(en, de)
-    return low
-
-
 def _segment(text: str, args: dict) -> str:
-    """Multi-Op-Attribution: der Satz-Teil, der zum Titel des Calls passt."""
-    low = _normalized_text(text)
+    """Multi-Op-Attribution: der Text-Ausschnitt, der zum Titel dieses Ops passt."""
+    low = (text or "").lower()
     title = str((args or {}).get("title") or "").strip().lower()
     if not title:
         return low
@@ -93,15 +85,15 @@ def _segment(text: str, args: dict) -> str:
 
 
 def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
-    """Whitelist + Zeitauflösung (Segment des Titels zuerst, dann Gesamtsatz)."""
+    """Whitelist + Zeit-Auflösung (Segment zuerst, dann Gesamtsatz)."""
     keep = allowed_args(name, fns)
     clean = {k: v for k, v in (args or {}).items() if keep is None or k in keep}
-    low = _segment(text, args)
-    pc = parse_calendar(low)
-    resolved = _norm_dt(pc["iso"]) if pc.get("iso") else None
+    seg = _segment(text, args)
+    pc = parse_calendar(seg)
+    resolved = _norm_dt(pc["iso"]) if pc and pc.get("iso") else None
     if resolved is None:
-        resolved = resolve_flexible(low)
-    for key in ("due_at", "start_at"):
+        resolved = resolve_flexible(seg)
+    for key in ("start_at", "due_at"):
         if key in clean:
             if resolved is not None:
                 clean[key] = resolved
@@ -111,110 +103,96 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
                     clean[key] = alt
                 else:
                     clean.pop(key)
-    if name == "upsert_reminder" and clean.get("due_at") is None:
-        m = re.search(r"in\s+(\d+)\s*(min(ute)?n?|m|stunden?|hours?|h)\b", low)
-        if m:
+    # Relative Verschiebung: "um 30 min nach hinten"
+    if name == "upsert_event" and "start_at" not in clean:
+        m = re.search(r"\bum\s+(\d+)\s*(min(ute)?n?|m|stunden?|hours?|h)\b", seg)
+        if m and re.search(r"nach hinten|später|früher|vorher|\bvor\b", seg):
             n = int(m.group(1))
-            clean["in_min"] = n if m.group(2).startswith(("min", "m")) else n * 60
-    if name == "upsert_event":
-        m_rel = re.search(r"\bum\s+(\d+)\s*(min(ute)?n?|stunden?)\b", low)
-        if m_rel and re.search(r"nach hinten|später|früher|vorher|\bvor\b", low):
-            n = int(m_rel.group(1)) * (1 if m_rel.group(2).startswith("min") else 60)
-            clean["shift_min"] = -n if re.search(r"früher|vorher", low) else n
-            clean.pop("start_at", None)
-        elif "start_at" not in clean:
-            m = re.search(r"\bum\s+(\d+)\s*(min(ute)?n?|stunden?)\b", low)
-            if m:
-                n = int(m.group(1)) * (1 if m.group(2).startswith("min") else 60)
-                clean["shift_min"] = -n if re.search(r"früher|vorher", low) else n
+            mins = n if m.group(2).startswith(("min", "m")) else n * 60
+            clean["shift_min"] = -mins if re.search(r"früher|vorher", seg) else mins
     return clean
 
 
 def draft_calls(agent, fns, text: str, lang: str = "de") -> list[dict]:
-    """Needle-Draft; bei Multi-Op-Sätzen ('und', <2 Calls) ein zweiter Sample-Versuch."""
-    prompt = text
+    """Needle-Draft (mit Multi-Op-Retry)."""
     if lang == "en":
         from translate import de2en
-        prompt, translated = de2en(text)
-        if translated:
-            _log(f"en: {prompt}")
+        text, _ = de2en(text)
     agent.reset()
-    response = agent.complete(prompt)
-    calls = response.get("function_calls") or []
-    if len(calls) < 2 and re.search(r"\bund\b", prompt or ""):
+    resp = agent.complete(text)
+    calls = resp.get("function_calls") or []
+    if len(calls) < 2 and re.search(r"\bund\b", text):
         agent.reset()
-        retry = agent.complete(prompt).get("function_calls") or []
-        seen = {(c.get("name"), str((c.get("arguments") or {}).get("title", "")).lower()) for c in calls}
-        for c in retry:
+        retry = agent.complete(text)
+        retry_calls = retry.get("function_calls") or []
+        seen = {(c.get("name"), str((c.get("arguments") or {}).get("title", "")).lower())
+                for c in calls}
+        for c in retry_calls:
             key = (c.get("name"), str((c.get("arguments") or {}).get("title", "")).lower())
             if key not in seen:
                 calls.append(c)
                 seen.add(key)
     fixed = []
-    for call in calls[:2]:
-        fixed.append({"tool": call.get("name"),
-                      "arguments": fix_args(text, call.get("name"), call.get("arguments") or {}, fns)})
+    for call in calls[:3]:
+        name = call.get("name")
+        args = call.get("arguments") or {}
+        # Intent-Korrektur: "lösche X" fälschlich zu upsert_event geroutet
+        if name == "upsert_event" and re.search(
+                r"\b(lösche|lösch|delete|entferne|streiche|loesche)\b", text.lower()):
+            title = str(args.get("title") or "").strip()
+            if title:
+                name, args = "cancel_event", {"title": title}
+        fixed.append({"tool": name, "arguments": fix_args(text, name, args, fns)})
     return fixed
 
 
-def process(text: str, tools: MiniTools, agent, fns: list, lang: str = "de", depth: int = 0) -> str:
-    calls = draft_calls(agent, fns, text, lang)
+def process(text: str, tools: MiniTools, agent, fns: list, lang: str = "de") -> str:
+    """Haupt-Turn: Needle → fix → read/plan → approval → apply."""
+    calls = draft_calls(agent, fns, text)
     if not calls:
-        _log("needle: kein Call -> still")
+        _log("needle: kein Call")
         return ""
-    outputs, writes = [], []
+    reads, writes = [], []
     for call in calls:
         name, args = call["tool"], call["arguments"]
         _log(f"needle -> {name}({args})")
         if name in WRITE:
             writes.append(call)
         else:
-            outputs.append(tools.execute(name, args, prompt))
-    if writes and depth < 3:
-        out = _plan_flow(tools, agent, fns, writes, depth, prompt)
-        if out:
-            outputs.append(out)
-    return "\n".join(o for o in outputs if o)
+            reads.append(tools.execute(name, args, text))
+    if writes:
+        return _plan_flow(tools, agent, fns, writes, text)
+    return "\n".join(r for r in reads if r)
 
 
-def _plan_flow(tools: MiniTools, agent, fns: list, calls: list[dict], depth: int,
-               turn_text: str = "") -> str:
-    """EIN Approval für den ganzen Plan; e = Freitext-Korrektur → neue Needle-Runde."""
-    plan = tools.plan(calls, turn_text)
+def _plan_flow(tools: MiniTools, agent, fns, writes: list[dict], text: str) -> str:
+    """EIN Approval für den ganzen Plan; e = Freitext-Korrektur."""
+    plan = tools.plan(writes, text)
     if not plan["ops"]:
-        return "\n".join(plan["lines"]) or ""
-    lines = plan["lines"] + [f"⚠ {w}" for w in plan["warn"]]
-    _console.print(Panel("\n".join(lines),
-                         title="Plan · y=ausführen · n=nein · e=Korrektur (Freitext) · q=abbrechen",
+        return "\n".join(plan["lines"]) or "Kein Plan erzeugt."
+    panel_lines = plan["lines"] + [f"⚠ {w}" for w in plan.get("warn", [])]
+    _console.print(Panel("\n".join(panel_lines),
+                         title="Plan · y=ausführen · n=nein · e=Korrektur",
                          border_style="yellow"))
-    answer = Prompt.ask("Ausführen?", default="n", choices=["y", "n", "e", "q"],
+    answer = Prompt.ask("Ausführen?", default="n", choices=["y", "n", "e"],
                         show_choices=False, console=_console).strip().lower()
     if answer == "y":
-        return tools.apply(plan) + "\n" + _after_state(tools, plan)
-    if answer == "e":
-        fix = Prompt.ask("Korrektur in Freitext (z. B. 'zahnarzt auf 10:30, hundefrisör auf 10 uhr'):",
-                         console=_console).strip()
-        if fix and depth < 2:
-            return process(fix, tools, agent, fns, depth=depth + 1) or "Nichts geändert."
-        if not fix:
-            return "Ok, nichts gespeichert."
-        return "Zu viele Korrekturrunden — abgebrochen."
-    if answer == "q":
-        return "Abgebrochen."
+        return tools.apply(plan)
+    if answer == "e" and len(text) < 500:
+        fix = Prompt.ask("Korrektur (Freitext):", console=_console).strip()
+        if fix:
+            return process(fix, tools, agent, fns)
     return "Ok, nichts gespeichert."
-
-
-def _after_state(tools: MiniTools, plan: dict) -> str:
-    """Der betroffene Tag nach Ausführung (lokale Zeit)."""
-    days = {op[k].astimezone().date() for op in plan["ops"] for k in ("start", "due") if op.get(k)}
-    if not days:
-        return ""
-    return tools.orga.list_events("monat")
 
 
 def main() -> None:
     tools, agent, fns = build()
-    _console.print("[bold cyan]needle-only v3.1[/] — Plan-Werkstatt (Kalender · Reminders · Notes) · /status · /quit")
+    # v4.2: Scheduler starten (Reminder-Firing + Appointment-Alarme)
+    from scheduler import Scheduler
+    sched = Scheduler(tools.orga,
+                      notify=lambda msg: _console.print(f"[bold yellow]{msg}[/]"))
+    sched.start()
+    _console.print("[bold cyan]needle-only v4.1[/] — Merge + Scheduler · /status · /quit")
     while True:
         try:
             text = _console.input("[bold yellow]du: [/]").strip()
@@ -225,19 +203,15 @@ def main() -> None:
         if text.lower() in ("/quit", "quit", "q"):
             break
         if text.lower() == "/status":
-            _console.print(tools.execute("show_status", {}))
-            continue
-        if text.lower() == "/log":
-            global LOG_ON
-            LOG_ON = not LOG_ON
-            _console.print(f"[dim]logs: {'an' if LOG_ON else 'aus'}[/]")
+            _console.print(tools.orga.status())
             continue
         try:
             out = process(text, tools, agent, fns)
             if out:
-                _console.print(f"[bold cyan]cactus[/] · {out}")
+                _console.print(f"[bold cyan]orga[/] · {out}")
         except Exception as exc:
             _console.print(f"[bold red]fehler:[/] {exc}")
+    sched.stop()
 
 
 if __name__ == "__main__":

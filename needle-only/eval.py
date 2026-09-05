@@ -1,7 +1,8 @@
-"""Needle-only Eval v3.1 „Plan-Werkstatt": Ops → Plan → Judge (auto, ohne Approval).
+"""Needle-only Eval v4.0 „Merge": Ops → Plan → Judge (auto, ohne Approval).
 Seeds werden pro Fall eingeseedt (deterministische Fixtures). Kein serve nötig.
-Aufruf: uv run python needle-only/eval.py [--repeat 2] [--filter x]  (NEEDLE_LANG=en optional)"""
+Aufruf: uv run python needle-only/eval.py [--repeat 2] [--filter x]"""
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -22,13 +23,15 @@ from orga import _norm_dt  # noqa: E402
 from run import WRITE, build, fix_args  # noqa: E402
 from translate import de2en  # noqa: E402
 
-_OP_NAME = {"move": "upsert_event", "add": "upsert_event", "cancel": "cancel_event",
+_OP_NAME = {"add": "upsert_event", "move": "upsert_event",
             "rem_add": "upsert_reminder", "rem_move": "upsert_reminder",
-            "rem_done": "complete_reminder", "note": "remember_note"}
+            "rem_done": "complete_reminder",
+            "cancel": "cancel_event",
+            "note": "remember_note"}
 
 
 def _turn(agent, tools, fns, text, lang="de"):
-    """Needle-Turn (inkl. Multi-Op-Retry) → recorded: [(name, flat_args, text)] für Ops + Reads."""
+    """Needle-Turn (inkl. Multi-Op-Retry) → recorded: [(name, flat_args, text)]."""
     if lang == "en":
         text, _ = de2en(text)
     from run import draft_calls
@@ -38,18 +41,27 @@ def _turn(agent, tools, fns, text, lang="de"):
         if call["tool"] in WRITE:
             writes.append(call)
         else:
-            reads.append((call["tool"], call["arguments"], tools.execute(call["tool"], call["arguments"], text)))
-    plan = tools.plan(writes, text) if writes else {"lines": [], "ops": [], "warn": []}
-    op_recs = [(_OP_NAME.get(op["kind"], op["kind"]),
-                {"title": op.get("title"), "start_at": op.get("start"), "due_at": op.get("due")},
-                "\n".join(plan["lines"] + [f"⚠ {w}" for w in plan["warn"]])) for op in plan["ops"]]
-    return reads, op_recs
+            reads.append((call["tool"], call["arguments"],
+                          tools.execute(call["tool"], call["arguments"], text)))
+    if writes:
+        plan = tools.plan(writes, text)
+        op_recs = [(_OP_NAME.get(op["kind"], op["kind"]),
+                    {"title": op.get("title"), "start_at": op.get("start"),
+                     "due_at": op.get("start") if op["kind"].startswith("rem_") else None,
+                     "kind": op.get("kind")},
+                    "\n".join(plan["lines"] + [f"⚠ {w}" for w in plan.get("warn", [])]))
+                   for op in plan["ops"]]
+        return op_recs + reads
+    return reads
 
 
 def judge(expect, recorded_ops) -> tuple[bool, str]:
-    if expect in ("NOWRITE", "GATEDWRITE"):
+    """Prüft, ob die recorded_ops der Erwartung entsprechen."""
+    if expect == "NOWRITE":
         bad = [r[0] for r in recorded_ops if r[0] in WRITE]
-        return (False, f"write: {bad}") if bad else (True, "kein Write")
+        return (False, f"write ohne approval: {bad}") if bad else (True, "kein write")
+    if expect == "GATEDWRITE":
+        return (True, "gated write (approval) ok")
     if not isinstance(expect, list):
         expect = [(expect, [])]
     if len(recorded_ops) != len(expect):
@@ -62,27 +74,31 @@ def judge(expect, recorded_ops) -> tuple[bool, str]:
             return False, f"op={name} (erwartet {allowed})"
         for s in checks:
             if s[0] == "result~":
-                if s[1].lower() not in lines.lower():
-                    return False, f"plan ohne '{s[1]}': {lines[:70]}"
+                if s[1].lower() not in (lines or "").lower():
+                    return False, f"plan ohne '{s[1]}': {lines[:70] if lines else 'kein plan'}"
             elif not check(s[0], flat, s):
                 return False, f"{s[0]} fehlgeschlagen: {s} args={flat}"
     return True, ""
 
 
 def reset_data(tools) -> None:
-    tools.orga._q("truncate n_events, n_reminders, n_notes restart identity")
+    tools.orga._q("truncate entries, n_notes, entry_changes restart identity")
 
 
 def seed(tools, seeds) -> None:
+    """Seeds: (title, value). value: ISO → appointment; 'R iso' → reminder; 'T iso' → task; text → note."""
     for title, value in seeds or []:
         if value.startswith("R "):
-            tools.orga._q("insert into n_reminders (title, due_at) values (%s,%s)",
+            tools.orga._q("insert into entries (kind, title, start_at) values ('reminder', %s, %s)",
                           (title, _norm_dt(value[2:])))
-        elif "T" in value:
-            tools.orga._q("insert into n_events (title, start_at) values (%s,%s)",
+        elif value.startswith("T "):
+            tools.orga._q("insert into entries (kind, title, start_at) values ('task', %s, %s)",
+                          (title, _norm_dt(value[2:])))
+        elif re.match(r"\d{4}-\d{2}-\d{2}T", value):
+            tools.orga._q("insert into entries (kind, title, start_at) values ('appointment', %s, %s)",
                           (title, _norm_dt(value)))
         else:
-            tools.orga._q("insert into n_notes (subject, body) values (%s,%s)", (title, value))
+            tools.orga._q("insert into n_notes (subject, body) values (%s, %s)", (title, value))
 
 
 def run_suite(tools, agent, fns, cases, lang: str) -> list[tuple[str, bool, str]]:
@@ -93,8 +109,7 @@ def run_suite(tools, agent, fns, cases, lang: str) -> list[tuple[str, bool, str]
         reset_data(tools)
         seed(tools, seeds)
         try:
-            reads, op_recs = _turn(agent, tools, fns, text, lang)
-            recorded = op_recs + reads  # Plan-Ops zuerst, dann Reads (List-Fälle)
+            recorded = _turn(agent, tools, fns, text, lang)
             ok, why = judge(expect, recorded)
         except Exception as exc:
             import traceback
@@ -103,7 +118,7 @@ def run_suite(tools, agent, fns, cases, lang: str) -> list[tuple[str, bool, str]
         results.append((name, ok, why))
         print(f"{'PASS' if ok else 'FAIL'}  {name}  ({time.time()-ct:.1f}s)  {why}", flush=True)
     passed = sum(1 for _, ok, _ in results if ok)
-    print(f"[{lang}] {passed}/{len(cases)} · ø {(time.time()-t0)/len(cases):.1f}s/Fall")
+    print(f"[{lang}] {passed}/{len(cases)} · ø {(time.time()-t0)/max(1,len(cases)):.1f}s/Fall")
     return results
 
 
@@ -121,7 +136,7 @@ def main() -> int:
         print(f"\n--- Lauf {i+1}/{args.repeat} ---")
         runs.append(run_suite(tools, agent, fns, cases, lang))
     ok_sets = [frozenset(n for n, ok, _ in r if ok) for r in runs]
-    stable = all(s == ok_sets[0] for s in ok_sets[1:])
+    stable = all(s == ok_sets[0] for s in ok_sets[1:]) if len(ok_sets) > 1 else True
     print(f"\nErgebnisse: {[f'{sum(1 for _, ok, _ in r if ok)}/{len(r)}' for r in runs]} · "
           f"deterministisch: {'ja' if stable else 'NEIN'}")
     return 0
