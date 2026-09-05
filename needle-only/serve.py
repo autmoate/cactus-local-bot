@@ -86,22 +86,29 @@ class Handler(BaseHTTPRequestHandler):
         sys.stderr.write("[ics] " + (fmt % args) + "\n")
 
 
+def create_server(orga, port=None):
+    """ICS-Server-Instanz erstellen (für run.py --ics-export Flag)."""
+    if port is None:
+        port = int(os.environ.get("ICS_PORT", "8765"))
+    server = ThreadingHTTPServer(("0.0.0.0", port), Handler)
+    server.orga = orga
+    server.token = get_token()
+    return server
+
+
 def main():
     import argparse
-    from modules.config import load_config
-
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description="ICS-Export-Server (allein lauffähig)")
     ap.add_argument("--port", type=int,
                     default=int(os.environ.get("ICS_PORT", "8765")))
     args = ap.parse_args()
+    server = create_server(None, args.port)
+    # Bei alleinigem Start: eigene Orga-Instanz
+    from modules.config import load_config
     cfg = load_config()
-    orga = Orga(cfg.database_url)
-    token = get_token()
-    server = ThreadingHTTPServer(("0.0.0.0", args.port), Handler)
-    server.orga = orga
-    server.token = token
+    server.orga = Orga(cfg.database_url)
     print(f"ICS-Server läuft auf Port {args.port}")
-    print(f"Feed-URL: http://<rpis-ip>:{args.port}/ics/{token}.ics")
+    print(f"Feed-URL: http://<rpis-ip>:{args.port}/ics/{server.token}.ics")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

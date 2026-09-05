@@ -7,6 +7,7 @@ Start: uv run python needle-only/run.py"""
 import os
 import re
 import sys
+import threading
 from datetime import datetime
 from pathlib import Path
 
@@ -186,13 +187,31 @@ def _plan_flow(tools: MiniTools, agent, fns, writes: list[dict], text: str) -> s
 
 
 def main() -> None:
+    import argparse
+    ap = argparse.ArgumentParser(description="Needle-only Orga-Bot (TUI)")
+    ap.add_argument("--ics-export", action="store_true", default=False,
+                    help="ICS-Export-Server starten (default: aus, security by design)")
+    args = ap.parse_args()
+
     tools, agent, fns = build()
+
+    # ICS-Server nur mit explizitem --ics-export Flag (default: aus)
+    ics_server = None
+    if args.ics_export:
+        from serve import create_server
+        ics_server = create_server(tools.orga)
+        ics_thread = threading.Thread(target=ics_server.serve_forever,
+                                       daemon=True, name="orga-ics")
+        ics_thread.start()
+        _console.print(f"[dim]ICS-Server: http://0.0.0.0:{ics_server.server_port}"
+                       f"/ics/{ics_server.token}.ics[/]")
+
     # v4.2: Scheduler starten (Reminder-Firing + Appointment-Alarme)
     from scheduler import Scheduler
     sched = Scheduler(tools.orga,
                       notify=lambda msg: _console.print(f"[bold yellow]{msg}[/]"))
     sched.start()
-    _console.print("[bold cyan]needle-only v4.1[/] — Merge + Scheduler · /status · /quit")
+    _console.print("[bold cyan]needle-only v4.2[/] — Merge + Scheduler · /status · /quit")
     while True:
         try:
             text = _console.input("[bold yellow]du: [/]").strip()
@@ -202,9 +221,6 @@ def main() -> None:
             continue
         if text.lower() in ("/quit", "quit", "q"):
             break
-        if text.lower() == "/status":
-            _console.print(tools.orga.status())
-            continue
         try:
             out = process(text, tools, agent, fns)
             if out:
@@ -212,6 +228,8 @@ def main() -> None:
         except Exception as exc:
             _console.print(f"[bold red]fehler:[/] {exc}")
     sched.stop()
+    if ics_server:
+        ics_server.shutdown()
 
 
 if __name__ == "__main__":
