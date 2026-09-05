@@ -43,10 +43,21 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     owner_id = os.environ.get("TELEGRAM_OWNER_CHAT_ID", "").strip()
 
     if not owner_id:
-        # Erster /start wird zum Owner → in .env schreiben
+        # Erster /start wird zum Owner → in .env schreiben + os.environ setzen
         env_path = Path(__file__).resolve().parent.parent / ".env"
-        with open(env_path, "a") as f:
-            f.write(f"TELEGRAM_OWNER_CHAT_ID={chat_id}\n")
+        # Bestehende (leere) Zeile ersetzen ODER anhängen
+        lines = env_path.read_text().splitlines()
+        found = False
+        for i, line in enumerate(lines):
+            if line.startswith("TELEGRAM_OWNER_CHAT_ID="):
+                lines[i] = f"TELEGRAM_OWNER_CHAT_ID={chat_id}"
+                found = True
+                break
+        if not found:
+            lines.append(f"TELEGRAM_OWNER_CHAT_ID={chat_id}")
+        env_path.write_text("\n".join(lines) + "\n")
+        # WICHTIG: os.environ aktualisieren, sonst kann sich jeder als Owner registrieren
+        os.environ["TELEGRAM_OWNER_CHAT_ID"] = str(chat_id)
         await update.message.reply_text(
             f"{BOT_NAME}\n\n✅ Du bist jetzt der Owner (chat_id={chat_id}).\n\n"
             f"Beispiele:\n"
@@ -220,6 +231,10 @@ async def scheduler_tick(context: ContextTypes.DEFAULT_TYPE):
 
 def main():
     global tools, agent, fns
+
+    # .env laden BEVOR Token gelesen wird (sonst ist TELEGRAM_BOT_TOKEN leer)
+    from dotenv import load_dotenv
+    load_dotenv(override=True)  # override: .env hat Vorrang vor Shell-Env
 
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     if not token:
