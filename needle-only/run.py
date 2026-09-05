@@ -90,6 +90,20 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
     keep = allowed_args(name, fns)
     clean = {k: v for k, v in (args or {}).items() if keep is None or k in keep}
     seg = _segment(text, args)
+
+    # 1) Relative Verschiebung PRÜFEN bevor start_at aufgelöst wird
+    #    "um 30 min" als Shift interpretieren, NICHT als Zeit
+    if name == "upsert_event":
+        m = re.search(r"\bum\s+(\d+)\s*(min(ute)?n?|m|stunden?|hours?|h)\b", seg)
+        if m:
+            n = int(m.group(1))
+            mins = n if m.group(2).startswith(("min", "m")) else n * 60
+            clean["shift_min"] = -mins if re.search(r"früher|vorher", seg) else mins
+            # start_at entfernen — der Planner nutzt shift_min relativ zum bestehenden Termin
+            clean.pop("start_at", None)
+            return clean
+
+    # 2) Normale Zeit-Auflösung
     pc = parse_calendar(seg)
     resolved = _norm_dt(pc["iso"]) if pc and pc.get("iso") else None
     if resolved is None:
@@ -104,13 +118,6 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
                     clean[key] = alt
                 else:
                     clean.pop(key)
-    # Relative Verschiebung: "um 30 min nach hinten"
-    if name == "upsert_event" and "start_at" not in clean:
-        m = re.search(r"\bum\s+(\d+)\s*(min(ute)?n?|m|stunden?|hours?|h)\b", seg)
-        if m and re.search(r"nach hinten|später|früher|vorher|\bvor\b", seg):
-            n = int(m.group(1))
-            mins = n if m.group(2).startswith(("min", "m")) else n * 60
-            clean["shift_min"] = -mins if re.search(r"früher|vorher", seg) else mins
     return clean
 
 
@@ -143,16 +150,48 @@ def draft_calls(agent, fns, text: str, lang: str = "de") -> list[dict]:
             title = str(args.get("title") or "").strip()
             if title:
                 name, args = "cancel_event", {"title": title}
+        # Intent-Korrektur: "verschiebe X um N min" fälschlich zu list_items/find_notes
+        elif name in ("list_items", "find_notes") and re.search(
+                r"\bverschiebe\b", text.lower()):
+            title = _extract_title_from_text(text)
+            if title:
+                name, args = "upsert_event", {"title": title}
         # Intent-Korrektur: "termin" im Text aber needle wählte upsert_reminder → upsert_event
         elif name == "upsert_reminder" and re.search(
                 r"\btermin\b", text.lower()) and not re.search(
                 r"\b(erinner|erinnere)\b", text.lower()):
             name = "upsert_event"
-            # due_at → start_at mappen
             if "due_at" in args:
                 args["start_at"] = args.pop("due_at")
+        # Intent-Korrektur: Notiz-Trigger im Text aber falsches Tool → remember_note
+        elif name in ("upsert_reminder", "find_notes") and re.search(
+                r"\b(merk dir|merke dir|notiere|speichere notiz|notiz:)\b", text.lower()):
+            subject, body = _extract_note(text)
+            if subject and body:
+                name, args = "remember_note", {"subject": subject, "body": body}
         fixed.append({"tool": name, "arguments": fix_args(text, name, args, fns)})
     return fixed
+
+
+def _extract_title_from_text(text: str) -> str:
+    """Extrahiert den Event-Titel aus 'verschiebe X auf/um ...' Mustern."""
+    m = re.match(r"^\s*verschiebe\s+(.+?)\s+(?:auf|um)\s+.+$", text.strip(), re.I)
+    return m.group(1).strip() if m else ""
+
+
+def _extract_note(text: str):
+    """Extrahiert (subject, body) aus 'merk dir: X Y Z' Mustern."""
+    m = re.match(
+        r"^\s*(?:merk dir|merke dir|notiere|speichere notiz|notiz)\s*[:\-]?\s*(.+?)\s*$",
+        text.strip(), re.I)
+    if not m:
+        return None, None
+    body = m.group(1).strip()
+    if not body:
+        return None, None
+    words = body.split()
+    subject = words[0] if words else ""
+    return subject, body
 
 
 def process(text: str, tools: MiniTools, agent, fns: list, lang: str = "de") -> str:

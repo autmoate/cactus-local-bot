@@ -150,15 +150,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         None, lambda: draft_calls(agent, fns, text))
 
     if not calls:
-        # Needle hat nichts verstanden → hilfreiche Fehlermeldung
         await update.message.reply_text(
-            f"⚠️ Konnte nichts extrahieren.\n\n"
-            f"Versuche:\n"
-            f"  erstelle einen termin zahnarzt am 10.9. 10 uhr\n"
-            f"  sage zahnarzt ab\n"
-            f"  erinnere mich in 10 min an wasser\n"
-            f"  was steht diese woche an?\n"
-            f"  lösche zahnarzt")
+            "⚠️ Das konnte ich nicht verarbeiten.\n\n"
+            "💡 Siehe /help für Beispiele.")
         return
 
     reads, writes = [], []
@@ -193,9 +187,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if reads:
         await update.message.reply_text("\n".join(r for r in reads if r))
     else:
-        # Needle hat Calls geliefert aber nichts gelesen oder geplant
         await update.message.reply_text(
-            f"⚠️ Konnte nichts extrahieren. Versuche /help für Beispiele.")
+            "⚠️ Das konnte ich nicht verarbeiten.\n\n"
+            "💡 Siehe /help für Beispiele.")
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
