@@ -1,7 +1,6 @@
-"""Needle-only v5.3 „CRUD": 7 Tools, CRUD-Semantik, Hard-Deletes.
-Termin/Erinnerung/Aufgabe = EIN Event mit kind ∈ {appointment, reminder, task}.
-Erinnerungen werden nach Feuern GELÖSCHT, abgesagte Termine GELÖSCHT,
-vergangene Termine bleiben (Archiv).
+"""Needle-only v5.4 „Router": Semantic Router als Triage-Layer.
+Router (~100ms, deterministisch) wählt das Tool, Needle extrahiert Argumente.
+Bei Unsicherheit: Fallback auf volle Needle-Routing (alle 7 Tools).
 Start: uv run python needle-only/run.py"""
 import os
 import re
@@ -28,18 +27,45 @@ WRITE = {"calendar_create", "calendar_edit", "calendar_delete",
          "note_write", "note_delete"}
 _console = Console()
 
+# Semantic Router (lazy geladen)
+_router = None
+
+# Cache für per-tool Needle-Sessions (Argument-Extraktion)
+_extract_cache = {}
+_SYSTEM_PROMPT = None
+
 
 def _log(line: str) -> None:
     if LOG_ON:
         print(f"  · {line}")
 
 
+def _get_router():
+    """Lazy-init des Semantic Routers (lädt Embedding-Modell beim ersten Aufruf)."""
+    global _router
+    if _router is None:
+        from router import ToolRouter
+        _router = ToolRouter(threshold=0.55)
+    return _router
+
+
+def _get_extract_session(tool_name: str, tool_fn, system_prompt: str):
+    """Lazy-init Needle-Session mit NUR diesem Tool (für Argument-Extraktion)."""
+    key = tool_name
+    if key not in _extract_cache:
+        _extract_cache[key] = needle.Needle(
+            tools=[tool_fn], system=system_prompt)
+    return _extract_cache[key]
+
+
 def build():
     """Tools, Needle-Agent und Tool-Funktionen aufsetzen."""
+    global _SYSTEM_PROMPT
     cfg = load_config()
     tools = MiniTools(Orga(cfg.database_url))
     fns = tools.build()
-    agent = needle.Needle(tools=fns, system=f"current date: {tz_now().strftime('%Y-%m-%d %H:%M')}. locale: de-DE.")
+    _SYSTEM_PROMPT = f"current date: {tz_now().strftime('%Y-%m-%d %H:%M')}. locale: de-DE."
+    agent = needle.Needle(tools=fns, system=_SYSTEM_PROMPT)
     return tools, agent, fns
 
 
@@ -113,6 +139,154 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
     return clean
 
 
+def _normalize_for_needle(text: str, tool_name: str) -> str:
+    """Normalisiert Text für die per-tool Needle-Extraktion.
+    Needle 45M kann 'erinnerung'/'aufgabe'-Phrasen nicht parsen,
+    aber 'termin'-Phrasen funktionieren zuverlässig."""
+    if tool_name != "calendar_create":
+        return text
+
+    result = text
+
+    # "erinner mich [in X] an Y" → "erstelle einen termin Y [in X]"
+    m = re.search(r'erinner\s+mich\s+(?:in\s+(\S+)\s+)?an\s+(.+)', result, re.I)
+    if m:
+        time_part = f" in {m.group(1)}" if m.group(1) else ""
+        return f"erstelle einen termin {m.group(2)}{time_part}"
+
+    # "stell(e) eine erinnerung X" → "erstelle einen termin X"
+    m = re.search(r'stell(?:e|n)?\s+eine\s+erinnerung\s+(.+)', result, re.I)
+    if m:
+        return f"erstelle einen termin {m.group(1)}"
+
+    # "erinnerung X" → "erstelle einen termin X"
+    m = re.match(r'erinnerung\s+(.+)', result, re.I)
+    if m:
+        return f"erstelle einen termin {m.group(1)}"
+
+    # "aufgabe X" → "erstelle einen termin X"
+    m = re.match(r'aufgabe\s+(.+)', result, re.I)
+    if m:
+        return f"erstelle einen termin {m.group(1)}"
+
+    # "erstelle eine aufgabe X" → "erstelle einen termin X"
+    m = re.search(r'erstelle\s+eine\s+aufgabe\s+(.+)', result, re.I)
+    if m:
+        return f"erstelle einen termin {m.group(1)}"
+
+    return result
+
+
+def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
+    """Regex-Extraktion als Fallback, wenn Needle keine Argumente liefert.
+    deckt die häufigsten erinnerung-/aufgabe-/notiz-muster ab."""
+    low = text.lower().strip()
+    now = tz_now()
+
+    if tool_name == "calendar_create":
+        # "erinner mich in N minuten an X"
+        m = re.search(r'erinner\s+mich\s+in\s+(\d+)\s*min(uten)?\s+an\s+(.+)', low)
+        if m:
+            mins = int(m.group(1))
+            return {"title": m.group(3).strip().capitalize(),
+                    "start_at": (now + timedelta(minutes=mins)).isoformat(),
+                    "kind": "reminder"}
+
+        # "stell eine erinnerung X in N minuten"
+        m = re.search(r'stell\w*\s+eine\s+erinnerung\s+(.+?)\s+in\s+(\d+)\s*min', low)
+        if m:
+            mins = int(m.group(2))
+            return {"title": m.group(1).strip().capitalize(),
+                    "start_at": (now + timedelta(minutes=mins)).isoformat(),
+                    "kind": "reminder"}
+
+        # "erinnerung X in N minuten"
+        m = re.search(r'erinnerung\s+(.+?)\s+in\s+(\d+)\s*min', low)
+        if m:
+            mins = int(m.group(2))
+            return {"title": m.group(1).strip().capitalize(),
+                    "start_at": (now + timedelta(minutes=mins)).isoformat(),
+                    "kind": "reminder"}
+
+        # "stell eine erinnerung X <zeit>" — Zeit via resolve_dt aus Rest
+        m = re.search(r'stell\w*\s+eine\s+erinnerung\s+(.+)', low)
+        if m:
+            rest = m.group(1).strip()
+            # Zeit-Ausdruck am Ende isolieren ("morgen früh 8 uhr", "morgen 14 uhr")
+            tm = re.search(r'((?:übermorgen|morgen|heute|montag|dienstag|mittwoch|'
+                           r'donnerstag|freitag|samstag|sonntag).*)$', rest)
+            title = rest
+            start_iso = None
+            if tm:
+                title = rest[:tm.start()].strip().rstrip(',').rstrip()
+                resolved = resolve_dt(tm.group(1))
+                if resolved:
+                    start_iso = resolved.isoformat()
+            if not start_iso:
+                resolved = resolve_dt(rest)
+                if resolved:
+                    start_iso = resolved.isoformat()
+                    title = rest
+            return {"title": (title or rest).capitalize(),
+                    "start_at": start_iso or (now + timedelta(hours=1)).isoformat(),
+                    "kind": "reminder"}
+
+        # "aufgabe X bis Y" (task)
+        m = re.search(r'aufgabe\s+(.+?)\s+bis\s+(.+)', low)
+        if m:
+            return {"title": m.group(1).strip().capitalize(),
+                    "start_at": m.group(2).strip(),
+                    "kind": "task"}
+
+        # "erinnerung X" (ohne Zeitangabe)
+        m = re.match(r'erinnerung\s+(.+)', low)
+        if m:
+            return {"title": m.group(1).strip().capitalize(),
+                    "start_at": (now + timedelta(hours=1)).isoformat(),
+                    "kind": "reminder"}
+
+    elif tool_name == "calendar_edit":
+        # "änder den termin X auf Y" / "verschiebe X auf Y"
+        m = re.search(r'(?:änder\w*|verschieb\w*)\s+(?:den\s+)?termin\s+(.+?)\s+auf\s+(.+)', low)
+        if m:
+            return {"title": m.group(1).strip().capitalize(),
+                    "start_at": m.group(2).strip()}
+        m = re.search(r'verschieb\w*\s+(.+?)\s+(?:auf|um|bis)\s+(.+)', low)
+        if m:
+            return {"title": m.group(1).strip().capitalize(),
+                    "start_at": m.group(2).strip()}
+
+    elif tool_name == "calendar_read":
+        # kind aus Text inferieren
+        kind = "all"
+        if any(w in low for w in ("erinnerung", "erinner", "reminder")):
+            kind = "reminder"
+        elif any(w in low for w in ("aufgabe", "aufgaben", "task", "todo")):
+            kind = "task"
+        elif any(w in low for w in ("termin", "termine", "appointment", "meeting")):
+            kind = "appointment"
+        return {"kind": kind, "horizon": "woche"}
+
+    elif tool_name == "note_write":
+        # "merk dir X kostet Y" / "merk dir X" → subject=X, body=Rest
+        m = re.search(r'merk\s+dir\s+(.+)', low)
+        if m:
+            rest = m.group(1).strip()
+            # "X kostet Y" → subject=X, body="kostet Y"
+            km = re.match(r'(.+?)\s+kostet\s+(.+)', rest)
+            if km:
+                return {"subject": km.group(1).strip().capitalize(),
+                        "body": f"kostet {km.group(2).strip()}"}
+            return {"subject": rest.capitalize(), "body": ""}
+
+        # "speichere X" → subject=X
+        m = re.search(r'speicher\w*\s+(.+)', low)
+        if m:
+            return {"subject": m.group(1).strip().capitalize(), "body": ""}
+
+    return None
+
+
 def _resolve_datetime(value: str, context: str = "") -> datetime | None:
     """Versucht, einen String in ein datetime zu übersetzen."""
     # Direkter ISO-String?
@@ -124,17 +298,55 @@ def _resolve_datetime(value: str, context: str = "") -> datetime | None:
 
 
 def draft_calls(agent, fns, text: str, lang: str = "de") -> list:
-    """Needle-Draft → direkt ausführen (write) oder lesen (read)."""
+    """Router-first: Semantic Router wählt Tool, Needle extrahiert Argumente.
+    Bei Unsicherheit oder Extraktions-Fehler: Fallback auf volle Needle-Routing."""
     if lang == "en":
         from translate import de2en
         text, _ = de2en(text)
 
+    # === STUFE 1: Semantic Router als Triage (nur Single-Op) ===
+    is_multi = bool(re.search(r"\bund\b", text))
+
+    if not is_multi:
+        try:
+            router = _get_router()
+            tool_name, score = router.route(text)
+
+            if tool_name and score >= 0.55:
+                # Router ist sicher → Needle mit NUR diesem Tool
+                tool_fn = next(
+                    (f for f in fns if f.__name__ == tool_name), None)
+                if tool_fn:
+                    session = _get_extract_session(
+                        tool_name, tool_fn, _SYSTEM_PROMPT)
+                    session.reset()
+                    # Text normalisieren: 'erinnerung'/'aufgabe' → 'termin'
+                    needle_text = _normalize_for_needle(text, tool_name)
+                    resp = session.complete(needle_text)
+                    calls = resp.get("function_calls") or []
+                    if calls:
+                        args = calls[0].get("arguments") or {}
+                        _log(f"router -> {tool_name} (score={score:.2f})")
+                        return [{"tool": tool_name,
+                                 "arguments": fix_args(text, tool_name, args, fns)}]
+
+                # === STUFE 1b: Template-Fallback wenn Needle leer ===
+                template_args = _template_extract(tool_name, text, fns)
+                if template_args:
+                    _log(f"template -> {tool_name} (needle war leer)")
+                    return [{"tool": tool_name,
+                             "arguments": fix_args(text, tool_name, template_args, fns)}]
+
+        except Exception as exc:
+            _log(f"router error: {exc} → fallback needle")
+
+    # === STUFE 2: Volle Needle-Routing (alle 7 Tools) ===
     agent.reset()
     resp = agent.complete(text)
     calls = resp.get("function_calls") or []
 
     # Wenn nur 1 Call und der Text "und" enthält → Retry für Multi-Op
-    if len(calls) < 2 and re.search(r"\bund\b", text):
+    if len(calls) < 2 and is_multi:
         agent.reset()
         retry = agent.complete(text)
         retry_calls = retry.get("function_calls") or []
