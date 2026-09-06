@@ -160,6 +160,35 @@ CASES = [
      []),
 
     # ==========================================
+    # Gruppen-Support v5.6 — NEU!
+    # ==========================================
+    # Termin FÜR eine Person erstellen (owner-Parameter)
+    ("group-create-fuer-lisa",
+     "erstelle einen termin zahnarzt für lisa am dienstag 9 uhr",
+     [("calendar_create", [("eq", "owner", "lisa"),
+                           ("contains", "title", "zahnarzt")])],
+     []),
+
+    # Termin MIT Person (participants-Parameter)
+    ("group-create-mit-person",
+     "erstelle einen termin meeting mit lisa am mittwoch 10 uhr",
+     [("calendar_create", [("contains", "participants", "lisa")])],
+     []),
+
+    # Gemeinsame freie Slots für Gruppe
+    ("group-free-slots",
+     "wann haben lisa und max gemeinsam zeit",
+     [("free_slots", [("contains", "persons", "lisa"),
+                      ("contains", "persons", "max")])],
+     []),
+
+    # Verfügbarkeit einer einzelnen Person
+    ("group-free-slots-verfuegbar",
+     "wann ist lisa verfügbar",
+     [("free_slots", [("contains", "persons", "lisa")])],
+     []),
+
+    # ==========================================
     # NOWRITE (2 Fälle)
     # ==========================================
     ("nowrite-allgemeinwissen",

@@ -130,3 +130,50 @@ reminder + anything       → ✅ Koexistiert
 - 3x calendar_delete (titel/explicit/datum)
 - 1x calendar_filter (person: lisa)
 - 2x NOWRITE (allgemeinwissen/chitchat)
+
+## v5.6: Gruppen-Support (29/29 Eval)
+
+### Was wurde hinzugefügt:
+- **owner-Parameter**: Termine FÜR andere Personen ("erstelle einen termin zahnarzt für lisa")
+- **participants-Parameter**: Termine MIT Personen ("termin meeting mit lisa")
+- **calendar_read mit person-Filter**: "wann hat lisa diese woche termine"
+- **free_slots-Tool**: gemeinsame freie Zeitslots für Gruppen ("wann haben lisa und max gemeinsam zeit")
+
+### Neue Tools (6 Tools):
+1. `calendar_create` (appointment/reminder/task/absence, mit owner/participants)
+2. `calendar_edit`
+3. `calendar_read` (mit person-Parameter)
+4. `calendar_delete`
+5. `calendar_filter` (Gruppen-Abfragen, Markdown-Output)
+6. `free_slots` (gemeinsame freie Zeitslots)
+
+### Person-Extraktion (fix_args):
+- `"für lisa"` → `owner='Lisa'`
+- `"mit lisa"` → `participants=['Lisa']`
+- Router entscheidet Tool, Needle extrahiert Argumente, fix_args macht Post-Korrektur
+
+### Zeitzonen-Fix (orga.py):
+- `_localize()`: DB-UTC-Datetimes nach Europe/Berlin konvertieren
+- `_fmt_day()/_fmt_time()`: zeigen jetzt lokale Zeit statt UTC (07:00→09:00 Bug behoben)
+- `by_day` Gruppierung lokalisiert (0-2 Uhr CEST-Einträge korrekt zugeordnet)
+
+### Weights-Loading-Verhalten (wichtig für Telegram-App):
+- **Embedding-Modell wird LAZY geladen**: Der Sentence-Transformers-Encoder wird erst beim ersten `router.route()`-Aufruf geladen. Erster User-Request dauert 5-10s (Modell-Loading), alle weiteren sind schnell (~100ms).
+- **Fix: Router-Warmup beim Start** (`needle-only/run.py`, `_get_router()`): `_router.route("warmup")` lädt das Embedding-Modell VOR dem ersten User-Request. Die Telegram-App ist erst "ready", wenn die Weights geladen sind.
+- **Needle 45M**: Wird beim `needle.Needle()`-Konstruktor geladen (~2-5s auf RPi 5). Nur EIN Modell-Load pro Prozess — JAX cached die Weights.
+
+### Eval-Suite: 29/29 Fälle (ø 2.6s/Fall)
+- 5x calendar_create (absolut/relativ/mit Ort/ISO/Dienstag)
+- 1x calendar_create-kollision (gleiche Zeit → Kollision erkannt)
+- 3x Erinnerungen (2min/in 10min/wasser trinken)
+- 2x Aufgaben (aufgabe/aufgabe-deadline)
+- 2x Urlaub (urlaub ohne termin, urlaub mit terminen → KEINE kollision)
+- 2x calendar_edit (verschieben/uhrzeit)
+- 4x calendar_read (all/erinnerungen/termine/tasks)
+- 3x calendar_delete (titel/explicit/datum)
+- 1x calendar_filter (person: lisa)
+- 1x group-create-fuer-lisa (owner-Parameter)
+- 1x group-create-mit-person (participants-Parameter)
+- 1x group-free-slots (free_slots mit Lisa+Max)
+- 1x group-free-slots-verfuegbar (free_slots mit Lisa allein)
+- 2x NOWRITE (allgemeinwissen/chitchat)

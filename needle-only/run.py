@@ -225,6 +225,21 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
             elif any(w in text_lower for w in ("termin", "termine", "appointment", "meeting")):
                 clean["kind"] = "appointment"
 
+    # Gruppen-Support: owner/participants aus Text extrahieren
+    if name == "calendar_create":
+        low_text = (text or "").lower()
+        # "für lisa" → owner
+        if clean.get("owner", "ich") in ("ich", "", None):
+            m = re.search(r'für\s+([a-zäöüß]+)', low_text)
+            if m and m.group(1) not in ("mich", "uns", "dich"):
+                clean["owner"] = m.group(1).capitalize()
+        # "mit lisa" / "meeting mit lisa" → participants
+        if not clean.get("participants"):
+            m = re.search(r'\bmit\s+([a-zäöüß]+)', low_text)
+            if m and m.group(1) not in ("mir", "dir", "uns", "dem", "der", "das",
+                                        "den", "einem", "einer", "ihm", "ihr"):
+                clean["participants"] = [m.group(1).capitalize()]
+
     return clean
 
 
@@ -431,6 +446,21 @@ def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
         elif any(w in low for w in ("termin", "termine", "appointment", "meeting")):
             kind = "appointment"
         return {"kind": kind, "horizon": "woche"}
+
+    elif tool_name == "free_slots":
+        # free_slots: "wann haben X und Y gemeinsam zeit" / "wann ist X verfügbar"
+        m = re.search(
+            r'wann\s+(?:ist|hat|haben|können|kann)\s+(.+?)'
+            r'(?:\s+(?:verfügbar|frei|gemeinsam|zeit|termin|termine)|$)',
+            low)
+        if m:
+            names_raw = m.group(1).strip()
+            parts = re.split(r'\s*(?:,|\+|und|oder)\s*', names_raw)
+            parts = [p.strip() for p in parts if p.strip()]
+            if parts:
+                return {"persons": ", ".join(parts),
+                        "duration_min": 60, "horizon": "woche"}
+        return None
 
     elif tool_name == "calendar_filter":
         # Person aus Text extrahieren: "wann hat Lisa diese woche termine"

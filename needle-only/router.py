@@ -17,6 +17,12 @@ ROUTES = {
         "termin arzt nächste woche dienstag",
         "erstelle einen termin", "neuer termin", "termin anlegen",
         "plane einen termin", "termin eintragen", "kalender eintrag erstellen",
+        # Termine für andere Personen (NEU: Gruppen-Support)
+        "erstelle einen termin zahnarzt für lisa",
+        "termin für lisa am dienstag um 9 uhr",
+        "erstelle einen termin für max",
+        "lisa hat am dienstag um 9 uhr einen termin",
+        "trage einen termin für lisa ein",
         # Erinnerungen
         "stell eine erinnerung", "erinnerung setzen", "erinner mich",
         "erinnerung wasser trinken", "stell eine erinnerung medikamente",
@@ -32,7 +38,7 @@ ROUTES = {
         "aufgabe bericht schreiben", "aufgabe bericht schreiben bis freitag",
         "to-do erstellen", "deadline setzen", "aufgabe hinzufügen",
         "aufgabe steuererklärung abgeben",
-        # Abwesenheiten (NEU: mehrtägig, kollidiert nicht)
+        # Abwesenheiten (mehrtägig, kollidiert nicht)
         "trage urlaub ein", "ich habe urlaub von 7.9. bis 11.9.",
         "urlaub vom 7.9. bis 11.9.", "ich bin verreist nächste woche",
         "ich bin vom 7.9. bis 11.9. abwesend", "trage abwesenheit ein",
@@ -74,19 +80,31 @@ ROUTES = {
         "lösche urlaub", "entferne urlaub aus dem kalender",
     ],
     "calendar_filter": [
-        # Gruppen-Abfragen / ICS-Filter (NEU)
+        # Gruppen-Abfragen (Kalender einer Person anzeigen)
         "wann hat lisa diese woche termine",
         "wann hat max diese woche termine",
         "termine von lisa diese woche",
         "kalender von lisa anzeigen",
         "zeige termine für lisa",
         "was hat lisa diese woche",
-        "wann ist lisa verfügbar",
         "termine für person x anzeigen",
         "kalender filter für lisa",
         "wann hat die gruppe termine",
         "termine der gruppe diese woche",
         "wann hat person x diese woche welche termine",
+    ],
+    "free_slots": [
+        # Gemeinsame freie Slots / Verfügbarkeit (NEU: Gruppen-Support)
+        "wann haben lisa und max gemeinsame zeit",
+        "wann sind lisa und max gleichzeitig frei",
+        "finde einen gemeinsamen termin für lisa und max",
+        "wann ist lisa verfügbar",
+        "wann ist lisa frei",
+        "freie slots für die gruppe diese woche",
+        "wann können wir uns treffen",
+        "suche einen termin wo alle zeit haben",
+        "wann haben wir beide zeit",
+        "gemeinsame freie zeiten finden",
     ],
 }
 
