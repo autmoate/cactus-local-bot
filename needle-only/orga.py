@@ -78,17 +78,35 @@ class Orga:
 
     def calendar_create(self, title, start_at, end_at=None, location="",
                         kind="appointment", alarm_min=0, notes=""):
-        """Erstellt einen Kalender-Eintrag (Termin, Erinnerung oder Aufgabe)."""
+        """Erstellt einen Kalender-Eintrag mit Kollisions-Check."""
         if kind not in KINDS:
             kind = "appointment"
-        with psycopg.connect(self.url) as c:
-            cur = c.execute("""
-                INSERT INTO entries (kind, title, start_at, end_at, alarm_min, location, notes)
-                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id
-            """, (kind, title, start_at, end_at, alarm_min or None, location, notes))
+
+        start_dt = _norm_dt(start_at)
+
+        # Kollisions-Check: gleicher Titel innerhalb ±1 Stunde?
+        if start_dt and title:
+            window_start = start_dt - timedelta(hours=1)
+            window_end = start_dt + timedelta(hours=1)
+            existing = self._q(
+                "SELECT title, start_at FROM entries "
+                "WHERE title ILIKE %s AND start_at BETWEEN %s AND %s LIMIT 1",
+                (title, window_start, window_end))
+            if existing:
+                return (f"⚠️ Kollision: '{existing[0][0]}' ist bereits für "
+                        f"{_when(existing[0][1])} eingetragen. "
+                        f"Duplikat nicht erstellt.")
+
+        with psycopg.connect(self.url, autocommit=True) as c:
+            cur = c.execute(
+                "INSERT INTO entries (kind, title, start_at, end_at, alarm_min, location, notes) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                (kind, title, start_dt, _norm_dt(end_at),
+                 alarm_min or None, location, notes))
             entry_id = cur.fetchone()[0]
+
         kind_label = {"appointment": "Termin", "reminder": "Erinnerung", "task": "Aufgabe"}[kind]
-        return f"✅ {kind_label} erstellt: {title} ({_when(start_at)})"
+        return f"✅ {kind_label} erstellt: {title} ({_when(start_dt)})"
 
     def calendar_edit(self, title, start_at=None, end_at=None, location=None,
                       alarm_min=None, notes=None):

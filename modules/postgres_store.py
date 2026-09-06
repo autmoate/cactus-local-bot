@@ -11,6 +11,10 @@ DATA_TABLES = ("inventory", "todos", "calendar_events", "knowledge")
 
 def _parse_dt(value: str):
     from datetime import datetime
+    from zoneinfo import ZoneInfo
+    # Naive Datetimes = lokale Zeit (Europe/Berlin), NICHT UTC.
+    # Sonst wird "10:00" zu "12:00" angezeigt (UTC+2 im Sommer).
+    _local_tz = ZoneInfo("Europe/Berlin")
     text = str(value).strip().replace("Z", "+00:00")
     for fmt in (
         "%Y-%m-%d %H:%M:%S%z", "%Y-%m-%d %H:%M%z",
@@ -19,12 +23,12 @@ def _parse_dt(value: str):
     ):
         try:
             dt = datetime.strptime(text, fmt)
-            return dt if dt.tzinfo else dt.replace(tzinfo=__import__("datetime").timezone.utc)
+            return dt if dt.tzinfo else dt.replace(tzinfo=_local_tz)
         except ValueError:
             continue
     try:
         dt = datetime.fromisoformat(text)
-        return dt if dt.tzinfo else dt.replace(tzinfo=__import__("datetime").timezone.utc)
+        return dt if dt.tzinfo else dt.replace(tzinfo=_local_tz)
     except ValueError:
         return None
 

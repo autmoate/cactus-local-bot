@@ -1,7 +1,7 @@
-"""Telegram-Bot „needle 📌" v5.3: CRUD-basierte Kalender- und Notizverwaltung.
+"""Telegram-Bot „needle 📌" v5.3: CRUD + Y/E/N-Approval via Inline-Keyboard.
 7 Tools: calendar_create/edit/read/delete + note_write/read/delete.
-Hard-Deletes. Erinnerungen werden nach Feuern gelöscht.
 Start: uv run python needle-only/tg.py"""
+
 import asyncio
 import os
 import sys
@@ -10,19 +10,19 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from dotenv import load_dotenv  # noqa: E402
+from dotenv import load_dotenv
 load_dotenv(override=True)
 
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup  # noqa: E402
-from telegram.ext import (Application, CommandHandler, MessageHandler,  # noqa: E402
-                          CallbackQueryHandler, ContextTypes, filters)
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import (Application, CallbackQueryHandler, CommandHandler,
+                          ContextTypes, MessageHandler, filters)
 
-from modules.timesync import now as tz_now  # noqa: E402
-from run import WRITE, build, draft_calls  # noqa: E402
+from modules.timesync import now as tz_now
+from run import WRITE, build, draft_calls
 
 BOT_NAME = "needle 📌"
 
-# Pending Approvals: chat_id -> {"plan": ..., "message_id": ...}
+# Pending Approvals: chat_id -> {"writes": [...], "message_id": ...}
 _pending: dict[int, dict] = {}
 
 # Globals (werden in main() gesetzt)
@@ -46,7 +46,6 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not owner_id:
         env_path = Path(__file__).resolve().parent.parent / ".env"
-        # Bestehende (leere) Zeile ersetzen ODER anhängen
         lines = env_path.read_text().splitlines()
         found = False
         for i, line in enumerate(lines):
@@ -61,9 +60,9 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             f"{BOT_NAME}\n\n✅ Du bist jetzt der Owner (chat_id={chat_id}).\n\n"
             f"Beispiele:\n"
-            f"  erstelle einen termin zahnarzt am 10.9. 10 uhr\n"
-            f"  erinnere mich in 10 min an wasser\n"
-            f"  was steht diese woche an?\n\n"
+            f"  erstelle einen termin zahnarzt am 10.9. um 10 uhr\n"
+            f"  was steht diese woche an?\n"
+            f"  merk dir feuerholz kostet 8 euro\n\n"
             f"  /status — Zähler\n  /help — Hilfe")
         return
 
@@ -76,6 +75,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Zeigt Kalender- und Notiz-Übersicht."""
     if not _is_owner(update):
         return
     result = tools.orga.calendar_read(kind="all", horizon="monat")
@@ -83,30 +83,31 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Zeigt Hilfe mit Beispielen."""
     if not _is_owner(update):
         return
     await update.message.reply_text(
         f"{BOT_NAME} — Needle-Orga-Bot (45M, lokal)\n\n"
         f"📅 Termine:\n"
-        f"  erstelle einen termin zahnarzt am 10.9. 10 uhr\n"
+        f"  erstelle einen termin zahnarzt am 10.9. um 10 uhr\n"
         f"  verschiebe zahnarzt auf 11:30\n"
-        f"  lösche zahnarzt\n\n"
+        f"  entferne zahnarzt aus dem kalender\n\n"
         f"⏰ Erinnerungen:\n"
-        f"  erinnerung wasser trinken in 10 min\n"
+        f"  stell eine erinnerung wasser trinken in 10 min\n"
         f"  zeige erinnerungen\n\n"
         f"📋 Aufgaben:\n"
-        f"  aufgabe bericht schreiben bis freitag\n\n"
+        f"  erstelle eine aufgabe bericht schreiben bis freitag\n\n"
         f"📝 Notizen:\n"
         f"  merk dir feuerholz kostet 8 euro\n"
         f"  was weißt du über feuerholz?\n"
-        f"  lösche notiz feuerholz\n\n"
+        f"  lösche die notiz feuerholz\n\n"
         f"Commands: /status /help")
 
 
 # ---------- Message Handling ----------
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Text → Needle-Draft → Plan/Read → Antwort (mit Inline-Approval)."""
+    """Text → Needle → Y/E/N-Approval (bei Writes) → Antwort."""
     if not _is_owner(update):
         await update.message.reply_text(f"{BOT_NAME} ❌ Nicht autorisiert.")
         return
@@ -135,26 +136,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             reads.append(tools.execute(name, args, text))
 
+    # Writes → Y/E/N-Approval mit Inline-Keyboard
     if writes:
-        # Plan erstellen und mit Inline-Keyboard freigeben
-        plan = tools.plan(writes, text)
-        if not plan["ops"]:
-            await update.message.reply_text(
-                "\n".join(plan["lines"]) or "⚠️ Kein Plan erzeugt.")
-            return
-        plan_lines = plan["lines"] + [f"⚠ {w}" for w in plan.get("warn", [])]
+        plan_lines = [_format_plan_line(w) for w in writes]
         keyboard = [
-            [InlineKeyboardButton("✅ Ausführen", callback_data="approve"),
+            [InlineKeyboardButton("✅ Ja", callback_data="approve"),
              InlineKeyboardButton("❌ Nein", callback_data="reject")],
-            [InlineKeyboardButton("✏️ Korrektur", callback_data="edit")],
+            [InlineKeyboardButton("✏️ Bearbeiten", callback_data="edit")],
         ]
         msg = await update.message.reply_text(
             f"📋 Plan:\n\n" + "\n".join(plan_lines) + "\n\nAusführen?",
             reply_markup=InlineKeyboardMarkup(keyboard))
         _pending[update.effective_chat.id] = {
-            "plan": plan, "message_id": msg.message_id}
+            "writes": writes, "message_id": msg.message_id, "text": text}
         return
 
+    # Nur Reads → direkt antworten
     if reads:
         await update.message.reply_text("\n".join(r for r in reads if r))
     else:
@@ -163,35 +160,72 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "💡 Siehe /help für Beispiele.")
 
 
+def _format_plan_line(w: dict) -> str:
+    """Formatiert einen Write-Call für die Approval-Anzeige."""
+    tool = w["tool"]
+    args = w["arguments"]
+
+    if tool == "calendar_create":
+        title = args.get("title", "?")
+        start = args.get("start_at", "?")
+        kind = args.get("kind", "appointment")
+        icons = {"appointment": "📅", "reminder": "⏰", "task": "📋"}
+        icon = icons.get(kind, "📅")
+        return f"{icon} {kind.title()} '{title}' um {start}"
+
+    if tool == "calendar_edit":
+        title = args.get("title", "?")
+        start = args.get("start_at", "unverändert")
+        return f"✏️ Bearbeite '{title}' → {start}"
+
+    if tool == "calendar_delete":
+        title = args.get("title", "?")
+        return f"🗑️ Lösche '{title}'"
+
+    if tool == "note_write":
+        subject = args.get("subject", "?")
+        body = args.get("body", "?")
+        return f"📝 Notiz '{subject}': {body}"
+
+    if tool == "note_delete":
+        subject = args.get("subject", "?")
+        return f"🗑️ Lösche Notiz '{subject}'"
+
+    return f"🔧 {tool}: {args}"
+
+
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Inline-Keyboard-Callback: ✅ approve / ❌ reject / ✏️ edit."""
+    """Inline-Keyboard-Callback: ✅ Ja / ❌ Nein / ✏️ Bearbeiten."""
     query = update.callback_query
     await query.answer()
 
     chat_id = query.message.chat.id
     pending = _pending.get(chat_id)
     if not pending or pending.get("message_id") != query.message.message_id:
-        await query.edit_message_text("⚠️ Approval bereits verarbeitet.")
+        await query.answer("⚠️ Bereits verarbeitet.", show_alert=True)
         return
 
     action = query.data
-    plan = pending["plan"]
+    writes = pending["writes"]
 
     if action == "approve":
-        result = tools.apply(plan)
-        await query.edit_message_text(f"✅ {result}")
+        # Writes ausführen (im Executor, da DB blockiert)
+        loop = asyncio.get_event_loop()
+        results = await loop.run_in_executor(
+            None, lambda: [tools._execute_write(w["tool"], w["arguments"])
+                           for w in writes])
+        await query.edit_message_text(
+            "✅ Ausgeführt:\n\n" + "\n".join(results))
         _pending.pop(chat_id, None)
     elif action == "reject":
-        await query.edit_message_text("❌ Abgelehnt. Nichts gespeichert.")
+        await query.edit_message_text(
+            "❌ Abgelehnt. Nichts gespeichert.")
         _pending.pop(chat_id, None)
     elif action == "edit":
         await query.edit_message_text(
-            "✏️ Sende die Korrektur als neue Nachricht.")
+            "✏️ Sende die Korrektur als neue Nachricht.\n\n"
+            f"Original: {pending['text']}")
         _pending.pop(chat_id, None)
-
-
-async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print(f"❌ Telegram-Fehler: {context.error}")
 
 
 # ---------- Scheduler (JobQueue) ----------
@@ -274,7 +308,6 @@ def main():
     app.add_handler(CommandHandler("help", cmd_help))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(CallbackQueryHandler(handle_callback))
-    app.add_error_handler(error_handler)
 
     # Scheduler via JobQueue (alle 30s, erster Tick nach 5s)
     if app.job_queue:
