@@ -51,6 +51,12 @@ def judge(expect, recorded) -> tuple[bool, str]:
         return (False, f"write ohne approval: {bad}") if bad else (True, "kein write")
     if expect == "GATEDWRITE":
         return (True, "gated write (approval) ok")
+    if expect == "KOLLISION":
+        # Prüfe ob eine Kollision-Warnung zurückgegeben wurde
+        for name, args, result in recorded:
+            if "ollision" in (result or ""):
+                return True, "Kollision erkannt"
+        return False, "keine Kollision erkannt"
 
     if not isinstance(expect, list):
         expect = [(expect, [])]

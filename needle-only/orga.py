@@ -84,18 +84,19 @@ class Orga:
 
         start_dt = _norm_dt(start_at)
 
-        # Kollisions-Check: gleicher Titel innerhalb ±1 Stunde?
-        if start_dt and title:
-            window_start = start_dt - timedelta(hours=1)
-            window_end = start_dt + timedelta(hours=1)
+        # Kollisions-Check: bereits ein Eintrag zur gleichen Zeit (±30 min)?
+        # Prüft ANY entry mit gleicher Startzeit — NICHT nur gleichen Titel!
+        if start_dt:
+            window_start = start_dt - timedelta(minutes=30)
+            window_end = start_dt + timedelta(minutes=30)
             existing = self._q(
                 "SELECT title, start_at FROM entries "
-                "WHERE title ILIKE %s AND start_at BETWEEN %s AND %s LIMIT 1",
-                (title, window_start, window_end))
+                "WHERE start_at BETWEEN %s AND %s LIMIT 1",
+                (window_start, window_end))
             if existing:
-                return (f"⚠️ Kollision: '{existing[0][0]}' ist bereits für "
-                        f"{_when(existing[0][1])} eingetragen. "
-                        f"Duplikat nicht erstellt.")
+                return (f"⚠️ Kollision: '{existing[0][0]}' beginnt bereits "
+                        f"um {_when(existing[0][1])}. "
+                        f"Trotzdem erstellen?")
 
         with psycopg.connect(self.url, autocommit=True) as c:
             cur = c.execute(
@@ -111,7 +112,7 @@ class Orga:
     def calendar_edit(self, title, start_at=None, end_at=None, location=None,
                       alarm_min=None, notes=None):
         """Bearbeitet einen bestehenden Kalender-Eintrag."""
-        entry = self._find_entry(title)
+        entry = self._find_entry(title, start_at)
         if not entry:
             return f"❌ Eintrag '{title}' nicht gefunden."
         sets = []
@@ -170,24 +171,44 @@ class Orga:
 
         return "\n".join(lines)
 
-    def calendar_delete(self, title):
-        """Löscht einen Kalender-Eintrag (Hard Delete)."""
-        entry = self._find_entry(title)
+    def calendar_delete(self, title, start_at=None):
+        """Löscht einen Kalender-Eintrag (Hard Delete).
+        Sucht zuerst nach Titel, fallback auf start_at wenn Titel nicht gefunden."""
+        entry = self._find_entry(title, start_at)
         if not entry:
             return f"❌ Eintrag '{title}' nicht gefunden."
         with psycopg.connect(self.url) as c:
             c.execute("DELETE FROM entries WHERE id = %s", (entry[0],))
         return f"🗑️ Gelöscht: {entry[1]}"
 
-    def _find_entry(self, title):
-        """Findet einen Eintrag per exaktem Titel-Match."""
+    def _find_entry(self, title, start_at=None):
+        """Findet einen Eintrag per Titel-Match (case-insensitive, partial).
+        Fallback: Wenn Titel nicht gefunden, suche per start_at (±30 min)."""
         if not title:
             return None
+
+        # 1) Titel-Suche (partial match)
         rows = self._q(
             "SELECT id, title FROM entries WHERE title ILIKE %s "
             "ORDER BY start_at ASC LIMIT 1",
             (f"%{title}%",))
-        return rows[0] if rows else None
+        if rows:
+            return rows[0]
+
+        # 2) Fallback: start_at-Suche (±30 min Fenster)
+        start_dt = _norm_dt(start_at)
+        if start_dt:
+            window_start = start_dt - timedelta(minutes=30)
+            window_end = start_dt + timedelta(minutes=30)
+            rows = self._q(
+                "SELECT id, title FROM entries "
+                "WHERE start_at BETWEEN %s AND %s "
+                "ORDER BY start_at ASC LIMIT 1",
+                (window_start, window_end))
+            if rows:
+                return rows[0]
+
+        return None
 
     # ==========================================
     # Notiz CRUD

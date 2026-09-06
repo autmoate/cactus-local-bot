@@ -4,7 +4,7 @@ Seeds: (title, value) — ISO = Termin, 'R iso' = Reminder, text = Notiz."""
 
 CASES = [
     # ==========================================
-    # calendar_create — Termine (4 Fälle)
+    # calendar_create — Termine (5 Fälle)
     # ==========================================
     ("cal-create-absolut",
      "erstelle einen termin zahnarzt am 10.9.2026 um 10 uhr",
@@ -28,8 +28,25 @@ CASES = [
      [("calendar_create", [("contains", "title", "zahnarzt")])],
      []),
 
+    # USER-REPORT: Titel ohne 'termin', korrektes Datum (Di 8.9.)
+    ("cal-create-dienstag",
+     "erstelle am dienstag einen termin zahnarzt 9:00",
+     [("calendar_create", [("eq", "kind", "appointment"),
+                           ("contains", "title", "zahnarzt")])],
+     []),
+
     # ==========================================
-    # calendar_create — Erinnerungen (2 Fälle)
+    # calendar_create — Kollision (1 Fall)
+    # ==========================================
+    # Seed: arbeitstreffen am Di 8.9. 09:00 bereits vorhanden
+    # User-Report: verschiedene Titel, gleiche Zeit → Kollision!
+    ("cal-create-kollision",
+     "erstelle am dienstag einen termin zahnarzt 9:00",
+     "KOLLISION",
+     [("Arbeitstreffen", "2026-09-08T09:00:00+02:00")]),
+
+    # ==========================================
+    # calendar_create — Erinnerungen (3 Fälle)
     # ==========================================
     ("cal-create-erinnerung",
      "erinnerung wasser trinken in 2 minuten",
@@ -39,6 +56,13 @@ CASES = [
     ("cal-create-erinnerung-morgen",
      "stell eine erinnerung medikamente nehmen morgen früh 8 uhr",
      [("calendar_create", [("eq", "kind", "reminder")])],
+     []),
+
+    # USER-REPORT: 'erstelle eine erinnerung' → explizit CREATE
+    ("cal-create-erinnerung-explicit",
+     "erstelle eine erinnerung wasser trinken in 10 minuten",
+     [("calendar_create", [("eq", "kind", "reminder"),
+                           ("contains", "title", "wasser")])],
      []),
 
     # ==========================================
@@ -91,7 +115,7 @@ CASES = [
      []),
 
     # ==========================================
-    # calendar_delete (2 Fälle)
+    # calendar_delete (3 Fälle)
     # ==========================================
     ("cal-delete",
      "lösche zahnarzt",
@@ -103,8 +127,14 @@ CASES = [
      [("calendar_delete", [("contains", "title", "zahnarzt")])],
      [("Zahnarzt", "2026-09-10T10:00:00+02:00")]),
 
+    # USER-REPORT: 'lösche termin am 11.9. um 9:00' → delete per Datum/Uhrzeit
+    ("cal-delete-datum",
+     "lösche termin am 11.9. um 9:00",
+     [("calendar_delete", [("contains", "title", "termin")])],
+     [("Arbeitstreffen", "2026-09-11T09:00:00+02:00")]),
+
     # ==========================================
-    # note_write (3 Fälle)
+    # note_write (4 Fälle)
     # ==========================================
     ("note-write",
      "merk dir feuerholz kostet 8 euro",
@@ -119,6 +149,12 @@ CASES = [
     ("note-write-komplex",
      "notiere dass das meeting um 15 uhr beginnt und im raum 3 stattfindet",
      [("note_write", [("contains", "subject", "meeting")])],
+     []),
+
+    # USER-REPORT: 'merke dir X' (mit 'e') → note_write
+    ("note-write-merke-dir",
+     "merke dir feuerholz kostet 8 euro",
+     [("note_write", [("contains", "subject", "feuerholz")])],
      []),
 
     # ==========================================

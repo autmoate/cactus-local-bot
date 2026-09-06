@@ -53,7 +53,9 @@ class MiniTools:
                     alarm_min=args.get("alarm_min"),
                     notes=args.get("notes", ""))
             if tool == "calendar_delete":
-                return self.orga.calendar_delete(args.get("title", ""))
+                return self.orga.calendar_delete(
+                    title=args.get("title", ""),
+                    start_at=args.get("start_at"))
             if tool == "note_write":
                 return self.orga.note_write(
                     subject=args.get("subject", ""),
@@ -95,10 +97,11 @@ class MiniTools:
             Keywords: was steht an, was kommt, zeige termine, zeige kalender, termine anzeigen, erinnerungen anzeigen."""
 
         @needle.tool
-        def calendar_delete(title: str):
+        def calendar_delete(title: str, start_at: str = ""):
             """DELETE a calendar entry (appointment, reminder, or task) permanently.
             Use this for removing events from the calendar. NOT for notes!
             title: The entry to delete (e.g. 'Zahnarzt', 'Wasser trinken').
+            start_at: Optional date/time (ISO) for disambiguation if title alone is not enough.
             Keywords: lösche, streiche, entferne, termin löschen, erinnerung löschen, sage ab, absagen."""
 
         @needle.tool

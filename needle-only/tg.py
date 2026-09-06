@@ -106,8 +106,37 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ---------- Message Handling ----------
 
+def _get_clarification(text: str) -> str | None:
+    """Returns a clarifying question for incomplete commands."""
+    import re
+    low = text.lower().strip()
+
+    # Incomplete reminder/erinnerung command
+    if re.search(r'erstelle\s+(eine\s+)?erinnerung\s*$', low) or \
+       re.search(r'erinner\w*\s+mich\s*$', low) or \
+       re.search(r'stell\s+(eine\s+)?erinnerung\s*$', low):
+        return ("⏰ Woran soll ich dich erinnern?\n\n"
+                "Beispiel: 'erinnerung wasser trinken in 10 minuten'")
+
+    # Incomplete note command
+    if re.search(r'merk\s+dir\s*$', low) or \
+       re.search(r'erstelle\s+(eine\s+)?notiz\s*$', low) or \
+       re.search(r'notiere\s*$', low) or \
+       re.search(r'speicher\w*\s*$', low):
+        return ("📝 Was soll ich mir merken?\n\n"
+                "Beispiel: 'merk dir feuerholz kostet 8 euro'")
+
+    # Incomplete appointment command
+    if re.search(r'erstelle\s+(einen\s+)?termin\s*$', low) or \
+       re.search(r'neuer\s+termin\s*$', low):
+        return ("📅 Welchen Termin soll ich erstellen?\n\n"
+                "Beispiel: 'erstelle einen termin zahnarzt am 10.9. um 10 uhr'")
+
+    return None
+
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Text → Needle → Y/E/N-Approval (bei Writes) → Antwort."""
+    """Text → Clarification-Check → Needle → Y/E/N-Approval → Antwort."""
     if not _is_owner(update):
         await update.message.reply_text(f"{BOT_NAME} ❌ Nicht autorisiert.")
         return
@@ -116,7 +145,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not text:
         return
 
-    # Needle blockiert → im Executor laufen lassen
+    # 1) Incomplete-Command-Check VOR der Pipeline
+    #    (verhindert Bad-Calls wie note_write(subject='Merk dir'))
+    clarification = _get_clarification(text)
+    if clarification:
+        await update.message.reply_text(clarification)
+        return
+
+    # 2) Needle blockiert → im Executor laufen lassen
     loop = asyncio.get_event_loop()
     calls = await loop.run_in_executor(
         None, lambda: draft_calls(agent, fns, text))
@@ -160,6 +196,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "💡 Siehe /help für Beispiele.")
 
 
+def _format_dt(dt) -> str:
+    """Formatiert ein datetime-Objekt lesbar: 'Di 08.09. 09:00'."""
+    if dt is None:
+        return "?"
+    if isinstance(dt, str):
+        from orga import _norm_dt
+        dt = _norm_dt(dt)
+    if dt is None:
+        return "?"
+    wd = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][dt.weekday()]
+    return f"{wd} {dt.strftime('%d.%m.')} {dt.strftime('%H:%M')}"
+
+
 def _format_plan_line(w: dict) -> str:
     """Formatiert einen Write-Call für die Approval-Anzeige."""
     tool = w["tool"]
@@ -171,21 +220,30 @@ def _format_plan_line(w: dict) -> str:
         kind = args.get("kind", "appointment")
         icons = {"appointment": "📅", "reminder": "⏰", "task": "📋"}
         icon = icons.get(kind, "📅")
-        return f"{icon} {kind.title()} '{title}' um {start}"
+        kind_labels = {"appointment": "Termin", "reminder": "Erinnerung", "task": "Aufgabe"}
+        label = kind_labels.get(kind, "Termin")
+        return f"{icon} {label}: {title}\n🕐 {_format_dt(start)}"
 
     if tool == "calendar_edit":
         title = args.get("title", "?")
-        start = args.get("start_at", "unverändert")
-        return f"✏️ Bearbeite '{title}' → {start}"
+        start = args.get("start_at")
+        if start:
+            return f"✏️ Verschiebe '{title}' auf {_format_dt(start)}"
+        return f"✏️ Bearbeite '{title}'"
 
     if tool == "calendar_delete":
         title = args.get("title", "?")
+        start = args.get("start_at")
+        if start:
+            return f"🗑️ Lösche '{title}' ({_format_dt(start)})"
         return f"🗑️ Lösche '{title}'"
 
     if tool == "note_write":
         subject = args.get("subject", "?")
-        body = args.get("body", "?")
-        return f"📝 Notiz '{subject}': {body}"
+        body = args.get("body", "")
+        if body:
+            return f"📝 Notiz: {subject}\n📄 {body}"
+        return f"📝 Notiz: {subject}"
 
     if tool == "note_delete":
         subject = args.get("subject", "?")
@@ -298,6 +356,14 @@ def main():
     # Orga-Stack aufsetzen (Needle + Orga + MiniTools)
     print(f"{BOT_NAME} — Lade Needle-Engine...")
     tools, agent, fns = build()
+
+    # Router-Warmup: Embedding-Modell VOR dem ersten Request laden
+    # (sonst dauert der erste User-Request 10-30s wegen Lazy-Loading)
+    print(f"{BOT_NAME} — Lade Embedding-Modell (Router-Warmup)...")
+    from run import _get_router
+    _router = _get_router()
+    _router.route("warmup needleorga")  # Triggert Modell-Loading
+    print(f"{BOT_NAME} — Router bereit.")
 
     # Bot konfigurieren
     app = Application.builder().token(token).build()

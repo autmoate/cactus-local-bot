@@ -83,3 +83,8 @@
 - If adding Postgres vectors, prefer `pgvector` in Postgres over a separate vector DB unless a local requirement proves otherwise.
 - Embeddings: real local vectors via Cactus `POST /v1/embeddings` (same Gemma bundle, dim auto-probed, ~1536); deterministic hash vectors only as offline fallback in `modules/embeddings.py`. Recreates tables if dim changes.
 - Do not add cloud dependencies for the core loop unless explicitly needed; the requested experiment is local-first.
+
+## Weights-Loading-Verhalten (wichtig für Telegram-App!)
+- **Embedding-Modell wird LAZY geladen**: Der Sentence-Transformers-Encoder (`paraphrase-multilingual-MiniLM-L12-v2`, ~470MB) wird erst beim ERSTEN `router.route()`-Aufruf geladen. Das bedeutet: Der erste User-Request nach dem Start dauert ~10-30s (Modell-Loading), alle weiteren sind schnell (~100ms).
+- **Fix: Router-Warmup beim Start** (`needle-only/tg.py`, `main()`): Direkt nach `build()` wird `_get_router()` initialisiert und `router.route("warmup")` aufgerufen. Das lädt das Modell VOR dem ersten User-Request. Die Telegram-App ist erst "ready", wenn die Weights geladen sind.
+- **Needle 45M**: Wird beim `needle.Needle()`-Konstruktor geladen (~2-5s). Per-Tool-Sessions werden lazy erstellt (`_get_extract_session`), aber das Modell wird nur einmal in den Speicher geladen (JAX cached die Weights).

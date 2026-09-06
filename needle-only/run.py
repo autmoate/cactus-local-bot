@@ -95,9 +95,19 @@ def resolve_flexible(text: str):
 
 
 def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
-    """Whitelist + Zeit-Auflösung + Kind-Default."""
+    """Whitelist + Zeit-Auflösung + Kind-Default + Title-Cleanup."""
     keep = allowed_args(name, fns)
     clean = {k: v for k, v in (args or {}).items() if keep is None or k in keep}
+
+    # Title-Cleanup: "termin X" → "X" (Wort 'termin' ist Typ-Indikator, nicht Name)
+    if "title" in clean and clean["title"]:
+        title_str = str(clean["title"]).strip()
+        low_title = title_str.lower()
+        if low_title.startswith("termin ") and len(title_str) > 7:
+            title_str = title_str[7:].strip()
+        elif low_title.startswith("einen termin ") and len(title_str) > 13:
+            title_str = title_str[13:].strip()
+        clean["title"] = title_str
 
     # Zeit-Auflösung für start_at/end_at
     for key in ("start_at", "end_at"):
@@ -110,11 +120,16 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
         elif key in clean and not clean[key]:
             clean.pop(key, None)
 
+    # Wenn start_at fehlt: Versuche aus dem Original-Text zu extrahieren
+    if name in ("calendar_create", "calendar_edit") and not clean.get("start_at"):
+        extracted = _extract_datetime_from_text(text)
+        if extracted:
+            clean["start_at"] = extracted
+
     # kind-Handling: Default 'appointment' wenn leer/fehlt
     if name == "calendar_create":
         kind = str(clean.get("kind", "")).strip().lower()
         if not kind or kind not in ("appointment", "reminder", "task"):
-            # Aus Text inferieren wenn needle kind nicht korrekt füllt
             text_lower = (text or "").lower()
             if any(w in text_lower for w in ("erinnerung", "erinnere", "erinner", "reminder", "timer")):
                 kind = "reminder"
@@ -131,12 +146,55 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
             text_lower = (text or "").lower()
             if any(w in text_lower for w in ("erinnerung", "erinner", "reminder")):
                 clean["kind"] = "reminder"
-            elif any(w in text_lower for w in ("aufgabe", "task", "todo")):
+            elif any(w in text_lower for w in ("aufgabe", "aufgaben", "task", "todo")):
                 clean["kind"] = "task"
-            elif any(w in text_lower for w in ("termin", "appointment", "meeting")):
+            elif any(w in text_lower for w in ("termin", "termine", "appointment", "meeting")):
                 clean["kind"] = "appointment"
 
     return clean
+
+
+def _extract_datetime_from_text(text: str):
+    """Extrahiert Datum/Uhrzeit aus dem Original-Text (Fallback wenn Needle leer liefert)."""
+    # Relativ: "in N minuten" / "in N stunden"
+    m = re.search(r'in\s+(\d+)\s*(minuten?|min|m)\b', text, re.I)
+    if m:
+        return tz_now() + timedelta(minutes=int(m.group(1)))
+    m = re.search(r'in\s+(\d+)\s*(stunden?|std|h)\b', text, re.I)
+    if m:
+        return tz_now() + timedelta(hours=int(m.group(1)))
+
+    # Wochentag: "am dienstag", "dienstag", etc.
+    WEEKDAYS = {"montag": 0, "dienstag": 1, "mittwoch": 2, "donnerstag": 3,
+                "freitag": 4, "samstag": 5, "sonntag": 6}
+    for wd_name, wd_num in WEEKDAYS.items():
+        m = re.search(rf'\b{wd_name}\b', text, re.I)
+        if m:
+            now = tz_now()
+            days_ahead = (wd_num - now.weekday()) % 7
+            if days_ahead == 0:
+                days_ahead = 7
+            target = now + timedelta(days=days_ahead)
+            # Uhrzeit aus Text extrahieren, falls vorhanden
+            tm = re.search(r'(\d{1,2})[:.](\d{2})\b', text) or re.search(r'\b(\d{1,2})\s*uhr\b', text)
+            if tm:
+                hour = int(tm.group(1))
+                minute = int(tm.group(2)) if tm.lastindex == 2 else 0
+                target = target.replace(hour=hour, minute=minute, second=0, microsecond=0)
+            return target
+
+    # "morgen" / "heute" / "übermorgen"
+    for keyword, days in (("übermorgen", 2), ("morgen", 1), ("heute", 0)):
+        if re.search(rf'\b{keyword}\b', text, re.I):
+            target = tz_now() + timedelta(days=days)
+            tm = re.search(r'(\d{1,2})[:.](\d{2})\b', text) or re.search(r'\b(\d{1,2})\s*uhr\b', text)
+            if tm:
+                hour = int(tm.group(1))
+                minute = int(tm.group(2)) if tm.lastindex == 2 else 0
+                target = target.replace(hour=hour, minute=minute, second=0, microsecond=0)
+            return target
+
+    return None
 
 
 def _normalize_for_needle(text: str, tool_name: str) -> str:
@@ -149,13 +207,18 @@ def _normalize_for_needle(text: str, tool_name: str) -> str:
     result = text
 
     # "erinner mich [in X] an Y" → "erstelle einen termin Y [in X]"
-    m = re.search(r'erinner\s+mich\s+(?:in\s+(\S+)\s+)?an\s+(.+)', result, re.I)
+    m = re.search(r'erinner\w*\s+mich\s+(?:in\s+(\S+)\s+)?an\s+(.+)', result, re.I)
     if m:
         time_part = f" in {m.group(1)}" if m.group(1) else ""
         return f"erstelle einen termin {m.group(2)}{time_part}"
 
     # "stell(e) eine erinnerung X" → "erstelle einen termin X"
     m = re.search(r'stell(?:e|n)?\s+eine\s+erinnerung\s+(.+)', result, re.I)
+    if m:
+        return f"erstelle einen termin {m.group(1)}"
+
+    # "erstelle eine erinnerung X" → "erstelle einen termin X"
+    m = re.search(r'erstelle\s+eine\s+erinnerung\s+(.+)', result, re.I)
     if m:
         return f"erstelle einen termin {m.group(1)}"
 
@@ -185,7 +248,7 @@ def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
 
     if tool_name == "calendar_create":
         # "erinner mich in N minuten an X"
-        m = re.search(r'erinner\s+mich\s+in\s+(\d+)\s*min(uten)?\s+an\s+(.+)', low)
+        m = re.search(r'erinner\w*\s+mich\s+in\s+(\d+)\s*min(uten)?\s+an\s+(.+)', low)
         if m:
             mins = int(m.group(1))
             return {"title": m.group(3).strip().capitalize(),
@@ -268,8 +331,8 @@ def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
         return {"kind": kind, "horizon": "woche"}
 
     elif tool_name == "note_write":
-        # "merk dir X kostet Y" / "merk dir X" → subject=X, body=Rest
-        m = re.search(r'merk\s+dir\s+(.+)', low)
+        # "merk(e) dir X kostet Y" / "merk(e) dir X" → subject=X, body=Rest
+        m = re.search(r'merk\w*\s+dir\s+(.+)', low)
         if m:
             rest = m.group(1).strip()
             # "X kostet Y" → subject=X, body="kostet Y"
@@ -283,6 +346,18 @@ def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
         m = re.search(r'speicher\w*\s+(.+)', low)
         if m:
             return {"subject": m.group(1).strip().capitalize(), "body": ""}
+
+    elif tool_name == "note_read":
+        # "was weißt du über X" → query="X"
+        m = re.search(r'(?:weißt|weisst)\s+du\s+(?:über|von|zu)\s+(.+)', low)
+        if m:
+            return {"query": m.group(1).strip()}
+        # "suche X" / "suche notiz X" → query="X"
+        m = re.search(r'such\w*\s+(?:notiz\s+)?(.+)', low)
+        if m:
+            return {"query": m.group(1).strip()}
+        # "zeige notizen" / "zeige alle notizen" → query=""
+        return {"query": ""}
 
     return None
 

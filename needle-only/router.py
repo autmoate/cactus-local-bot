@@ -24,6 +24,9 @@ ROUTES = {
         "erinnere mich daran wasser zu trinken",
         "stell einen timer", "weck mich um 7 uhr",
         "erinnerung in 10 minuten", "erinnerung morgen früh",
+        "erstelle eine erinnerung", "erstelle eine erinnerung wasser trinken",
+        "erinnere mich", "erinnere mich in 30 minuten an kaffee",
+        "erinnerung an zahnarzt", "stell mir eine erinnerung",
         # Aufgaben — "Aufgabe" / "Deadline"
         "erstelle eine aufgabe", "neue aufgabe", "aufgabe anlegen",
         "aufgabe bericht schreiben", "aufgabe bericht schreiben bis freitag",
@@ -71,6 +74,12 @@ ROUTES = {
         "notiz schreiben", "notiz speichern",
         "schreib auf dass", "behalte das im kopf",
         "notiz anlegen über feuerholz",
+        "erstelle notiz", "erstelle eine notiz",
+        "notiere dir dass", "speicher dir",
+        "merke dir dass feuerholz 8 euro kostet",
+        "merke dir feuerholz kostet 8 euro",
+        "merke dir", "notiere dir feuerholz kostet 8 euro",
+        "speichere notiz", "notiz erstellen",
     ],
     "note_read": [
         # Notiz lesen — "was weißt du", "zeige Notizen"
