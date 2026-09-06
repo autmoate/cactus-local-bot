@@ -1,4 +1,4 @@
-"""Needle-only Eval v5.3 „CRUD": 7 Tools, CRUD-Semantik, Hard-Deletes.
+"""Needle-only Eval v5.5: CRUD + Absence (Notizen entfernt).
 Aufruf: uv run python needle-only/eval.py [--repeat 2] [--filter x]"""
 import os
 import re
@@ -90,20 +90,16 @@ def reset_data(tools) -> None:
 
 
 def seed(tools, seeds) -> None:
-    """Seeds: (title, value). value: ISO → appointment; 'R iso' → reminder; text → note."""
+    """Seeds: (title, value). value: 'R iso' → reminder, ISO → appointment."""
     for title, value in seeds or []:
         if value.startswith("R "):
             tools.orga._q(
                 "INSERT INTO entries (kind, title, start_at) VALUES ('reminder', %s, %s)",
                 (title, _norm_dt(value[2:])))
-        elif re.match(r"\d{4}-\d{2}-\d{2}T", value):
+        else:  # ISO datetime → appointment
             tools.orga._q(
                 "INSERT INTO entries (kind, title, start_at) VALUES ('appointment', %s, %s)",
                 (title, _norm_dt(value)))
-        else:
-            tools.orga._q(
-                "INSERT INTO n_notes (subject, body) VALUES (%s, %s)",
-                (title, value))
 
 
 def run_suite(tools, agent, fns, cases, lang: str) -> list:
@@ -143,7 +139,7 @@ def main() -> int:
         print(f"\n--- Lauf {i+1}/{args.repeat} ---")
         runs.append(run_suite(tools, agent, fns, cases, lang))
 
-    ok_sets = [frozenset(n for n, ok, _ in r if r) for r in runs]
+    ok_sets = [frozenset(n for n, ok, _ in r if ok) for r in runs]
     stable = all(s == ok_sets[0] for s in ok_sets[1:]) if len(ok_sets) > 1 else True
     print(f"\nErgebnisse: {[f'{sum(1 for _, ok, _ in r if ok)}/{len(r)}' for r in runs]} · "
           f"deterministisch: {'ja' if stable else 'NEIN'}")

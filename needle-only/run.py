@@ -1,7 +1,13 @@
-"""Needle-only v5.4 „Router": Semantic Router als Triage-Layer.
+"""Needle-only v5.5 „Router": Semantic Router als Triage-Layer.
 Router (~100ms, deterministisch) wählt das Tool, Needle extrahiert Argumente.
-Bei Unsicherheit: Fallback auf volle Needle-Routing (alle 7 Tools).
-Start: uv run python needle-only/run.py"""
+Bei Unsicherheit: Fallback auf volle Needle-Routing (alle 5 Tools).
+
+NEU in v5.5:
+- Notizen ENTFERNT (Nutzer-Wunsch: verschlanken)
+- 'absence' Kind (Urlaub/Reise/krank) — mehrtägig, kollidiert NICHT
+- Multi-Day-Support: 'von 07.09. bis 11.09.' → start_at + end_at
+- Kollision: NUR appointment+appointment (±30 min)
+"""
 import os
 import re
 import sys
@@ -23,8 +29,7 @@ from orga import Orga, _norm_dt  # noqa: E402
 from tools import MiniTools  # noqa: E402
 
 LOG_ON = True
-WRITE = {"calendar_create", "calendar_edit", "calendar_delete",
-         "note_write", "note_delete"}
+WRITE = {"calendar_create", "calendar_edit", "calendar_delete"}
 _console = Console()
 
 # Semantic Router (lazy geladen)
@@ -33,6 +38,12 @@ _router = None
 # Cache für per-tool Needle-Sessions (Argument-Extraktion)
 _extract_cache = {}
 _SYSTEM_PROMPT = None
+
+# Abwesenheits-Keywords (für kind='absence' Detection)
+ABSENCE_KEYWORDS = (
+    "urlaub", "verreist", "abwesend", "krank", "abwesenheit",
+    "krankmeldung", "dienstreise", "geschäftsreise", "reise",
+)
 
 
 def _log(line: str) -> None:
@@ -90,16 +101,63 @@ def resolve_flexible(text: str):
             return None
         minute = int(tm.group(2)) if tm.lastindex == 2 else 0
         cand = tz_now().replace(hour=hour, minute=minute, second=0, microsecond=0)
-        return cand + __import__("datetime").timedelta(days=1) if cand < tz_now() else cand
+        return cand + timedelta(days=1) if cand < tz_now() else cand
     return None
 
 
+def _parse_date_range(text: str):
+    """Parst 'von 07.09. bis 11.09.' → (start, end).
+    Wird für mehrtägige Abwesenheiten (Urlaub etc.) verwendet."""
+    # "von 7.9. bis 11.9." / "vom 07.09.2026 bis 11.09.2026"
+    m = re.search(
+        r'v[oön]m?\s+(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?\s+'
+        r'bis\s+(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?',
+        text, re.I)
+    if m:
+        now = tz_now()
+        year_s = m.group(3)
+        year_e = m.group(6)
+        y_s = int(year_s) if year_s else now.year
+        y_e = int(year_e) if year_e else y_s
+        try:
+            start = datetime(y_s, int(m.group(2)), int(m.group(1)),
+                             0, 0, 0, tzinfo=now.tzinfo)
+            end = datetime(y_e, int(m.group(5)), int(m.group(4)),
+                           23, 59, 59, tzinfo=now.tzinfo)
+            return start, end
+        except ValueError:
+            return None, None
+
+    # "von 7.9. bis 11.9." ohne 'von'-Prefix
+    m = re.search(
+        r'(\d{1,2})\.(\d{1,2})\.?\s+bis\s+(\d{1,2})\.(\d{1,2})\.?',
+        text, re.I)
+    if m:
+        now = tz_now()
+        try:
+            start = datetime(now.year, int(m.group(2)), int(m.group(1)),
+                             0, 0, 0, tzinfo=now.tzinfo)
+            end = datetime(now.year, int(m.group(4)), int(m.group(3)),
+                           23, 59, 59, tzinfo=now.tzinfo)
+            return start, end
+        except ValueError:
+            return None, None
+
+    return None, None
+
+
+def _detect_absence(text: str) -> bool:
+    """Erkennt Abwesenheits-Anfragen (Urlaub, verreist, krank etc.)."""
+    low = text.lower()
+    return any(w in low for w in ABSENCE_KEYWORDS)
+
+
 def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
-    """Whitelist + Zeit-Auflösung + Kind-Default + Title-Cleanup."""
+    """Whitelist + Zeit-Auflösung + Kind-Default + Absence-Handling."""
     keep = allowed_args(name, fns)
     clean = {k: v for k, v in (args or {}).items() if keep is None or k in keep}
 
-    # Title-Cleanup: "termin X" → "X" (Wort 'termin' ist Typ-Indikator, nicht Name)
+    # Title-Cleanup: "termin X" → "X"
     if "title" in clean and clean["title"]:
         title_str = str(clean["title"]).strip()
         low_title = title_str.lower()
@@ -114,6 +172,8 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
         if key in clean and clean[key]:
             resolved = _resolve_datetime(str(clean[key]), text)
             if resolved:
+                # Wochentag-Korrektur: Needle berechnet 'dienstag' oft falsch
+                resolved = _correct_weekday_date(text, resolved)
                 clean[key] = resolved
             else:
                 clean.pop(key, None)
@@ -126,10 +186,16 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
         if extracted:
             clean["start_at"] = extracted
 
-    # kind-Handling: Default 'appointment' wenn leer/fehlt
+    # kind-Handling für calendar_create
     if name == "calendar_create":
         kind = str(clean.get("kind", "")).strip().lower()
-        if not kind or kind not in ("appointment", "reminder", "task"):
+
+        # 1) Absence-Detection: Urlaub/verreist/krank → kind='absence'
+        if _detect_absence(text):
+            kind = "absence"
+
+        # 2) Wenn kein gültiger kind: aus Text inferieren
+        if not kind or kind not in ("appointment", "reminder", "task", "absence"):
             text_lower = (text or "").lower()
             if any(w in text_lower for w in ("erinnerung", "erinnere", "erinner", "reminder", "timer")):
                 kind = "reminder"
@@ -137,7 +203,15 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
                 kind = "task"
             else:
                 kind = "appointment"
+
         clean["kind"] = kind
+
+        # 3) Multi-Day für Absences: "von 07.09. bis 11.09." → start + end
+        if kind == "absence" and not clean.get("end_at"):
+            start_dt, end_dt = _parse_date_range(text)
+            if start_dt and end_dt:
+                clean["start_at"] = start_dt
+                clean["end_at"] = end_dt
 
     # calendar_read: kind aus Text inferieren wenn 'all'
     if name == "calendar_read":
@@ -155,15 +229,9 @@ def fix_args(text: str, name: str, args: dict, fns: list) -> dict:
 
 
 def _extract_datetime_from_text(text: str):
-    """Extrahiert Datum/Uhrzeit aus dem Original-Text (Fallback wenn Needle leer liefert)."""
-    # Relativ: "in N minuten" / "in N stunden"
-    m = re.search(r'in\s+(\d+)\s*(minuten?|min|m)\b', text, re.I)
-    if m:
-        return tz_now() + timedelta(minutes=int(m.group(1)))
-    m = re.search(r'in\s+(\d+)\s*(stunden?|std|h)\b', text, re.I)
-    if m:
-        return tz_now() + timedelta(hours=int(m.group(1)))
-
+    """Extrahiert Datum/Uhrzeit aus dem Original-Text.
+    Needle 45M berechnet 'dienstag' oft falsch (Mo statt Di) —
+    daher berechnen wir Wochentage SELBST."""
     # Wochentag: "am dienstag", "dienstag", etc.
     WEEKDAYS = {"montag": 0, "dienstag": 1, "mittwoch": 2, "donnerstag": 3,
                 "freitag": 4, "samstag": 5, "sonntag": 6}
@@ -179,6 +247,8 @@ def _extract_datetime_from_text(text: str):
             tm = re.search(r'(\d{1,2})[:.](\d{2})\b', text) or re.search(r'\b(\d{1,2})\s*uhr\b', text)
             if tm:
                 hour = int(tm.group(1))
+                if not 0 <= hour <= 23:
+                    return None
                 minute = int(tm.group(2)) if tm.lastindex == 2 else 0
                 target = target.replace(hour=hour, minute=minute, second=0, microsecond=0)
             return target
@@ -190,11 +260,39 @@ def _extract_datetime_from_text(text: str):
             tm = re.search(r'(\d{1,2})[:.](\d{2})\b', text) or re.search(r'\b(\d{1,2})\s*uhr\b', text)
             if tm:
                 hour = int(tm.group(1))
+                if not 0 <= hour <= 23:
+                    return None
                 minute = int(tm.group(2)) if tm.lastindex == 2 else 0
                 target = target.replace(hour=hour, minute=minute, second=0, microsecond=0)
             return target
 
     return None
+
+
+def _correct_weekday_date(text: str, resolved_dt):
+    """Korrigiert das Datum, wenn der Text einen Wochentag enthält.
+    Needle 45M berechnet Wochentage oft falsch (z.B. 'dienstag' → Montag statt Dienstag).
+    Wir berechnen den Wochentag selbst und überschreiben Needles Datum."""
+    if resolved_dt is None:
+        return resolved_dt
+
+    WEEKDAYS = {"montag": 0, "dienstag": 1, "mittwoch": 2, "donnerstag": 3,
+                "freitag": 4, "samstag": 5, "sonntag": 6}
+    low = text.lower()
+    for wd_name, wd_num in WEEKDAYS.items():
+        if re.search(rf'\b{wd_name}\b', low):
+            # Prüfen ob Needles Datum bereits den richtigen Wochentag hat
+            if resolved_dt.weekday() == wd_num:
+                return resolved_dt  # Bereits korrekt
+            # Nein: Wochentag selbst berechnen, Uhrzeit von Needle übernehmen
+            now = tz_now()
+            days_ahead = (wd_num - now.weekday()) % 7
+            if days_ahead == 0:
+                days_ahead = 7
+            target_date = (now + timedelta(days=days_ahead)).date()
+            return resolved_dt.replace(
+                year=target_date.year, month=target_date.month, day=target_date.day)
+    return resolved_dt
 
 
 def _normalize_for_needle(text: str, tool_name: str) -> str:
@@ -241,12 +339,19 @@ def _normalize_for_needle(text: str, tool_name: str) -> str:
 
 
 def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
-    """Regex-Extraktion als Fallback, wenn Needle keine Argumente liefert.
-    deckt die häufigsten erinnerung-/aufgabe-/notiz-muster ab."""
+    """Regex-Extraktion als Fallback, wenn Needle keine Argumente liefert."""
     low = text.lower().strip()
     now = tz_now()
 
     if tool_name == "calendar_create":
+        # === ABSENCE: Urlaub/verreist/krank (mehrtägig) ===
+        if _detect_absence(text):
+            start_dt, end_dt = _parse_date_range(text)
+            if start_dt and end_dt:
+                return {"title": "Urlaub", "kind": "absence",
+                        "start_at": start_dt.isoformat(),
+                        "end_at": end_dt.isoformat()}
+
         # "erinner mich in N minuten an X"
         m = re.search(r'erinner\w*\s+mich\s+in\s+(\d+)\s*min(uten)?\s+an\s+(.+)', low)
         if m:
@@ -271,11 +376,10 @@ def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
                     "start_at": (now + timedelta(minutes=mins)).isoformat(),
                     "kind": "reminder"}
 
-        # "stell eine erinnerung X <zeit>" — Zeit via resolve_dt aus Rest
+        # "stell eine erinnerung X <zeit>"
         m = re.search(r'stell\w*\s+eine\s+erinnerung\s+(.+)', low)
         if m:
             rest = m.group(1).strip()
-            # Zeit-Ausdruck am Ende isolieren ("morgen früh 8 uhr", "morgen 14 uhr")
             tm = re.search(r'((?:übermorgen|morgen|heute|montag|dienstag|mittwoch|'
                            r'donnerstag|freitag|samstag|sonntag).*)$', rest)
             title = rest
@@ -309,7 +413,6 @@ def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
                     "kind": "reminder"}
 
     elif tool_name == "calendar_edit":
-        # "änder den termin X auf Y" / "verschiebe X auf Y"
         m = re.search(r'(?:änder\w*|verschieb\w*)\s+(?:den\s+)?termin\s+(.+?)\s+auf\s+(.+)', low)
         if m:
             return {"title": m.group(1).strip().capitalize(),
@@ -320,7 +423,6 @@ def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
                     "start_at": m.group(2).strip()}
 
     elif tool_name == "calendar_read":
-        # kind aus Text inferieren
         kind = "all"
         if any(w in low for w in ("erinnerung", "erinner", "reminder")):
             kind = "reminder"
@@ -330,51 +432,43 @@ def _template_extract(tool_name: str, text: str, fns: list) -> dict | None:
             kind = "appointment"
         return {"kind": kind, "horizon": "woche"}
 
-    elif tool_name == "note_write":
-        # "merk(e) dir X kostet Y" / "merk(e) dir X" → subject=X, body=Rest
-        m = re.search(r'merk\w*\s+dir\s+(.+)', low)
+    elif tool_name == "calendar_filter":
+        # Person aus Text extrahieren: "wann hat Lisa diese woche termine"
+        person = ""
+        # Muster: "wann hat [Person] ..."
+        m = re.search(r'wann\s+hat\s+(\S+)', low)
         if m:
-            rest = m.group(1).strip()
-            # "X kostet Y" → subject=X, body="kostet Y"
-            km = re.match(r'(.+?)\s+kostet\s+(.+)', rest)
-            if km:
-                return {"subject": km.group(1).strip().capitalize(),
-                        "body": f"kostet {km.group(2).strip()}"}
-            return {"subject": rest.capitalize(), "body": ""}
+            person = m.group(1).strip()
+        # Muster: "termine von [Person]"
+        m = re.search(r'termine\s+von\s+(\S+)', low)
+        if m:
+            person = m.group(1).strip()
+        # Muster: "kalender von [Person]"
+        m = re.search(r'kalender\s+von\s+(\S+)', low)
+        if m:
+            person = m.group(1).strip()
 
-        # "speichere X" → subject=X
-        m = re.search(r'speicher\w*\s+(.+)', low)
-        if m:
-            return {"subject": m.group(1).strip().capitalize(), "body": ""}
+        horizon = "woche"
+        if "heute" in low:
+            horizon = "heute"
+        elif "monat" in low:
+            horizon = "monat"
 
-    elif tool_name == "note_read":
-        # "was weißt du über X" → query="X"
-        m = re.search(r'(?:weißt|weisst)\s+du\s+(?:über|von|zu)\s+(.+)', low)
-        if m:
-            return {"query": m.group(1).strip()}
-        # "suche X" / "suche notiz X" → query="X"
-        m = re.search(r'such\w*\s+(?:notiz\s+)?(.+)', low)
-        if m:
-            return {"query": m.group(1).strip()}
-        # "zeige notizen" / "zeige alle notizen" → query=""
-        return {"query": ""}
+        return {"person": person, "horizon": horizon}
 
     return None
 
 
 def _resolve_datetime(value: str, context: str = "") -> datetime | None:
     """Versucht, einen String in ein datetime zu übersetzen."""
-    # Direkter ISO-String?
     dt = _norm_dt(value)
     if dt:
         return dt
-    # Relative Angaben wie "in 10 min" oder "morgen 14:00"?
     return resolve_flexible(value)
 
 
 def draft_calls(agent, fns, text: str, lang: str = "de") -> list:
-    """Router-first: Semantic Router wählt Tool, Needle extrahiert Argumente.
-    Bei Unsicherheit oder Extraktions-Fehler: Fallback auf volle Needle-Routing."""
+    """Router-first: Semantic Router wählt Tool, Needle extrahiert Argumente."""
     if lang == "en":
         from translate import de2en
         text, _ = de2en(text)
@@ -415,7 +509,7 @@ def draft_calls(agent, fns, text: str, lang: str = "de") -> list:
         except Exception as exc:
             _log(f"router error: {exc} → fallback needle")
 
-    # === STUFE 2: Volle Needle-Routing (alle 7 Tools) ===
+    # === STUFE 2: Volle Needle-Routing (alle 5 Tools) ===
     agent.reset()
     resp = agent.complete(text)
     calls = resp.get("function_calls") or []
@@ -462,7 +556,7 @@ def process(text: str, tools: MiniTools, agent, fns: list, lang: str = "de") -> 
             reads.append(result)
 
     if writes:
-        # Write-Tools direkt ausführen (kein Approval-Flow mehr)
+        # Write-Tools direkt ausführen
         results = []
         for w in writes:
             result = tools._execute_write(w["tool"], w["arguments"])
@@ -497,7 +591,7 @@ def main():
                       notify=lambda msg: _console.print(f"[bold yellow]{msg}[/]"))
     sched.start()
 
-    _console.print("[bold cyan]needle-only v5.3[/] — CRUD · /status · /quit")
+    _console.print("[bold cyan]needle-only v5.5[/] — CRUD + Absence · /status · /quit")
     while True:
         try:
             text = _console.input("[bold yellow]du: [/]").strip()

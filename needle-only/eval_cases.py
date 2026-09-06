@@ -1,4 +1,4 @@
-"""Eval-Fälle v5.4 „Router": 24 Cases, alle 7 Tools + NOWRITE + Multi-Op.
+"""Eval-Fälle v5.5 „Router + Absence": Notizen entfernt, Urlaub-Tests neu.
 Format: (name, input_text, expected_calls_or_string, seeds).
 Seeds: (title, value) — ISO = Termin, 'R iso' = Reminder, text = Notiz."""
 
@@ -79,6 +79,24 @@ CASES = [
      []),
 
     # ==========================================
+    # calendar_create — ABSENCE (Urlaub) — NEU!
+    # ==========================================
+    # USER-REPORT: 'Trage im Kalender von 07.09. bis 11.09. Urlaub ein!'
+    # Muss als mehrtägige Abwesenheit erstellt werden
+    # UND darf KEINE Kollision mit bestehenden Terminen triggern
+    ("cal-create-urlaub",
+     "trage im kalender von 7.9. bis 11.9. urlaub ein",
+     [("calendar_create", [("eq", "kind", "absence"),
+                           ("contains", "title", "urlaub")])],
+     []),
+
+    # Urlaub + bestehende Termine = KEINE Kollision!
+    ("cal-create-urlaub-mit-terminen",
+     "trage im kalender von 7.9. bis 11.9. urlaub ein",
+     [("calendar_create", [("eq", "kind", "absence")])],
+     [("Hundefrisör", "2026-09-08T09:00:00+02:00")]),
+
+    # ==========================================
     # calendar_edit (2 Fälle)
     # ==========================================
     ("cal-edit-verschieben",
@@ -134,52 +152,15 @@ CASES = [
      [("Arbeitstreffen", "2026-09-11T09:00:00+02:00")]),
 
     # ==========================================
-    # note_write (4 Fälle)
+    # calendar_filter (Gruppen-Abfragen) — NEU!
     # ==========================================
-    ("note-write",
-     "merk dir feuerholz kostet 8 euro",
-     [("note_write", [("contains", "subject", "feuerholz")])],
-     []),
-
-    ("note-write-adresse",
-     "speichere meine adresse ist hauptstraße 1",
-     [("note_write", [("contains", "subject", "adresse")])],
-     []),
-
-    ("note-write-komplex",
-     "notiere dass das meeting um 15 uhr beginnt und im raum 3 stattfindet",
-     [("note_write", [("contains", "subject", "meeting")])],
-     []),
-
-    # USER-REPORT: 'merke dir X' (mit 'e') → note_write
-    ("note-write-merke-dir",
-     "merke dir feuerholz kostet 8 euro",
-     [("note_write", [("contains", "subject", "feuerholz")])],
+    ("cal-filter-person",
+     "wann hat lisa diese woche termine",
+     [("calendar_filter", [("contains", "person", "lisa")])],
      []),
 
     # ==========================================
-    # note_read (2 Fälle)
-    # ==========================================
-    ("note-read",
-     "was weißt du über feuerholz?",
-     [("note_read", [("contains", "query", "feuerholz")])],
-     [("Feuerholz", "kostet 8 euro pro kiste")]),
-
-    ("note-read-all",
-     "zeige alle notizen",
-     [("note_read", [])],
-     [("Feuerholz", "8 euro pro kiste")]),
-
-    # ==========================================
-    # note_delete (1 Fall)
-    # ==========================================
-    ("note-delete",
-     "lösche die notiz feuerholz",
-     [("note_delete", [("contains", "subject", "feuerholz")])],
-     [("Feuerholz", "8 euro pro kiste")]),
-
-    # ==========================================
-    # NOWRITE / GATEDWRITE (2 Fälle)
+    # NOWRITE (2 Fälle)
     # ==========================================
     ("nowrite-allgemeinwissen",
      "wer hat das internet erfunden?",

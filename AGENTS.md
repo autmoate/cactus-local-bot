@@ -88,3 +88,45 @@
 - **Embedding-Modell wird LAZY geladen**: Der Sentence-Transformers-Encoder (`paraphrase-multilingual-MiniLM-L12-v2`, ~470MB) wird erst beim ERSTEN `router.route()`-Aufruf geladen. Das bedeutet: Der erste User-Request nach dem Start dauert ~10-30s (Modell-Loading), alle weiteren sind schnell (~100ms).
 - **Fix: Router-Warmup beim Start** (`needle-only/tg.py`, `main()`): Direkt nach `build()` wird `_get_router()` initialisiert und `router.route("warmup")` aufgerufen. Das lädt das Modell VOR dem ersten User-Request. Die Telegram-App ist erst "ready", wenn die Weights geladen sind.
 - **Needle 45M**: Wird beim `needle.Needle()`-Konstruktor geladen (~2-5s). Per-Tool-Sessions werden lazy erstellt (`_get_extract_session`), aber das Modell wird nur einmal in den Speicher geladen (JAX cached die Weights).
+
+## v5.5: Notizen entfernt, Absence-Kind, Kollisions-Fix
+
+### Was hat sich geändert:
+- **Notizen ENTFERNT** (Nutzer-Wunsch: verschlanken, Erinnerungen gehen bereits)
+- **`absence` Kind hinzugefügt**: Urlaub/Reise/krank — mehrtägig, kollidiert NICHT mit Terminen
+- **Kollisions-Logik gefixt**: NUR appointment+appointment (±30 min)
+- **Wochentag-Korrektur**: Needle 45M berechnet 'dienstag' oft falsch (Mo statt Di) — wir berechnen Wochentage selbst
+- **Multi-Day-Support**: 'von 07.09. bis 11.09.' wird geparst → start_at + end_at
+- **`calendar_filter` Tool**: Gruppen-Abfragen ('wann hat lisa diese woche termine')
+
+### Kollisions-Design (klassischer Kalender-Kram):
+```
+appointment + appointment → ⚠️ Kollision (±30 min)
+appointment + absence     → ✅ Koexistiert (Urlaub + Termine gleichzeitig)
+absence + anything        → ✅ Koexistiert
+reminder + anything       → ✅ Koexistiert
+```
+
+### Weights-Loading-Verhalten (wichtig für Telegram-App):
+- **Embedding-Modell wird LAZY geladen**: Der Sentence-Transformers-Encoder wird erst beim ersten `router.route()`-Aufruf geladen. Erster User-Request dauert 5-10s (Modell-Loading), alle weiteren sind schnell (~100ms).
+- **Fix: Router-Warmup beim Start** (`tg.py` main(), Zeile ~361): `_router.route("warmup")` lädt das Embedding-Modell VOR dem ersten User-Request.
+- **Needle 45M**: Wird beim `needle.Needle()`-Konstruktor geladen (~2-5s auf RPi 5). Nur EIN Modell-Load pro Prozess — JAX cached die Weights.
+
+### Aktuelle Tool-Liste (5 Tools):
+1. `calendar_create` (appointment/reminder/task/absence)
+2. `calendar_edit`
+3. `calendar_read` (mit person-Parameter)
+4. `calendar_delete`
+5. `calendar_filter` (Gruppen-Abfragen, Markdown-Output)
+
+### Eval-Suite: 25/25 Fälle (ø 3.3s/Fall)
+- 5x calendar_create (Termine: absolut/relativ/mit Ort/ISO/Dienstag)
+- 1x Kollision (verschiedene Titel, gleiche Zeit → Kollision erkannt)
+- 3x Erinnerungen (2min/in 10min/medikamente morgen früh)
+- 2x Aufgaben (aufgabe/aufgabe-deadline)
+- 2x Urlaub (urlaub ohne termin, urlaub mit terminen → KEINE kollision)
+- 2x calendar_edit (verschieben/uhrzeit)
+- 4x calendar_read (all/erinnerungen/termine/tasks)
+- 3x calendar_delete (titel/explicit/datum)
+- 1x calendar_filter (person: lisa)
+- 2x NOWRITE (allgemeinwissen/chitchat)

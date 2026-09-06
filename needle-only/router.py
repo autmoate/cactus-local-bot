@@ -9,7 +9,7 @@ _MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 # Routes in der Embedding-Space klar unterscheiden.
 ROUTES = {
     "calendar_create": [
-        # Termine — Schreib-Verben + "Termin"
+        # Termine
         "erstelle einen termin zahnarzt", "erstelle einen termin beim arzt",
         "neuer termin zahnarzt", "termin anlegen zahnarzt",
         "erstelle einen termin meeting", "plane einen termin meeting",
@@ -17,7 +17,7 @@ ROUTES = {
         "termin arzt nächste woche dienstag",
         "erstelle einen termin", "neuer termin", "termin anlegen",
         "plane einen termin", "termin eintragen", "kalender eintrag erstellen",
-        # Erinnerungen — "Erinnerung" / "erinnern"
+        # Erinnerungen
         "stell eine erinnerung", "erinnerung setzen", "erinner mich",
         "erinnerung wasser trinken", "stell eine erinnerung medikamente",
         "erinnerung medikamente nehmen morgen früh",
@@ -27,14 +27,20 @@ ROUTES = {
         "erstelle eine erinnerung", "erstelle eine erinnerung wasser trinken",
         "erinnere mich", "erinnere mich in 30 minuten an kaffee",
         "erinnerung an zahnarzt", "stell mir eine erinnerung",
-        # Aufgaben — "Aufgabe" / "Deadline"
+        # Aufgaben
         "erstelle eine aufgabe", "neue aufgabe", "aufgabe anlegen",
         "aufgabe bericht schreiben", "aufgabe bericht schreiben bis freitag",
         "to-do erstellen", "deadline setzen", "aufgabe hinzufügen",
         "aufgabe steuererklärung abgeben",
+        # Abwesenheiten (NEU: mehrtägig, kollidiert nicht)
+        "trage urlaub ein", "ich habe urlaub von 7.9. bis 11.9.",
+        "urlaub vom 7.9. bis 11.9.", "ich bin verreist nächste woche",
+        "ich bin vom 7.9. bis 11.9. abwesend", "trage abwesenheit ein",
+        "ich bin krank morgen", "krankmeldung eintragen",
+        "urlaub eintragen im kalender", "abwesend vom bis",
     ],
     "calendar_read": [
-        # Lesen — "was steht an", "zeige", etc.
+        # Lesen
         "was steht diese woche an", "was steht an",
         "zeige meine termine", "zeige termine",
         "was kommt diese woche", "was habe ich diese woche",
@@ -44,9 +50,10 @@ ROUTES = {
         "was ist diese woche geplant", "termine auflisten",
         "nächste termine anzeigen", "was ist zu tun",
         "was habe ich nächste woche für termine",
+        "zeige meinen kalender diese woche",
     ],
     "calendar_edit": [
-        # Bearbeiten — "verschiebe", "änder", etc.
+        # Bearbeiten
         "verschiebe den termin", "verschiebe zahnarzt",
         "termin verschieben", "termin bearbeiten",
         "änder den termin", "termin ändern",
@@ -55,7 +62,7 @@ ROUTES = {
         "änder den termin arzt auf morgen 14 uhr",
     ],
     "calendar_delete": [
-        # Löschen — "lösche Termin", "entferne aus Kalender"
+        # Löschen
         "lösche den termin zahnarzt", "lösche den termin",
         "lösche zahnarzt", "lösche den eintrag zahnarzt",
         "entferne den termin aus dem kalender",
@@ -64,38 +71,22 @@ ROUTES = {
         "termin löschen", "lösche zahnarzt aus dem kalender",
         "erinnerung löschen", "lösche die erinnerung",
         "aufgabe löschen", "lösche die aufgabe",
+        "lösche urlaub", "entferne urlaub aus dem kalender",
     ],
-    "note_write": [
-        # Notiz schreiben — "merk dir", "notiere", "speichere"
-        "merk dir dass feuerholz 8 euro kostet",
-        "merk dir feuerholz kostet 8 euro",
-        "merk dir", "notiere dass",
-        "speichere die information", "speichere meine adresse",
-        "notiz schreiben", "notiz speichern",
-        "schreib auf dass", "behalte das im kopf",
-        "notiz anlegen über feuerholz",
-        "erstelle notiz", "erstelle eine notiz",
-        "notiere dir dass", "speicher dir",
-        "merke dir dass feuerholz 8 euro kostet",
-        "merke dir feuerholz kostet 8 euro",
-        "merke dir", "notiere dir feuerholz kostet 8 euro",
-        "speichere notiz", "notiz erstellen",
-    ],
-    "note_read": [
-        # Notiz lesen — "was weißt du", "zeige Notizen"
-        "was weißt du über feuerholz",
-        "was weißt du über das thema",
-        "zeige meine notizen", "zeige notizen",
-        "suche in meinen notizen", "notizen durchsuchen",
-        "was hast du notiert", "notizen anzeigen",
-        "lies meine notizen", "was steht in den notizen",
-    ],
-    "note_delete": [
-        # Notiz löschen — "lösche Notiz", "vergiss Notiz"
-        "lösche die notiz", "lösche die notiz feuerholz",
-        "vergiss die notiz", "notiz entfernen",
-        "entferne die notiz", "notiz löschen",
-        "lösche notiz feuerholz", "vergiss die notiz über feuerholz",
+    "calendar_filter": [
+        # Gruppen-Abfragen / ICS-Filter (NEU)
+        "wann hat lisa diese woche termine",
+        "wann hat max diese woche termine",
+        "termine von lisa diese woche",
+        "kalender von lisa anzeigen",
+        "zeige termine für lisa",
+        "was hat lisa diese woche",
+        "wann ist lisa verfügbar",
+        "termine für person x anzeigen",
+        "kalender filter für lisa",
+        "wann hat die gruppe termine",
+        "termine der gruppe diese woche",
+        "wann hat person x diese woche welche termine",
     ],
 }
 
@@ -173,8 +164,3 @@ class ToolRouter:
 
 # Singleton-Instanz
 router = ToolRouter()
-
-
-def route_tool(text: str) -> tuple:
-    """Convenience-Funktion: (tool_name, score) für einen Text."""
-    return router.route(text)

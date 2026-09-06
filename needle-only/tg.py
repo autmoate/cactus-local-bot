@@ -1,5 +1,5 @@
-"""Telegram-Bot „needle 📌" v5.3: CRUD + Y/E/N-Approval via Inline-Keyboard.
-7 Tools: calendar_create/edit/read/delete + note_write/read/delete.
+"""Telegram-Bot „needle 📌" v5.5: CRUD + Absence + Y/E/N-Approval.
+5 Tools: calendar_create/edit/read/delete + calendar_filter.
 Start: uv run python needle-only/tg.py"""
 
 import asyncio
@@ -62,7 +62,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"Beispiele:\n"
             f"  erstelle einen termin zahnarzt am 10.9. um 10 uhr\n"
             f"  was steht diese woche an?\n"
-            f"  merk dir feuerholz kostet 8 euro\n\n"
+            f"  trage urlaub von 7.9. bis 11.9. ein\n\n"
             f"  /status — Zähler\n  /help — Hilfe")
         return
 
@@ -75,7 +75,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Zeigt Kalender- und Notiz-Übersicht."""
+    """Zeigt Kalender-Übersicht."""
     if not _is_owner(update):
         return
     result = tools.orga.calendar_read(kind="all", horizon="monat")
@@ -97,10 +97,9 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"  zeige erinnerungen\n\n"
         f"📋 Aufgaben:\n"
         f"  erstelle eine aufgabe bericht schreiben bis freitag\n\n"
-        f"📝 Notizen:\n"
-        f"  merk dir feuerholz kostet 8 euro\n"
-        f"  was weißt du über feuerholz?\n"
-        f"  lösche die notiz feuerholz\n\n"
+        f"🏖️ Abwesenheit (Urlaub/Reise):\n"
+        f"  trage urlaub von 7.9. bis 11.9. ein\n"
+        f"  ich bin nächste woche verreist\n\n"
         f"Commands: /status /help")
 
 
@@ -117,14 +116,6 @@ def _get_clarification(text: str) -> str | None:
        re.search(r'stell\s+(eine\s+)?erinnerung\s*$', low):
         return ("⏰ Woran soll ich dich erinnern?\n\n"
                 "Beispiel: 'erinnerung wasser trinken in 10 minuten'")
-
-    # Incomplete note command
-    if re.search(r'merk\s+dir\s*$', low) or \
-       re.search(r'erstelle\s+(eine\s+)?notiz\s*$', low) or \
-       re.search(r'notiere\s*$', low) or \
-       re.search(r'speicher\w*\s*$', low):
-        return ("📝 Was soll ich mir merken?\n\n"
-                "Beispiel: 'merk dir feuerholz kostet 8 euro'")
 
     # Incomplete appointment command
     if re.search(r'erstelle\s+(einen\s+)?termin\s*$', low) or \
@@ -146,7 +137,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # 1) Incomplete-Command-Check VOR der Pipeline
-    #    (verhindert Bad-Calls wie note_write(subject='Merk dir'))
     clarification = _get_clarification(text)
     if clarification:
         await update.message.reply_text(clarification)
@@ -209,6 +199,19 @@ def _format_dt(dt) -> str:
     return f"{wd} {dt.strftime('%d.%m.')} {dt.strftime('%H:%M')}"
 
 
+def _format_dt_short(dt) -> str:
+    """Formatiert ein datetime-Objekt lesbar: 'Di 08.09.' (ohne Uhrzeit)."""
+    if dt is None:
+        return "?"
+    if isinstance(dt, str):
+        from orga import _norm_dt
+        dt = _norm_dt(dt)
+    if dt is None:
+        return "?"
+    wd = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][dt.weekday()]
+    return f"{wd} {dt.strftime('%d.%m.')}"
+
+
 def _format_plan_line(w: dict) -> str:
     """Formatiert einen Write-Call für die Approval-Anzeige."""
     tool = w["tool"]
@@ -217,12 +220,18 @@ def _format_plan_line(w: dict) -> str:
     if tool == "calendar_create":
         title = args.get("title", "?")
         start = args.get("start_at", "?")
+        end = args.get("end_at")
         kind = args.get("kind", "appointment")
-        icons = {"appointment": "📅", "reminder": "⏰", "task": "📋"}
+        icons = {"appointment": "📅", "reminder": "⏰", "task": "📋", "absence": "🏖️"}
         icon = icons.get(kind, "📅")
-        kind_labels = {"appointment": "Termin", "reminder": "Erinnerung", "task": "Aufgabe"}
-        label = kind_labels.get(kind, "Termin")
-        return f"{icon} {label}: {title}\n🕐 {_format_dt(start)}"
+
+        if kind == "absence" and end:
+            # Mehrtägige Abwesenheit: "Urlaub: Mo 07.09. – Fr 11.09."
+            return f"{icon} {title}\n{_format_dt_short(start)} – {_format_dt_short(end)}"
+        elif end:
+            return f"{icon} {title}\n{_format_dt(start)} – {_format_dt(end)}"
+        else:
+            return f"{icon} {title}\n🕐 {_format_dt(start)}"
 
     if tool == "calendar_edit":
         title = args.get("title", "?")
@@ -237,17 +246,6 @@ def _format_plan_line(w: dict) -> str:
         if start:
             return f"🗑️ Lösche '{title}' ({_format_dt(start)})"
         return f"🗑️ Lösche '{title}'"
-
-    if tool == "note_write":
-        subject = args.get("subject", "?")
-        body = args.get("body", "")
-        if body:
-            return f"📝 Notiz: {subject}\n📄 {body}"
-        return f"📝 Notiz: {subject}"
-
-    if tool == "note_delete":
-        subject = args.get("subject", "?")
-        return f"🗑️ Lösche Notiz '{subject}'"
 
     return f"🔧 {tool}: {args}"
 
@@ -311,21 +309,23 @@ async def scheduler_tick(context: ContextTypes.DEFAULT_TYPE):
 
     # 2) Appointment-Alarme feuern (einmalig via alarmed_at)
     alarms = tools.orga._q(
-        "SELECT id, title, start_at FROM entries "
-        "WHERE kind = 'appointment' AND alarm_min IS NOT NULL "
+        "SELECT id, title, start_at, alarm_min FROM entries "
+        "WHERE kind IN ('appointment', 'task') "
+        "AND alarm_min IS NOT NULL "
         "AND alarmed_at IS NULL "
         "AND start_at - (alarm_min || ' minutes')::interval <= %s "
         "AND start_at >= %s "
         "ORDER BY start_at LIMIT 10",
         (now, now))
-    for aid, title, start_at in alarms:
+    for aid, title, start_at, alarm_min in alarms:
         tools.orga._q(
             "UPDATE entries SET alarmed_at = now() WHERE id = %s",
             (aid,))
         remaining = max(0, int((start_at - now).total_seconds() / 60))
         try:
             await context.bot.send_message(
-                chat_id=int(owner_id), text=f"🔔 {title} in {remaining} min")
+                chat_id=int(owner_id),
+                text=f"🔔 {title} in {remaining} min")
         except Exception as exc:
             print(f"❌ Telegram-Push fehlgeschlagen: {exc}")
 
@@ -358,11 +358,10 @@ def main():
     tools, agent, fns = build()
 
     # Router-Warmup: Embedding-Modell VOR dem ersten Request laden
-    # (sonst dauert der erste User-Request 10-30s wegen Lazy-Loading)
     print(f"{BOT_NAME} — Lade Embedding-Modell (Router-Warmup)...")
     from run import _get_router
     _router = _get_router()
-    _router.route("warmup needleorga")  # Triggert Modell-Loading
+    _router.route("warmup needleorga")
     print(f"{BOT_NAME} — Router bereit.")
 
     # Bot konfigurieren
