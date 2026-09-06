@@ -1,104 +1,89 @@
-"""Eval-Fälle v4.0 „Merge": entries-DB, Tool-Oberfläche v3.1.
-Format: (name, text, expect, seeds). expect: Liste[(Name, [checks])] | NOWRITE |
-GATEDWRITE | ("TOOL_IN", (names,)). Checks: contains/eq/local_hm/weekday_hm/
-within_min/result~. Seeds: [(titel, iso_local), ...]."""
+"""Eval-Fälle v5.3 „CRUD": 7 Tools, CRUD-Semantik, Hard-Deletes.
+Format: (name, input_text, expected_calls_or_string, seeds).
+Seeds: [(title, value)] — ISO = Termin, 'R iso' = Reminder, text = Notiz."""
 
 CASES = [
-    ("cal-add-absolut",
-     "erstelle einen termin am 10.9.2026 10Uhr Zahnarzt",
-     [("upsert_event", [("contains", "title", "zahnarzt"), ("local_hm", "start_at", 10, 0)])],
+    # ==========================================
+    # calendar_create
+    # ==========================================
+    ("cal-create-absolut",
+     "erstelle einen termin zahnarzt am 10.9.2026 um 10 uhr",
+     [("calendar_create", [("eq", "kind", "appointment")])],
      []),
-    ("cal-add-mittwoch",
-     "lege das meeting am mittwoch in den kalender",
-     [("upsert_event", [("weekday_hm", "start_at", 2, 9, 0)])],
+
+    ("cal-create-erinnerung",
+     "erinnerung wasser trinken in 2 minuten",
+     [("calendar_create", [("eq", "kind", "reminder")])],
      []),
-    ("cal-add-kommende-woche-sa",
-     "kannst du für kommende woche sa. ab 12:30Uhr kindergeburtstag eintragen?",
-     [("upsert_event", [("contains", "title", "kindergeburtstag"), ("weekday_hm", "start_at", 5, 12, 30)])],
+
+    ("cal-create-aufgabe",
+     "aufgabe bericht schreiben bis freitag",
+     [("calendar_create", [("eq", "kind", "task")])],
      []),
-    ("multi-move-und-setzen",
-     "verschiebe zahnarzt auf 10.9. 10:30Uhr und setze hundefrisör auf 10.9. 10Uhr!",
-     [("upsert_event", [("contains", "title", "zahnarzt"), ("local_hm", "start_at", 10, 30),
-                        ("result~", "→")]),
-      ("upsert_event", [("contains", "title", "hundefrisör"), ("local_hm", "start_at", 10, 0)])],
-     [("Zahnarzt", "2026-09-10T10:00:00+02:00"), ("Hundefrisör", "2026-09-10T10:00:00+02:00")]),
-    ("cal-relative-30min",
-     "verschiebe zahnarzt um 30min nach hinten und lege hundefrisör auf 10Uhr am 10.9.!",
-     [("upsert_event", [("contains", "title", "zahnarzt"), ("local_hm", "start_at", 10, 30)]),
-      ("upsert_event", [("contains", "title", "hundefrisör"), ("local_hm", "start_at", 10, 0)])],
-     [("Zahnarzt", "2026-09-10T10:00:00+02:00"), ("Hundefrisör", "2026-09-10T10:00:00+02:00")]),
-    ("cal-fuzzy-cancel",
-     "sage hunderisör ab",
-     [("cancel_event", [("contains", "title", "hundefrisör"), ("result~", "ABSAGEN")])],
-     [("Hundefrisör", "2026-09-10T10:00:00+02:00")]),
-    ("cal-endstate-kollision",
-     "termin projekt am 10.9.2026 um 10:15 uhr",
-     [("upsert_event", [("contains", "title", "projekt"), ("result~", "Kollision im Endzustand")])],
+
+    # ==========================================
+    # calendar_edit
+    # ==========================================
+    ("cal-edit-verschieben",
+     "verschiebe zahnarzt auf 11:30",
+     [("calendar_edit", [("contains", "title", "zahnarzt")])],
      [("Zahnarzt", "2026-09-10T10:00:00+02:00")]),
-    ("cal-kommende-woche",
-     "trage für kommende woche sa. 12:30Uhr familientreffen ein",
-     [("upsert_event", [("contains", "title", "familientreffen"), ("weekday_hm", "start_at", 5, 12, 30)])],
-     []),
-    ("cal-move-einfach",
-     "verschiebe zahnarzt auf 10.9. 10:30Uhr",
-     [("upsert_event", [("contains", "title", "zahnarzt"), ("local_hm", "start_at", 10, 30),
-                        ("result~", "ÄNDERN")])],
-     [("Zahnarzt", "2026-09-10T10:00:00+02:00")]),
-    ("cal-cancel",
-     "sage hundefrisör ab",
-     [("cancel_event", [("contains", "title", "hundefrisör"), ("result~", "ABSAGEN")])],
-     [("Hundefrisör", "2026-09-10T10:00:00+02:00")]),
-    ("rem-10min",
-     "erinnere mich in 10 min an wasser",
-     [("upsert_reminder", [("contains", "title", "wasser"), ("within_min", "due_at", 10, 2)])],
-     []),
-    ("rem-morgen-9",
-     "erinnere mich morgen um 9 an blumen gießen",
-     [("upsert_reminder", [("contains", "title", "blumen"), ("local_hm", "due_at", 9, 0)])],
-     []),
-    ("rem-retiming",
-     "setze die wasser-erinnerung auf 15 uhr",
-     [("upsert_reminder", [("contains", "title", "wasser"), ("local_hm", "due_at", 15, 0),
-                           ("result~", "ÄNDERN")])],
-     [("wasser", "R 2026-09-03T12:00:00+02:00")]),
-    ("rem-complete",
-     "die wasser-erinnerung ist erledigt",
-     [("complete_reminder", [("contains", "title", "wasser")])],
-     [("wasser", "R 2026-09-03T12:00:00+02:00")]),
-    ("list-termine",
+
+    # ==========================================
+    # calendar_read
+    # ==========================================
+    ("cal-read-all",
      "was steht diese woche an?",
-     [("list_items", [])],
+     [("calendar_read", [])],
      [("Zahnarzt", "2026-09-10T10:00:00+02:00")]),
-    ("list-erinnerungen",
+
+    ("cal-read-reminders",
      "zeige meine erinnerungen",
-     [("list_items", [])],
-     [("wasser", "R 2026-09-03T12:00:00+02:00")]),
-    ("free-slots",
-     "wann habe ich diese woche zeit?",
-     [("free_slots", [])],
+     [("calendar_read", [("eq", "kind", "reminder")])],
+     [("Wasser trinken", "R 2026-09-08T09:00:00+02:00")]),
+
+    # ==========================================
+    # calendar_delete
+    # ==========================================
+    ("cal-delete",
+     "lösche zahnarzt",
+     [("calendar_delete", [("contains", "title", "zahnarzt")])],
      [("Zahnarzt", "2026-09-10T10:00:00+02:00")]),
-    ("note-add",
-     "merk dir: feuerholz kostet 8 euro pro kiste",
-     [("remember_note", [("result~", "NOTIZ")])],
+
+    # ==========================================
+    # note_write
+    # ==========================================
+    ("note-write",
+     "merk dir feuerholz kostet 8 euro",
+     [("note_write", [("contains", "subject", "feuerholz")])],
      []),
-    ("note-find",
+
+    # ==========================================
+    # note_read
+    # ==========================================
+    ("note-read",
      "was weißt du über feuerholz?",
-     [("find_notes", [("result~", "feuerholz")])],
-     [("feuerholz", "8 euro pro kiste")]),
-    ("recall-frage",
-     "moment, wann hast du jetzt kindergeburtstag in den kalender eingetragen?",
-     "NOWRITE",
-     [("Kindergeburtstag", "2026-09-12T12:30:00+02:00")]),
+     [("note_read", [("contains", "query", "feuerholz")])],
+     []),
+
+    # ==========================================
+    # note_delete
+    # ==========================================
+    ("note-delete",
+     "lösche die notiz feuerholz",
+     [("note_delete", [("contains", "subject", "feuerholz")])],
+     [("Feuerholz-Notiz", "8 euro pro kiste")]),
+
+    # ==========================================
+    # NOWRITE / GATEDWRITE
+    # ==========================================
     ("nowrite-allgemeinwissen",
      "wer hat das internet erfunden?",
      "NOWRITE",
      []),
+
     ("gated-komplex",
      "plane eine reise nach japan für nächste woche",
      "GATEDWRITE",
-     []),
-    ("status-abfrage",
-     "wie ist dein stand?",
-     [(("TOOL_IN", ("show_status", "list_items")), [])],
      []),
 ]

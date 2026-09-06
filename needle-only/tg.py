@@ -1,8 +1,7 @@
-"""Telegram-Bot „needle 📌" v5.0: Orga-Bot via python-telegram-bot v22.
-Owner-only (TELEGRAM_OWNER_CHAT_ID). Approvals via Inline-Keyboard.
-Scheduler (Reminder + Appointment-Alarme) läuft als JobQueue-Callback
-und pusht Nachrichten direkt an den Owner.
-Start: uv run python needle-only/telegram.py"""
+"""Telegram-Bot „needle 📌" v5.3: CRUD-basierte Kalender- und Notizverwaltung.
+7 Tools: calendar_create/edit/read/delete + note_write/read/delete.
+Hard-Deletes. Erinnerungen werden nach Feuern gelöscht.
+Start: uv run python needle-only/tg.py"""
 import asyncio
 import os
 import sys
@@ -10,6 +9,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from dotenv import load_dotenv  # noqa: E402
+load_dotenv(override=True)
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup  # noqa: E402
 from telegram.ext import (Application, CommandHandler, MessageHandler,  # noqa: E402
@@ -43,7 +45,6 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     owner_id = os.environ.get("TELEGRAM_OWNER_CHAT_ID", "").strip()
 
     if not owner_id:
-        # Erster /start wird zum Owner → in .env schreiben + os.environ setzen
         env_path = Path(__file__).resolve().parent.parent / ".env"
         # Bestehende (leere) Zeile ersetzen ODER anhängen
         lines = env_path.read_text().splitlines()
@@ -56,7 +57,6 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not found:
             lines.append(f"TELEGRAM_OWNER_CHAT_ID={chat_id}")
         env_path.write_text("\n".join(lines) + "\n")
-        # WICHTIG: os.environ aktualisieren, sonst kann sich jeder als Owner registrieren
         os.environ["TELEGRAM_OWNER_CHAT_ID"] = str(chat_id)
         await update.message.reply_text(
             f"{BOT_NAME}\n\n✅ Du bist jetzt der Owner (chat_id={chat_id}).\n\n"
@@ -78,33 +78,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not _is_owner(update):
         return
-    await update.message.reply_text(tools.orga.status())
-
-
-async def cmd_delete(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """/delete <titel> — Eintrag hart löschen (Needle-Bypass)."""
-    if not _is_owner(update):
-        return
-    title = " ".join(context.args) if context.args else ""
-    if not title:
-        await update.message.reply_text(
-            "Verwendung: /delete <titel>\nBeispiel: /delete zahnarzt")
-        return
-    # Suche in Terminen UND Erinnerungen
-    hit = tools.orga._find_event(title) or tools.orga._find_reminder(title)
-    if not hit:
-        await update.message.reply_text(f"❌ '{title}' nicht gefunden.")
-        return
-    tools.orga._q("delete from entries where id = %s", (hit[0],))
-    await update.message.reply_text(f"🗑️ Gelöscht: {hit[1]}")
-
-
-async def cmd_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """/list [termine|erinnerungen|notizen] — Liste anzeigen (Needle-Bypass)."""
-    if not _is_owner(update):
-        return
-    what = context.args[0] if context.args else "termine"
-    result = tools.orga.list_entries(what, "woche")
+    result = tools.orga.calendar_read(kind="all", horizon="monat")
     await update.message.reply_text(result)
 
 
@@ -113,23 +87,20 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     await update.message.reply_text(
         f"{BOT_NAME} — Needle-Orga-Bot (45M, lokal)\n\n"
-        f"Termine:\n"
+        f"📅 Termine:\n"
         f"  erstelle einen termin zahnarzt am 10.9. 10 uhr\n"
         f"  verschiebe zahnarzt auf 11:30\n"
-        f"  sage zahnarzt ab\n\n"
-        f"Erinnerungen:\n"
-        f"  erinnere mich in 10 min an wasser\n"
-        f"  wasser ist erledigt\n\n"
-        f"Kalender:\n"
-        f"  was steht diese woche an?\n"
-        f"  wann habe ich zeit?\n\n"
-        f"Notizen:\n"
-        f"  merk dir: feuerholz kostet 8 euro\n"
-        f"  was weißt du über feuerholz?\n\n"
-        f"Commands:\n"
-        f"  /delete <titel> — hart löschen\n"
-        f"  /list [termine|erinnerungen] — auflisten\n"
-        f"  /status — Zähler")
+        f"  lösche zahnarzt\n\n"
+        f"⏰ Erinnerungen:\n"
+        f"  erinnerung wasser trinken in 10 min\n"
+        f"  zeige erinnerungen\n\n"
+        f"📋 Aufgaben:\n"
+        f"  aufgabe bericht schreiben bis freitag\n\n"
+        f"📝 Notizen:\n"
+        f"  merk dir feuerholz kostet 8 euro\n"
+        f"  was weißt du über feuerholz?\n"
+        f"  lösche notiz feuerholz\n\n"
+        f"Commands: /status /help")
 
 
 # ---------- Message Handling ----------
@@ -216,7 +187,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif action == "edit":
         await query.edit_message_text(
             "✏️ Sende die Korrektur als neue Nachricht.")
-        _pending.pop(chat_id, None)  # Neue Nachricht = neuer Plan
+        _pending.pop(chat_id, None)
 
 
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -226,39 +197,39 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ---------- Scheduler (JobQueue) ----------
 
 async def scheduler_tick(context: ContextTypes.DEFAULT_TYPE):
-    """Alle 30s: Fällige Reminder feuern + Appointment-Alarme."""
-    orga = tools.orga
+    """Alle 30s: Fällige Reminder feuern (und löschen) + Appointment-Alarme."""
+    now = tz_now()
     owner_id = os.environ.get("TELEGRAM_OWNER_CHAT_ID", "").strip()
     if not owner_id:
         return
-    now = tz_now()
 
-    # 1) Fällige Reminder → status='done' + Telegram-Push
-    due = orga._q(
-        "select id, title from entries "
-        "where kind='reminder' and status='active' "
-        "and start_at <= %s order by start_at limit 5",
+    # 1) Fällige Reminder feuern und SOFORT LÖSCHEN
+    due = tools.orga._q(
+        "SELECT id, title FROM entries "
+        "WHERE kind = 'reminder' AND start_at <= %s "
+        "ORDER BY start_at LIMIT 10",
         (now,))
     for rid, title in due:
-        orga._q("update entries set status='done', updated_at=now() "
-                "where id=%s", (rid,))
+        tools.orga._q("DELETE FROM entries WHERE id = %s", (rid,))
         try:
             await context.bot.send_message(
-                chat_id=int(owner_id), text=f"⏰ Erinnerung: {title}")
+                chat_id=int(owner_id), text=f"⏰ {title}")
         except Exception as exc:
             print(f"❌ Telegram-Push fehlgeschlagen: {exc}")
 
-    # 2) Appointment-Alarme (einmalig via alarmed_at) → Telegram-Push
-    alarms = orga._q(
-        "select id, title, start_at from entries "
-        "where kind='appointment' and status='active' "
-        "and alarm_min is not null and alarmed_at is null "
-        "and start_at - (alarm_min || ' minutes')::interval <= %s "
-        "and start_at >= %s order by start_at limit 5",
+    # 2) Appointment-Alarme feuern (einmalig via alarmed_at)
+    alarms = tools.orga._q(
+        "SELECT id, title, start_at FROM entries "
+        "WHERE kind = 'appointment' AND alarm_min IS NOT NULL "
+        "AND alarmed_at IS NULL "
+        "AND start_at - (alarm_min || ' minutes')::interval <= %s "
+        "AND start_at >= %s "
+        "ORDER BY start_at LIMIT 10",
         (now, now))
     for aid, title, start_at in alarms:
-        orga._q("update entries set alarmed_at=now(), updated_at=now() "
-                "where id=%s", (aid,))
+        tools.orga._q(
+            "UPDATE entries SET alarmed_at = now() WHERE id = %s",
+            (aid,))
         remaining = max(0, int((start_at - now).total_seconds() / 60))
         try:
             await context.bot.send_message(
@@ -272,9 +243,8 @@ async def scheduler_tick(context: ContextTypes.DEFAULT_TYPE):
 def main():
     global tools, agent, fns
 
-    # .env laden BEVOR Token gelesen wird (sonst ist TELEGRAM_BOT_TOKEN leer)
     from dotenv import load_dotenv
-    load_dotenv(override=True)  # override: .env hat Vorrang vor Shell-Env
+    load_dotenv(override=True)
 
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     if not token:
@@ -287,7 +257,7 @@ def main():
         print("  3. Kopiere den Token (Format: 123456:ABC-DEF...)")
         print("  4. Füge in .env hinzu:")
         print("     TELEGRAM_BOT_TOKEN=<dein-token>")
-        print("  5. Starte erneut: uv run python needle-only/telegram.py")
+        print("  5. Starte erneut: uv run python needle-only/tg.py")
         print("  6. Schicke /start an deinen Bot → du wirst Owner")
         sys.exit(1)
 
@@ -302,8 +272,6 @@ def main():
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("status", cmd_status))
     app.add_handler(CommandHandler("help", cmd_help))
-    app.add_handler(CommandHandler("delete", cmd_delete))
-    app.add_handler(CommandHandler("list", cmd_list))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(CallbackQueryHandler(handle_callback))
     app.add_error_handler(error_handler)

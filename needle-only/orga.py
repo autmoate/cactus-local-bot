@@ -1,19 +1,22 @@
-"""Orga-Schicht v4.0 „Merge": entries-Tabelle (eine Tabelle für alles Zeitliche),
-Tool-Oberfläche und Planner-Semantik exakt wie v3.1 (bewährt, 17/24).
-Sprache = Differenz-Spezifikation: Ops werden normalisiert (add⟷move), der ENDZUSTAND
-wird berechnet (Kollisionen dort, nicht pro Schritt) und als Plan mit EINEM Approval
-atomar ausgeführt. Fuzzy-Titel via pg_trgm. psycopg direkt, kein serve."""
-import json
+"""Orga v5.3: CRUD-basierte Kalender- und Notizverwaltung.
+7 Tools: calendar_create/edit/read/delete + note_write/read/delete.
+
+Lifecycle (vom Nutzer so spezifiziert):
+- Erinnerungen (kind='reminder') werden nach dem Auslösen GELÖSCHT
+- Abgesagte Termine werden GELÖSCHT (calendar_delete = Hard Delete)
+- Vergangene Termine BLEIBEN in der DB (Archiv, via Zeitfilter abfragbar)
+
+Kein Status-Feld, kein Lifecycle-Tracking — nur CRUD.
+Die Zeit IST der Lifecycle: Vergangenes bleibt, Irrelevantes wird gelöscht."""
 import re
 import psycopg
 from datetime import datetime, timedelta
-from uuid import uuid4
 
 from modules.postgres_store import _parse_dt
 from modules.timesync import format_local, _TZ
 
-DEFAULT_DUR_MIN = 60
-_ENTRY_KINDS = ("appointment", "reminder", "task")
+KINDS = ("appointment", "reminder", "task")
+HORIZONS = {"heute": 1, "woche": 7, "monat": 31, "alle": 365}
 
 
 def _norm_dt(value):
@@ -22,51 +25,44 @@ def _norm_dt(value):
     return _parse_dt(str(value))
 
 
-def _when(dt) -> str:
+def _when(dt):
     return format_local(dt.isoformat() if hasattr(dt, "isoformat") else str(dt))
 
 
 class Orga:
     def __init__(self, url: str):
         self.url = url
-        self.trgm = False
         with psycopg.connect(url, autocommit=True) as c:
-            c.execute("""create table if not exists entries (
-                id bigserial primary key, owner text not null default 'ich',
-                kind text not null check (kind in ('appointment', 'reminder', 'task')),
-                title text not null, start_at timestamptz not null, end_at timestamptz,
-                status text not null default 'active' check (status in ('active', 'done', 'cancelled')),
-                alarm_min integer, location text not null default '', notes text not null default '',
-                participants text[] not null default '{}', source_id bigint,
-                created_at timestamptz not null default now(),
-                updated_at timestamptz not null default now())""")
-            c.execute("""create table if not exists n_notes (
-                id bigserial primary key, owner text not null default 'ich',
-                subject text not null, body text not null default '',
-                created_at timestamptz not null default now())""")
-            c.execute("""create table if not exists entry_changes (
-                id bigserial primary key, batch_id uuid not null,
-                entry_id bigint not null references entries(id) on delete cascade,
-                action text not null, old_values jsonb, new_values jsonb,
-                actor text not null default 'needle',
-                created_at timestamptz not null default now())""")
-            c.execute("create index if not exists entries_time_idx on entries (owner, start_at)")
-            c.execute("create index if not exists entries_kind_idx on entries (kind, status)")
-            # v4.2: alarmed_at für einmaliges Appointment-Alarm-Firing
-            c.execute("alter table entries add column if not exists alarmed_at timestamptz")
+            # v5.3 Schema: kein 'status' Feld — Lifecycle via DELETE
+            c.execute("""
+                CREATE TABLE IF NOT EXISTS entries (
+                    id          bigserial PRIMARY KEY,
+                    owner       text NOT NULL DEFAULT 'ich',
+                    kind        text NOT NULL CHECK (kind IN ('appointment', 'reminder', 'task')),
+                    title       text NOT NULL,
+                    start_at    timestamptz NOT NULL,
+                    end_at      timestamptz,
+                    alarm_min   integer,
+                    location    text NOT NULL DEFAULT '',
+                    notes       text NOT NULL DEFAULT '',
+                    participants text[] NOT NULL DEFAULT '{}',
+                    alarmed_at  timestamptz,
+                    created_at  timestamptz NOT NULL DEFAULT now()
+                )
+            """)
+            c.execute("CREATE TABLE IF NOT EXISTS n_notes ("
+                      "id bigserial primary key, owner text not null default 'ich', "
+                      "subject text not null, body text not null default '', "
+                      "created_at timestamptz not null default now())")
+            c.execute("CREATE INDEX IF NOT EXISTS entries_time_idx ON entries (owner, start_at)")
+            c.execute("CREATE INDEX IF NOT EXISTS entries_kind_idx ON entries (kind)")
+            c.execute("CREATE INDEX IF NOT EXISTS n_notes_subject_trgm_idx ON n_notes USING gin (subject gin_trgm_ops)")
             try:
-                c.execute("create extension if not exists pg_trgm")
-                self.trgm = True
+                c.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm")
             except Exception:
-                self.trgm = False
+                pass
 
-    def _q(self, sql, vals=(), conn=None):
-        if conn is not None:
-            cur = conn.execute(sql, vals)
-            try:
-                return cur.fetchall()
-            except psycopg.ProgrammingError:
-                return []
+    def _q(self, sql, vals=()):
         with psycopg.connect(self.url) as c:
             cur = c.execute(sql, vals)
             try:
@@ -76,345 +72,146 @@ class Orga:
             c.commit()
             return rows
 
-    # ---------- Fuzzy-Ziele ----------
-    def _find_event(self, title: str):
-        if not title:
-            return None
-        if self.trgm:
+    # ==========================================
+    # Kalender CRUD
+    # ==========================================
+
+    def calendar_create(self, title, start_at, end_at=None, location="",
+                        kind="appointment", alarm_min=0, notes=""):
+        """Erstellt einen Kalender-Eintrag (Termin, Erinnerung oder Aufgabe)."""
+        if kind not in KINDS:
+            kind = "appointment"
+        with psycopg.connect(self.url) as c:
+            cur = c.execute("""
+                INSERT INTO entries (kind, title, start_at, end_at, alarm_min, location, notes)
+                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id
+            """, (kind, title, start_at, end_at, alarm_min or None, location, notes))
+            entry_id = cur.fetchone()[0]
+        kind_label = {"appointment": "Termin", "reminder": "Erinnerung", "task": "Aufgabe"}[kind]
+        return f"✅ {kind_label} erstellt: {title} ({_when(start_at)})"
+
+    def calendar_edit(self, title, start_at=None, end_at=None, location=None,
+                      alarm_min=None, notes=None):
+        """Bearbeitet einen bestehenden Kalender-Eintrag."""
+        entry = self._find_entry(title)
+        if not entry:
+            return f"❌ Eintrag '{title}' nicht gefunden."
+        sets = []
+        params = []
+        if start_at is not None:
+            sets.append("start_at = %s")
+            params.append(start_at)
+        if end_at is not None:
+            sets.append("end_at = %s")
+            params.append(end_at)
+        if location is not None:
+            sets.append("location = %s")
+            params.append(location)
+        if alarm_min is not None:
+            sets.append("alarm_min = %s")
+            params.append(alarm_min)
+        if notes is not None:
+            sets.append("notes = %s")
+            params.append(notes)
+        sets.append("alarmed_at = NULL")
+        sets_sql = ", ".join(sets)
+        params.append(entry[0])
+        with psycopg.connect(self.url) as c:
+            c.execute(f"UPDATE entries SET {sets_sql} WHERE id = %s", tuple(params))
+        return f"✏️ Bearbeitet: {title}"
+
+    def calendar_read(self, kind="all", horizon="woche"):
+        """Liest Kalender-Einträge mit optionalem Filter."""
+        days = HORIZONS.get(horizon, 7)
+        now = datetime.now(_TZ)
+        start_range = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_range = start_range + timedelta(days=days)
+
+        if kind == "all":
             rows = self._q(
-                "select id, title, start_at from entries "
-                "where kind='appointment' and status='active' "
-                "and (title ilike %s or similarity(title, %s) > 0.35) "
-                "order by similarity(title, %s) desc, start_at asc limit 1",
-                (f"%{title}%", title, title),
-            )
+                "SELECT kind, title, start_at, end_at FROM entries "
+                "WHERE start_at >= %s AND start_at < %s "
+                "ORDER BY start_at",
+                (start_range, end_range))
         else:
             rows = self._q(
-                "select id, title, start_at from entries "
-                "where kind='appointment' and status='active' "
-                "and title ilike %s order by start_at asc limit 1",
-                (f"%{title}%",),
-            )
-        return rows[0] if rows else None
+                "SELECT kind, title, start_at, end_at FROM entries "
+                "WHERE kind = %s AND start_at >= %s AND start_at < %s "
+                "ORDER BY start_at",
+                (kind, start_range, end_range))
 
-    def _shift(self, base, minutes):
-        return base + timedelta(minutes=minutes) if (base and minutes) else base
+        if not rows:
+            return f"Keine Einträge in den nächsten {days} Tagen."
 
-    def _find_reminder(self, title: str):
-        """Bidirektionales Matching: 'wasser-erinnerung' findet 'wasser'."""
+        kind_labels = {"appointment": "📅", "reminder": "⏰", "task": "📋"}
+        lines = []
+        for k, title, start_at, end_at in rows:
+            icon = kind_labels.get(k, "•")
+            end_str = f" - {_when(end_at)}" if end_at else ""
+            lines.append(f"{icon} {_when(start_at)}{end_str} {title}")
+
+        return "\n".join(lines)
+
+    def calendar_delete(self, title):
+        """Löscht einen Kalender-Eintrag (Hard Delete)."""
+        entry = self._find_entry(title)
+        if not entry:
+            return f"❌ Eintrag '{title}' nicht gefunden."
+        with psycopg.connect(self.url) as c:
+            c.execute("DELETE FROM entries WHERE id = %s", (entry[0],))
+        return f"🗑️ Gelöscht: {entry[1]}"
+
+    def _find_entry(self, title):
+        """Findet einen Eintrag per exaktem Titel-Match."""
         if not title:
             return None
-        low = title.lower()
         rows = self._q(
-            "select id, title, start_at from entries "
-            "where kind='reminder' and status='active' "
-            "order by start_at asc")
-        for row in rows:
-            db_title = (row[1] or "").lower()
-            if low in db_title or db_title in low:
-                return row
-        return None
+            "SELECT id, title FROM entries WHERE title ILIKE %s "
+            "ORDER BY start_at ASC LIMIT 1",
+            (f"%{title}%",))
+        return rows[0] if rows else None
 
-    # ---------- Plan (rein berechnend, schreibt nichts) ----------
-    def plan_writes(self, ops: list[dict], text: str = "") -> dict:
-        """Ops → Plan: gerenderte Zeilen, Warnungen, ausführbare Ops."""
-        lines, exec_ops = [], []
-        for op in ops:
-            tool, a = op.get("tool"), dict(op.get("arguments") or {})
-            title = (a.get("title") or "").strip()
-            if tool == "upsert_event":
-                start = _norm_dt(a.get("start_at"))
-                shift = a.get("shift_min")
-                hit = self._find_event(title)
-                if hit:
-                    new_start = start or (self._shift(hit[2], shift) if shift else hit[2])
-                    old_when, new_when = _when(hit[2]), _when(new_start)
-                    line = f"ÄNDERN: {hit[1]}"
-                    if old_when != new_when:
-                        line += f" · {old_when} → {new_when}"
-                    if a.get("location"):
-                        line += f" · Ort: {a['location']}"
-                    lines.append(line)
-                    exec_ops.append({"kind": "move", "id": hit[0], "title": hit[1],
-                                     "start": new_start, "end": _norm_dt(a.get("end_at")),
-                                     "loc": a.get("location", ""),
-                                     "notes": a.get("notes", ""),
-                                     "part": a.get("participants", ""),
-                                     "alarm": a.get("alarm_min")})
-                else:
-                    if not title or start is None:
-                        lines.append(f"ABGELEHNT: '{title or '—'}' — Titel und Zeit nötig.")
-                        continue
-                    line = f"NEU: {title} ({_when(start)})"
-                    if a.get("alarm_min"):
-                        line += f" · Alarm {a['alarm_min']}min vorher"
-                    if a.get("location"):
-                        line += f" · Ort: {a['location']}"
-                    lines.append(line)
-                    exec_ops.append({"kind": "add", "title": title, "start": start,
-                                     "end": _norm_dt(a.get("end_at")),
-                                     "loc": a.get("location", ""),
-                                     "notes": a.get("notes", ""),
-                                     "part": a.get("participants", ""),
-                                     "alarm": a.get("alarm_min")})
-            elif tool == "upsert_reminder":
-                due = _norm_dt(a.get("due_at"))
-                if a.get("in_min"):
-                    due = datetime.now(_TZ) + timedelta(minutes=int(a["in_min"]))
-                if not title or due is None:
-                    lines.append("ABGELEHNT: Erinnerung braucht Titel und WANN (Zeit oder Minuten).")
-                    continue
-                hit = self._find_reminder(title)
-                if hit:
-                    lines.append(f"ERINNERUNG ÄNDERN: {hit[1]}: {_when(hit[2])} → {_when(due)}")
-                    exec_ops.append({"kind": "rem_move", "id": hit[0], "title": hit[1], "start": due})
-                else:
-                    lines.append(f"ERINNERUNG NEU: {title} ({_when(due)})")
-                    exec_ops.append({"kind": "rem_add", "title": title, "start": due})
-            elif tool == "cancel_event":
-                # Suche zuerst Termine, dann Erinnerungen
-                hit = self._find_event(title)
-                if not hit:
-                    hit = self._find_reminder(title)
-                if hit:
-                    lines.append(f"ABSAGEN: {hit[1]} ({_when(hit[2])})")
-                    exec_ops.append({"kind": "cancel", "id": hit[0], "title": hit[1]})
-                else:
-                    lines.append(f"ABGELEHNT: '{title}' nicht gefunden.")
-            elif tool == "complete_reminder":
-                hit = self._find_reminder(title)
-                if hit:
-                    lines.append(f"ERLEDIGT: {hit[1]} ({_when(hit[2])})")
-                    exec_ops.append({"kind": "rem_done", "id": hit[0], "title": hit[1]})
-                else:
-                    lines.append(f"ABGELEHNT: Erinnerung '{title}' nicht gefunden.")
-            elif tool == "remember_note":
-                subject, body = a.get("subject") or "", a.get("body") or ""
-                if not subject or not body:
-                    lines.append("ABGELEHNT: Notiz braucht Thema und Inhalt.")
-                    continue
-                lines.append(f"NOTIZ: {subject} = {body[:60]}")
-                exec_ops.append({"kind": "note", "subject": subject, "body": body})
-        # Endzustand-Kollisionen: DB-State + geplante Ops simulieren
-        warn = self._collisions_after(exec_ops)
-        return {"lines": lines, "ops": exec_ops, "warn": warn}
+    # ==========================================
+    # Notiz CRUD
+    # ==========================================
 
-    def _collisions_after(self, exec_ops: list[dict]) -> list[str]:
-        """Simuliert den Endzustand (DB + geplante Ops) und prüft auf Kollisionen."""
-        rows = self._q(
-            "select id, title, start_at, coalesce(end_at, start_at + interval '60 minutes') "
-            "from entries where kind='appointment' and status='active'")
-        state = {r[0]: [r[1], r[2], r[3]] for r in rows}
-        next_id = max(state.keys(), default=0) + 1
-        for op in exec_ops:
-            k = op["kind"]
-            if k in ("add", "rem_add"):
-                end = op.get("end") or (op["start"] + timedelta(minutes=DEFAULT_DUR_MIN))
-                state[next_id] = [op["title"], op["start"], end]
-                next_id += 1
-            elif k in ("move", "rem_move") and op["id"] in state:
-                start = op.get("start") or state[op["id"]][1]
-                end = op.get("end") or (start + timedelta(minutes=DEFAULT_DUR_MIN))
-                state[op["id"]] = [state[op["id"]][0], start, end]
-            elif k in ("cancel", "rem_done"):
-                state.pop(op["id"], None)
-        items = sorted(state.values(), key=lambda x: x[1])
-        warns = []
-        for i, (t1, s1, e1) in enumerate(items):
-            for t2, s2, e2 in items[i+1:]:
-                if s1.date() == s2.date() and s2 < e1 and s1 < e2:
-                    warns.append(f"Kollision im Endzustand: {t1} ↔ {t2} ({_when(max(s1, s2))})")
-        return warns
-
-    # ---------- Ausführung (1 Transaktion, mit Audit) ----------
-    def apply_plan(self, plan: dict) -> str:
-        batch_id = uuid4()
+    def note_write(self, subject, body):
+        """Erstellt eine Notiz."""
+        if not subject or not body:
+            return "❌ Notiz braucht Thema und Inhalt."
         with psycopg.connect(self.url) as c:
-            for op in plan["ops"]:
-                k = op["kind"]
-                if k == "add":
-                    cur = c.execute(
-                        """insert into entries (kind, title, start_at, end_at, location, notes, participants, alarm_min)
-                           values ('appointment',%s,%s,%s,%s,%s,%s,%s) returning id""",
-                        (op["title"], op["start"], op.get("end"),
-                         op.get("loc") or "", op.get("notes") or "",
-                         _parse_participants(op.get("part")), op.get("alarm")))
-                    new_id = cur.fetchone()[0]
-                    c.execute(
-                        """insert into entry_changes (batch_id, entry_id, action, new_values)
-                           values (%s,%s,'create',%s)""",
-                        (batch_id, new_id, json.dumps({"kind": "appointment", "title": op["title"],
-                                                       "start_at": str(op["start"])}, default=str)))
-                elif k == "move":
-                    c.execute(
-                        """update entries set start_at=%s, end_at=%s, location=%s, notes=%s,
-                           participants=%s, alarm_min=%s, updated_at=now() where id=%s""",
-                        (op["start"], op.get("end"), op.get("loc") or "",
-                         op.get("notes") or "", _parse_participants(op.get("part")),
-                         op.get("alarm"), op["id"]))
-                    c.execute(
-                        """insert into entry_changes (batch_id, entry_id, action, new_values)
-                           values (%s,%s,'update',%s)""",
-                        (batch_id, op["id"], json.dumps({"start_at": str(op["start"])}, default=str)))
-                elif k == "cancel":
-                    c.execute("update entries set status='cancelled', updated_at=now() where id=%s",
-                              (op["id"],))
-                    c.execute(
-                        """insert into entry_changes (batch_id, entry_id, action, new_values)
-                           values (%s,%s,'cancel',%s)""",
-                        (batch_id, op["id"], json.dumps({"status": "cancelled"})))
-                elif k == "rem_add":
-                    cur = c.execute(
-                        """insert into entries (kind, title, start_at, alarm_min)
-                           values ('reminder',%s,%s,0) returning id""",
-                        (op["title"], op["start"]))
-                    new_id = cur.fetchone()[0]
-                    c.execute(
-                        """insert into entry_changes (batch_id, entry_id, action, new_values)
-                           values (%s,%s,'create',%s)""",
-                        (batch_id, new_id, json.dumps({"kind": "reminder", "title": op["title"],
-                                                       "start_at": str(op["start"])}, default=str)))
-                elif k == "rem_move":
-                    c.execute("update entries set start_at=%s, updated_at=now() where id=%s",
-                              (op["start"], op["id"]))
-                    c.execute(
-                        """insert into entry_changes (batch_id, entry_id, action, new_values)
-                           values (%s,%s,'update',%s)""",
-                        (batch_id, op["id"], json.dumps({"start_at": str(op["start"])}, default=str)))
-                elif k == "rem_done":
-                    c.execute("update entries set status='done', updated_at=now() where id=%s",
-                              (op["id"],))
-                    c.execute(
-                        """insert into entry_changes (batch_id, entry_id, action, new_values)
-                           values (%s,%s,'complete',%s)""",
-                        (batch_id, op["id"], json.dumps({"status": "done"})))
-                elif k == "note":
-                    c.execute("insert into n_notes (subject, body) values (%s,%s)",
-                              (op["subject"], op["body"]))
-            c.commit()
-        return f"Plan ausgeführt: {len(plan['ops'])} Änderung(en)."
+            c.execute("INSERT INTO n_notes (subject, body) VALUES (%s, %s)",
+                      (subject, body))
+        return f"📝 Notiz gespeichert: {subject}"
 
-    def undo_last(self) -> str:
-        """Letzten Batch rückgängig machen (Audit-Trail)."""
-        batch = self._q("select distinct batch_id from entry_changes order by batch_id desc limit 1")
-        if not batch:
-            return "Nichts zum Rückgängigmachen."
-        batch_id = batch[0][0]
+    def note_read(self, query=""):
+        """Liest/durchsucht Notizen."""
+        if query:
+            rows = self._q(
+                "SELECT subject, body FROM n_notes "
+                "WHERE subject ILIKE %s OR body ILIKE %s "
+                "ORDER BY created_at DESC LIMIT 10",
+                (f"%{query}%", f"%{query}%"))
+        else:
+            rows = self._q(
+                "SELECT subject, body FROM n_notes "
+                "ORDER BY created_at DESC LIMIT 20")
+
+        if not rows:
+            return f"Keine Notizen gefunden." + (f" (Suche: '{query}')" if query else "")
+
+        lines = [f"📝 {subject}: {body[:80]}" for subject, body in rows]
+        return "\n".join(lines)
+
+    def note_delete(self, subject):
+        """Löscht eine Notiz (Hard Delete)."""
+        if not subject:
+            return "❌ Notiz-Thema fehlt."
+        rows = self._q(
+            "SELECT id, subject FROM n_notes WHERE subject ILIKE %s LIMIT 1",
+            (f"%{subject}%",))
+        if not rows:
+            return f"❌ Notiz '{subject}' nicht gefunden."
         with psycopg.connect(self.url) as c:
-            changes = c.execute(
-                "select entry_id, action from entry_changes where batch_id = %s order by id desc",
-                (batch_id,)).fetchall()
-            for entry_id, action in changes:
-                if action == "create":
-                    c.execute("delete from entries where id = %s", (entry_id,))
-                elif action in ("update", "cancel", "complete"):
-                    c.execute("select old_values from entry_changes "
-                              "where entry_id = %s and action = %s order by id desc limit 1",
-                              (entry_id, action))
-                    row = c.fetchone()
-                    if row and row[0]:
-                        old = json.loads(row[0])
-                        sets = []
-                        if "start_at" in old:
-                            sets.append(f"start_at = '{old['start_at']}'")
-                        if sets:
-                            c.execute(f"update entries set {', '.join(sets)} where id = %s",
-                                      (entry_id,))
-            c.execute("delete from entry_changes where batch_id = %s", (batch_id,))
-            c.commit()
-        return f"Batch {str(batch_id)[:8]} rückgängig gemacht ({len(changes)} Ops)."
-
-    # ---------- Reads (gerendert) ----------
-    def list_entries(self, what: str = "termine", horizon: str = "woche") -> str:
-        days = {"heute": 1, "woche": 7, "monat": 31}.get(horizon, 7)
-        start = datetime.now(_TZ).replace(hour=0, minute=0, second=0, microsecond=0)
-        end = start + timedelta(days=days)
-        what_map = {"termine": "appointment", "erinnerungen": "reminder",
-                    "todos": "task", "aufgaben": "task", "tasks": "task"}
-        target = what_map.get(what.lower(), "appointment")
-        # NUR aktive Einträge zeigen (abgesagte/erledigte ausblenden)
-        rows = self._q(
-            "select kind, title, start_at, status from entries "
-            "where kind = %s and status = 'active' "
-            "and start_at >= %s and start_at < %s "
-            "order by start_at",
-            (target, start, end))
-        if not rows:
-            return f"Keine aktiven {what} in den nächsten {days} Tagen."
-        lines = []
-        for kind, title, start_at, status in rows:
-            lines.append(f"  {_when(start_at)}  {title}")
-        return f"{what.title()} ({horizon}):\n" + "\n".join(lines)
-
-    def free_slots(self, horizon: str = "woche") -> str:
-        days = {"heute": 1, "woche": 7, "monat": 31}.get(horizon, 7)
-        start0 = datetime.now(_TZ).replace(hour=0, minute=0, second=0, microsecond=0)
-        rows = self._q(
-            "select start_at, coalesce(end_at, start_at + interval '30 minutes') "
-            "from entries where kind='appointment' and status='active' "
-            "and start_at >= %s and start_at < %s order by start_at",
-            (start0, start0 + timedelta(days=days)))
-        by_day: dict = {}
-        for s, e in rows:
-            s, e = s.astimezone(_TZ), e.astimezone(_TZ)
-            if s.date() != e.date():
-                e = s.replace(hour=20, minute=0)
-            by_day.setdefault(s.date(), []).append((s, e))
-        lines = []
-        for i in range(days):
-            day = start0.date() + timedelta(days=i)
-            cursor = datetime(day.year, day.month, day.day, 8, tzinfo=_TZ)
-            limit = datetime(day.year, day.month, day.day, 20, tzinfo=_TZ)
-            gaps = []
-            for s, e in by_day.get(day, []):
-                if s > cursor and (s - cursor).total_seconds() >= 3600:
-                    gaps.append(f"{cursor.strftime('%H:%M')}–{s.strftime('%H:%M')}")
-                cursor = max(cursor, e)
-            if limit > cursor and (limit - cursor).total_seconds() >= 3600:
-                gaps.append(f"{cursor.strftime('%H:%M')}–{limit.strftime('%H:%M')}")
-            if gaps:
-                lines.append(f"  {day.strftime('%a %d.%m')}: " + ", ".join(gaps))
-        return ("Freie Zeiten (8–20 Uhr, ≥60 min):\n" + "\n".join(lines)) if lines else "Keine größeren Lücken."
-
-    def find_notes(self, query: str) -> str:
-        if not query:
-            return "Bitte Suchbegriff angeben."
-        rows = self._q(
-            "select subject, body from n_notes "
-            "where subject ilike %s or body ilike %s "
-            "order by created_at desc limit 5",
-            (f"%{query}%", f"%{query}%"))
-        if not rows:
-            return f"Nichts gefunden zu '{query}'."
-        return "Gefunden:\n" + "\n".join(f"  · {s}: {b[:70]}" for s, b in rows)
-
-    def list_notes(self) -> str:
-        """Alle Notizen (neueste zuerst, max 20)."""
-        rows = self._q(
-            "select subject, body from n_notes "
-            "order by created_at desc limit 20")
-        if not rows:
-            return "Keine Notizen gespeichert."
-        return "Notizen:\n" + "\n".join(f"  · {s}: {b[:70]}" for s, b in rows)
-
-    def status(self) -> str:
-        rows = self._q(
-            "select count(*) filter (where kind='appointment' and status='active'), "
-            "count(*) filter (where kind='reminder' and status='active'), "
-            "count(*) filter (where kind='task' and status='active'), "
-            "(select count(*) from n_notes), "
-            "(select count(*) from entry_changes) from entries")
-        if not rows:
-            return "Keine Daten."
-        a, r, t, n, ch = rows[0]
-        return (f"Termine: {a} · Erinnerungen: {r} · Aufgaben: {t} · "
-                f"Notizen: {n} · Änderungen: {ch}")
-
-
-def _parse_participants(raw) -> list:
-    """'lisa, tom' → ['lisa', 'tom'] (kleingeschrieben, getrimmt)."""
-    if not raw:
-        return []
-    if isinstance(raw, list):
-        return [str(p).strip().lower() for p in raw if str(p).strip()]
-    return [p.strip().lower() for p in str(raw).split(",") if p.strip()]
+            c.execute("DELETE FROM n_notes WHERE id = %s", (rows[0][0],))
+        return f"🗑️ Notiz gelöscht: {rows[0][1]}"
