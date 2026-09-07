@@ -1,8 +1,16 @@
-# Orga v4 — Architektur: Needle als Postgres-Orchestrator
+# Orga v5 — Architektur: Needle als Postgres-Orchestrator
 
-> **Status:** v4.2 implementiert. 19/23 Eval-Fälle deterministisch (ø ~3s/Fall). ICS-Export + Scheduler aktiv.
+> **Status:** v5.6 implementiert. 29/29 Eval-Fälle (ø ~2.6s/Fall). Semantic Router + Gruppen-Support aktiv.
 > **Basis:** needle-only v3.1 „Plan-Werkstatt" (17/24), Gemma-Stack v3.1 (28/28).
 > **Konzept:** needle-only/ARCHITECTURE.md — „einfach, simpel, robust, funktional".
+
+### v5.x Update (gegenüber dem v4-Text unten)
+
+- **Semantic Router als Triage-Layer (v5.x):** `paraphrase-multilingual-MiniLM` (~100ms, deterministisch) wählt das Tool VOR Needle. Needle 45M bekommt dann nur EIN Tool zur Argument-Extraktion. 3-stufige Pipeline: Router → Per-Tool-Needle → Regex-Template.
+- **Gruppen-Support (v5.6):** Termine FÜR Personen (`"für lisa"` → `owner='Lisa'`), Termine MIT Personen (`"mit lisa"` → `participants=['Lisa']`), gemeinsame freie Zeitslots (`free_slots`), `calendar_read` mit funktionierendem person-Filter.
+- **Owner/Participants NICHT über Needle-Grammar:** Needle 45M hat ein enges Context-Budget. Der v5.5-`calendar_create`-Docstring (~400 Zeichen + 9 Params) überschritt das Budget → „No tool available". Lösung: kompakte 1-2-Zeilen-Docstrings, owner/participants deterministisch in `fix_args` extrahieren.
+- **Zeitzonen-Fix (v5.6):** `_localize()` in orga.py konvertiert DB-UTC-Datetimes nach Europe/Berlin für Display und `by_day`-Gruppierung.
+- **Telegram-App (v5.x):** `needle-only/tg.py` implementiert den Delivery-Layer als Telegram-Bot „needle 📌" mit Y/E/N-Approval-Buttons.
 
 ---
 
