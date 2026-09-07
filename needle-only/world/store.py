@@ -360,6 +360,52 @@ class WorldStore:
             })
         return out
 
+    def find_entities(self, conditions: list[tuple[str, str, Any]]
+                      ) -> list[UUID]:
+        """Findet Entities, die ALLE Bedingungen erfüllen.
+
+        conditions: [(attribute, kind, payload), ...]
+          kind: 'value' (skalarer jsonb-Wert) | 'ref' (Entity-UUID)
+
+        Beispiel: Commitments mit action=bring und object=Beamer:
+          [('org/action', 'value', 'bring'),
+           ('org/object', 'ref', beamer_uuid)]
+        """
+        if not conditions:
+            return []
+        clauses, params = [], []
+        for attr, kind, payload in conditions:
+            if kind == "value":
+                sub = ("SELECT entity_id FROM world_current_datoms "
+                       "WHERE attribute = %s AND value = %s::jsonb")
+                params.extend([attr,
+                               json.dumps(payload, default=str)])
+            else:  # ref
+                sub = ("SELECT entity_id FROM world_current_datoms "
+                       "WHERE attribute = %s AND ref_entity = %s")
+                params.extend([attr, payload])
+            clauses.append(f"entity_id IN ({sub})")
+        where = " AND ".join(clauses)
+        sql = ("SELECT DISTINCT entity_id FROM world_current_datoms "
+               f"WHERE {where}")
+        with self._connect() as conn:
+            rows = conn.execute(sql, params).fetchall()
+            return [r["entity_id"] for r in rows]
+
+    def current_value(self, entity_id: UUID, attribute: str) -> Any:
+        """Der aktuelle Wert von (entity, attribute) oder None."""
+        dats = self.current_datoms(entity_id=entity_id, attribute=attribute)
+        if not dats:
+            return None
+        d = dats[0]
+        return d.ref_entity if d.ref_entity is not None else d.value
+
+    def current_values(self, entity_id: UUID, attribute: str) -> list[Any]:
+        """Alle aktiven Werte von (entity, attribute) — auch bei many."""
+        dats = self.current_datoms(entity_id=entity_id, attribute=attribute)
+        return [d.ref_entity if d.ref_entity is not None else d.value
+                for d in dats]
+
     # ------------------------------------------------------------------
     # Historie
     # ------------------------------------------------------------------
