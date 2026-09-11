@@ -1,0 +1,5408 @@
+[
+  {
+    "index": 0,
+    "query": "Nimm noch Tim mit zu Augenarzt.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Tim",
+        "title": "Augenarzt",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Nimm noch Tim mit zu Augenarzt"
+      }
+    },
+    "latency_ms": 235.05592346191406
+  },
+  {
+    "index": 1,
+    "query": "Meeting mit Paul und Sara heute Morgen um Viertel vor acht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Paul und Sara",
+        "date": "heute Morgen",
+        "time": "Viertel vor acht",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Paul und Sara",
+        "date": "heute Morgen",
+        "time": "19:45",
+        "participants": "Paul, Sara"
+      }
+    },
+    "latency_ms": 376.4989376068115
+  },
+  {
+    "index": 2,
+    "query": "Meeting mit Lisa und Tim morgen früh um Viertel vor drei.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lisa und Tim",
+        "date": "morgen früh",
+        "time": "Viertel vor drei",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lisa und Tim",
+        "date": "morgen",
+        "time": "15:45",
+        "participants": "Lisa und Tim"
+      }
+    },
+    "latency_ms": 366.58740043640137
+  },
+  {
+    "index": 3,
+    "query": "Zahnarzt ist jetzt erst halb acht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "time": "halb acht",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "halb drei"
+      }
+    },
+    "latency_ms": 219.37870979309082
+  },
+  {
+    "index": 4,
+    "query": "Verschieb Elternabend halt auf 14:15.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "time": "14:15",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "halt",
+        "time": "14:15"
+      }
+    },
+    "latency_ms": 233.58869552612305
+  },
+  {
+    "index": 6,
+    "query": "am 7. April um halb zwölf Friseur.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "am 7. April",
+        "time": "halb zwölf"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "2025-04-07",
+        "time": "12:30"
+      }
+    },
+    "latency_ms": 267.6575183868408
+  },
+  {
+    "index": 7,
+    "query": "Nimm noch Nora mit zu Steuerberatung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Nora",
+        "title": "Steuerberatung",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 89.62631225585938
+  },
+  {
+    "index": 8,
+    "query": "Für Lena nächsten Freitag um kurz vor halb neun Zahnarzttermin.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "nächsten Freitag",
+        "time": "kurz vor halb neun",
+        "person": "Lena"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "nächsten Freitag",
+        "time": "20:30",
+        "location": "Für Lena"
+      }
+    },
+    "latency_ms": 356.31632804870605
+  },
+  {
+    "index": 9,
+    "query": "Verschieb den Termin Nachmittagstermin auf am 30. November.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachmittagstermin",
+        "date": "am 30. November",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Nachmittagstermin",
+        "date": "2025-11-30",
+        "time": "15:00",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 382.81798362731934
+  },
+  {
+    "index": 10,
+    "query": "Plane Projektbesprechung am Wochenende von 10 Uhr bis 16:50.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "date": "am Wochenende",
+        "time": "10 Uhr",
+        "end_time": "16:50",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Projektbesprechung",
+        "date": "2025-04-22",
+        "time": "10:00",
+        "end_time": "16:50"
+      }
+    },
+    "latency_ms": 384.78827476501465
+  },
+  {
+    "index": 13,
+    "query": "Nimm noch Nora mit zu Buchhaltung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Nora",
+        "title": "Buchhaltung",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 89.54024314880371
+  },
+  {
+    "index": 14,
+    "query": "Nachhilfe ist jetzt erst 19 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe",
+        "time": "19 Uhr",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe",
+        "date": "19:00"
+      }
+    },
+    "latency_ms": 196.42376899719238
+  },
+  {
+    "index": 15,
+    "query": "Meeting mit Lisa und Julia nächsten Dienstag um halb sechs.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lisa und Julia",
+        "date": "nächsten Dienstag",
+        "time": "halb sechs",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lisa und Julia",
+        "date": "nächsten Dienstag",
+        "time": "halb sechs",
+        "participants": "Lisa, Julia"
+      }
+    },
+    "latency_ms": 428.82728576660156
+  },
+  {
+    "index": 16,
+    "query": "Plane Nachmittagstermin nächsten Mittwoch von 7:30 bis 14:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachmittagstermin",
+        "date": "nächsten Mittwoch",
+        "time": "7:30",
+        "end_time": "14:30",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Nachmittagstermin",
+        "date": "nächsten Mittwoch",
+        "time": "07:30",
+        "end_time": "14:30"
+      }
+    },
+    "latency_ms": 397.6619243621826
+  },
+  {
+    "index": 18,
+    "query": "Verschieb die Zeit von Friseur auf 12 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "time": "12 Uhr",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 100.07500648498535
+  },
+  {
+    "index": 19,
+    "query": "Verschieb Buchhaltung halt auf 19:45.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "time": "19:45",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "date": "halt",
+        "time": "19:45"
+      }
+    },
+    "latency_ms": 245.22161483764648
+  },
+  {
+    "index": 20,
+    "query": "Trag Kegelabend am Wochenende um halb zehn im Seminargebäude ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "date": "am Wochenende",
+        "time": "halb zehn",
+        "location": "im Seminargebäude",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Kegelabend",
+        "date": "Wochenende",
+        "time": "21:30",
+        "location": "Seminargebäude"
+      }
+    },
+    "latency_ms": 354.8109531402588
+  },
+  {
+    "index": 21,
+    "query": "Trag bitte Workshop am 1. November um Viertel nach drei ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "date": "am 1. November",
+        "time": "Viertel nach drei",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "date": "2025-11-01",
+        "time": "15:15",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 302.6244640350342
+  },
+  {
+    "index": 22,
+    "query": "Lösche Sprachkurs.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Sprachkurs",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 81.42495155334473
+  },
+  {
+    "index": 23,
+    "query": "Trag bitte Betriebsversammlung diese Woche um 8:00 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "date": "diese Woche",
+        "time": "8:00",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "date": "morgen",
+        "time": "08:00"
+      }
+    },
+    "latency_ms": 278.240442276001
+  },
+  {
+    "index": 24,
+    "query": "Teammeeting ist jetzt erst Viertel vor zwölf.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "time": "Viertel vor zwölf",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "jetzt",
+        "time": "12:45"
+      }
+    },
+    "latency_ms": 263.6091709136963
+  },
+  {
+    "index": 25,
+    "query": "Trag Mitarbeitergespräch in vierzehn Tagen um 7:30 in der Praxis am Markt ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "in vierzehn Tagen",
+        "time": "7:30",
+        "location": "in der Praxis am Markt",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Mitarbeitergespräch",
+        "date": "vierzehn Tagen",
+        "time": "7:30",
+        "location": "Praxis am Markt"
+      }
+    },
+    "latency_ms": 401.7469882965088
+  },
+  {
+    "index": 26,
+    "query": "Lösche Augenarzt.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 69.47827339172363
+  },
+  {
+    "index": 27,
+    "query": "Für Tom nächsten Montag um halb zehn Haartermin.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Haartermin",
+        "date": "nächsten Montag",
+        "time": "halb zehn",
+        "person": "Tom"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Haartermin",
+        "date": "nächsten Montag",
+        "time": "21:30",
+        "location": "Haartermin"
+      }
+    },
+    "latency_ms": 332.51309394836426
+  },
+  {
+    "index": 28,
+    "query": "Plane Elternabend morgen Mittag von 21 Uhr bis kurz nach halb zwei.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "morgen Mittag",
+        "time": "21 Uhr",
+        "end_time": "kurz nach halb zwei",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Elternabend",
+        "date": "morgen",
+        "time": "21:00",
+        "end_time": "14:30",
+        "location": "Plane Elternabend"
+      }
+    },
+    "latency_ms": 402.23193168640137
+  },
+  {
+    "index": 29,
+    "query": "Lösche Elternabend.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 69.60487365722656
+  },
+  {
+    "index": 30,
+    "query": "Setz Kino Samstag um 16:20 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "Samstag",
+        "time": "16:20",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Kino",
+        "date": "Saturday",
+        "time": "16:20"
+      }
+    },
+    "latency_ms": 242.05660820007324
+  },
+  {
+    "index": 31,
+    "query": "Für Max am 18. September um Viertel nach drei Augenarzt.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "date": "am 18. September",
+        "time": "Viertel nach drei",
+        "person": "Max"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Max",
+        "date": "18. September",
+        "time": "15:15",
+        "location": "Augenarzt"
+      }
+    },
+    "latency_ms": 312.15381622314453
+  },
+  {
+    "index": 32,
+    "query": "Lösche Friseur.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 77.20041275024414
+  },
+  {
+    "index": 33,
+    "query": "Trag bitte Yoga Anfang der Woche um 13:45 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Yoga",
+        "date": "Anfang der Woche",
+        "time": "13:45",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Yoga Anfang der Woche",
+        "date": "13:45",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 274.3487358093262
+  },
+  {
+    "index": 34,
+    "query": "Trag bitte Teammeeting diese Woche um Viertel vor acht ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "diese Woche",
+        "time": "Viertel vor acht",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "am 18. September",
+        "time": "19:45"
+      }
+    },
+    "latency_ms": 330.60288429260254
+  },
+  {
+    "index": 35,
+    "query": "Der Termin Teammeeting fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 229.19583320617676
+  },
+  {
+    "index": 37,
+    "query": "Nimm noch Jonas mit zu Klavierunterricht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Jonas",
+        "title": "Klavierunterricht",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 98.01387786865234
+  },
+  {
+    "index": 39,
+    "query": "Plane Arzttermin am 5. Dezember von halb drei bis 15:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Arzttermin",
+        "date": "am 5. Dezember",
+        "time": "halb drei",
+        "end_time": "15:30",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Arzttermin",
+        "date": "2025-12-05",
+        "time": "15:30",
+        "end_time": "15:30"
+      }
+    },
+    "latency_ms": 350.2070903778076
+  },
+  {
+    "index": 40,
+    "query": "Trag bitte Arzttermin am Donnerstag um 17 Uhr ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Arzttermin",
+        "date": "am Donnerstag",
+        "time": "17 Uhr",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Arzttermin",
+        "date": "Donnerstag",
+        "time": "17:00"
+      }
+    },
+    "latency_ms": 271.8820571899414
+  },
+  {
+    "index": 41,
+    "query": "kommenden Samstag um halb eins Physiotherapie.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "kommenden Samstag",
+        "time": "halb eins"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "Samstag",
+        "time": "halb eins"
+      }
+    },
+    "latency_ms": 280.9746265411377
+  },
+  {
+    "index": 42,
+    "query": "Setz Zahnarzttermin am Samstag um Viertel nach drei an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "am Samstag",
+        "time": "Viertel nach drei",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "Samstag",
+        "time": "15:15"
+      }
+    },
+    "latency_ms": 281.68725967407227
+  },
+  {
+    "index": 43,
+    "query": "Mitarbeitergespräch ist jetzt erst 11 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "time": "11 Uhr",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "jetzt",
+        "time": "11:00"
+      }
+    },
+    "latency_ms": 254.48942184448242
+  },
+  {
+    "index": 44,
+    "query": "Verschieb Teammeeting halt auf 12:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "time": "12:30",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "halt",
+        "time": "12:30",
+        "location": "Verschieb"
+      }
+    },
+    "latency_ms": 270.1575756072998
+  },
+  {
+    "index": 45,
+    "query": "Verschieb die Zeit von Elternabend auf 7:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "time": "7:30",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 97.81908988952637
+  },
+  {
+    "index": 46,
+    "query": "Trag bitte Friseur Anfang nächster Woche um 16:20 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "Anfang nächster Woche",
+        "time": "16:20",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "nächster Woche",
+        "time": "16:20",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 309.34762954711914
+  },
+  {
+    "index": 47,
+    "query": "Plane Vorstandssitzung am 9. Oktober von halb zehn bis 13:45.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Vorstandssitzung",
+        "date": "am 9. Oktober",
+        "time": "halb zehn",
+        "end_time": "13:45",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Vorstandssitzung",
+        "date": "2025-10-09",
+        "time": "halb drei",
+        "end_time": "13:45",
+        "location": "Plane Vorstandssitzung"
+      }
+    },
+    "latency_ms": 478.18541526794434
+  },
+  {
+    "index": 48,
+    "query": "Lösche Gitarrenunterricht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 85.15238761901855
+  },
+  {
+    "index": 49,
+    "query": "Lösche Nachmittagstermin.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachmittagstermin",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 75.01649856567383
+  },
+  {
+    "index": 50,
+    "query": "Buchhaltung ist jetzt erst halb zwölf.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "time": "halb zwölf",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 90.45100212097168
+  },
+  {
+    "index": 51,
+    "query": "Der Termin Mitarbeitergespräch fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Mitarbeitergespräch",
+        "date": "morgen",
+        "time": "15:00"
+      }
+    },
+    "latency_ms": 290.35282135009766
+  },
+  {
+    "index": 52,
+    "query": "Setz Physiotherapie übermorgen um 21 Uhr an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "übermorgen",
+        "time": "21 Uhr",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Physiotherapie",
+        "date": "übermorgen",
+        "time": "21:00"
+      }
+    },
+    "latency_ms": 275.63929557800293
+  },
+  {
+    "index": 53,
+    "query": "Meeting mit Julia und Paul nächsten Montag um 16:50.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Julia und Paul",
+        "date": "nächsten Montag",
+        "time": "16:50",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Julia und Paul",
+        "date": "nächsten Montag",
+        "time": "16:50",
+        "participants": "Julia und Paul"
+      }
+    },
+    "latency_ms": 390.002965927124
+  },
+  {
+    "index": 54,
+    "query": "Trag Training in einer Woche um 12:05 im Besprechungsraum ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Training",
+        "date": "in einer Woche",
+        "time": "12:05",
+        "location": "im Besprechungsraum",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Training in einer Woche",
+        "date": "in 1 Woche",
+        "time": "12:05",
+        "location": "Besprechungsraum"
+      }
+    },
+    "latency_ms": 376.80935859680176
+  },
+  {
+    "index": 55,
+    "query": "kommende Woche um halb zwei Teammeeting.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "kommende Woche",
+        "time": "halb zwei"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "kommende Woche",
+        "time": "14:30"
+      }
+    },
+    "latency_ms": 268.8870429992676
+  },
+  {
+    "index": 56,
+    "query": "am 21. Oktober um 13:45 Mitarbeitergespräch.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "am 21. Oktober",
+        "time": "13:45"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "21. Oktober",
+        "time": "13:45",
+        "location": "Mitarbeitergespräch"
+      }
+    },
+    "latency_ms": 361.9067668914795
+  },
+  {
+    "index": 57,
+    "query": "Verschieb die Zeit von Mitarbeitergespräch auf kurz nach halb zwei.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "time": "kurz nach halb zwei",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 102.67949104309082
+  },
+  {
+    "index": 58,
+    "query": "morgen Abend um 18:30 Augenarzt.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "date": "morgen Abend",
+        "time": "18:30"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "date": "morgen",
+        "time": "18:30"
+      }
+    },
+    "latency_ms": 244.28820610046387
+  },
+  {
+    "index": 59,
+    "query": "Der Termin Buchhaltung fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Buchhaltung",
+        "date": "fällt aus"
+      }
+    },
+    "latency_ms": 277.73332595825195
+  },
+  {
+    "index": 60,
+    "query": "Trag Sprachkurs nächsten Montag um halb zehn im Meetingraum 2 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Sprachkurs",
+        "date": "nächsten Montag",
+        "time": "halb zehn",
+        "location": "im Meetingraum 2",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Sprachkurs",
+        "date": "nächsten Montag",
+        "time": "halb drei",
+        "location": "Meetingraum 2"
+      }
+    },
+    "latency_ms": 390.0277614593506
+  },
+  {
+    "index": 61,
+    "query": "Lösche Yoga.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Yoga",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 83.0686092376709
+  },
+  {
+    "index": 62,
+    "query": "Lösche Betriebsversammlung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 83.31608772277832
+  },
+  {
+    "index": 63,
+    "query": "Nimm noch Jonas mit zu Chorprobe.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Jonas",
+        "title": "Chorprobe",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 92.85259246826172
+  },
+  {
+    "index": 64,
+    "query": "Verschieb Projektbesprechung halt auf 8:00.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "time": "8:00",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "date": "halt",
+        "time": "halt 8:00"
+      }
+    },
+    "latency_ms": 272.89438247680664
+  },
+  {
+    "index": 65,
+    "query": "Meeting mit Lisa und Paul am Montag um 11 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lisa und Paul",
+        "date": "am Montag",
+        "time": "11 Uhr",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lisa und Paul",
+        "date": "Montag",
+        "time": "11:00",
+        "participants": "Lisa, Paul"
+      }
+    },
+    "latency_ms": 343.31488609313965
+  },
+  {
+    "index": 66,
+    "query": "Verschieb die Zeit von Arztbesuch auf 12:05.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Arztbesuch",
+        "time": "12:05",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 103.77192497253418
+  },
+  {
+    "index": 67,
+    "query": "Der Termin Zahnarzttermin fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "morgen",
+        "time": "15:00"
+      }
+    },
+    "latency_ms": 272.79114723205566
+  },
+  {
+    "index": 68,
+    "query": "Der Termin Fußballtraining fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Fußballtraining",
+        "date": "morgen",
+        "time": "15:00",
+        "location": "Fußballtraining"
+      }
+    },
+    "latency_ms": 334.2103958129883
+  },
+  {
+    "index": 69,
+    "query": "Verschieb Workshop halt auf 17 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "time": "17 Uhr",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "time": "17 Uhr"
+      }
+    },
+    "latency_ms": 188.82226943969727
+  },
+  {
+    "index": 72,
+    "query": "Trag bitte Teammeeting heute Morgen um 10:30 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "heute Morgen",
+        "time": "10:30",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "heute Morgen",
+        "time": "10:30"
+      }
+    },
+    "latency_ms": 270.5655097961426
+  },
+  {
+    "index": 73,
+    "query": "Verschieb Betriebsausflug halt auf 14:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsausflug",
+        "time": "14:30",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Betriebsausflug",
+        "date": "halt",
+        "time": "14:30"
+      }
+    },
+    "latency_ms": 261.98482513427734
+  },
+  {
+    "index": 74,
+    "query": "Trag Kegelabend am Montag um 11:45 im Meetingraum 2 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "date": "am Montag",
+        "time": "11:45",
+        "location": "im Meetingraum 2",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Kegelabend",
+        "date": "monday",
+        "time": "11:45",
+        "location": "Meetingraum 2"
+      }
+    },
+    "latency_ms": 323.21882247924805
+  },
+  {
+    "index": 75,
+    "query": "Nimm noch Felix mit zu Nachmittagstermin.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Felix",
+        "title": "Nachmittagstermin",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 89.51330184936523
+  },
+  {
+    "index": 76,
+    "query": "Nimm noch Miriam mit zu Teammeeting.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Miriam",
+        "title": "Teammeeting",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "person": "Miriam"
+      }
+    },
+    "latency_ms": 239.3937110900879
+  },
+  {
+    "index": 77,
+    "query": "am 18. September um halb zwei Zahnarzt.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "am 18. September",
+        "time": "halb zwei"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "18. September",
+        "time": "14:30"
+      }
+    },
+    "latency_ms": 277.1151065826416
+  },
+  {
+    "index": 78,
+    "query": "Nimm noch Tim mit zu Nachhilfe.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Tim",
+        "title": "Nachhilfe",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 83.06479454040527
+  },
+  {
+    "index": 79,
+    "query": "am 9. Oktober um 17:05 Gitarrenunterricht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "am 9. Oktober",
+        "time": "17:05"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "2026-10-09",
+        "time": "17:05"
+      }
+    },
+    "latency_ms": 322.95894622802734
+  },
+  {
+    "index": 80,
+    "query": "Nimm noch Nora mit zu Gitarrenunterricht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Nora",
+        "title": "Gitarrenunterricht",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 92.01765060424805
+  },
+  {
+    "index": 81,
+    "query": "Nimm noch Miriam mit zu Yoga.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Miriam",
+        "title": "Yoga",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 80.23476600646973
+  },
+  {
+    "index": 82,
+    "query": "Verschieb den Termin Zahnarzttermin auf am 3. März.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "am 3. März",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "2025-03-03",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 299.47423934936523
+  },
+  {
+    "index": 83,
+    "query": "Gitarrenunterricht ist jetzt erst Viertel vor zehn.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "time": "Viertel vor zehn",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "2025-03-21",
+        "time": "09:45"
+      }
+    },
+    "latency_ms": 289.7660732269287
+  },
+  {
+    "index": 84,
+    "query": "Trag bitte Steuerberatung am 9. Oktober um 17 Uhr ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Steuerberatung",
+        "date": "am 9. Oktober",
+        "time": "17 Uhr",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Steuerberatung",
+        "date": "2026-10-09",
+        "time": "17:00",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 319.47922706604004
+  },
+  {
+    "index": 87,
+    "query": "Trag Physiotherapie morgen um 8:15 im Nachbarort ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "morgen",
+        "time": "8:15",
+        "location": "im Nachbarort",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Physiotherapie",
+        "date": "morgen",
+        "time": "8:15",
+        "location": "Nachbarort"
+      }
+    },
+    "latency_ms": 330.41977882385254
+  },
+  {
+    "index": 88,
+    "query": "Nimm noch Sara mit zu Teammeeting.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Sara",
+        "title": "Teammeeting",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "person": "Sara"
+      }
+    },
+    "latency_ms": 212.04280853271484
+  },
+  {
+    "index": 90,
+    "query": "Kegelabend ist jetzt erst halb zwei.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "time": "halb zwei",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "date": "halb zwei"
+      }
+    },
+    "latency_ms": 223.1614589691162
+  },
+  {
+    "index": 91,
+    "query": "Setz Mitarbeitergespräch nächsten Mittwoch um 19:45 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "nächsten Mittwoch",
+        "time": "19:45",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Mitarbeitergespräch",
+        "date": "nächsten Mittwoch",
+        "time": "19:45"
+      }
+    },
+    "latency_ms": 343.89519691467285
+  },
+  {
+    "index": 92,
+    "query": "Trag Yoga am 30. November um 11 Uhr in der Bibliothek ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Yoga",
+        "date": "am 30. November",
+        "time": "11 Uhr",
+        "location": "in der Bibliothek",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Yoga",
+        "date": "2025-11-30",
+        "time": "11:00",
+        "location": "Bibliothek"
+      }
+    },
+    "latency_ms": 312.23440170288086
+  },
+  {
+    "index": 93,
+    "query": "Projektbesprechung ist jetzt erst 20:15.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "time": "20:15",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "date": "20:15"
+      }
+    },
+    "latency_ms": 215.61932563781738
+  },
+  {
+    "index": 94,
+    "query": "Schwimmkurs ist jetzt erst 14:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "time": "14:30",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "date": "jetzt",
+        "time": "14:30"
+      }
+    },
+    "latency_ms": 244.42529678344727
+  },
+  {
+    "index": 95,
+    "query": "Der Termin Elternabend fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Der Termin Elternabend",
+        "date": "morgen",
+        "time": "15:00"
+      }
+    },
+    "latency_ms": 257.4019432067871
+  },
+  {
+    "index": 96,
+    "query": "in drei Tagen um 6 Uhr Vorstandssitzung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Vorstandssitzung",
+        "date": "in drei Tagen",
+        "time": "6 Uhr"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Vorstandssitzung",
+        "date": "in 3 Tagen",
+        "time": "06:00"
+      }
+    },
+    "latency_ms": 280.2102565765381
+  },
+  {
+    "index": 97,
+    "query": "Lösche Vorstandssitzung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Vorstandssitzung",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 82.55600929260254
+  },
+  {
+    "index": 99,
+    "query": "Meeting mit Max und Sophie in zwei Wochen um 13 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Max und Sophie",
+        "date": "in zwei Wochen",
+        "time": "13 Uhr",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Max und Sophie",
+        "date": "zwei Wochen",
+        "time": "13:00",
+        "participants": "Max und Sophie"
+      }
+    },
+    "latency_ms": 373.04186820983887
+  },
+  {
+    "index": 100,
+    "query": "Verschieb den Termin Physiotherapie auf nächsten Montag.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "nächsten Montag",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Physiotherapie"
+      }
+    },
+    "latency_ms": 250.0295639038086
+  },
+  {
+    "index": 101,
+    "query": "Verschieb die Zeit von Zahnarzt auf 16:20.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "time": "16:20",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 85.71839332580566
+  },
+  {
+    "index": 103,
+    "query": "Für Lena in einer Woche um 8:00 Haartermin.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Haartermin",
+        "date": "in einer Woche",
+        "time": "8:00",
+        "person": "Lena"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Haartermin",
+        "date": "in einer Woche",
+        "time": "8:00",
+        "participants": "Lena"
+      }
+    },
+    "latency_ms": 309.48615074157715
+  },
+  {
+    "index": 104,
+    "query": "Meeting mit Max und Jonas nächsten Freitag um halb drei.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Max und Jonas",
+        "date": "nächsten Freitag",
+        "time": "halb drei",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Max und Jonas",
+        "date": "nächsten Freitag",
+        "time": "15:30",
+        "participants": "Max und Jonas"
+      }
+    },
+    "latency_ms": 397.69792556762695
+  },
+  {
+    "index": 105,
+    "query": "Verschieb Mitarbeitergespräch halt auf halb sechs.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "time": "halb sechs",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "time": "halb sechs"
+      }
+    },
+    "latency_ms": 253.4797191619873
+  },
+  {
+    "index": 106,
+    "query": "Verschieb Kegelabend halt auf 10:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "time": "10:30",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "date": "halt",
+        "time": "10:30",
+        "location": "Verschieb"
+      }
+    },
+    "latency_ms": 270.3373432159424
+  },
+  {
+    "index": 107,
+    "query": "Plane Zahnarzt am 1. November von kurz nach halb zwei bis halb acht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "am 1. November",
+        "time": "kurz nach halb zwei",
+        "end_time": "halb acht",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Zahnarzt",
+        "date": "2025-11-01",
+        "time": "14:30",
+        "end_time": "2025-11-08",
+        "location": "Plane Zahnarzt"
+      }
+    },
+    "latency_ms": 457.28182792663574
+  },
+  {
+    "index": 109,
+    "query": "Verschieb die Zeit von Fußballtraining auf 14 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining",
+        "time": "14 Uhr",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 102.68759727478027
+  },
+  {
+    "index": 110,
+    "query": "Lösche Teammeeting.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 69.49901580810547
+  },
+  {
+    "index": 111,
+    "query": "morgen Vormittag um Viertel nach drei Physiotherapie.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "morgen Vormittag",
+        "time": "Viertel nach drei"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "morgen",
+        "time": "15:15",
+        "location": "Viertel nach drei"
+      }
+    },
+    "latency_ms": 340.29221534729004
+  },
+  {
+    "index": 112,
+    "query": "Verschieb Betriebsversammlung halt auf 17:05.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "time": "17:05",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "date": "17:05",
+        "location": "Verschieb"
+      }
+    },
+    "latency_ms": 262.1610164642334
+  },
+  {
+    "index": 113,
+    "query": "am 12. Mai um 14:30 Friseur.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "am 12. Mai",
+        "time": "14:30"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "12.05.",
+        "time": "14:30",
+        "location": "Friseur"
+      }
+    },
+    "latency_ms": 276.51500701904297
+  },
+  {
+    "index": 114,
+    "query": "Verschieb den Termin Training auf in einer Woche.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Training",
+        "date": "in einer Woche",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 135.4992389678955
+  },
+  {
+    "index": 116,
+    "query": "Verschieb Augenarzt halt auf 9 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "time": "9 Uhr",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "date": "halt auf 9 Uhr"
+      }
+    },
+    "latency_ms": 248.12626838684082
+  },
+  {
+    "index": 117,
+    "query": "kommende Woche um 8:00 Fußballtraining.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining",
+        "date": "kommende Woche",
+        "time": "8:00"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining",
+        "date": "kommende Woche",
+        "time": "8:00",
+        "location": "Fußballtraining"
+      }
+    },
+    "latency_ms": 334.1708183288574
+  },
+  {
+    "index": 118,
+    "query": "Trag Chorprobe morgen um 15 Uhr im Besprechungsraum ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Chorprobe",
+        "date": "morgen",
+        "time": "15 Uhr",
+        "location": "im Besprechungsraum",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Chorprobe",
+        "date": "morgen",
+        "time": "15:00",
+        "location": "Besprechungsraum"
+      }
+    },
+    "latency_ms": 312.4709129333496
+  },
+  {
+    "index": 120,
+    "query": "am 14. Februar um halb drei Projektbesprechung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "date": "am 14. Februar",
+        "time": "halb drei"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "date": "2026-02-14",
+        "time": "15:30"
+      }
+    },
+    "latency_ms": 309.4656467437744
+  },
+  {
+    "index": 121,
+    "query": "Schwimmkurs ist jetzt erst halb sieben.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "time": "halb sieben",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 91.36414527893066
+  },
+  {
+    "index": 122,
+    "query": "Lösche Arztbesuch.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Arztbesuch",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 69.98276710510254
+  },
+  {
+    "index": 123,
+    "query": "Lösche Training.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Training",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 73.42100143432617
+  },
+  {
+    "index": 124,
+    "query": "Verschieb die Zeit von Buchhaltung auf halb drei.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "time": "halb drei",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 95.10326385498047
+  },
+  {
+    "index": 126,
+    "query": "Plane Mitarbeitergespräch am Samstag von 11:45 bis 16 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "am Samstag",
+        "time": "11:45",
+        "end_time": "16 Uhr",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Mitarbeitergespräch",
+        "date": "Samstag",
+        "time": "11:45",
+        "end_time": "16:00",
+        "location": "Plane Mitarbeitergespräch"
+      }
+    },
+    "latency_ms": 448.8680362701416
+  },
+  {
+    "index": 127,
+    "query": "Der Termin Augenarzt fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Augenarzt",
+        "date": "fällt aus"
+      }
+    },
+    "latency_ms": 265.2626037597656
+  },
+  {
+    "index": 130,
+    "query": "Setz Steuerberatung Ende des Monats um 7:30 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Steuerberatung",
+        "date": "Ende des Monats",
+        "time": "7:30",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Steuerberatung",
+        "date": "morgen",
+        "time": "07:30"
+      }
+    },
+    "latency_ms": 255.24139404296875
+  },
+  {
+    "index": 131,
+    "query": "Der Termin Klavierunterricht fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Der Termin Klavierunterricht",
+        "date": "2025-03-21",
+        "time": "15:00"
+      }
+    },
+    "latency_ms": 287.71376609802246
+  },
+  {
+    "index": 132,
+    "query": "Trag Zahnarzt nächsten Montag um 17:05 im Seminargebäude ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "nächsten Montag",
+        "time": "17:05",
+        "location": "im Seminargebäude",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Zahnarzt",
+        "date": "nächsten Montag",
+        "time": "17:05",
+        "location": "Seminargebäude"
+      }
+    },
+    "latency_ms": 384.72628593444824
+  },
+  {
+    "index": 133,
+    "query": "Plane Kino Samstag von 12:30 bis 13:45.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "Samstag",
+        "time": "12:30",
+        "end_time": "13:45",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Kino Samstag",
+        "date": "Saturday",
+        "time": "12:30",
+        "end_time": "13:45"
+      }
+    },
+    "latency_ms": 336.3943099975586
+  },
+  {
+    "index": 134,
+    "query": "Physiotherapie ist jetzt erst 17:05.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "time": "17:05",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "17:05"
+      }
+    },
+    "latency_ms": 222.29480743408203
+  },
+  {
+    "index": 135,
+    "query": "Setz Schwimmkurs kommende Woche um 16:50 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "date": "kommende Woche",
+        "time": "16:50",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Schwimmkurs",
+        "date": "kommende Woche",
+        "time": "16:50"
+      }
+    },
+    "latency_ms": 295.85886001586914
+  },
+  {
+    "index": 137,
+    "query": "Trag bitte Elternabend diese Woche um kurz nach zehn ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "diese Woche",
+        "time": "kurz nach zehn",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "diese Woche",
+        "time": "kurz nach zehn"
+      }
+    },
+    "latency_ms": 308.9015483856201
+  },
+  {
+    "index": 138,
+    "query": "Trag bitte Teammeeting am 12. Mai um halb sieben ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "am 12. Mai",
+        "time": "halb sieben",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "12.05.",
+        "time": "06:30",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 314.15557861328125
+  },
+  {
+    "index": 140,
+    "query": "Für Peter nächsten Freitag um 11:45 Buchhaltung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "date": "nächsten Freitag",
+        "time": "11:45",
+        "person": "Peter"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "date": "nächsten Freitag",
+        "time": "11:45",
+        "location": "Peter"
+      }
+    },
+    "latency_ms": 329.235315322876
+  },
+  {
+    "index": 141,
+    "query": "Für Emma Samstag um 11:45 Elternabend.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "Samstag",
+        "time": "11:45",
+        "person": "Emma"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "Samstag",
+        "time": "11:45",
+        "location": "Elternabend"
+      }
+    },
+    "latency_ms": 315.64807891845703
+  },
+  {
+    "index": 142,
+    "query": "Meeting mit Peter und Sophie morgen Abend um 15:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Peter und Sophie",
+        "date": "morgen Abend",
+        "time": "15:30",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Peter und Sophie",
+        "date": "morgen",
+        "time": "15:30",
+        "participants": "Peter und Sophie"
+      }
+    },
+    "latency_ms": 342.1459197998047
+  },
+  {
+    "index": 143,
+    "query": "Fußballtraining ist jetzt erst halb zehn.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining",
+        "time": "halb zehn",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining",
+        "date": "halb zehn"
+      }
+    },
+    "latency_ms": 244.5352077484131
+  },
+  {
+    "index": 144,
+    "query": "Verschieb die Zeit von Mitarbeitergespräch auf Viertel vor acht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "time": "Viertel vor acht",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 116.37639999389648
+  },
+  {
+    "index": 145,
+    "query": "Plane Buchhaltung Samstag von 7:30 bis 14 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "date": "Samstag",
+        "time": "7:30",
+        "end_time": "14 Uhr",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Buchhaltung",
+        "date": "Samstag",
+        "time": "7:30",
+        "end_time": "14:00",
+        "location": "Plane Buchhaltung"
+      }
+    },
+    "latency_ms": 395.4470157623291
+  },
+  {
+    "index": 146,
+    "query": "Trag bitte Betriebsausflug in vierzehn Tagen um 9:15 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsausflug",
+        "date": "in vierzehn Tagen",
+        "time": "9:15",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Betriebsausflug",
+        "date": "vierzehn Tagen",
+        "time": "9:15",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 333.7128162384033
+  },
+  {
+    "index": 147,
+    "query": "Setz Steuerberatung am 12. Mai um 20:15 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Steuerberatung",
+        "date": "am 12. Mai",
+        "time": "20:15",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Steuerberatung",
+        "date": "12.05.2025",
+        "time": "20:15"
+      }
+    },
+    "latency_ms": 279.7574996948242
+  },
+  {
+    "index": 149,
+    "query": "Lösche Mitarbeitergespräch.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 76.82132720947266
+  },
+  {
+    "index": 150,
+    "query": "Meeting mit Jana und Anna am 1. November um kurz nach zehn.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Jana und Anna",
+        "date": "am 1. November",
+        "time": "kurz nach zehn",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Jana und Anna",
+        "date": "1. November",
+        "time": "10:00",
+        "participants": "Jana und Anna"
+      }
+    },
+    "latency_ms": 345.4320430755615
+  },
+  {
+    "index": 151,
+    "query": "Verschieb die Zeit von Training auf halb sechs.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Training",
+        "time": "halb sechs",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 99.34115409851074
+  },
+  {
+    "index": 152,
+    "query": "Meeting mit Lena und Felix am 21. Oktober um 10:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lena und Felix",
+        "date": "am 21. Oktober",
+        "time": "10:30",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lena und Felix",
+        "date": "21. Oktober",
+        "time": "10:30",
+        "participants": "Lena und Felix"
+      }
+    },
+    "latency_ms": 400.06399154663086
+  },
+  {
+    "index": 153,
+    "query": "Verschieb Betriebsversammlung halt auf 7:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "time": "7:30",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "date": "halt",
+        "time": "halt 7:30",
+        "location": "Verschieb"
+      }
+    },
+    "latency_ms": 300.4803657531738
+  },
+  {
+    "index": 154,
+    "query": "Dienstag um 14 Uhr Elternabend.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "Dienstag",
+        "time": "14 Uhr"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "Dienstag",
+        "time": "14:00"
+      }
+    },
+    "latency_ms": 255.30338287353516
+  },
+  {
+    "index": 155,
+    "query": "Für Jonas morgen früh um halb eins Mitarbeitergespräch.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "morgen früh",
+        "time": "halb eins",
+        "person": "Jonas"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "morgen",
+        "time": "09:30",
+        "location": "Mitarbeiter"
+      }
+    },
+    "latency_ms": 342.03410148620605
+  },
+  {
+    "index": 156,
+    "query": "Lösche Zahnarzt.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 71.22588157653809
+  },
+  {
+    "index": 157,
+    "query": "Für Paul am 7. April um 9:15 Kino.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "am 7. April",
+        "time": "9:15",
+        "person": "Paul"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "2025-04-07",
+        "time": "09:15",
+        "location": "Paul"
+      }
+    },
+    "latency_ms": 294.175386428833
+  },
+  {
+    "index": 158,
+    "query": "Verschieb die Zeit von Kino auf 16:20.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "time": "16:20",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 136.1706256866455
+  },
+  {
+    "index": 159,
+    "query": "Für Anna am Donnerstag um 19 Uhr Augenarzt.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "date": "am Donnerstag",
+        "time": "19 Uhr",
+        "person": "Anna"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "date": "Donnerstag",
+        "time": "19:00",
+        "location": "Augenarzt"
+      }
+    },
+    "latency_ms": 308.2890510559082
+  },
+  {
+    "index": 160,
+    "query": "Nimm noch Lisa mit zu Yoga.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Lisa",
+        "title": "Yoga",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 82.03840255737305
+  },
+  {
+    "index": 161,
+    "query": "Trag Fußballtraining am 7. April um 9:15 im Kulturzentrum ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining",
+        "date": "am 7. April",
+        "time": "9:15",
+        "location": "im Kulturzentrum",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Fußballtraining",
+        "date": "2025-04-07",
+        "time": "09:15",
+        "location": "Kulturzentrum"
+      }
+    },
+    "latency_ms": 352.9677391052246
+  },
+  {
+    "index": 162,
+    "query": "Verschieb den Termin Yoga auf Anfang nächster Woche.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Yoga",
+        "date": "Anfang nächster Woche",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 94.99812126159668
+  },
+  {
+    "index": 163,
+    "query": "Setz Betriebsversammlung am 20. Juni um 11 Uhr an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "date": "am 20. Juni",
+        "time": "11 Uhr",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Betriebsversammlung",
+        "date": "2026-06-20",
+        "time": "11:00"
+      }
+    },
+    "latency_ms": 306.81324005126953
+  },
+  {
+    "index": 166,
+    "query": "Nimm noch Max mit zu Chorprobe.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Max",
+        "title": "Chorprobe",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 87.66531944274902
+  },
+  {
+    "index": 167,
+    "query": "Meeting mit Lena und Nora morgen früh um halb acht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lena und Nora",
+        "date": "morgen früh",
+        "time": "halb acht",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lena und Nora",
+        "date": "morgen",
+        "time": "07:30",
+        "participants": "Lena, Nora"
+      }
+    },
+    "latency_ms": 351.0582447052002
+  },
+  {
+    "index": 168,
+    "query": "Setz Klavierunterricht am Montag um 8:00 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Klavierunterricht",
+        "date": "am Montag",
+        "time": "8:00",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Klavierunterricht",
+        "date": "Montag",
+        "time": "8:00"
+      }
+    },
+    "latency_ms": 269.99425888061523
+  },
+  {
+    "index": 170,
+    "query": "Lösche Arzttermin.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Arzttermin",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 70.81770896911621
+  },
+  {
+    "index": 171,
+    "query": "Plane Physiotherapie Anfang der Woche von Viertel nach sieben bis 14:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "Anfang der Woche",
+        "time": "Viertel nach sieben",
+        "end_time": "14:30",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Physiotherapie",
+        "date": "Anfang der Woche",
+        "time": "19:15",
+        "end_time": "14:30",
+        "location": "Plane Physiotherapie"
+      }
+    },
+    "latency_ms": 445.39499282836914
+  },
+  {
+    "index": 172,
+    "query": "Nimm noch Lena mit zu Kegelabend.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Lena",
+        "title": "Kegelabend",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "date": "morgen",
+        "person": "Lena"
+      }
+    },
+    "latency_ms": 240.00883102416992
+  },
+  {
+    "index": 173,
+    "query": "Verschieb Kegelabend halt auf Viertel nach fünf.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "time": "Viertel nach fünf",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "date": "halt",
+        "time": "15:15",
+        "location": "Viertel nach fünf"
+      }
+    },
+    "latency_ms": 330.46698570251465
+  },
+  {
+    "index": 177,
+    "query": "Plane Betriebsversammlung morgen von halb sieben bis halb zehn.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "date": "morgen",
+        "time": "halb sieben",
+        "end_time": "halb zehn",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Betriebsversammlung",
+        "date": "morgen",
+        "time": "06:30",
+        "end_time": "10:30"
+      }
+    },
+    "latency_ms": 368.9308166503906
+  },
+  {
+    "index": 178,
+    "query": "Für Miriam in zwei Wochen um halb zehn Klavierunterricht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Klavierunterricht",
+        "date": "in zwei Wochen",
+        "time": "halb zehn",
+        "person": "Miriam"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Klavierunterricht",
+        "date": "2 Wochen",
+        "time": "21:30",
+        "location": "Miriam"
+      }
+    },
+    "latency_ms": 335.4687690734863
+  },
+  {
+    "index": 179,
+    "query": "Betriebsausflug ist jetzt erst 15:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsausflug",
+        "time": "15:30",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Betriebsausflug",
+        "date": "jetzt",
+        "time": "15:30"
+      }
+    },
+    "latency_ms": 249.7715950012207
+  },
+  {
+    "index": 181,
+    "query": "Plane Elternabend am 7. April von halb sechs bis 16:50.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "am 7. April",
+        "time": "halb sechs",
+        "end_time": "16:50",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Elternabend",
+        "date": "2025-04-07",
+        "time": "17:30",
+        "end_time": "16:50"
+      }
+    },
+    "latency_ms": 362.0011806488037
+  },
+  {
+    "index": 182,
+    "query": "Plane Nachmittagstermin heute Morgen von Viertel vor zehn bis 20:15.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachmittagstermin",
+        "date": "heute Morgen",
+        "time": "Viertel vor zehn",
+        "end_time": "20:15",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Nachmittagstermin",
+        "date": "heute Morgen",
+        "time": "09:45",
+        "end_time": "20:15",
+        "location": "Plane Nachmittagstermin"
+      }
+    },
+    "latency_ms": 472.257137298584
+  },
+  {
+    "index": 183,
+    "query": "Physiotherapie ist jetzt erst 12 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "time": "12 Uhr",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "jetzt",
+        "time": "12:00"
+      }
+    },
+    "latency_ms": 241.04952812194824
+  },
+  {
+    "index": 184,
+    "query": "Verschieb den Termin Fußballtraining auf am 5. Dezember.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining",
+        "date": "am 5. Dezember",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Fußballtraining",
+        "date": "2025-12-05",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 292.39916801452637
+  },
+  {
+    "index": 185,
+    "query": "Training ist jetzt erst kurz nach zehn.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Training",
+        "time": "kurz nach zehn",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 90.16251564025879
+  },
+  {
+    "index": 186,
+    "query": "Nimm noch Lena mit zu Betriebsausflug.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Lena",
+        "title": "Betriebsausflug",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 94.4664478302002
+  },
+  {
+    "index": 187,
+    "query": "Trag Teammeeting am 12. Mai um 19 Uhr im Büro ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "am 12. Mai",
+        "time": "19 Uhr",
+        "location": "im Büro",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "12.05.2025",
+        "time": "19:00",
+        "location": "Büro"
+      }
+    },
+    "latency_ms": 326.6406059265137
+  },
+  {
+    "index": 188,
+    "query": "Verschieb Arzttermin halt auf 6 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Arzttermin",
+        "time": "6 Uhr",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Arzttermin",
+        "time": "halt auf 6 Uhr"
+      }
+    },
+    "latency_ms": 236.60516738891602
+  },
+  {
+    "index": 189,
+    "query": "Lösche Zahnarzttermin.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 75.26278495788574
+  },
+  {
+    "index": 190,
+    "query": "heute Morgen um Viertel nach elf Physiotherapie.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "heute Morgen",
+        "time": "Viertel nach elf"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "morgen",
+        "time": "23:15"
+      }
+    },
+    "latency_ms": 266.13569259643555
+  },
+  {
+    "index": 191,
+    "query": "Lösche Physiotherapie.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 71.34532928466797
+  },
+  {
+    "index": 192,
+    "query": "Für Lena am 3. März um 19:45 Mitarbeitergespräch.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "am 3. März",
+        "time": "19:45",
+        "person": "Lena"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "2025-03-03",
+        "time": "19:45",
+        "location": "Mitarbeitergespräch"
+      }
+    },
+    "latency_ms": 381.8039894104004
+  },
+  {
+    "index": 193,
+    "query": "Meeting mit Max und Tom heute Abend um 21 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Max und Tom",
+        "date": "heute Abend",
+        "time": "21 Uhr",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Max und Tom",
+        "date": "heute",
+        "time": "21:00",
+        "participants": "Max, Tom"
+      }
+    },
+    "latency_ms": 319.35620307922363
+  },
+  {
+    "index": 194,
+    "query": "Trag bitte Haartermin in zwei Wochen um 15:30 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Haartermin",
+        "date": "in zwei Wochen",
+        "time": "15:30",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Haartermin",
+        "date": "zwei Wochen",
+        "time": "15:30"
+      }
+    },
+    "latency_ms": 281.0187339782715
+  },
+  {
+    "index": 195,
+    "query": "Verschieb die Zeit von Betriebsausflug auf 10:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsausflug",
+        "time": "10:30",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 92.12017059326172
+  },
+  {
+    "index": 196,
+    "query": "Trag Sprachkurs am 5. Dezember um 13:45 in der Altstadt ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Sprachkurs",
+        "date": "am 5. Dezember",
+        "time": "13:45",
+        "location": "in der Altstadt",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Sprachkurs",
+        "date": "2025-12-05",
+        "time": "13:45",
+        "location": "Altstadt"
+      }
+    },
+    "latency_ms": 338.67597579956055
+  },
+  {
+    "index": 197,
+    "query": "Trag Vorstandssitzung am 14. Februar um 10 Uhr im Kino ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Vorstandssitzung",
+        "date": "am 14. Februar",
+        "time": "10 Uhr",
+        "location": "im Kino",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Vorstandssitzung",
+        "date": "14. Februar",
+        "time": "10:00",
+        "location": "Kino"
+      }
+    },
+    "latency_ms": 337.67127990722656
+  },
+  {
+    "index": 198,
+    "query": "Meeting mit Nora und Felix am 7. April um 16:20.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Nora und Felix",
+        "date": "am 7. April",
+        "time": "16:20",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Nora und Felix",
+        "date": "2025-04-07",
+        "time": "16:20",
+        "participants": "Nora, Felix"
+      }
+    },
+    "latency_ms": 409.5795154571533
+  },
+  {
+    "index": 199,
+    "query": "Trag bitte Gitarrenunterricht diese Woche um 15 Uhr ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "diese Woche",
+        "time": "15 Uhr",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "diese Woche",
+        "time": "15:00"
+      }
+    },
+    "latency_ms": 308.48097801208496
+  },
+  {
+    "index": 200,
+    "query": "Nimm noch Tim mit zu Buchhaltung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Tim",
+        "title": "Buchhaltung",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 80.17301559448242
+  },
+  {
+    "index": 201,
+    "query": "Trag Betriebsversammlung nächste Woche um 14:15 in der Altstadt ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsversammlung",
+        "date": "nächste Woche",
+        "time": "14:15",
+        "location": "in der Altstadt",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Betriebsversammlung",
+        "date": "nächste Woche",
+        "time": "14:15",
+        "location": "Altstadt"
+      }
+    },
+    "latency_ms": 343.4414863586426
+  },
+  {
+    "index": 202,
+    "query": "Nimm noch Paul mit zu Betriebsausflug.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Paul",
+        "title": "Betriebsausflug",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 86.42721176147461
+  },
+  {
+    "index": 203,
+    "query": "Für Lena in einer Woche um 12 Uhr Kino.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "in einer Woche",
+        "time": "12 Uhr",
+        "person": "Lena"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "in einer Woche",
+        "time": "12:00",
+        "location": "Kino"
+      }
+    },
+    "latency_ms": 296.5695858001709
+  },
+  {
+    "index": 204,
+    "query": "Trag bitte Chorprobe übernächste Woche um 12:05 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Chorprobe",
+        "date": "übernächste Woche",
+        "time": "12:05",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag bitte Chorprobe",
+        "date": "12:05",
+        "time": "12:05"
+      }
+    },
+    "latency_ms": 313.7779235839844
+  },
+  {
+    "index": 205,
+    "query": "Verschieb Projektbesprechung halt auf 7:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "time": "7:30",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "date": "halt",
+        "time": "halt 7:30",
+        "location": "Verschieb"
+      }
+    },
+    "latency_ms": 308.5944652557373
+  },
+  {
+    "index": 206,
+    "query": "Plane Buchhaltung am Montag von 19:45 bis 20:15.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "date": "am Montag",
+        "time": "19:45",
+        "end_time": "20:15",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Buchhaltung",
+        "date": "monday",
+        "time": "19:45",
+        "end_time": "20:15",
+        "location": "Plane Buchhaltung"
+      }
+    },
+    "latency_ms": 393.19753646850586
+  },
+  {
+    "index": 207,
+    "query": "Verschieb die Zeit von Kino auf halb eins.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "time": "halb eins",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 111.62018775939941
+  },
+  {
+    "index": 208,
+    "query": "Verschieb die Zeit von Haartermin auf 14:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Haartermin",
+        "time": "14:30",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 85.72006225585938
+  },
+  {
+    "index": 210,
+    "query": "Für Tim nächsten Donnerstag um 19 Uhr Sprachkurs.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Sprachkurs",
+        "date": "nächsten Donnerstag",
+        "time": "19 Uhr",
+        "person": "Tim"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Sprachkurs",
+        "date": "nächsten Donnerstag",
+        "time": "19:00"
+      }
+    },
+    "latency_ms": 322.76415824890137
+  },
+  {
+    "index": 211,
+    "query": "morgen um 19 Uhr Gitarrenunterricht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "morgen",
+        "time": "19 Uhr"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "morgen",
+        "time": "19:00"
+      }
+    },
+    "latency_ms": 272.5715637207031
+  },
+  {
+    "index": 212,
+    "query": "Der Termin Friseur fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Friseur"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Friseur fällt aus"
+      }
+    },
+    "latency_ms": 217.90075302124023
+  },
+  {
+    "index": 214,
+    "query": "Verschieb die Zeit von Gitarrenunterricht auf halb zwölf.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "time": "halb zwölf",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "morgen",
+        "time": "12:30"
+      }
+    },
+    "latency_ms": 302.78682708740234
+  },
+  {
+    "index": 215,
+    "query": "Verschieb den Termin Betriebsausflug auf am 21. Oktober.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Betriebsausflug",
+        "date": "am 21. Oktober",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Betriebsausflug",
+        "date": "21. Oktober",
+        "time": "14:00",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 414.5646095275879
+  },
+  {
+    "index": 216,
+    "query": "Meeting mit Lisa und Max am 1. November um 16:50.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lisa und Max",
+        "date": "am 1. November",
+        "time": "16:50",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lisa und Max",
+        "date": "2025-11-01",
+        "time": "16:50",
+        "participants": "Lisa und Max"
+      }
+    },
+    "latency_ms": 381.0703754425049
+  },
+  {
+    "index": 217,
+    "query": "Setz Zahnarzt nächsten Freitag um 6 Uhr an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "nächsten Freitag",
+        "time": "6 Uhr",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Zahnarzt",
+        "date": "nächsten Freitag",
+        "time": "06:00"
+      }
+    },
+    "latency_ms": 312.1650218963623
+  },
+  {
+    "index": 218,
+    "query": "Trag bitte Kino kommenden Samstag um Viertel vor acht ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "kommenden Samstag",
+        "time": "Viertel vor acht",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "Samstag",
+        "time": "19:45",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 293.44868659973145
+  },
+  {
+    "index": 219,
+    "query": "Trag bitte Nachhilfe morgen früh um 8:15 ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe",
+        "date": "morgen früh",
+        "time": "8:15",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag bitte Nachhilfe",
+        "date": "morgen",
+        "time": "08:15"
+      }
+    },
+    "latency_ms": 295.6719398498535
+  },
+  {
+    "index": 220,
+    "query": "Trag Schwimmkurs Ende der Woche um 9 Uhr im Vereinsheim ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "date": "Ende der Woche",
+        "time": "9 Uhr",
+        "location": "im Vereinsheim",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Schwimmkurs Ende der Woche",
+        "date": "2025-03-21",
+        "time": "09:00",
+        "location": "Vereinsheim"
+      }
+    },
+    "latency_ms": 391.01290702819824
+  },
+  {
+    "index": 221,
+    "query": "Der Termin Vorstandssitzung fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Vorstandssitzung"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Vorstandssitzung",
+        "date": "morgen",
+        "time": "15:00"
+      }
+    },
+    "latency_ms": 284.24525260925293
+  },
+  {
+    "index": 222,
+    "query": "Trag bitte Mitarbeitergespräch am 12. Mai um 10 Uhr ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "am 12. Mai",
+        "time": "10 Uhr",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "12.05.2025",
+        "time": "10:00",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 343.1432247161865
+  },
+  {
+    "index": 223,
+    "query": "Meeting mit Lena und Tom am 18. September um 19 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lena und Tom",
+        "date": "am 18. September",
+        "time": "19 Uhr",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lena und Tom",
+        "date": "18. September",
+        "time": "19:00",
+        "participants": "Lena, Tom"
+      }
+    },
+    "latency_ms": 350.15058517456055
+  },
+  {
+    "index": 224,
+    "query": "Plane Chorprobe nächsten Montag von kurz nach zehn bis 16:50.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Chorprobe",
+        "date": "nächsten Montag",
+        "time": "kurz nach zehn",
+        "end_time": "16:50",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Chorprobe",
+        "date": "nächsten Montag",
+        "time": "10:00",
+        "end_time": "16:50"
+      }
+    },
+    "latency_ms": 400.8445739746094
+  },
+  {
+    "index": 225,
+    "query": "Plane Teammeeting am 20. Juni von 16:50 bis 18 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "am 20. Juni",
+        "time": "16:50",
+        "end_time": "18 Uhr",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Teammeeting",
+        "date": "2025-06-20",
+        "time": "16:50",
+        "end_time": "18:00"
+      }
+    },
+    "latency_ms": 352.5381088256836
+  },
+  {
+    "index": 226,
+    "query": "Lösche Nachhilfe.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 79.00190353393555
+  },
+  {
+    "index": 227,
+    "query": "Trag Klavierunterricht übermorgen um 8:15 im Gemeindehaus ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Klavierunterricht",
+        "date": "übermorgen",
+        "time": "8:15",
+        "location": "im Gemeindehaus",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Klavierunterricht",
+        "date": "übermorgen",
+        "time": "8:15",
+        "location": "Gemeindehaus"
+      }
+    },
+    "latency_ms": 338.66214752197266
+  },
+  {
+    "index": 228,
+    "query": "Lösche Klavierunterricht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Klavierunterricht",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 82.53884315490723
+  },
+  {
+    "index": 230,
+    "query": "Der Termin Zahnarzt fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "fällt aus"
+      }
+    },
+    "latency_ms": 235.05043983459473
+  },
+  {
+    "index": 232,
+    "query": "Verschieb den Termin Chorprobe auf Anfang nächster Woche.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Chorprobe",
+        "date": "Anfang nächster Woche",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Chorprobe"
+      }
+    },
+    "latency_ms": 217.9543972015381
+  },
+  {
+    "index": 233,
+    "query": "Verschieb die Zeit von Nachhilfe auf 14:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe",
+        "time": "14:30",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 84.65909957885742
+  },
+  {
+    "index": 234,
+    "query": "Gitarrenunterricht ist jetzt erst halb eins.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "time": "halb eins",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "date": "halb eins"
+      }
+    },
+    "latency_ms": 237.2457981109619
+  },
+  {
+    "index": 235,
+    "query": "Lösche Kegelabend.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 69.1385269165039
+  },
+  {
+    "index": 236,
+    "query": "Für Lisa in drei Tagen um 11 Uhr Schwimmkurs.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "date": "in drei Tagen",
+        "time": "11 Uhr",
+        "person": "Lisa"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "date": "drei Tagen",
+        "time": "11:00",
+        "participants": "Lisa"
+      }
+    },
+    "latency_ms": 315.8385753631592
+  },
+  {
+    "index": 237,
+    "query": "Für Tim kommende Woche um halb drei Chorprobe.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Chorprobe",
+        "date": "kommende Woche",
+        "time": "halb drei",
+        "person": "Tim"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Chorprobe",
+        "date": "kommende Woche",
+        "time": "15:30"
+      }
+    },
+    "latency_ms": 272.1526622772217
+  },
+  {
+    "index": 239,
+    "query": "Trag bitte Physiotherapie am 9. Oktober um Viertel nach sieben ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "am 9. Oktober",
+        "time": "Viertel nach sieben",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Physiotherapie",
+        "date": "2025-10-09",
+        "time": "19:15",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 310.38880348205566
+  },
+  {
+    "index": 240,
+    "query": "Meeting mit Emma und Felix in vierzehn Tagen um halb neun.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Emma und Felix",
+        "date": "in vierzehn Tagen",
+        "time": "halb neun",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Emma und Felix",
+        "date": "vierzehn Tagen",
+        "time": "20:30",
+        "participants": "Emma und Felix"
+      }
+    },
+    "latency_ms": 377.535343170166
+  },
+  {
+    "index": 241,
+    "query": "Nimm noch Jonas mit zu Gitarrenunterricht.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "person": "Jonas",
+        "title": "Gitarrenunterricht",
+        "action_span": "Nimm"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 92.16976165771484
+  },
+  {
+    "index": 242,
+    "query": "Für Sophie am 20. Juni um 12 Uhr Schwimmkurs.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "date": "am 20. Juni",
+        "time": "12 Uhr",
+        "person": "Sophie"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "date": "2026-06-20",
+        "time": "12:00",
+        "location": "Schwimmkurs"
+      }
+    },
+    "latency_ms": 355.4821014404297
+  },
+  {
+    "index": 243,
+    "query": "Verschieb die Zeit von Elternabend auf Viertel nach fünf.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "time": "Viertel nach fünf",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 104.095458984375
+  },
+  {
+    "index": 244,
+    "query": "Verschieb die Zeit von Elternabend auf 8:15.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "time": "8:15",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 95.51692008972168
+  },
+  {
+    "index": 245,
+    "query": "Meeting mit Julia und Tom übermorgen um Viertel nach elf.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Julia und Tom",
+        "date": "übermorgen",
+        "time": "Viertel nach elf",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Julia und Tom",
+        "date": "übermorgen",
+        "time": "23:15",
+        "participants": "Julia, Tom"
+      }
+    },
+    "latency_ms": 358.7303161621094
+  },
+  {
+    "index": 246,
+    "query": "Trag bitte Friseur nächsten Mittwoch um Viertel vor zehn ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "nächsten Mittwoch",
+        "time": "Viertel vor zehn",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "nächsten Mittwoch",
+        "time": "09:45",
+        "location": "Trag"
+      }
+    },
+    "latency_ms": 345.07036209106445
+  },
+  {
+    "index": 247,
+    "query": "Für Jan Freitag um Viertel vor zehn Buchhaltung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "date": "Freitag",
+        "time": "Viertel vor zehn",
+        "person": "Jan"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Für Jan Freitag",
+        "date": "Freitag",
+        "time": "9:45",
+        "location": "Buchhaltung"
+      }
+    },
+    "latency_ms": 336.061954498291
+  },
+  {
+    "index": 248,
+    "query": "Workshop ist jetzt erst 11:45.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "time": "11:45",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "date": "jetzt",
+        "time": "11:45"
+      }
+    },
+    "latency_ms": 227.71620750427246
+  },
+  {
+    "index": 249,
+    "query": "Elternabend ist jetzt erst Viertel nach drei.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "time": "Viertel nach drei",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Elternabend",
+        "date": "jetzt",
+        "time": "15:15"
+      }
+    },
+    "latency_ms": 249.80401992797852
+  },
+  {
+    "index": 250,
+    "query": "Verschieb den Termin Schwimmkurs auf am 14. Februar.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs",
+        "date": "am 14. Februar",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Schwimmkurs",
+        "date": "14. Februar",
+        "time": "14:00",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 381.3493251800537
+  },
+  {
+    "index": 251,
+    "query": "Verschieb Yoga halt auf 17 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Yoga",
+        "time": "17 Uhr",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Yoga",
+        "time": "17 Uhr"
+      }
+    },
+    "latency_ms": 192.8412914276123
+  },
+  {
+    "index": 252,
+    "query": "Setz Sprachkurs am Donnerstag um 20:15 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Sprachkurs",
+        "date": "am Donnerstag",
+        "time": "20:15",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Sprachkurs",
+        "date": "Donnerstag",
+        "time": "20:15"
+      }
+    },
+    "latency_ms": 275.0115394592285
+  },
+  {
+    "index": 253,
+    "query": "Plane Kegelabend am Mittwoch von 11 Uhr bis 14:15.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "date": "am Mittwoch",
+        "time": "11 Uhr",
+        "end_time": "14:15",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Kegelabend",
+        "date": "morgen",
+        "time": "11:00",
+        "end_time": "14:15",
+        "location": "Plane Kegelabend"
+      }
+    },
+    "latency_ms": 382.94506072998047
+  },
+  {
+    "index": 254,
+    "query": "Meeting mit Lena und Paul heute Nachmittag um 14 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lena und Paul",
+        "date": "heute Nachmittag",
+        "time": "14 Uhr",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lena und Paul",
+        "date": "heute",
+        "time": "14:00",
+        "participants": "Lena, Paul"
+      }
+    },
+    "latency_ms": 320.4982280731201
+  },
+  {
+    "index": 255,
+    "query": "Plane Arzttermin am 21. Oktober von 14:15 bis 15 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Arzttermin",
+        "date": "am 21. Oktober",
+        "time": "14:15",
+        "end_time": "15 Uhr",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Arzttermin",
+        "date": "21. Oktober",
+        "time": "14:15",
+        "end_time": "15:00"
+      }
+    },
+    "latency_ms": 346.26293182373047
+  },
+  {
+    "index": 257,
+    "query": "Verschieb Kino halt auf 14 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "time": "14 Uhr",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Kino halt",
+        "time": "14 Uhr"
+      }
+    },
+    "latency_ms": 183.335542678833
+  },
+  {
+    "index": 258,
+    "query": "Für Jana am 9. Oktober um Viertel nach drei Mitarbeitergespräch.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "am 9. Oktober",
+        "time": "Viertel nach drei",
+        "person": "Jana"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Für Jana am 9. Oktober",
+        "date": "2025-10-09",
+        "time": "15:15",
+        "location": "Mitarbeitergespräch"
+      }
+    },
+    "latency_ms": 407.08231925964355
+  },
+  {
+    "index": 259,
+    "query": "Lösche Kino.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "action_span": "Lösche"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 73.9145278930664
+  },
+  {
+    "index": 260,
+    "query": "Verschieb die Zeit von Kegelabend auf 9 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kegelabend",
+        "time": "9 Uhr",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 117.9499626159668
+  },
+  {
+    "index": 261,
+    "query": "Yoga ist jetzt erst 16:50.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Yoga",
+        "time": "16:50",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Yoga",
+        "date": "jetzt",
+        "time": "16:50"
+      }
+    },
+    "latency_ms": 222.88775444030762
+  },
+  {
+    "index": 262,
+    "query": "Verschieb den Termin Workshop auf am 5. Dezember.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "date": "am 5. Dezember",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "date": "2025-12-05",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 263.3209228515625
+  },
+  {
+    "index": 263,
+    "query": "Der Termin Chorprobe fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Chorprobe"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Chorprobe",
+        "date": "morgen",
+        "time": "15:00"
+      }
+    },
+    "latency_ms": 270.74170112609863
+  },
+  {
+    "index": 264,
+    "query": "am Donnerstag um 14:15 Projektbesprechung.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "date": "am Donnerstag",
+        "time": "14:15"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Projektbesprechung",
+        "date": "Donnerstag",
+        "time": "14:15"
+      }
+    },
+    "latency_ms": 282.33981132507324
+  },
+  {
+    "index": 265,
+    "query": "Nachhilfe ist jetzt erst 18:30.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe",
+        "time": "18:30",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe",
+        "date": "18:30"
+      }
+    },
+    "latency_ms": 187.53767013549805
+  },
+  {
+    "index": 266,
+    "query": "nächsten Freitag um 9 Uhr Zahnarzt.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "nächsten Freitag",
+        "time": "9 Uhr"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzt",
+        "date": "nächsten Freitag",
+        "time": "9:00"
+      }
+    },
+    "latency_ms": 283.25915336608887
+  },
+  {
+    "index": 267,
+    "query": "Verschieb den Termin Nachhilfe auf am 7. April.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe",
+        "date": "am 7. April",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Nachhilfe",
+        "date": "am 7. April",
+        "time": "15:00",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 358.55674743652344
+  },
+  {
+    "index": 270,
+    "query": "Verschieb den Termin Vorstandssitzung auf in vierzehn Tagen.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Vorstandssitzung",
+        "date": "in vierzehn Tagen",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 98.66833686828613
+  },
+  {
+    "index": 271,
+    "query": "Der Termin Gitarrenunterricht fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Gitarrenunterricht",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 231.49943351745605
+  },
+  {
+    "index": 272,
+    "query": "Setz Arztbesuch Ende des Monats um 13 Uhr an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Arztbesuch",
+        "date": "Ende des Monats",
+        "time": "13 Uhr",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Arztbesuch Ende des Monats",
+        "date": "Monats",
+        "time": "13:00"
+      }
+    },
+    "latency_ms": 280.09557723999023
+  },
+  {
+    "index": 273,
+    "query": "Trag Workshop Ende des Monats um 11 Uhr im Rathaus ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "date": "Ende des Monats",
+        "time": "11 Uhr",
+        "location": "im Rathaus",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Workshop Ende des Monats",
+        "date": "11:00",
+        "location": "im Rathaus"
+      }
+    },
+    "latency_ms": 283.5373878479004
+  },
+  {
+    "index": 274,
+    "query": "heute Nachmittag um 16:20 Zahnarzttermin.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "heute Nachmittag",
+        "time": "16:20"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "today",
+        "time": "16:20"
+      }
+    },
+    "latency_ms": 255.34772872924805
+  },
+  {
+    "index": 275,
+    "query": "Zahnarzttermin ist jetzt erst halb zwei.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "time": "halb zwei",
+        "modifier": "jetzt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "halb zwei"
+      }
+    },
+    "latency_ms": 240.90123176574707
+  },
+  {
+    "index": 276,
+    "query": "Plane Zahnarzttermin nächsten Montag von 9:15 bis 15 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Zahnarzttermin",
+        "date": "nächsten Montag",
+        "time": "9:15",
+        "end_time": "15 Uhr",
+        "action_span": "Plane"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Plane Zahnarzttermin",
+        "date": "nächsten Montag",
+        "time": "9:15",
+        "end_time": "15:00"
+      }
+    },
+    "latency_ms": 380.5046081542969
+  },
+  {
+    "index": 277,
+    "query": "Setz Nachmittagstermin Dienstag um halb zehn an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachmittagstermin",
+        "date": "Dienstag",
+        "time": "halb zehn",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Nachmittagstermin Dienstag",
+        "date": "Dienstag",
+        "time": "halb zehn"
+      }
+    },
+    "latency_ms": 317.14630126953125
+  },
+  {
+    "index": 278,
+    "query": "Verschieb den Termin Augenarzt auf nächsten Montag.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Augenarzt",
+        "date": "nächsten Montag",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Augenarzt",
+        "date": "nächsten Montag",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 348.22678565979004
+  },
+  {
+    "index": 280,
+    "query": "Trag Mitarbeitergespräch morgen früh um 16:20 im Büro ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "morgen früh",
+        "time": "16:20",
+        "location": "im Büro",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Mitarbeitergespräch",
+        "date": "morgen",
+        "time": "16:20",
+        "location": "Büro"
+      }
+    },
+    "latency_ms": 339.89429473876953
+  },
+  {
+    "index": 281,
+    "query": "Der Termin Schwimmkurs fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Schwimmkurs",
+        "date": "fällt aus"
+      }
+    },
+    "latency_ms": 289.1690731048584
+  },
+  {
+    "index": 282,
+    "query": "Verschieb Nachmittagstermin halt auf 12 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachmittagstermin",
+        "time": "12 Uhr",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Nachmittagstermin",
+        "date": "12:00",
+        "action_span": "Verschieb"
+      }
+    },
+    "latency_ms": 264.84107971191406
+  },
+  {
+    "index": 283,
+    "query": "Setz Buchhaltung Anfang nächster Woche um 12:05 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Buchhaltung",
+        "date": "Anfang nächster Woche",
+        "time": "12:05",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Buchhaltung",
+        "date": "nächster Woche",
+        "time": "12:05"
+      }
+    },
+    "latency_ms": 316.0409927368164
+  },
+  {
+    "index": 284,
+    "query": "Der Termin Nachhilfe fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Nachhilfe",
+        "date": "nächsten Fälligkeit"
+      }
+    },
+    "latency_ms": 273.20051193237305
+  },
+  {
+    "index": 285,
+    "query": "Meeting mit Lisa und Paul nächsten Dienstag um Viertel nach fünf.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "participants": "Lisa und Paul",
+        "date": "nächsten Dienstag",
+        "time": "Viertel nach fünf",
+        "title": "Meeting"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Meeting mit Lisa und Paul",
+        "date": "nächsten Dienstag",
+        "time": "15:15",
+        "participants": "Lisa, Paul"
+      }
+    },
+    "latency_ms": 417.12498664855957
+  },
+  {
+    "index": 287,
+    "query": "Setz Vorstandssitzung kommenden Samstag um halb neun an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Vorstandssitzung",
+        "date": "kommenden Samstag",
+        "time": "halb neun",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Vorstandssitzung",
+        "date": "Samstag",
+        "time": "20:30"
+      }
+    },
+    "latency_ms": 280.5609703063965
+  },
+  {
+    "index": 288,
+    "query": "Setz Teammeeting am 12. Mai um 15 Uhr an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "am 12. Mai",
+        "time": "15 Uhr",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "12.05.",
+        "time": "15:00"
+      }
+    },
+    "latency_ms": 261.4154815673828
+  },
+  {
+    "index": 289,
+    "query": "Für Nora am 21. Oktober um 8 Uhr Workshop.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "date": "am 21. Oktober",
+        "time": "8 Uhr",
+        "person": "Nora"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "date": "21. Oktober",
+        "time": "8:00",
+        "location": "Workshop"
+      }
+    },
+    "latency_ms": 323.1801986694336
+  },
+  {
+    "index": 290,
+    "query": "Setz Mitarbeitergespräch am 30. November um 13:45 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Mitarbeitergespräch",
+        "date": "am 30. November",
+        "time": "13:45",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Mitarbeitergespräch",
+        "date": "2025-11-30",
+        "time": "13:45"
+      }
+    },
+    "latency_ms": 312.8633499145508
+  },
+  {
+    "index": 291,
+    "query": "Trag Friseur morgen Mittag um Viertel vor acht im Erdgeschoss ein.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Friseur",
+        "date": "morgen Mittag",
+        "time": "Viertel vor acht",
+        "location": "im Erdgeschoss",
+        "action_span": "Trag"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Trag Friseur",
+        "date": "morgen",
+        "time": "19:15",
+        "location": "Erdgeschoss"
+      }
+    },
+    "latency_ms": 321.8412399291992
+  },
+  {
+    "index": 292,
+    "query": "Anfang nächster Woche um halb elf Kino.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "Anfang nächster Woche",
+        "time": "halb elf"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 89.62893486022949
+  },
+  {
+    "index": 293,
+    "query": "Der Termin Haartermin fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Haartermin"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Haartermin",
+        "date": "fällt aus"
+      }
+    },
+    "latency_ms": 235.05616188049316
+  },
+  {
+    "index": 294,
+    "query": "Setz Kino am 3. März um 12:30 an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Kino",
+        "date": "am 3. März",
+        "time": "12:30",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Setz Kino",
+        "date": "2025-03-03",
+        "time": "12:30"
+      }
+    },
+    "latency_ms": 266.91460609436035
+  },
+  {
+    "index": 295,
+    "query": "Verschieb Klavierunterricht halt auf 20:15.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Klavierunterricht",
+        "time": "20:15",
+        "action_span": "Verschieb",
+        "modifier": "halt"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Klavierunterricht",
+        "date": "halt",
+        "time": "20:15"
+      }
+    },
+    "latency_ms": 251.61170959472656
+  },
+  {
+    "index": 296,
+    "query": "Verschieb die Zeit von Workshop auf 11 Uhr.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Workshop",
+        "time": "11 Uhr",
+        "action_span": "Verschieb"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 92.22912788391113
+  },
+  {
+    "index": 297,
+    "query": "Der Termin Workshop fällt aus.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Termin Workshop",
+        "date": "fällt aus"
+      }
+    },
+    "latency_ms": 231.6720485687256
+  },
+  {
+    "index": 299,
+    "query": "Setz Teammeeting am 3. März um halb acht an.",
+    "expected": {
+      "name": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "am 3. März",
+        "time": "halb acht",
+        "action_span": "Setz"
+      }
+    },
+    "got": {
+      "tool": "calendar_write",
+      "arguments": {
+        "title": "Teammeeting",
+        "date": "morgen",
+        "time": "halb drei"
+      }
+    },
+    "latency_ms": 285.9065532684326
+  }
+]

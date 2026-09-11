@@ -1,0 +1,45 @@
+{
+  "name": "calendar_write",
+  "description": "Create, move, edit or cancel a calendar appointment. Extract only literal spans that appear in the query. Omit every field without evidence.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "Appointment title exactly as written in the query, e.g. 'Zahnarzt', 'Teammeeting'."
+      },
+      "date": {
+        "type": "string",
+        "description": "Date phrase exactly as written, e.g. 'morgen', 'n\u00e4chsten Dienstag', 'am 18. September'."
+      },
+      "time": {
+        "type": "string",
+        "description": "Start time phrase exactly as written, e.g. '14 Uhr', 'halb drei', '15:00'."
+      },
+      "end_time": {
+        "type": "string",
+        "description": "End time phrase exactly as written, e.g. '16 Uhr', '17:30'."
+      },
+      "person": {
+        "type": "string",
+        "description": "Owner name exactly as written, e.g. 'Lisa' in 'Termin f\u00fcr Lisa'."
+      },
+      "participants": {
+        "type": "string",
+        "description": "Participant names exactly as written, e.g. 'Jana und Peter'."
+      },
+      "location": {
+        "type": "string",
+        "description": "Location phrase exactly as written, e.g. 'im Besprechungsraum', 'Praxis am Markt'."
+      },
+      "action_span": {
+        "type": "string",
+        "description": "The literal action verb span copied from the query, e.g. 'Verschieb', 'Sag', 'Trag', 'Plane', 'L\u00f6sch'."
+      },
+      "modifier": {
+        "type": "string",
+        "description": "Literal modifier span copied from the query, e.g. 'doch', 'auch', 'jetzt'."
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "task": "calendar_read",
+  "weights": "needle-only/calendar_ft/models/calendar_read.cact",
+  "n_examples": 240,
+  "n_positive": 212,
+  "n_negative": 28,
+  "tool_call_accuracy": 0.9575471698113207,
+  "full_frame_exact_match": 0.175,
+  "field_precision": 0.8412698412698413,
+  "field_recall": 0.34945054945054943,
+  "field_f1": 0.4937888198757764,
+  "field_exact_accuracy": {
+    "target": 0.0425531914893617,
+    "query_span": 0.20754716981132076,
+    "person": 0.8936170212765957,
+    "when": 0.47058823529411764,
+    "persons": 0.48936170212765956
+  },
+  "per_field_support": {
+    "target": 47,
+    "query_span": 212,
+    "person": 47,
+    "when": 102,
+    "persons": 47
+  },
+  "hallucinated_field_rate": 0.05846153846153846,
+  "missed_field_rate": 0.3516483516483517,
+  "false_positive_tool_rate": 0.21428571428571427,
+  "false_negative_tool_rate": 0.04245283018867924,
+  "latency_ms": {
+    "mean": 145.48408885796866,
+    "p50": 141.05606079101562,
+    "p95": 219.53916549682617
+  },
+  "per_field": {
+    "target": {
+      "exact_accuracy": 0.0425531914893617,
+      "support": 47
+    },
+    "query_span": {
+      "exact_accuracy": 0.20754716981132076,
+      "support": 212
+    },
+    "person": {
+      "exact_accuracy": 0.8936170212765957,
+      "support": 47
+    },
+    "when": {
+      "exact_accuracy": 0.47058823529411764,
+      "support": 102
+    },
+    "persons": {
+      "exact_accuracy": 0.48936170212765956,
+      "support": 47
+    }
+  }
+}

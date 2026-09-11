@@ -1,0 +1,51 @@
+{
+  "task": "reminder",
+  "weights": "needle-only/calendar_ft/models/reminder.cact",
+  "n_examples": 120,
+  "n_positive": 106,
+  "n_negative": 14,
+  "tool_call_accuracy": 0.7452830188679245,
+  "full_frame_exact_match": 0.23333333333333334,
+  "field_precision": 0.9038461538461539,
+  "field_recall": 0.4104803493449782,
+  "field_f1": 0.5645645645645646,
+  "field_exact_accuracy": {
+    "relative": 0.25806451612903225,
+    "target": 0.5,
+    "when": 0.20454545454545456,
+    "person": 0.7586206896551724
+  },
+  "per_field_support": {
+    "relative": 62,
+    "target": 94,
+    "when": 44,
+    "person": 29
+  },
+  "hallucinated_field_rate": 0.20114942528735633,
+  "missed_field_rate": 0.2838427947598253,
+  "false_positive_tool_rate": 0.2857142857142857,
+  "false_negative_tool_rate": 0.25471698113207547,
+  "latency_ms": {
+    "mean": 172.73876865704855,
+    "p50": 194.37313079833984,
+    "p95": 275.51984786987305
+  },
+  "per_field": {
+    "relative": {
+      "exact_accuracy": 0.25806451612903225,
+      "support": 62
+    },
+    "target": {
+      "exact_accuracy": 0.5,
+      "support": 94
+    },
+    "when": {
+      "exact_accuracy": 0.20454545454545456,
+      "support": 44
+    },
+    "person": {
+      "exact_accuracy": 0.7586206896551724,
+      "support": 29
+    }
+  }
+}

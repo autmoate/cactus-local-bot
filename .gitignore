@@ -5,3 +5,9 @@ models/
 vendor/
 __pycache__/
 *.pyc
+checkpoints/
+*.cact
+*.pkl
+data/train/
+data/eval/
+data/generated/

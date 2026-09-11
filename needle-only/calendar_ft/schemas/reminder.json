@@ -1,0 +1,25 @@
+{
+  "name": "reminder_parse",
+  "description": "Extract the literal spans needed to set a reminder: either an absolute time, or a relative offset before a calendar event. Omit every field without evidence.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "target": {
+        "type": "string",
+        "description": "What the reminder is about, exactly as written: an event title like 'Zahnarzt' or a subject like 'Wasser trinken'."
+      },
+      "when": {
+        "type": "string",
+        "description": "Absolute time phrase exactly as written, e.g. 'morgen um 8 Uhr', 'um 18:00'."
+      },
+      "relative": {
+        "type": "string",
+        "description": "Relative offset span exactly as written, e.g. 'drei Stunden vorher', '20 Minuten vor dem Termin'."
+      },
+      "person": {
+        "type": "string",
+        "description": "Person name exactly as written when the reminder is for someone else, e.g. 'Lisa'."
+      }
+    }
+  }
+}
