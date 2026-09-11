@@ -1,10 +1,21 @@
 # AGENTS.md
 
+## Security: `.env` & Secrets
+
+**Die `.env` wird NIEMALS gelesen.** Kein `cat .env`, kein Read-Tool, kein `grep` auf die Datei. Sie enthält Secrets (HF-Tokens, API-Keys, DB-Credentials) und ist in `.gitignore` — sie darf niemals committet werden.
+
+Regeln:
+- **Lesen verboten:** Wenn ein Agent Zugriff auf Secrets braucht (z.B. HF-Upload), lädt ein Skript die `.env` via `python-dotenv` (`load_dotenv()`) intern. Der Token-Wert wird nie ausgegeben, geloggt oder in Commits aufgenommen.
+- **Fragen vor Debugging:** Wenn für Debugging-Zwecke Zugriff auf Secrets nötig wäre, FRAGE VORHER den Nutzer.
+- **Keine Secrets in Logs/Commits:** Niemals Token-Werte in Print-Statements, Log-Files oder Commit-Messages ausgeben.
+- **`.env.example` ist ok:** Diese Datei enthält nur Keys ohne Werte und kann gelesen werden.
+
 ## Repo State
 - This is a prototype workspace for local Cactus/Gemma + Needle 2 experiments, NOT an upstream checkout of `cactus-compute/cactus` or `cactus-compute/needle`; those are cloned into gitignored `vendor/` for source reference.
 - Target is ARM64 (RPi 5 8GB); Cactus kernels build and run there, unlike the old x86_64 WSL machine.
 - Python environment is managed with `uv`; dependencies are in `pyproject.toml` and the app is launched with `uv run python scripts/launch.py`. `launch.py` auto-creates `.env` from `.env.example` if missing, so the initial `cp` is optional.
 - Keep Python modules small; user explicitly asked for `.py` modules around 100 lines max and functionality split under `modules/`.
+- **Calendar-FT (neu):** `needle-only/calendar_ft/` enthält task-spezifische Needle-FT-Modelle (calendar_write, calendar_read, reminder) mit Dataset-Builder, Validator, Training, Evaluation und E2E-Tests. Siehe `needle-only/calendar_ft/README.md`.
 
 ## Local Commands
 - First run: `cp .env.example .env && uv sync`; use `uv sync --extra needle` for real Needle 2 instead of the heuristic fallback.
@@ -177,3 +188,66 @@ reminder + anything       → ✅ Koexistiert
 - 1x group-free-slots (free_slots mit Lisa+Max)
 - 1x group-free-slots-verfuegbar (free_slots mit Lisa allein)
 - 2x NOWRITE (allgemeinwissen/chitchat)
+
+---
+
+## Calendar-FT: Task-spezifische Needle-Feintuning-Experimente
+
+**Ziel:** Verbessert task-spezifisches Needle-FT die Kalenderbedienung signifikant?
+Drei separate LoRA-Adapter (calendar_write, calendar_read, reminder) wurden auf
+dem Jetson AGX Orin trainiert.
+
+### Ergebnisse (Base vs FT, Eval-Datasets)
+
+| Task | Base Exact | FT Exact | Base F1 | FT F1 | FT Halluc. |
+|---|---|---|---|---|---|
+| calendar_write | 0.127 | **0.287** | 0.402 | **0.752** | 3.1% |
+| calendar_read | 0.117 | **0.175** | 0.184 | **0.494** | 5.9% |
+| reminder | 0.092 | **0.233** | 0.493 | **0.565** | 20.1% |
+
+E2E (10 Cases): **90% Pass Rate, 100% Route Accuracy**
+
+### Training auf dem Orin (GPU)
+- **Gesamt: 5.4h** (calendar_write 3.9h, calendar_read 1.0h, reminder 0.5h)
+- LoRA rank=16, alpha=32, lr=1e-4, 10 Epochs, QAT W4A8
+
+### Dataset-Details
+- **Nur Deutsch** — alle Templates, Value-Pools und Negatives sind deutsch
+- Deterministisch, seedbar, mit Train/Eval-Split (0 Duplikate)
+- 12% Negatives (Cross-Task + Off-Topic)
+- Grounding-Prinzip: Argument-Werte sind Substrings des Queries
+
+### Jetson-spezifische Workarounds (siehe `reports/environment.md`)
+1. `unset LD_LIBRARY_PATH` — vermeidet Konflikt zwischen System-CUDA 12.6 und pip-CUDA 12.9
+2. `XLA_FLAGS="--xla_gpu_autotune_level=0"` — umgeht sm_87 Autotuner-Crash
+3. `XLA_PYTHON_CLIENT_PREALLOCATE=false` — verhindert 46 GiB Preallocation auf Unified Memory
+
+### Modelle (für HuggingFace-Upload bereit)
+| Modell | Größe | Task |
+|---|---|---|
+| `calendar_write.cact` | 23.2 MB | Termin erstellen/verschieben/absagen |
+| `calendar_read.cact` | 23.2 MB | Kalender abfragen/anzeigen |
+| `reminder.cact` | 23.2 MB | Erinnerungen setzen |
+
+### E2E-Pipeline (Calendar-vNext)
+```
+User Query → Router (deterministisch) → Task-FT-Modell (.cact) → Planner → DB → Response
+```
+
+### Integration
+- `needle-only/router_calendar.py` — deterministischer Router (Regex-Trigger)
+- `needle-only/calendar_service.py` — Calendar-vNext-Service mit Base-Model-Fallback
+- `needle-only/calendar_ft/e2e_eval.py` — E2E-Evaluation (10 Cases)
+
+### Reproduktion
+```bash
+uv run python needle-only/calendar_ft/run_experiment.py --task calendar_write
+# oder alle Tasks:
+uv run python needle-only/calendar_ft/run_experiment.py --all
+```
+
+### Bekannte Probleme
+1. FT-Modell verweigert bei fehlendem Date ("Missing required parameter: date") — Base-Fallback fängt das ab
+2. Generalisierungslücke bei unbekannten Phrasings — Lösung: mehr diverse Phrasings im Training
+3. Reminder-Modell schwächer (75% Tool-Accuracy) — komplexere Zeit-Auflösung
+4. Dataset ist rein deutsch — für bilingualen Support erweitern + neu trainieren
