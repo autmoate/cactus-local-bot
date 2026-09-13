@@ -429,7 +429,8 @@ def _do_list(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
         start = cal.datetime.combine(first, cal.time(0, 0))
         end = (cal.datetime.combine(last, cal.time(0, 0)) + cal.timedelta(days=1)
                if last else start + cal.timedelta(days=1))
-        resolved = {"person": who, "range": f"{start:%d.%m.%Y} – {end:%d.%m.%Y}"}
+        resolved = {"person": who, "range": f"{start:%d.%m.%Y} – {end:%d.%m.%Y}",
+                    "first_day": f"{first:%Y-%m-%d}"}
     else:
         start = cal.now()
         end = start + cal.timedelta(days=days)

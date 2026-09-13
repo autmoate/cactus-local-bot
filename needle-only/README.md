@@ -132,6 +132,24 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
 - **Traces sind persistent**: jeder Request landet append-only in
   `data/traces.jsonl` (eine JSON-Zeile pro Request, inkl. Canonical, Steps,
   Confidence, `ungrounded`, Fehler) — Grundlage für gezieltes Debugging.
+
+## Telegram (optional)
+
+```sh
+uv sync --extra telegram
+uv run local-calendar-telegram           # Long Polling, keine Webhooks
+```
+
+Nutzt die bestehenden Variablen aus der Root-`.env` (`TELEGRAM_BOT_TOKEN`,
+`TELEGRAM_OWNER_CHAT_ID`, `TELEGRAM_ALLOWED_CHAT_IDS`) — keine neuen Namen,
+kein Überschreiben, keine Secrets in Logs. Owner/Allowlist bekommen Agent-
+Ausführung, alle anderen Chats werden ignoriert. Natürliche Sprache geht an
+denselben Agent wie Gradio (Phase 28); `/week` und `/today` senden Pillow-
+Snapshots mit deterministischer Inline-Navigation (◀/Heute/▶, Teilnehmer-
+Buttons), `/debug` (nur Owner) zeigt den letzten Eintrag aus
+`data/traces.jsonl`. Widget-Auswahl über die Trace-Steps
+(`calendar_find_slot` → Availability-PNG, `calendar_list` → Wochen-Snapshot,
+create/move/delete → Confirmation-Text) — kein Text-Regex.
 - Die kanonische Gemma-Instruction muss die Intent-Wörter (löschen/entfernen)
   bewahren — im Prompt explizit verankert, sonst erzeugt „Termin X löschen"
   ein CREATE statt eines DELETE (war ein echter Bug, über Repair nicht fangbar).

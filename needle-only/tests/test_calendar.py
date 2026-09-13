@@ -334,3 +334,65 @@ def test_move_target_last_text_date_wins(store):
     assert out["ok"]
     assert store.events_between(dt(2026, 9, 1), dt(2026, 10, 1))[0].start.date() \
         == date(2026, 9, 9)
+
+
+# -------------------------------------------------------- telegram-phase units
+
+def test_resolve_date_last_weekday():
+    today = date(2026, 9, 13)  # Sunday
+    assert resolve_date("letzten dienstag", today) == date(2026, 9, 8)
+    assert resolve_date("last friday", today) == date(2026, 9, 11)
+    assert resolve_date("letzten sonntag", today) == date(2026, 9, 6)
+
+
+def test_extract_dates_day_only_range():
+    from local_calendar.calendar import extract_dates_from_text as ex
+    today = date(2026, 9, 13)
+    assert ex("Ich bin vom 23. bis 27. komplett weg.", today, roll=True) == [
+        date(2026, 9, 23), date(2026, 9, 27)]
+    assert ex("Meeting von 13 bis 16 Uhr", today) == []  # time range, not dates
+
+
+def test_render_week_png(tmp_path):
+    from local_calendar.render import render_week_png
+    from PIL import Image
+    import io
+    store = CalendarStore(tmp_path / "r.db")
+    create_event(store, "Zahnarzt", dt(2026, 9, 17, 10), dt(2026, 9, 17, 11),
+                 False, ["Ich"])
+    create_event(store, "Urlaub", dt(2026, 9, 21), dt(2026, 9, 25), True,
+                 ["Ich"], kind="absence")
+    png = render_week_png(store, date(2026, 9, 14))
+    img = Image.open(io.BytesIO(png))
+    assert img.format == "PNG" and img.width > 800
+
+
+def test_render_availability_png(tmp_path):
+    from local_calendar.render import render_availability_png
+    from PIL import Image
+    import io
+    store = CalendarStore(tmp_path / "a.db")
+    create_event(store, "Meeting", dt(2026, 9, 17, 10), dt(2026, 9, 17, 11),
+                 False, ["Lisa"])
+    png = render_availability_png(store, ["Lisa", "Max"], date(2026, 9, 17))
+    img = Image.open(io.BytesIO(png))
+    assert img.format == "PNG" and img.height > 100
+
+
+def test_telegram_widget_selection_from_trace():
+    from local_calendar.telegram import TelegramBot
+    trace = {"steps": [{"name": "execute calendar_find_slot"}]}
+    assert TelegramBot._executed_tools(trace) == {"calendar_find_slot"}
+    trace2 = {"steps": [{"name": "execute calendar_list",
+                         "output": {"ok": True, "resolved": {"first_day": "2026-09-14"}}}]}
+    assert TelegramBot._list_first_day(trace2) == date(2026, 9, 14)
+    trace3 = {"steps": [{"name": "execute calendar_find_slot",
+                         "output": {"ok": True, "resolved": {"day": "2026-09-17"}}}]}
+    assert TelegramBot._day_of(trace3, "calendar_find_slot") == date(2026, 9, 17)
+
+
+def test_telegram_allowlist():
+    from local_calendar.telegram import TelegramBot
+    bot = TelegramBot(None, owner=1, allowed={2})
+    assert bot._allowed_chat(1) and bot._allowed_chat(2)
+    assert not bot._allowed_chat(999)

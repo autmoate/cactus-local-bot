@@ -397,6 +397,11 @@ def resolve_date(expr: str, today: date | None = None, roll: bool = True) -> dat
     if wd is not None:
         days_ahead = (wd - today.weekday()) % 7 or 7
         return today + timedelta(days=days_ahead)
+    past = re.match(r"(?:letzten?|letzte[nr]?|vergangenen?|last)\s+([a-zäöüß]+)", e)
+    if past and past[1] in _WEEKDAYS:
+        wd = _WEEKDAYS[past[1]]
+        days_back = (today.weekday() - wd) % 7 or 7
+        return today - timedelta(days=days_back)
     if e in ("next week", "nächste woche"):
         return today + timedelta(days=(7 - today.weekday()) % 7 or 7)
     return None
@@ -404,59 +409,67 @@ def resolve_date(expr: str, today: date | None = None, roll: bool = True) -> dat
 
 def extract_dates_from_text(text: str, today: date | None = None,
                             roll: bool = False) -> list[date]:
-    """All explicit dates (DD.MM.[YYYY] or ISO) in a request text, in order.
-    Without an explicit year the current year is assumed; roll=True moves past
-    dates to the following year (create semantics), matching existing entries
-    uses roll=False (move/delete target matching)."""
+    """All explicit dates (DD.MM.[YYYY], month names, ISO) in a request text,
+    in text order. Range patterns are EXCLUSIVE: 'vom 3. bis 18. august' yields
+    exactly its two dates — no mixed candidates. roll=True applies create
+    semantics (past -> next year); matching existing entries uses roll=False."""
     if not text:
         return []
     today = today or now().date()
-    hits: list[tuple[int, date]] = []  # (position in text, date) — order matters
     seen: set[tuple[int, int, int]] = set()
-    for m in re.finditer(r"\b(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?\b", text):
-        d, mo, y = int(m[1]), int(m[2]), m[3]
-        try:
-            if y:
-                hits.append((m.start(), date(int(y) + (2000 if len(y) == 2 else 0), mo, d)))
-                continue
-            got = date(today.year, mo, d)
-            if roll and got < today:
-                got = got.replace(year=got.year + 1)
-            hits.append((m.start(), got))
-        except ValueError:
-            continue
-    for lang_m in _MONTH_PATTERNS:
-        for m in lang_m.finditer(text):
-            d = int(m[1]) if m[2].lower() in _MONTHS else int(m[2])
-            mo = _MONTHS[m[2].lower()] if m[2].lower() in _MONTHS else _MONTHS[m[1].lower()]
-            try:
-                got = date(today.year, mo, d)
-                if roll and got < today:
-                    got = got.replace(year=got.year + 1)
-                hits.append((m.start(), got))
-            except ValueError:
-                continue
-    m = _MONTH_RANGE.search(text)
-    if m:
-        try:
-            mo = _MONTHS[m[3].lower()]
-            for d in (int(m[1]), int(m[2])):
-                got = date(today.year, mo, d)
-                if roll and got < today:
-                    got = got.replace(year=got.year + 1)
-                hits.append((m.start(), got))
-        except ValueError:
-            pass
-    for m in re.finditer(r"\b(20\d{2})-(\d{2})-(\d{2})\b", text):
-        try:
-            hits.append((m.start(), date(int(m[1]), int(m[2]), int(m[3]))))
-        except ValueError:
-            continue
-    out = []
-    for _, d in sorted(hits, key=lambda t: t[0]):
+    out: list[date] = []
+
+    def _keep(d: date) -> None:
         if (d.year, d.month, d.day) not in seen:
             seen.add((d.year, d.month, d.day))
             out.append(d)
+
+    def _roll(d: date) -> date:
+        if roll and d < today:
+            return d.replace(year=d.year + 1)
+        return d
+
+    m = _MONTH_RANGE.search(text)
+    if m:  # 'vom 3. bis 18. august' / 'august 3 to august 18' with month name
+        try:
+            mo = _MONTHS[m[3].lower()]
+            for d in (int(m[1]), int(m[2])):
+                _keep(_roll(date(today.year, mo, d)))
+            return out
+        except ValueError:
+            pass
+    m = _DAY_RANGE.search(text)  # 'vom 23. bis 27.' (shared month, no time)
+    if m and int(m[1]) <= 31 and int(m[2]) <= 31 \
+            and "uhr" not in text[m.end():m.end() + 8].lower():
+        try:
+            for d in (int(m[1]), int(m[2])):
+                _keep(_roll(date(today.year, today.month, d)))
+            return out
+        except ValueError:
+            pass
+    for lang_m in _MONTH_PATTERNS:
+        for mm in lang_m.finditer(text):
+            dd = int(mm[1]) if mm[2].lower() in _MONTHS else int(mm[2])
+            mo = _MONTHS[mm[2].lower()] if mm[2].lower() in _MONTHS \
+                else _MONTHS[mm[1].lower()]
+            try:
+                _keep(_roll(date(today.year, mo, dd)))
+            except ValueError:
+                continue
+    for m in re.finditer(r"\b(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?\b", text):
+        dd, mo, y = int(m[1]), int(m[2]), m[3]
+        try:
+            if y:
+                _keep(date(int(y) + (2000 if len(y) == 2 else 0), mo, dd))
+            else:
+                _keep(_roll(date(today.year, mo, dd)))
+        except ValueError:
+            continue
+    for m in re.finditer(r"\b(20\d{2})-(\d{2})-(\d{2})\b", text):
+        try:
+            _keep(date(int(m[1]), int(m[2]), int(m[3])))
+        except ValueError:
+            continue
     return out
 
 
@@ -475,6 +488,8 @@ _MONTH_NAME_DAY = re.compile(
 _DAY_MONTH_NAME = re.compile(
     r"\b(\d{1,2})\.?\s+(" + "|".join(_MONTHS) + r")\b", re.IGNORECASE)
 _MONTH_PATTERNS = (_MONTH_NAME_DAY, _DAY_MONTH_NAME)
+_DAY_RANGE = re.compile(
+    r"\bvom\s+(\d{1,2})\.?\s*bis\s+(\d{1,2})\.?(?!\s*uhr)\b", re.IGNORECASE)
 _MONTH_RANGE = re.compile(
     r"\b(\d{1,2})\.?\s*(?:bis|-|–|to)\s*(\d{1,2})\.?\s+(" + "|".join(_MONTHS) + r")\b",
     re.IGNORECASE)

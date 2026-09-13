@@ -9,8 +9,12 @@ dependencies = [
     "gradio==6.27.0",
 ]
 
+[project.optional-dependencies]
+telegram = ["python-telegram-bot==22.8", "python-dotenv==1.1.1"]
+
 [project.scripts]
 local-calendar = "local_calendar.app:main"
+local-calendar-telegram = "local_calendar.telegram:main"
 
 [dependency-groups]
 dev = [

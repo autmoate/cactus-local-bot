@@ -263,7 +263,8 @@
           "start_date": "2026-10-10"
         }
       ]
-    }
+    },
+    "hybrid_only": true
   },
   {
     "input": "Lege Termin Kino am 5.10. um 20 Uhr an, verschiebe Alt-Kino auf den 6.10. und lösche den Termin Sonderfall.",
@@ -299,7 +300,8 @@
         "Sonderfall",
         "Alt-Kino"
       ]
-    }
+    },
+    "hybrid_only": true
   },
   {
     "input": "Verschieb das Meeting mit Lisa.",
@@ -347,6 +349,37 @@
     ],
     "expected": {
       "title_contains": "meeting lisa"
+    }
+  },
+  {
+    "input": "Lösch den Termin Kurzcheck letzten Dienstag.",
+    "expected_tool": "calendar_delete",
+    "should_execute": true,
+    "category": "past weekday delete",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Kurzcheck",
+          "date": "letzten dienstag",
+          "time": "10:00"
+        }
+      }
+    ],
+    "expected": {
+      "absent": [
+        "Kurzcheck"
+      ]
+    }
+  },
+  {
+    "input": "Ich bin vom 23. bis 27. komplett weg.",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "multi-day absence (day-only range)",
+    "expected": {
+      "all_day": true,
+      "span_days": 5
     }
   }
 ]
