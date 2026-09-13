@@ -86,26 +86,35 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
 
 ## Gemessene Erkenntnisse (Basis Needle 2, ohne Fine-Tuning)
 
-- **Tool-Accuracy** ist gut (E2E-Suite 80–95 % je nach Modus); Argumente werden
-  überwiegend korrekt extrahiert, Mehrfach-Calls pro Person werden gemergt.
+- **Eval mischt zwei Metriken**: Tool-Accuracy liegt bei ~80–90 %, aber die
+  **semantische Genauigkeit** (finaler DB-Zustand: Titel, all_day, Zeitspanne,
+  Teilnehmer) bei ~70 % — die E2E-Suite prüft beides (`expected`-Felder in
+  `eval_cases.json`). Die alte reine Tool-Namen-Messung („90–95 %") war zu optimistisch.
+- **Das Modell rechnet Datumsangaben selbst und dabei regelmäßig falsch**
+  (z. B. „am 9.9." → heutiges Datum, „Freitag" → Mittwoch als ISO). Fix:
+  deterministische Autoritätshierarchie — explizites Datum im Text > benannter
+  Wochentag > Modell-Output (`extract_dates_from_text`, `extract_weekday_from_text`);
+  zwei Datumsangaben im Text bilden eine Zeitspanne; vergangene Daten rollen
+  (Create) bzw. werden unverändert gematcht (Move/Delete).
+- **Keine Zeitangabe im Text → ganztägig**: das Modell erfindet Zeiten; ohne
+  Zeit-Signal (HH:MM/Uhr/at/Perioden) wird die erfundene Zeit verworfen.
+  Grenze: „Ich habe morgen Urlaub" ohne DD.MM bleibt timed (dokumentierte Schwäche).
+- **Collision ist participant-aware**: nur gemeinsame Teilnehmer kollidieren;
+  eine Absence blockiert Termine derselben Person (konsistent mit den freien
+  Slots), das Anlegen einer Absence selbst kollidiert nie.
 - **Confidence ist unkalibriert auf dieser Domäne**: abgelehnte (off-topic) Requests
   scoren hoch (~0.99), valide Calls teils sehr niedrig (~0.00–0.5). Das Floor-Default
   ist deshalb 0; `NEEDLE_CONFIDENCE_FLOOR`/`NEEDLE_CONFIDENCE_THRESHOLD` sind
   konfigurierbar, alle Werte sind im Trace sichtbar.
-- **Das Modell rechnet Datumsangaben selbst und dabei regelmäßig falsch**
-  (z. B. „am 9.9." → heutiges Datum als ISO). Fix: ein explizites Datum im
-  Anfragetext gewinnt deterministisch über das Modell-Datum (Python rechnet,
-  nicht das Modell); vergangene Daten rollen aufs Folgejahr und werden mit
-  Jahreszahl ausgewiesen.
 - **Trailing-Satzzeichen** („.") am Query-Ende lösen Refusals aus — wird gestript.
-- **Mehrtägige Absences** extrahiert das Basismodell nur teils zuverlässig
-  (Enddatum landet mitunter im falschen Feld; der Resolver toleriert das).
-- **Hybrid (+Gemma)** stabilisiert deutsche Umgangssprache (95 % vs ~80 %), kostet
-  auf dem Pi aber ~7 s/Request gegenüber ~1 s needle-only. Beide Modi sind bewusst
-  je startbar (`--mode`).
-- Repair-Schleife greift jetzt auf allen drei Pfaden (leere Calls, niedrige
-  Confidence, **fehlgeschlagene Ausführung**) mit der exakten Fehlermeldung an
-  Gemma (max. 3, danach Rückfrage) — Plan §24.
+- **Mehrtägige Absences**: Enddatum landet mitunter im falschen Feld; der
+  Resolver toleriert das, und zwei Datumsangaben im Text bilden die Zeitspanne.
+- **Hybrid (+Gemma)** stabilisiert deutsche Umgangssprache (95 % Tool-Accuracy
+  vs ~80 %), kostet auf dem Pi aber ~7 s/Request gegenüber ~1 s needle-only.
+  Beide Modi sind bewusst je startbar (`--mode`).
+- Repair-Schleife greift auf allen drei Pfaden (leere Calls, niedrige Confidence,
+  fehlgeschlagene Ausführung) mit der exakten Fehlermeldung an Gemma (max. 3,
+  danach Rückfrage) — Plan §24.
 - Die kanonische Gemma-Instruction muss die Intent-Wörter (löschen/entfernen)
   bewahren — im Prompt explizit verankert, sonst erzeugt „Termin X löschen"
   ein CREATE statt eines DELETE (war ein echter Bug, über Repair nicht fangbar).
@@ -113,13 +122,12 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
 ## Bekannte Limitationen
 
 - Reminder/Tasks sind bewusst nicht im V1-Toolset (nur appointment/absence).
-- Englische „Show my appointments“-Formulierungen routen gelegentlich auf
-  `calendar_find_slot` — Varianz des Basismodells, sicher abgefangen (Rückfrage).
+- „Ich habe morgen Urlaub" (relative Tagesangabe ohne Zeit) erzeugt noch einen
+  terminierten Eintrag statt einer ganztägigen Absence — ehrlich im Eval gemessen.
+- Kolloquiale Formulierungen („Nimm den Zahnarzttermin wieder raus") werden vom
+  Basismodell teils verweigert — varianzbehaftet, sicher abgefangen (Rückfrage).
 - `cactus serve` muss für den Hybrid-Modus separat laufen; die App startet es nicht
   selbst (kein unbeaufsichtigter Modell-Start/Download).
-- **Gradio-Share-Link**: das von Gradio gebündelte `frpc` (arm64 v0.3) verbindet
-  sich zwar, sein Datenkanal liefert aber in manchen Netzen keine Requests
-  (kontrolliert auch mit einer Hello-World-App reproduzierbar). Die App verifiziert
-  den Share-Link deshalb beim Start selbst und zeigt im Fehlerfall die LAN-URL —
-  **`http://<pi-ip>:7860`** ist der zuverlässige Weg zum Testen vom zweiten Gerät
-  (App lauscht auf 0.0.0.0, keine öffentliche Freigabe).
+- Gradio-Share (`--share`) verlässt sich auf das gebündelte frpc; in manchen Netzen
+  liefert sein Datenkanal keine Requests. Die App lauscht standardmäßig auf
+  0.0.0.0 — **`http://<pi-ip>:7860`** ist der zuverlässige Weg vom zweiten Gerät.

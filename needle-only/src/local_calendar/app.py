@@ -5,8 +5,6 @@ from __future__ import annotations
 import argparse
 import os
 import socket
-import threading
-import urllib.request
 
 import gradio as gr
 
@@ -40,18 +38,6 @@ def _lan_ip() -> str:
         return "127.0.0.1"
 
 
-def _verify_share(share_url: str, port: int) -> None:
-    """The bundled frpc (arm64 v0.3) connects but its data channel stays dead
-    in some networks; verify the link so users are not stuck with a blank page."""
-    try:
-        urllib.request.urlopen(share_url + "/config", timeout=30)
-        print(f"  share link verified: {share_url}")
-    except Exception as exc:
-        print(f"  ⚠️ share link not responding ({type(exc).__name__}) — the gradio "
-              f"tunnel data channel does not work in this network. "
-              f"Test in the LAN instead: http://{_lan_ip()}:{port}")
-
-
 def main() -> None:
     ap = argparse.ArgumentParser(prog="local-calendar")
     ap.add_argument("--mode", choices=["needle", "hybrid"], default="hybrid",
@@ -59,16 +45,13 @@ def main() -> None:
     ap.add_argument("--db", default=os.environ.get("CALENDAR_DB", "data/calendar.db"))
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("--port", type=int, default=7860)
+    ap.add_argument("--share", action="store_true",
+                    help="gradio share tunnel (tun works per network; LAN is default)")
     args = ap.parse_args()
     agent = Agent(CalendarStore(args.db), mode=args.mode)
     print(f"  LAN URL: http://{_lan_ip()}:{args.port}")
-    app = build_app(agent)
-    app.launch(server_name=args.host, server_port=args.port, share=True,
-               prevent_thread_lock=True)
-    if app.share_url:
-        threading.Thread(target=_verify_share, args=(app.share_url, args.port),
-                         daemon=True).start()
-    app.block_thread()
+    build_app(agent).launch(server_name=args.host, server_port=args.port,
+                            share=args.share)
 
 
 if __name__ == "__main__":

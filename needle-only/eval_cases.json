@@ -3,55 +3,89 @@
     "input": "Create an appointment tomorrow at 14:00",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "create timed"
+    "category": "create timed",
+    "expected": {
+      "all_day": false
+    }
   },
   {
     "input": "Termin Zahnarzt morgen um 14 Uhr",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "create timed"
+    "category": "create timed",
+    "expected": {
+      "all_day": false
+    }
   },
   {
     "input": "Create a dentist appointment tomorrow afternoon",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "day period"
+    "category": "day period",
+    "expected": {
+      "all_day": false
+    }
   },
   {
     "input": "Pack mir morgen Nachmittag Friseur rein",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "day period"
+    "category": "day period",
+    "expected": {
+      "all_day": false
+    }
   },
   {
     "input": "Ich habe morgen Urlaub",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "create all-day"
+    "category": "create all-day",
+    "expected": {
+      "all_day": true,
+      "span_days": 1
+    }
   },
   {
     "input": "I am on vacation from August 3 to August 18",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "create multi-day absence"
+    "category": "create multi-day absence",
+    "expected": {
+      "all_day": true,
+      "span_days": 16
+    }
   },
   {
     "input": "Ich bin vom 3. bis 18. August komplett weg",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "create multi-day absence"
+    "category": "create multi-day absence",
+    "expected": {
+      "all_day": true,
+      "span_days": 16
+    }
   },
   {
     "input": "Termin Lisa und Max Freitag um 10 Uhr",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "multiple participants"
+    "category": "multiple participants",
+    "expected": {
+      "all_day": false,
+      "participants": [
+        "Lisa",
+        "Max"
+      ]
+    }
   },
   {
     "input": "Termin übermorgen um 9 Uhr Sport",
     "expected_tool": "calendar_create",
     "should_execute": true,
-    "category": "relative day"
+    "category": "relative day",
+    "expected": {
+      "all_day": false
+    }
   },
   {
     "input": "Show my appointments next week",

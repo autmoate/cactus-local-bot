@@ -149,7 +149,10 @@ class CalendarStore:
     def get(self, event_id: int) -> CalendarEvent | None:
         with self._conn() as c:
             row = c.execute("SELECT * FROM events WHERE id=?", (event_id,)).fetchone()
-        return self._event(row) if row else None
+            if row is None:
+                return None
+            people = self._load_people(c, [event_id])
+        return self._event(row, people.get(event_id, []))
 
     def _event(self, row: sqlite3.Row, people: list[str]) -> CalendarEvent:
         return CalendarEvent(
@@ -210,12 +213,21 @@ class CalendarStore:
                     c.execute("SELECT name FROM participants ORDER BY name")]
 
     def collision(self, ev: CalendarEvent) -> CalendarEvent | None:
-        """First appointment overlapping ev (±30 min). Absences never collide."""
+        """First conflicting event sharing a participant with ev.
+        - appointment vs appointment (±30 min overlap): collision
+        - appointment vs absence (shared person): collision — a vacation blocks
+          that person's appointments, consistent with find_free_slots
+        - creating an absence never collides (absences coexist by design)."""
         if ev.kind != "appointment":
             return None
         lo, hi = ev.start - COLLISION_WINDOW, ev.end + COLLISION_WINDOW
+        mine = {_canonical_person(p) for p in ev.participants}
         for other in self.events_between(lo, hi):
-            if other.id != ev.id and other.kind == "appointment" and event_overlaps(ev, other):
+            if other.id == ev.id or other.kind not in ("appointment", "absence"):
+                continue
+            if not (mine & {_canonical_person(p) for p in other.participants}):
+                continue
+            if event_overlaps(ev, other):
                 return other
         return None
 
@@ -394,27 +406,53 @@ def extract_dates_from_text(text: str, today: date | None = None,
     if not text:
         return []
     today = today or now().date()
-    out: list[date] = []
+    hits: list[tuple[int, date]] = []  # (position in text, date) — order matters
     seen: set[tuple[int, int, int]] = set()
     for m in re.finditer(r"\b(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?\b", text):
         d, mo, y = int(m[1]), int(m[2]), m[3]
         try:
             if y:
-                out.append(date(int(y) + (2000 if len(y) == 2 else 0), mo, d))
+                hits.append((m.start(), date(int(y) + (2000 if len(y) == 2 else 0), mo, d)))
                 continue
             got = date(today.year, mo, d)
             if roll and got < today:
                 got = got.replace(year=got.year + 1)
-            out.append(got)
+            hits.append((m.start(), got))
         except ValueError:
             continue
+    for lang_m in _MONTH_PATTERNS:
+        for m in lang_m.finditer(text):
+            d = int(m[1]) if m[2].lower() in _MONTHS else int(m[2])
+            mo = _MONTHS[m[2].lower()] if m[2].lower() in _MONTHS else _MONTHS[m[1].lower()]
+            try:
+                got = date(today.year, mo, d)
+                if roll and got < today:
+                    got = got.replace(year=got.year + 1)
+                hits.append((m.start(), got))
+            except ValueError:
+                continue
+    m = _MONTH_RANGE.search(text)
+    if m:
+        try:
+            mo = _MONTHS[m[3].lower()]
+            for d in (int(m[1]), int(m[2])):
+                got = date(today.year, mo, d)
+                if roll and got < today:
+                    got = got.replace(year=got.year + 1)
+                hits.append((m.start(), got))
+        except ValueError:
+            pass
     for m in re.finditer(r"\b(20\d{2})-(\d{2})-(\d{2})\b", text):
         try:
-            out.append(date(int(m[1]), int(m[2]), int(m[3])))
+            hits.append((m.start(), date(int(m[1]), int(m[2]), int(m[3]))))
         except ValueError:
             continue
-    return [d for d in out if (d.year, d.month, d.day) not in seen
-            and not seen.add((d.year, d.month, d.day))]
+    out = []
+    for _, d in sorted(hits, key=lambda t: t[0]):
+        if (d.year, d.month, d.day) not in seen:
+            seen.add((d.year, d.month, d.day))
+            out.append(d)
+    return out
 
 
 def extract_date_from_text(text: str, today: date | None = None,
@@ -427,6 +465,14 @@ def extract_date_from_text(text: str, today: date | None = None,
 _TIME_AT = re.compile(r"\b(?:um|at)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?", re.I)
 _TIME_COLON = re.compile(r"\b(\d{1,2}):(\d{2})\b")
 _TIME_UHR = re.compile(r"\b(\d{1,2})\s*uhr\b", re.IGNORECASE)
+_MONTH_NAME_DAY = re.compile(
+    r"\b(" + "|".join(_MONTHS) + r")\s+(\d{1,2})\b", re.IGNORECASE)
+_DAY_MONTH_NAME = re.compile(
+    r"\b(\d{1,2})\.?\s+(" + "|".join(_MONTHS) + r")\b", re.IGNORECASE)
+_MONTH_PATTERNS = (_MONTH_NAME_DAY, _DAY_MONTH_NAME)
+_MONTH_RANGE = re.compile(
+    r"\b(\d{1,2})\.?\s*(?:bis|-|–|to)\s*(\d{1,2})\.?\s+(" + "|".join(_MONTHS) + r")\b",
+    re.IGNORECASE)
 
 
 def extract_time_from_text(text: str) -> time | None:
@@ -446,6 +492,33 @@ def extract_time_from_text(text: str) -> time | None:
     m = _TIME_UHR.search(text)
     if m:
         return resolve_time(f"{m[1]} uhr")
+    return None
+
+
+def has_time_signal(text: str) -> bool:
+    """True when the text names any time of day: HH:MM, 'um 14 Uhr', '17Uhr',
+    'at 3 pm', or a day period (afternoon/morning/...). A create request without
+    a time signal must not inherit the model's invented time (all-day instead)."""
+    if not text:
+        return False
+    if (_TIME_COLON.search(text) or _TIME_AT.search(text)
+            or _TIME_UHR.search(text)):
+        return True
+    return _period_of(text) != ""
+
+
+def extract_weekday_from_text(text: str, today: date | None = None) -> date | None:
+    """Next occurrence of an explicitly named weekday in the text (Python computes
+    the date; the model's weekday math is unreliable). None without a weekday."""
+    if not text:
+        return None
+    for m in re.finditer(r"\b(nächste[nr]?|next|kommende[nr]?)?\s*"
+                         r"(montag|dienstag|mittwoch|donnerstag|freitag|samstag|"
+                         r"sonnabend|sonntag|monday|tuesday|wednesday|thursday|"
+                         r"friday|saturday|sunday)\b", text, re.IGNORECASE):
+        wd = _WEEKDAYS[m[2].lower()]
+        base = today or now().date()
+        return base + timedelta(days=(wd - base.weekday()) % 7 or 7)
     return None
 
 

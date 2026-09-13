@@ -182,12 +182,42 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
                 "message": (f"❌ Zeitangabe nicht verstanden: "
                             f"{args.get('date')!r} {args.get('time') or ''}".strip())}
     start, end, all_day = timing
-    fixed = _fix_text_date(context, start.date())
-    if fixed != start.date():
-        start = cal.datetime.combine(fixed, start.time())
-        end = start + (end - start)
-        checks.append({"check": "Datum aus Text korrigiert", "ok": True,
-                       "value": f"{start:%d.%m.%Y}"})
+    # Deterministic corrections (plan: Python computes, not the model).
+    # Authority: explicit dates in the text > named weekday > model output.
+    # No time signal in the text -> all-day (the model's invented time is dropped).
+    signal = cal.has_time_signal(context) if context else True
+    text_dates = cal.extract_dates_from_text(context, roll=True)
+    wd = cal.extract_weekday_from_text(context)
+    if text_dates:
+        first, last = text_dates[0], text_dates[-1]
+        if not signal:
+            if first != last:
+                timing2 = cal.resolve_timing(
+                    f"{first:%d.%m.%Y}", "", f"{last:%d.%m.%Y}",
+                    _to_int(args.get("duration_min"), cal.DEFAULT_DURATION_MIN))
+                if timing2 is not None:
+                    start, end, all_day = timing2
+            else:
+                duration = end - start
+                start = cal.datetime.combine(first, cal.time(0, 0))
+                end = start + duration
+            all_day = True
+            checks.append({"check": "Zeit aus Text", "ok": True,
+                           "value": (f"{start:%d.%m.} – {end - cal.timedelta(days=1):%d.%m.},"
+                                     " ganztägig" if first != last
+                                     else f"{start:%d.%m.}, ganztägig")})
+        elif (first.month, first.day) != (start.month, start.day):
+            duration = end - start  # duration first: start must not shift `end`
+            start = cal.datetime.combine(first, start.time())
+            end = start + duration
+            checks.append({"check": "Datum aus Text korrigiert", "ok": True,
+                           "value": f"{start:%d.%m.%Y}"})
+    elif wd is not None and (wd.month, wd.day) != (start.month, start.day):
+        duration = end - start
+        start = cal.datetime.combine(wd, start.time())
+        end = start + duration
+        checks.append({"check": "Wochentag aus Text", "ok": True,
+                       "value": f"{wd:%d.%m.%Y}"})
     checks.append({"check": "Zeit aufgelöst", "ok": True,
                    "value": f"{start:%d.%m.%Y %H:%M} – {end:%d.%m.%Y %H:%M}"})
     ev = cal.CalendarEvent(
@@ -198,9 +228,12 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
     checks.append({"check": "Kollision", "ok": clash is None,
                    "value": clash.title if clash else "keine"})
     if clash:
+        reason = ("Abwesenheit blockiert diesen Termin"
+                  if clash.kind == "absence"
+                  else f"belegt bereits {cal._fmt_day(clash.start)} "
+                       f"{cal._fmt_time(clash.start)}")
         return {"ok": False, "checks": checks, "resolved": ev.model_dump(mode="json"),
-                "message": (f"⚠️ Kollision: '{clash.title}' belegt bereits "
-                            f"{cal._fmt_day(clash.start)} {cal._fmt_time(clash.start)}. "
+                "message": (f"⚠️ Kollision: '{clash.title}' {reason}. "
                             "Anderen Zeitpunkt wählen?")}
     ev = store.add(ev)
     label = "🚫 Absence eingetragen" if all_day else "✅ Erstellt"
@@ -446,10 +479,26 @@ class Agent:
     @staticmethod
     def _merge_calls(calls: list) -> list:
         """Dedup repeated calls and merge consecutive calendar_find_slot calls
-        (the engine often emits one call per person) into a single intersection."""
+        (the engine often emits one call per person) into a single intersection.
+        Only `persons` is merged; the other arguments survive from the first call."""
         out: list = []
         pending: list = []
         seen: set = set()
+
+        def flush() -> None:
+            if not pending:
+                return
+            merged = dict(pending[0])
+            names: list[str] = []
+            for a in pending:
+                for p in str(a.get("persons", "")).split(","):
+                    p = p.strip()
+                    if p and p.lower() not in (n.lower() for n in names):
+                        names.append(p)
+            merged["persons"] = ", ".join(names)
+            out.append({"name": "calendar_find_slot", "arguments": merged})
+            pending.clear()
+
         for call in calls[:3]:
             name = call.get("name", "")
             args = call.get("arguments") or {}
@@ -458,16 +507,11 @@ class Agent:
                 continue
             seen.add(key)
             if name == "calendar_find_slot":
-                pending.append(str(args.get("persons", "")))
+                pending.append(args)
                 continue
-            if pending:
-                out.append({"name": "calendar_find_slot",
-                            "arguments": {"persons": ", ".join(pending)}})
-                pending = []
+            flush()
             out.append(call)
-        if pending:
-            out.append({"name": "calendar_find_slot",
-                        "arguments": {"persons": ", ".join(pending)}})
+        flush()
         return out
 
     def _clarify(self, trace: dict, why: str) -> None:

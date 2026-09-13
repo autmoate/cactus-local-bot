@@ -65,16 +65,17 @@ def grid_html(store, days: list[date], people: list[str]) -> str:
             f"<tr><th>Zeit</th>{head}</tr>{''.join(rows)}</table>")
 
 
-def availability_html(store, people: list[str]) -> str:
+def availability_html(store, people: list[str],
+                      first_day: date | None = None) -> str:
     """One line per participant: 7 days x 30-min slots (07:00-21:00), █=busy ░=free."""
     if people and "all" not in people:
         names = sorted(set(people))
     else:
         names = sorted(set(store.participant_names()) or {"Ich"})
-    day0 = datetime.combine(cal.now().date(), time(0, 0))
+    day0 = datetime.combine(first_day or cal.now().date(), time(0, 0))
     n_slots = (21 - 7) * 60 // SLOT_MIN
     lines = ["<div style='font-family:monospace;font-size:12px'>"
-             "<b>Beschäftigt/Frei — 7 Tage ab heute, 30-min-Raster (07–21 Uhr)</b>"]
+             f"<b>Beschäftigt/Frei ab {day0:%d.%m.} (7 Tage, 30-min-Raster, 07–21 Uhr)</b>"]
     for p in names:
         bar = []
         for d in range(7):
@@ -119,10 +120,15 @@ def build_calendar_tab(agent) -> None:
                                       "participants"], interactive=False)
         offset_state = gr.State(0)
 
+        def _people_choices() -> dict:
+            names = ["all", "Ich"] + [p for p in agent.store.participant_names()
+                                      if p != "Ich"]
+            return gr.update(choices=names)
+
         def _render(offset, people):
             days = week_days(int(offset or 0))
             return (grid_html(agent.store, days, people),
-                    availability_html(agent.store, people),
+                    availability_html(agent.store, people, days[0]),
                     event_table(agent.store, people))
 
         prev_btn.click(lambda o: int(o) - 1, offset_state, offset_state)
@@ -130,9 +136,11 @@ def build_calendar_tab(agent) -> None:
         today_btn.click(lambda: 0, None, offset_state)
         refresh_btn.click(_render, [offset_state, people_box],
                           [week_view, avail_view, table])
+        refresh_btn.click(_people_choices, None, people_box)
         offset_state.change(_render, [offset_state, people_box],
                             [week_view, avail_view, table])
         people_box.change(_render, [offset_state, people_box],
                           [week_view, avail_view, table])
         tab.select(_render, [offset_state, people_box],
                    [week_view, avail_view, table])
+        tab.select(_people_choices, None, people_box)

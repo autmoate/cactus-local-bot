@@ -37,11 +37,13 @@ class Lab:
         self.gemma = Gemma()
         self._sessions: dict = {}
 
-    def session(self, names: tuple[str, ...]) -> needle_lib.Needle:
-        if names not in self._sessions:
-            self._sessions[names] = needle_lib.Needle(
-                tools=[self.tools[n] for n in names], system=system_facts())
-        return self._sessions[names]
+    def session(self, names: tuple[str, ...], use_facts: bool) -> needle_lib.Needle:
+        key = (names, use_facts)
+        if key not in self._sessions:
+            self._sessions[key] = needle_lib.Needle(
+                tools=[self.tools[n] for n in names],
+                system=system_facts() if use_facts else None)
+        return self._sessions[key]
 
     def run(self, mode: str, names: list[str], schema_name: str,
             text: str, use_facts: bool, canonicalize: bool) -> dict:
@@ -62,7 +64,7 @@ class Lab:
             out["validation"] = {"type": type(got).__name__,
                                  "ok": got is not None}
         else:
-            session = self.session(tuple(sorted(set(names or []))))
+            session = self.session(tuple(sorted(set(names or []))), use_facts)
             resp = session.run(text) if mode == "run" else session.complete(text)
             out["raw_response"] = resp
             calls = resp.get("function_calls") or []
@@ -77,11 +79,15 @@ class Lab:
             return {}
         args = calls[0].get("arguments") or {}
         return {"timing": cal.resolve_timing(
-                    str(args.get("date_expression", "")),
-                    str(args.get("time_expression", "")),
-                    str(args.get("end_date_expression", "")),
+                    str(args.get("date", "")),
+                    str(args.get("time", "")),
+                    str(args.get("until", "")),
                     cal.DEFAULT_DURATION_MIN),
                 "participants": cal.parse_persons(args.get("participants", ""))}
+
+    def schemas(self, names: list[str]) -> dict:
+        """The real compiled schemas of the selected tools (plan §38)."""
+        return {n: self.tools[n]._needle_tool for n in names or []}
 
 
 def build_needle_lab_tab(agent) -> None:

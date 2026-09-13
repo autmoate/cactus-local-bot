@@ -202,13 +202,29 @@ def test_move_event_preserves_duration_and_all_day_span(store):
     assert moved.all_day and moved.end == dt(2026, 10, 10)
 
 
-def test_absence_coexists_with_appointments_no_collision(store):
+def test_collision_participants_and_absences(store):
+    # appointment vs appointment WITHOUT shared participants: no collision
+    create_event(store, "Lisa Zahnarzt", dt(2026, 9, 14, 10), dt(2026, 9, 14, 11),
+                 False, ["Lisa"])
+    b = ev("Max Meeting", dt(2026, 9, 14, 10, 30), dt(2026, 9, 14, 11, 30),
+           participants=["Max"])
+    assert store.collision(b) is None
+    # appointment vs appointment WITH shared participant: collision
+    c = ev("Ich Meeting", dt(2026, 9, 14, 10, 30), dt(2026, 9, 14, 11, 30),
+           participants=["Ich", "Lisa"])
+    assert store.collision(c).title == "Lisa Zahnarzt"
+    # appointment inside one's own vacation: collision (consistent with free slots)
     vac = create_event(store, "Urlaub", dt(2026, 9, 21), dt(2026, 9, 26), True,
                        ["Ich"], kind="absence")
-    appt = create_event(store, "Meeting", dt(2026, 9, 22, 10), dt(2026, 9, 22, 11),
-                        False, ["Ich"])
-    assert store.collision(appt) is None  # absence never collides
+    appt = ev("Meeting", dt(2026, 9, 22, 10), dt(2026, 9, 22, 11),
+              participants=["Ich"])
+    assert store.collision(appt) is not None
+    # creating an absence itself never collides
     assert store.collision(vac) is None
+    # Lisa's vacation does not block Max
+    appt2 = ev("Max Meeting", dt(2026, 9, 22, 10), dt(2026, 9, 22, 11),
+               participants=["Max"])
+    assert store.collision(appt2) is None
 
 
 def test_collision_appointment_appointment(store):
