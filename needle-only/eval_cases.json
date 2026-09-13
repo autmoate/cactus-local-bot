@@ -1,0 +1,162 @@
+[
+  {
+    "input": "Create an appointment tomorrow at 14:00",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "create timed"
+  },
+  {
+    "input": "Termin Zahnarzt morgen um 14 Uhr",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "create timed"
+  },
+  {
+    "input": "Create a dentist appointment tomorrow afternoon",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "day period"
+  },
+  {
+    "input": "Pack mir morgen Nachmittag Friseur rein",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "day period"
+  },
+  {
+    "input": "Ich habe morgen Urlaub",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "create all-day"
+  },
+  {
+    "input": "I am on vacation from August 3 to August 18",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "create multi-day absence"
+  },
+  {
+    "input": "Ich bin vom 3. bis 18. August komplett weg",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "create multi-day absence"
+  },
+  {
+    "input": "Termin Lisa und Max Freitag um 10 Uhr",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "multiple participants"
+  },
+  {
+    "input": "Termin übermorgen um 9 Uhr Sport",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "relative day"
+  },
+  {
+    "input": "Show my appointments next week",
+    "expected_tool": "calendar_list",
+    "should_execute": true,
+    "category": "read"
+  },
+  {
+    "input": "Zeig meine Termine nächste Woche",
+    "expected_tool": "calendar_list",
+    "should_execute": true,
+    "category": "read"
+  },
+  {
+    "input": "Wann hat Lisa diese Woche Termine?",
+    "expected_tool": "calendar_list",
+    "should_execute": true,
+    "category": "single participant"
+  },
+  {
+    "input": "Move my dentist appointment to Friday",
+    "expected_tool": "calendar_move",
+    "should_execute": true,
+    "category": "move",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "dentist appointment",
+          "date": "next tuesday",
+          "time": "09:00"
+        }
+      }
+    ]
+  },
+  {
+    "input": "Schieb den Zahnarzttermin auf Freitag",
+    "expected_tool": "calendar_move",
+    "should_execute": true,
+    "category": "move",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Zahnarzt",
+          "date": "next tuesday",
+          "time": "09:00"
+        }
+      }
+    ]
+  },
+  {
+    "input": "Delete my dentist appointment",
+    "expected_tool": "calendar_delete",
+    "should_execute": true,
+    "category": "delete",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "dentist appointment",
+          "date": "next wednesday",
+          "time": "09:00"
+        }
+      }
+    ]
+  },
+  {
+    "input": "Nimm den Zahnarzttermin wieder raus",
+    "expected_tool": "calendar_delete",
+    "should_execute": true,
+    "category": "delete",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Zahnarzt",
+          "date": "next wednesday",
+          "time": "09:00"
+        }
+      }
+    ]
+  },
+  {
+    "input": "When are Lisa and Max free tomorrow afternoon?",
+    "expected_tool": "calendar_find_slot",
+    "should_execute": true,
+    "category": "find free slot"
+  },
+  {
+    "input": "Wann haben Lisa und Max gemeinsam Zeit?",
+    "expected_tool": "calendar_find_slot",
+    "should_execute": true,
+    "category": "find free slot"
+  },
+  {
+    "input": "Wie wird das Wetter morgen?",
+    "expected_tool": null,
+    "should_execute": false,
+    "category": "off-topic"
+  },
+  {
+    "input": "Wer hat den DSM erfunden?",
+    "expected_tool": null,
+    "should_execute": false,
+    "category": "off-topic"
+  }
+]

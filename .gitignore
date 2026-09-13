@@ -11,3 +11,5 @@ checkpoints/
 data/train/
 data/eval/
 data/generated/
+needle-only/data/
+needle-only/.gradio/
