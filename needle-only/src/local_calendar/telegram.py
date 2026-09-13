@@ -48,6 +48,7 @@ class TelegramBot:
         self.week_offset: dict[int, int] = {}
         self.day_offset: dict[int, int] = {}
         self.people: dict[int, list[str]] = {}
+        self.widget_msg: dict[int, int] = {}  # one live widget per chat
 
     # ----------------------------------------------------------- security
     def _allowed_chat(self, chat_id: int) -> bool:
@@ -102,10 +103,20 @@ class TelegramBot:
             render.render_week_png, self.agent.store, first, self._people_of(chat_id))
         keyboard = self._nav_keyboard(chat_id)
         if hasattr(query_or_message, "edit_message_media"):
-            await query_or_message.edit_message_media(
-                InputMediaPhoto(png), reply_markup=keyboard)
-        else:
-            await query_or_message.reply_photo(png, reply_markup=keyboard)
+            try:
+                await query_or_message.edit_message_media(
+                    InputMediaPhoto(png), reply_markup=keyboard)
+                return
+            except Exception:  # message deleted/old -> fall through to a new one
+                pass
+        msg = await query_or_message.reply_photo(png, reply_markup=keyboard)
+        old = self.widget_msg.get(chat_id)
+        if old and old != msg.message_id:  # keep the chat uncluttered: one widget
+            try:
+                await msg.get_bot().delete_message(chat_id, old)
+            except Exception:
+                pass
+        self.widget_msg[chat_id] = msg.message_id
 
     # ----------------------------------------------------------- commands
     async def cmd_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -163,9 +174,11 @@ class TelegramBot:
         text = (update.message.text or "").strip()
         if not text:
             return
+        await update.message.chat.send_action("typing")
         trace = await self._run_agent(text)
         result = self._plain(trace.get("result") or "…")
         tools = self._executed_tools(trace)
+        await self._refresh_widget(update, context, chat, tools)
         # Phase 27: widget choice from the structured trace, never from text
         if "calendar_find_slot" in tools:
             day = self._day_of(trace, "calendar_find_slot")
@@ -186,8 +199,11 @@ class TelegramBot:
     async def on_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         chat = query.message.chat_id
+        try:  # answer immediately; stale queries raise BadRequest -> ignore
+            await query.answer()
+        except Exception:
+            pass
         if not self._allowed_chat(chat):
-            await query.answer("Kein Zugriff.")
             return
         kind, _, value = (query.data or "").partition(":")
         step = int(value) if value.lstrip("-").isdigit() else 0
@@ -201,7 +217,6 @@ class TelegramBot:
         elif kind == "people":
             self.people[chat] = ["all"] if value == "all" else [value]
             await self._send_week(query, chat, self.week_offset.get(chat, 0))
-        await query.answer()
 
     async def _send_today(self, query, chat_id: int, offset: int):
         day = cal.now().date() + cal.timedelta(days=offset)
@@ -220,6 +235,25 @@ class TelegramBot:
             await query.edit_message_text(text, reply_markup=keyboard)
         except Exception:
             await query.message.reply_text(text, reply_markup=keyboard)
+
+    async def _refresh_widget(self, update, context, chat: int, tools: set[str]):
+        """Keep the standing week widget in sync after create/move/delete —
+        otherwise a photo rendered 30 s ago hides the new event."""
+        if not tools & {"calendar_create", "calendar_move", "calendar_delete"}:
+            return
+        mid = self.widget_msg.get(chat)
+        if not mid:
+            return
+        offset = self.week_offset.get(chat, 0)
+        first = _monday(cal.now().date()) + cal.timedelta(weeks=offset)
+        png = await asyncio.to_thread(
+            render.render_week_png, self.agent.store, first, self._people_of(chat))
+        try:
+            await context.bot.edit_message_media(
+                chat_id=chat, message_id=mid, media=InputMediaPhoto(png),
+                reply_markup=self._nav_keyboard(chat))
+        except Exception:
+            pass  # widget was deleted or too old; a fresh /week rebuilds it
 
     # --------------------------------------------------------- widget data
     @staticmethod
