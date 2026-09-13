@@ -73,10 +73,16 @@ class Gemma:
     def canonicalize(self, text: str) -> str:
         return self.chat(CANON_SYSTEM, text)
 
-    def repair(self, instruction: str, failures: list[str]) -> str:
+    def repair(self, instruction: str, failures: list[str],
+               calendar_context: str = "") -> str:
         msg = ("Original instruction: " + instruction
-               + "\nIt failed verification:\n- " + "\n- ".join(failures)
-               + "\nWrite the corrected canonical English instruction.")
+               + "\nIt failed:\n- " + "\n- ".join(failures))
+        if calendar_context:
+            msg += "\nCurrent calendar entries:\n" + calendar_context
+        msg += ("\nCheck the calendar entries and write ONE corrected canonical "
+                "English instruction that refers to an existing entry "
+                "(keep titles exactly as written). If nothing matches, output "
+                "exactly: NO_MATCH")
         return self.chat(CANON_SYSTEM, msg)
 
     def respond(self, user_text: str, result: str) -> str:
@@ -583,14 +589,31 @@ class Agent:
         trace["result"] = "\n".join(messages)
         trace["failures"] = failures
 
+    def _calendar_context(self) -> str:
+        """The entries Gemma may inspect during a repair (plan §24: the repair
+        loop sees the exact failure AND the calendar, so it can match titles)."""
+        events = self.store.events_between(
+            cal.now() - cal.timedelta(days=7), cal.now() + cal.timedelta(days=30))
+        return cal.render_events(events)
+
     def _repair_loop(self, trace: dict, text: str, failures: list) -> list | None:
-        """Gemma receives the exact failure -> new canonical instruction -> Needle."""
+        """Gemma receives the exact failure plus the current calendar entries,
+        corrects the canonical instruction, and Needle retries."""
         for attempt in range(1, MAX_REPAIRS + 1):
             if self.gemma is None or not self.gemma.available():
                 self._clarify(trace, "Ungültig/unsicher: " + "; ".join(failures))
                 return None
+            calendar_ctx = self._calendar_context()
             new_text = self._step(trace, f"repair {attempt}",
-                                  self.gemma.repair, text, failures)
+                                  self.gemma.repair, text, failures, calendar_ctx)
+            if not new_text or new_text.strip().upper().startswith("NO_MATCH"):
+                self._clarify(trace, "Kein passender Eintrag gefunden: "
+                              + "; ".join(failures))
+                return None
+            if new_text.strip().rstrip(".!?") == text.strip().rstrip(".!?"):
+                # an unchanged instruction would fail identically — stop early
+                self._clarify(trace, "Korrektur nicht möglich: " + "; ".join(failures))
+                return None
             resp = self._ask_needle(trace, new_text)
             calls = resp.get("function_calls") or []
             if calls:
@@ -606,7 +629,20 @@ class Agent:
                                       for s in trace["steps"]), 1)
         trace["ram_mb"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1)
         trace["done"] = True
+        trace["ts"] = f"{cal.now():%Y-%m-%d %H:%M:%S}"
         self.history.append(trace)
+        self._persist_trace(trace)
+
+    def _persist_trace(self, trace: dict) -> None:
+        """Append-only trace log (JSONL, one request per line) next to the DB —
+        persistent across restarts so traces can be revisited while debugging."""
+        try:
+            from pathlib import Path
+            log = Path(self.store.path).parent / "traces.jsonl"
+            with open(log, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(trace, ensure_ascii=False, default=str) + "\n")
+        except OSError:
+            pass  # tracing must never break the request
 
 
 # --------------------------------------------------- extraction schemas (lab)

@@ -51,3 +51,17 @@ def test_needle_integration(tmp_path, capsys):
     hits = sum(1 for *_, ok in rows if ok)
     print(f"tool accuracy: {hits}/{len(rows)}")
     assert hits >= 0.7 * len(rows), rows
+
+
+def test_trace_persistence(tmp_path):
+    """Traces land append-only in data/traces.jsonl (persistent, debuggable)."""
+    import json
+    store = CalendarStore(tmp_path / "cal.db")
+    agent = Agent(store, mode="needle")
+    for _ in agent.handle("Zeig meine Termine"):
+        pass
+    log = tmp_path / "traces.jsonl"
+    assert log.exists()
+    rows = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
+    assert rows[-1]["input"] == "Zeig meine Termine"
+    assert rows[-1]["done"] and rows[-1].get("ts")

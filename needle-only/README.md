@@ -113,8 +113,13 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
   vs ~80 %), kostet auf dem Pi aber ~7 s/Request gegenüber ~1 s needle-only.
   Beide Modi sind bewusst je startbar (`--mode`).
 - Repair-Schleife greift auf allen drei Pfaden (leere Calls, niedrige Confidence,
-  fehlgeschlagene Ausführung) mit der exakten Fehlermeldung an Gemma (max. 3,
-  danach Rückfrage) — Plan §24.
+  fehlgeschlagene Ausführung). Gemma bekommt dabei die exakte Fehlermeldung **und
+  den aktuellen Kalenderinhalt** (nächste 30 Tage), korrigiert die Instruction
+  auf existierende Einträge oder meldet NO_MATCH (max. 3 Loops, dann Rückfrage;
+  eine unveränderte Instruction bricht den Loop frühzeitig ab) — Plan §24.
+- **Traces sind persistent**: jeder Request landet append-only in
+  `data/traces.jsonl` (eine JSON-Zeile pro Request, inkl. Canonical, Steps,
+  Confidence, `ungrounded`, Fehler) — Grundlage für gezieltes Debugging.
 - Die kanonische Gemma-Instruction muss die Intent-Wörter (löschen/entfernen)
   bewahren — im Prompt explizit verankert, sonst erzeugt „Termin X löschen"
   ein CREATE statt eines DELETE (war ein echter Bug, über Repair nicht fangbar).
