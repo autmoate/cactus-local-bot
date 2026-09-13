@@ -187,6 +187,25 @@ class CalendarStore:
             people = self._load_people(c, [r["id"] for r in rows])
         return [self._event(r, people.get(r["id"], [])) for r in rows]
 
+    def find_candidates(self, title: str, near_date: date | None = None
+                        ) -> list[CalendarEvent]:
+        """All case-insensitive substring matches (both directions). Mutating
+        operations must not silently pick one when several match (plan §2)."""
+        if not title.strip():
+            return []
+        t = title.strip()
+        with self._conn() as c:
+            rows = c.execute(
+                "SELECT * FROM events WHERE title LIKE ? OR ? LIKE ('%' || title || '%') "
+                "ORDER BY start", (f"%{t}%", t)).fetchall()
+            people = self._load_people(c, [r["id"] for r in rows])
+        events = [self._event(r, people.get(r["id"], [])) for r in rows]
+        if near_date is not None:  # hard date filter for mutations (plan §3):
+            # an explicit date must never silently delete/move a different day
+            filtered = [e for e in events if _covers(e, near_date)]
+            return filtered
+        return events
+
     def find_by_title(self, title: str, near: datetime | date | None = None) -> CalendarEvent | None:
         """Case-insensitive substring match in both directions; prefers the next
         upcoming match relative to `near` (default: now), else the latest past one."""
@@ -643,6 +662,14 @@ def resolve_timing(date_expr: str = "", time_expr: str = "", end_date_expr: str 
             end_day = end_day.replace(year=day.year + 1)
         return start, datetime.combine(end_day + timedelta(days=1), time(0, 0)), True
     return start, start + timedelta(days=1), True
+
+
+def _covers(e: CalendarEvent, d: date) -> bool:
+    """Does event e cover the calendar day d? (half-open for all-day,
+    closed for timed events whose end is on the same/next day)"""
+    if e.all_day:
+        return e.start.date() <= d < e.end.date()
+    return e.start.date() <= d <= e.end.date()
 
 
 def _canonical_person(name: str) -> str:

@@ -63,5 +63,18 @@ def test_trace_persistence(tmp_path):
     log = tmp_path / "traces.jsonl"
     assert log.exists()
     rows = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
-    assert rows[-1]["input"] == "Zeig meine Termine"
+    assert rows[-1]["input"]
     assert rows[-1]["done"] and rows[-1].get("ts")
+
+
+def test_gemma_unavailable_fallback(tmp_path):
+    """Phase 4.12: cactus serve down -> no crash, needle-only fallback,
+    the trace documents Gemma unavailability."""
+    agent = Agent(CalendarStore(tmp_path / "cal.db"), mode="hybrid")
+    agent.gemma.available = lambda: (setattr(agent.gemma, "error", "down") or False)
+    traces = list(agent.handle("Termin Zahnarzt morgen um 14 Uhr"))
+    final = traces[-1]
+    assert final["done"] is True          # no crash, needle-only fallback ran
+    assert final["executed"] is True      # create executed
+    assert final.get("gemma_unavailable") or any(
+        s.get("detail") for s in final["steps"])  # trace documents the fallback

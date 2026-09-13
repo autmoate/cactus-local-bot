@@ -69,6 +69,35 @@ uv run python tests/test_e2e.py --hybrid     # Gemma-Pfad messen
 Unit-Tests laufen ohne Modelle (temporäre SQLite-DBs): DST, Monats-/Jahresgrenze,
 Schaltjahr, halboffene Intervalle, All-Day/Mehrtägig, Kollisionen, freie Slots.
 
+## Agent-Flow (aktuell)
+
+```
+User (de/en)
+   ↓
+Gemma Controller (CONTROLLER_SYSTEM → JSON continue/ask_user/finish)
+   ↓ instruction (keine Tool-Namen — Gemma zerlegt mehrfach-Items vor Needle)
+Needle complete()  → Tool + constrained Arguments (Grammar)
+   ↓
+Python: resolve (Zeit aus Text > Wochentag > Modell) → verify (Kollision,
+Titel-Kandidaten, Hard-Filter) → execute (SQLite)
+   ↓
+Observation (Ergebnis + Fehler + Kalenderinhalt) → zurück an Gemma
+   ↓
+Gemma: continue (nächster Schritt) | ask_user (Pending pro Session) | finish
+```
+Safety: MAX_AGENT_STEPS=8, Loop-Guards (identische Instruction/Observation,
+bereits abgeschlossene Schritte), Needle-Inference serialisiert
+(threading.Lock), Pending-State pro Session (Telegram = chat_id, Gradio =
+"local"), Gemma-Ausfall → dokumentierter Needle-only-Fallback.
+Needle-only-Modus läuft ohne Gemma in einem einzigen Durchlauf.
+
+Bekannte Schwäche: Gemma 4 E2B folgt dem Controller-JSON-Protokoll nur
+teilweise zuverlässig — einfache Creates laufen (Iteration 1 = Instruction,
+Iteration 2 = finish), aber der Controller fragt gelegentlich unnötig nach
+oder beendet zu früh. Das ist ein Gemma-Planning-Fehler (Schicht 1), sichtbar
+in jedem Trace (controller-Steps) — Verbesserung über die reale
+Nutzungs-Feedback-Schleife (Plan §22-24), nicht über Regex.
+
 ## Architektur (Kurzform)
 
 | Datei | Aufgabe |

@@ -59,10 +59,10 @@ class TelegramBot:
     def _plain(text: str | None) -> str:
         return (text or "").replace("**", "")
 
-    async def _run_agent(self, text: str) -> dict:
+    async def _run_agent(self, text: str, session_id: str) -> dict:
         def work():
             final = None
-            for trace in self.agent.handle(text):
+            for trace in self.agent.handle(text, session_id=session_id):
                 final = trace
             return final or {}
         return await asyncio.to_thread(work)
@@ -84,10 +84,12 @@ class TelegramBot:
         return self.people.get(chat_id, ["all"])
 
     def _nav_keyboard(self, chat_id: int) -> InlineKeyboardMarkup:
-        people = [InlineKeyboardButton("Alle", callback_data="people:all"),
-                  InlineKeyboardButton("Ich", callback_data="people:Ich")]
-        people += [InlineKeyboardButton(p, callback_data=f"people:{p}")
-                   for p in self.agent.store.participant_names() if p != "Ich"]
+        names = ["Alle", "Ich"] + [p for p in
+                                   self.agent.store.participant_names()
+                                   if p != "Ich"]
+        people = [InlineKeyboardButton(n, callback_data=f"people:{n}")
+                  for n in names]
+        rows = [people[i:i + 3] for i in range(0, len(people), 3)]  # plan §9
         return InlineKeyboardMarkup([
             [InlineKeyboardButton("◀ Woche", callback_data="week:-1"),
              InlineKeyboardButton("Heute", callback_data="week:0"),
@@ -95,7 +97,7 @@ class TelegramBot:
             [InlineKeyboardButton("Tag ◀", callback_data="day:-1"),
              InlineKeyboardButton("Heute", callback_data="day:0"),
              InlineKeyboardButton("Tag ▶", callback_data="day:1")],
-            people])
+            *rows])
 
     async def _send_week(self, query_or_message, chat_id: int, offset: int):
         first = _monday(cal.now().date()) + cal.timedelta(weeks=offset)
@@ -139,16 +141,22 @@ class TelegramBot:
         chat = update.effective_chat.id
         if not self._allowed_chat(chat):
             return
-        offset = self.day_offset.get(chat, 0)
+        await self._send_today_media(update.message, chat,
+                                     self.day_offset.get(chat, 0))
+
+    async def _send_today_media(self, target, chat: int, offset: int):
         day = cal.now().date() + cal.timedelta(days=offset)
-        events = self.agent.store.events_between(
-            cal.datetime.combine(day, cal.time(0, 0)),
-            cal.datetime.combine(day, cal.time(0, 0)) + cal.timedelta(days=1))
-        people = self._people_of(chat)
-        if people and "all" not in people:
-            events = [e for e in events if set(e.participants) & set(people)]
-        await update.message.reply_text(
-            self._plain(cal.render_events(events)) or "Keine Termine an diesem Tag.")
+        png = await asyncio.to_thread(
+            render.render_day_png, self.agent.store, day, self._people_of(chat))
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("◀", callback_data="day:-1"),
+             InlineKeyboardButton("Heute", callback_data="day:0"),
+             InlineKeyboardButton("▶", callback_data="day:1")]])
+        if hasattr(target, "edit_message_media"):
+            await target.edit_message_media(
+                InputMediaPhoto(png), reply_markup=keyboard)
+        else:
+            await target.reply_photo(png, reply_markup=keyboard)
 
     async def cmd_debug(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat = update.effective_chat.id
@@ -175,16 +183,18 @@ class TelegramBot:
         if not text:
             return
         await update.message.chat.send_action("typing")
-        trace = await self._run_agent(text)
+        trace = await self._run_agent(text, session_id=str(chat))
         result = self._plain(trace.get("result") or "…")
         tools = self._executed_tools(trace)
         await self._refresh_widget(update, context, chat, tools)
-        # Phase 27: widget choice from the structured trace, never from text
+        # Phase 27 + §6: widget choice from the structured trace; the renderer
+        # displays exactly the executed solver result (never re-schedules)
         if "calendar_find_slot" in tools:
+            resolved = self._resolved(trace, "calendar_find_slot")
             day = self._day_of(trace, "calendar_find_slot")
             png = await asyncio.to_thread(
                 render.render_availability_png, self.agent.store,
-                self._slot_people(trace), day)
+                resolved.get("persons", []), day, resolved)
             await update.message.reply_photo(png, caption=result[:1000])
             return
         await update.message.reply_text(result[:4000] or "…")
@@ -213,7 +223,7 @@ class TelegramBot:
         elif kind == "day":
             self.day_offset[chat] = (self.day_offset.get(chat, 0) + step) \
                 if step else 0
-            await self._send_today(query, chat, self.day_offset[chat])
+            await self._send_today_media(query, chat, self.day_offset[chat])
         elif kind == "people":
             self.people[chat] = ["all"] if value == "all" else [value]
             await self._send_week(query, chat, self.week_offset.get(chat, 0))

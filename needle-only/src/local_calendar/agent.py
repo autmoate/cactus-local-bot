@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import threading
 import time
 import urllib.request
 from collections import deque
@@ -24,7 +25,6 @@ CACTUS_BASE_URL = os.environ.get("CACTUS_BASE_URL", "http://127.0.0.1:8080/v1").
 # defaults to 0 (execute any grammar-valid call) and stays configurable.
 CONFIDENCE_THRESHOLD = float(os.environ.get("NEEDLE_CONFIDENCE_THRESHOLD", "0.3"))
 CONFIDENCE_FLOOR = float(os.environ.get("NEEDLE_CONFIDENCE_FLOOR", "0.0"))
-MAX_REPAIRS = int(os.environ.get("NEEDLE_MAX_REPAIRS", "3"))
 MAX_TOOL_CALLS_PER_STEP = int(os.environ.get("NEEDLE_MAX_TOOL_CALLS", "10"))
 MAX_AGENT_STEPS = int(os.environ.get("NEEDLE_MAX_AGENT_STEPS", "8"))  # Phase 9 safety ceiling
 WRITE_TOOLS = {"calendar_create", "calendar_move", "calendar_delete"}
@@ -76,36 +76,21 @@ class Gemma:
     def canonicalize(self, text: str) -> str:
         return self.chat(CANON_SYSTEM, text)
 
-    def repair(self, instruction: str, failures: list[str],
-               calendar_context: str = "") -> str:
-        msg = ("Original instruction: " + instruction
-               + "\nIt failed:\n- " + "\n- ".join(failures))
-        if calendar_context:
-            msg += "\nCurrent calendar entries:\n" + calendar_context
-        msg += ("\nCheck the calendar entries and write ONE corrected canonical "
-                "English instruction that refers to an existing entry "
-                "(keep titles exactly as written). If nothing matches, output "
-                "exactly: NO_MATCH")
-        return self.chat(CANON_SYSTEM, msg)
-
     def decide(self, state: dict) -> ControllerDecision | None:
         """Phase 6/8: Gemma observes and decides continue/ask_user/finish —
         no tool names, no arguments, just the next semantic step."""
-        obs = "\n".join(f"- {o}" for o in state.get("observations", [])[-4:])
-        user = f"User goal: {state.get('goal', '')}"
+        iteration = state.get("iteration", 1)
+        user = f"User goal: {state.get('goal', '')} Iteration {iteration}"
+        completed = state.get("completed") or []
+        if completed:  # plan §5.13: the controller always sees what is done
+            user += "\n\nCompleted:\n" + "\n".join(completed)
         if state.get("pending_question"):
             user += f"\nPending question to the user: {state['pending_question']}"
+        obs = "\n".join(f"- {o}" for o in state.get("observations", [])[-4:])
         if obs:
             user += f"\n\nObservations:\n{obs}"
         raw = self.chat(CONTROLLER_SYSTEM, user, max_tokens=240)
         return parse_controller_decision(raw)
-
-    def respond(self, user_text: str, result: str) -> str:
-        return self.chat(
-            "Du bist ein lokaler Kalender-Assistent. Antworte auf Deutsch in einem "
-            "kurzen Satz auf Basis des Tool-Ergebnisses. Erfinde nichts.",
-            f"Nutzer: {user_text}\nTool-Ergebnis:\n{result}", max_tokens=120)
-
 
 CANON_SYSTEM = """You rewrite a user's calendar request as ONE short canonical English instruction.
 
@@ -135,38 +120,51 @@ Output: Find a free slot for Lisa and Max.
 Input: Wie wird das Wetter morgen?
 Output: OFF_TOPIC"""
 
-CONTROLLER_SYSTEM = """You coordinate a calendar agent. You get the user's goal and observations of executed steps. Decide the next step.
+CONTROLLER_SYSTEM = """You coordinate a calendar agent. Decide the next step.
 
 Respond ONLY with JSON, nothing else:
 {"action": "continue" | "ask_user" | "finish", "instruction": "...", "message": "..."}
 
-- action=continue: another semantic step is needed. instruction = ONE canonical English
-  instruction for the tool model. Keep titles, person names, relative dates and times
-  exactly as written (or exactly as they appear in the calendar entries). Never compute dates.
-- action=ask_user: the goal is ambiguous. message = ONE short German question.
-- action=finish: the goal is fulfilled or off-topic. message = short German confirmation
-  or final answer.
-If a step failed, read the calendar entries in the observation and refer to an existing
-entry exactly as written. If no entry matches, ask the user (ask_user).
+You always receive "Iteration" in the input.
+
+FIRST STEP (no observations yet): your job is to turn the goal into the FIRST
+canonical English instruction for the tool model.
+- action=continue, instruction = the first operation as ONE short canonical
+  English sentence. Keep titles, person names, relative dates and times exactly
+  as written (or exactly as they appear in the calendar). Never compute dates.
+- If the goal contains SEVERAL operations, output only the FIRST one.
+- Never ask_user in the first step. Never finish in the first step.
+- finish only for requests with no calendar intent at all (off-topic).
+
+FOLLOW-UP STEPS (observations exist): read the observations carefully.
+- If the goal has remaining operations: action=continue with the NEXT operation
+  as ONE canonical English instruction (titles exactly as written).
+- If the result is ambiguous (several entries match and the goal does not say
+  which one): action=ask_user with ONE short German question.
+- If everything is done: action=finish with a short German confirmation.
+- If a step failed: read the calendar entries in the observation and refer to
+  an existing entry exactly as written. If nothing matches, ask_user.
 
 Examples:
-Goal: "Trag am 17.9. um 10 Uhr Zahnarzt ein, um 13 Uhr Meeting bis 16 Uhr und am 10.10. um 9 Uhr TÜV."
-Observation: "- created: Zahnarzt (17.09. 10:00)"
+Goal: "Termin Zahnarzt morgen um 14 Uhr" Iteration 1
+{"action": "continue", "instruction": "Create the Zahnarzt appointment tomorrow at 14:00.", "message": ""}
+
+Goal: "Trag am 17.9. um 10 Uhr Zahnarzt ein, um 13 Uhr Meeting bis 16 Uhr und am 10.10. um 9 Uhr TÜV." Iteration 1
+{"action": "continue", "instruction": "Create the Zahnarzt appointment on September 17 at 10:00.", "message": ""}
+
+Goal: (same) Iteration 2
+Observation: "created: Zahnarzt (17.09. 10:00)"
 {"action": "continue", "instruction": "Create the Meeting appointment on September 17 from 13:00 to 16:00.", "message": ""}
 
-Goal: "Verschieb das Meeting mit Lisa."
+Goal: (same) Iteration 4
+Observation: "created: TUEV (10.10. 09:00)"
+{"action": "finish", "instruction": "", "message": "Alle drei Termine wurden eingetragen."}
+
+Goal: "Verschieb das Meeting mit Lisa." Iteration 2
 Observation: "calendar_list found: Meeting Lisa Di 18.09. 10:00; Meeting Lisa Do 20.09. 14:00"
 {"action": "ask_user", "instruction": "", "message": "Welches Meeting mit Lisa meinst du - das am Dienstag oder das am Donnerstag?"}
 
-Goal: "Verschieb das Meeting mit Lisa auf einen freien 90-Minuten-Slot nächste Woche."
-Observation: "calendar_find_slot: Do 20.09. 14:00-15:30"
-{"action": "continue", "instruction": "Move the existing Meeting Lisa to Thursday at 14:00.", "message": ""}
-
-Goal: "Wann haben Lisa und ich nächste Woche 90 Minuten?"
-Observation: "calendar_find_slot: Mo 24.09. 09:00-10:30"
-{"action": "finish", "instruction": "", "message": "Nächste Woche habt ihr am Montag 09:00-10:30 gemeinsam Zeit."}
-
-Goal: "Wie wird das Wetter morgen?"
+Goal: "Wie wird das Wetter morgen?" Iteration 1
 {"action": "finish", "instruction": "", "message": "Das gehört nicht zum Kalender."}"""
 
 
@@ -341,15 +339,9 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
 
 def _do_move(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
     checks: list = []
-    ev = store.find_by_title(str(args.get("title", "")))
-    checks.append({"check": "Eintrag gefunden", "ok": ev is not None,
-                   "value": ev.title if ev else "-"})
-    if ev is None:
-        return {"ok": False, "checks": checks, "resolved": {},
-                "message": f"❌ Kein Eintrag '{args.get('title')}' gefunden."}
     date_expr = str(args.get("date", "")).strip()
     time_expr = str(args.get("time", "")).strip()
-    new_day = cal.resolve_date(date_expr) if date_expr else None
+    new_day = cal.resolve_date(date_expr, roll=False) if date_expr else None
     new_time = cal.resolve_time(time_expr) if time_expr else None
     if new_day is None and new_time is None:
         return {"ok": False, "checks": checks, "resolved": {},
@@ -359,12 +351,12 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
     # The LAST explicit date in the text is the target; an explicit time in the
     # text wins, no time in the text keeps the event's current time.
     if context:
-        dates = cal.extract_dates_from_text(context)
+        dates = cal.extract_dates_from_text(context, roll=False)
         if dates:
             if new_day is not None:
                 if new_day != dates[-1] and new_day in dates:
                     new_day = dates[-1]
-                elif len(dates) == 1 and dates[0] != ev.start.date():
+                elif len(dates) == 1:
                     new_day = dates[-1]
             else:
                 new_day = dates[-1]
@@ -377,12 +369,44 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
                            "value": f"{text_time:%H:%M}"})
         else:
             new_time = None
+    # Source resolution with candidates: ambiguity must ask, never guess (plan §2)
+    candidates = store.find_candidates(str(args.get("title", "")))
+    if not candidates:
+        return {"ok": False, "checks": checks, "resolved": {},
+                "message": f"❌ Kein Eintrag '{args.get('title')}' gefunden."}
+    if len(candidates) > 1:
+        listing = "; ".join(_describe(c) for c in candidates[:5])
+        return {"ok": False, "checks": checks, "resolved": {},
+                "message": (f"⚠️ Mehrere Einträge '{args.get('title')}' — "
+                            f"bitte präzisieren: {listing}")}
+    ev = candidates[0]
+    checks.append({"check": "Eintrag gefunden", "ok": True, "value": ev.title})
+    if new_day is None and new_time is None:
+        return {"ok": False, "checks": checks, "resolved": {},
+                "message": "❌ Kein neues Datum/keine neue Zeit erkannt."}
+    # Phase 1.1: build the candidate first — a move never writes through a
+    # collision and never silently blocks itself on its own old slot.
     if ev.all_day:
-        moved = cal.move_event(store, ev, cal.datetime.combine(
-            new_day or ev.start.date(), cal.time(0, 0)))
+        new_start = cal.datetime.combine(new_day or ev.start.date(), cal.time(0, 0))
     else:
-        moved = cal.move_event(store, ev, cal.datetime.combine(
-            new_day or ev.start.date(), new_time or ev.start.time()))
+        new_start = cal.datetime.combine(new_day or ev.start.date(),
+                                         new_time or ev.start.time())
+    if ev.all_day:
+        days = (ev.end.date() - ev.start.date()).days
+        new_end = new_start + cal.timedelta(days=max(days, 1))
+    else:
+        new_end = new_start + (ev.end - ev.start)
+    candidate = ev.model_copy(update={"start": new_start, "end": new_end})
+    clash = store.collision(candidate)
+    checks.append({"check": "Kollision", "ok": clash is None,
+                   "value": clash.title if clash else "keine"})
+    if clash:
+        return {"ok": False, "checks": checks,
+                "resolved": candidate.model_dump(mode="json"),
+                "message": (f"⚠️ Kollision: '{clash.title}' belegt bereits "
+                            f"{cal._fmt_day(clash.start)} {cal._fmt_time(clash.start)}. "
+                            "Nicht verschoben.")}
+    moved = cal.move_event(store, ev, new_start, new_end)
     return {"ok": True, "checks": checks, "resolved": moved.model_dump(mode="json"),
             "message": f"✏️ Verschoben: {_describe(moved)}"}
 
@@ -390,17 +414,28 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
 def _do_delete(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
     checks: list = []
     date_expr = str(args.get("date", "")).strip()
-    near = cal.resolve_date(date_expr) if date_expr else None
-    if near is not None and context:
-        # the model computes the hint date itself and gets it wrong; the explicit
+    near = cal.resolve_date(date_expr, roll=False) if date_expr else None
+    if near is None and context:
+        # the model computes the hint date itself and gets it wrong; an explicit
         # date in the request text is authoritative (no roll: existing entry)
-        near = _fix_text_date(context, near, roll=False)
-    ev = store.find_by_title(str(args.get("title", "")), near=near)
-    checks.append({"check": "Eintrag gefunden", "ok": ev is not None,
-                   "value": ev.title if ev else "-"})
-    if ev is None:
+        near = cal.extract_date_from_text(context, roll=False)
+    # Phase 1.2/1.3: candidates instead of silent pick; the date hint is a HARD
+    # filter — 'Lösch Meeting am 12.9.' must never delete the 17.9. meeting.
+    candidates = store.find_candidates(str(args.get("title", "")), near)
+    if not candidates:
+        if near is not None:
+            return {"ok": False, "checks": checks, "resolved": {},
+                    "message": f"❌ Kein Eintrag '{args.get('title')}' am "
+                               f"{near:%d.%m.%Y} gefunden."}
         return {"ok": False, "checks": checks, "resolved": {},
                 "message": f"❌ Kein Eintrag '{args.get('title')}' gefunden."}
+    if len(candidates) > 1:
+        listing = "; ".join(_describe(c) for c in candidates[:5])
+        return {"ok": False, "checks": checks, "resolved": {},
+                "message": (f"⚠️ Mehrere Einträge '{args.get('title')}' — "
+                            f"bitte präzisieren: {listing}")}
+    ev = candidates[0]
+    checks.append({"check": "Eintrag gefunden", "ok": True, "value": ev.title})
     cal.delete_event(store, ev.id)
     return {"ok": True, "checks": checks, "resolved": ev.model_dump(mode="json"),
             "message": f"🗑️ Gelöscht: {_describe(ev)}"}
@@ -448,22 +483,37 @@ def _do_find_slot(store: cal.CalendarStore, args: dict, context: str = "") -> di
     persons = cal.parse_persons(raw)
     duration = max(5, _to_int(args.get("duration_min"), 60))
     date_expr = str(args.get("date", "")).strip()
-    if date_expr:
-        day = cal.resolve_date(cal.strip_period(date_expr.lower()).strip())
-        if day is None:
-            return {"ok": False, "checks": [], "resolved": {},
-                    "message": f"❌ Datum nicht verstanden: {date_expr!r}"}
-        first = last = day
-    else:
+    until_expr = str(args.get("until", "")).strip()
+    # no roll: find-slot searches dates as written (past included)
+    first = cal.resolve_date(date_expr, roll=False) if date_expr else None
+    last = cal.resolve_date(until_expr, roll=False) if until_expr else None
+    if date_expr and first is None:
+        return {"ok": False, "checks": [], "resolved": {},
+                "message": f"❌ Datum nicht verstanden: {date_expr!r}"}
+    if until_expr and last is None:
+        return {"ok": False, "checks": [], "resolved": {},
+                "message": f"❌ Enddatum nicht verstanden: {until_expr!r}"}
+    if first is None:
         first = cal.now().date()
         last = first + cal.timedelta(days=max(1, _to_int(args.get("days"), 7)) - 1)
+    elif last is None:
+        last = first
     period = cal._period_of(date_expr)
     work_start, work_end = cal.PERIOD_WINDOWS.get(
         period, (cal.WORK_START, cal.WORK_END))
     slots = cal.find_free_slots(store, persons, first, last, duration,
                                 work_start, work_end)
+    # Phase 6.6: the executed solver result is the truth — Telegram renders
+    # exactly these data, it never re-schedules with different defaults.
     return {"ok": True, "checks": [],
-            "resolved": {"persons": persons, "day": str(first)},
+            "resolved": {"persons": persons,
+                         "first_day": f"{first:%Y-%m-%d}",
+                         "last_day": f"{last:%Y-%m-%d}",
+                         "duration_min": duration,
+                         "window_start": f"{work_start:%H:%M}",
+                         "window_end": f"{work_end:%H:%M}",
+                         "slots": [[f"{s:%Y-%m-%d %H:%M}", f"{e:%Y-%m-%d %H:%M}"]
+                                   for s, e in slots]},
             "message": cal.render_slots(slots)}
 
 
@@ -489,18 +539,19 @@ def build_tools(store: cal.CalendarStore) -> dict:
 
     @needle.tool
     def calendar_find_slot(persons: str, duration_min: int = 60,
-                           date: str = "", days: int = 7) -> str:
+                           date: str = "", until: str = "", days: int = 7) -> str:
         """Find common free time slots for a group of persons.
 
         Args:
             persons: comma-separated participant names
             duration_min: minimum slot length in minutes
-            date: optional single day like 'tomorrow afternoon'
-            days: search horizon in days when no date is given
+            date: first day like 'tomorrow afternoon' or 'September 20'
+            until: last day of the search range like 'September 24'; empty with date means one day
+            days: search horizon in days (from today) when no date is given
         """
         return execute_call(store, "calendar_find_slot", {
             "persons": persons, "duration_min": duration_min,
-            "date": date, "days": days})["message"]
+            "date": date, "until": until, "days": days})["message"]
 
     @needle.tool
     def calendar_create(title: str, date: str = "", until: str = "",
@@ -564,7 +615,9 @@ class Agent:
                                     system=system_facts())
         self._facts_key = system_facts()
         self.history: deque = deque(maxlen=10)
-        self.pending: dict | None = None  # Phase 12: pending ask_user state
+        self.pending: dict[str, dict] = {}  # Phase 12, per session_id (plan §10)
+        self.inference_lock = threading.Lock()  # plan §11: needle engine is
+        # not reentrant — Telegram threads/Gradio callbacks serialize here
 
     def _step(self, trace: dict, name: str, fn, *args):
         t0 = time.perf_counter()
@@ -587,7 +640,9 @@ class Agent:
                                         system=facts)
         self.needle.reset()  # each request is independent; keep tools loaded
         text = (text or "").strip().rstrip(".!?;:,")  # trailing periods cause refusals
-        return self._step(trace, "needle_complete", self.needle.complete, text) or {}
+        with self.inference_lock:  # plan §11: one engine call at a time
+            return self._step(trace, "needle_complete",
+                              self.needle.complete, text) or {}
 
     def _resolve(self, name: str, args: dict) -> dict:
         """Deterministic pre-resolution of symbolic args (trace + verification)."""
@@ -643,31 +698,35 @@ class Agent:
         trace["result"] = (why + " Bitte formuliere den Wunsch konkret: Termin "
                            "anlegen/verschieben/löschen, Urlaub, Liste, freie Slots.")
 
-    def handle(self, user_text: str):
+    def handle(self, user_text: str, session_id: str = "local"):
         trace = {"input": user_text, "mode": self.mode, "canonical": None,
                  "steps": [], "result": "", "executed": False,
                  "confidence": None, "total_ms": None, "done": False}
         yield trace
-        state = {"goal": user_text, "observations": []}
-        resumed = bool(self.pending)
+        state = {"goal": user_text, "observations": [], "completed": []}
+        pending = self.pending.pop(session_id, None)
+        resumed = bool(pending)
         if resumed:
             # Phase 12: the user answered a pending question -> continue the task
-            state["goal"] = self.pending["goal"]
-            state["observations"] = self.pending["observations"] + [
+            state["goal"] = pending["goal"]
+            state["observations"] = pending["observations"] + [
                 f"user answered: {user_text!r}"]
-            state["pending_question"] = self.pending["question"]
-            self.pending = None
+            state["pending_question"] = pending["question"]
         controller = (self.gemma is not None and self.gemma.available())
         if self.gemma is not None and not self.gemma.available():
-            trace["steps"][-1]["detail"] = (
-                f"Gemma nicht erreichbar ({self.gemma.error}) — Needle direkt")
+            detail = (f"Gemma nicht erreichbar ({self.gemma.error}) — Needle direkt")
+            if trace["steps"]:
+                trace["steps"][-1]["detail"] = detail
+            else:
+                trace["gemma_unavailable"] = detail
         if controller:
             # Phase 5/10: Gemma understands the goal and formulates the first
             # semantic step; multi-item requests are decomposed here, before Needle.
-            yield from self._controller_loop(trace, state, last_instruction=None)
+            yield from self._controller_loop(trace, state, last_instruction=None,
+                                             session_id=session_id)
         else:
             if self.gemma is not None:
-                trace["steps"][-1]["detail"] = (
+                trace["gemma_unavailable"] = (
                     f"Gemma nicht erreichbar ({self.gemma.error}) — Needle direkt")
             resp = self._ask_needle(trace, user_text)
             calls = resp.get("function_calls") or []
@@ -682,11 +741,13 @@ class Agent:
         self._finish(trace)
         yield trace
 
-    def _controller_loop(self, trace: dict, state: dict, last_instruction: str | None):
+    def _controller_loop(self, trace: dict, state: dict, last_instruction: str | None,
+                         session_id: str = "local"):
         """Phase 5-12: Gemma decides continue/ask_user/finish after every result;
         every continue-instruction goes to Needle, which stays the only dispatcher."""
         last_obs = None
         for iteration in range(1, MAX_AGENT_STEPS + 1):
+            state["iteration"] = iteration
             decision = self._step(trace, f"controller {iteration}",
                                   self.gemma.decide, state)
             yield trace
@@ -700,9 +761,10 @@ class Agent:
                 return
             if decision.action == "ask_user":
                 trace["result"] = decision.message or trace["result"]
-                self.pending = {"goal": state["goal"],
-                                "observations": state["observations"][:],
-                                "question": decision.message}
+                self.pending[session_id] = {
+                    "goal": state["goal"],
+                    "observations": state["observations"][:],
+                    "question": decision.message}
                 return
             instruction = (decision.instruction or "").strip()
             if not instruction:
@@ -713,6 +775,12 @@ class Agent:
                 self._clarify(trace, "Loop erkannt (identische Instruction) — "
                               + (trace["result"] or ""))
                 return
+            if any(self._same(instruction, done)
+                   for done in state.get("completed_instructions", [])):
+                # Phase 5.14: an already executed instruction is never re-planned
+                self._clarify(trace, "Schritt bereits abgeschlossen — "
+                              + (trace["result"] or ""))
+                return
             last_instruction = instruction
             trace["canonical"] = instruction
             resp = self._ask_needle(trace, instruction)
@@ -720,6 +788,11 @@ class Agent:
             trace["confidence"] = resp.get("confidence")
             if calls:
                 yield from self._execute_steps(trace, calls, instruction)
+                if trace["executed"]:
+                    state["completed"].append(
+                        f"- {trace['result'].splitlines()[0][:120]}")
+                    state.setdefault("completed_instructions", []).append(
+                        instruction)
             else:
                 trace["result"] = "Kein Kalender-Befehl erkannt."
             obs = self._observation(trace, instruction)
