@@ -136,11 +136,12 @@ def _describe(ev: cal.CalendarEvent) -> str:
             f"{cal._fmt_time(ev.start)}–{cal._fmt_time(ev.end)})")
 
 
-def _fix_text_date(context: str, day: cal.date) -> cal.date:
+def _fix_text_date(context: str, day: cal.date, roll: bool = True) -> cal.date:
     """Deterministic post-choice fix (plan: Python computes, not the model):
     an explicit date in the request text wins over the model's computed date,
-    because the model regularly miscalculates dates."""
-    text_date = cal.extract_date_from_text(context or "")
+    because the model regularly miscalculates dates. roll=True applies the
+    past->next-year rule (create); matching existing entries uses roll=False."""
+    text_date = cal.extract_date_from_text(context or "", roll=roll)
     if text_date is not None and (text_date.month, text_date.day) != (day.month, day.day):
         return text_date
     return day
@@ -205,7 +206,7 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
     label = "🚫 Absence eingetragen" if all_day else "✅ Erstellt"
     note = ""
     if start.date() < cal.now().date():
-        note = " ⚠️ Datum lag in der Vergangenheit — aufs Folgejahr gerollt."
+        note = " ⚠️ Datum liegt in der Vergangenheit."
     return {"ok": True, "checks": checks, "resolved": ev.model_dump(mode="json"),
             "message": f"{label}: {_describe(ev)}{note}"}
 
@@ -225,8 +226,29 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
     if new_day is None and new_time is None:
         return {"ok": False, "checks": checks, "resolved": {},
                 "message": "❌ Kein neues Datum/keine neue Zeit erkannt."}
-    if new_day is not None:
-        new_day = _fix_text_date(context, new_day)
+    # Deterministic target fix (plan: Python computes): 'Move X on A to B' — the
+    # model often repeats the source day A and/or reads the target day as a time.
+    # The LAST explicit date in the text is the target; an explicit time in the
+    # text wins, no time in the text keeps the event's current time.
+    if context:
+        dates = cal.extract_dates_from_text(context)
+        if dates:
+            if new_day is not None:
+                if new_day != dates[-1] and new_day in dates:
+                    new_day = dates[-1]
+                elif len(dates) == 1 and dates[0] != ev.start.date():
+                    new_day = dates[-1]
+            else:
+                new_day = dates[-1]
+            checks.append({"check": "Zieldatum aus Text", "ok": True,
+                           "value": f"{new_day:%d.%m.%Y}"})
+        text_time = cal.extract_time_from_text(context)
+        if text_time is not None:
+            new_time = text_time
+            checks.append({"check": "Zeit aus Text", "ok": True,
+                           "value": f"{text_time:%H:%M}"})
+        else:
+            new_time = None
     if ev.all_day:
         moved = cal.move_event(store, ev, cal.datetime.combine(
             new_day or ev.start.date(), cal.time(0, 0)))
@@ -241,6 +263,10 @@ def _do_delete(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
     checks: list = []
     date_expr = str(args.get("date", "")).strip()
     near = cal.resolve_date(date_expr) if date_expr else None
+    if near is not None and context:
+        # the model computes the hint date itself and gets it wrong; the explicit
+        # date in the request text is authoritative (no roll: existing entry)
+        near = _fix_text_date(context, near, roll=False)
     ev = store.find_by_title(str(args.get("title", "")), near=near)
     checks.append({"check": "Eintrag gefunden", "ok": ev is not None,
                    "value": ev.title if ev else "-"})

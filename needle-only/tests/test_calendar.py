@@ -274,3 +274,47 @@ def test_render_events_markdown(store):
     text = render_events(list_events(store, start=dt(2026, 9, 1), end=dt(2026, 10, 1)))
     assert "Urlaub" in text and "Mo 21.09." in text
     assert "14:00–15:00 Zahnarzt (Ich, Lisa)" in text
+
+
+# --------------------------------------------------- text-date precedence fixes
+
+def test_extract_dates_no_roll_and_roll():
+    from local_calendar.calendar import extract_dates_from_text as ex
+    today = date(2026, 9, 13)
+    # move/delete matching: no roll
+    assert ex("Move Einkaufen on 8.9. to 9.9.", today) == [date(2026, 9, 8), date(2026, 9, 9)]
+    # create semantics: past explicit dates roll to next year
+    assert ex("Termin am 9.9. um 14 Uhr", today, roll=True) == [date(2027, 9, 9)]
+    assert ex("Termin am 19.9.", today, roll=True) == [date(2026, 9, 19)]
+    assert ex("kein datum hier", today) == []
+
+
+def test_extract_time_from_text():
+    from local_calendar.calendar import extract_time_from_text as ext
+    assert ext("Verschiebe X am 8.9. auf den 9.9.") is None  # 9.9 is a date, not 9:00
+    assert ext("auf den 20.9. um 10 Uhr").hour == 10
+    assert ext("Termin 17Uhr").hour == 17
+    assert ext("meeting at 14:30") == time(14, 30)
+
+
+def test_find_by_title_near_accepts_date(store):
+    create_event(store, "Einkaufen", dt(2026, 9, 8, 9), dt(2026, 9, 8, 10),
+                 False, ["Ich"])
+    found = store.find_by_title("Einkaufen", near=date(2026, 9, 8))  # no TypeError
+    assert found is not None and found.title == "Einkaufen"
+
+
+def test_move_target_last_text_date_wins(store):
+    e = create_event(store, "Einkaufen", dt(2026, 9, 8, 9), dt(2026, 9, 8, 10),
+                     False, ["Ich"])
+    # model repeated the source day; the canonical names source AND target
+    moved = move_event(store, e, dt(2026, 9, 8, 9))  # simulate model's wrong target
+    assert moved.start.date() == date(2026, 9, 8)  # solver stays literal
+    # the correction lives in agent._do_move; verified via execute_call:
+    from local_calendar.agent import execute_call
+    out = execute_call(store, "calendar_move",
+                       {"title": "Einkaufen", "date": "2026-09-08", "time": "09:00"},
+                       "Move Einkaufen on 8.9. to 9.9.")
+    assert out["ok"]
+    assert store.events_between(dt(2026, 9, 1), dt(2026, 10, 1))[0].start.date() \
+        == date(2026, 9, 9)

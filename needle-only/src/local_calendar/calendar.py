@@ -184,12 +184,14 @@ class CalendarStore:
             people = self._load_people(c, [r["id"] for r in rows])
         return [self._event(r, people.get(r["id"], [])) for r in rows]
 
-    def find_by_title(self, title: str, near: datetime | None = None) -> CalendarEvent | None:
+    def find_by_title(self, title: str, near: datetime | date | None = None) -> CalendarEvent | None:
         """Case-insensitive substring match in both directions; prefers the next
         upcoming match relative to `near` (default: now), else the latest past one."""
         if not title.strip():
             return None
         t = title.strip()
+        if near is not None and not isinstance(near, datetime):
+            near = datetime.combine(near, time(0, 0))
         with self._conn() as c:
             rows = c.execute(
                 "SELECT * FROM events WHERE title LIKE ? OR ? LIKE ('%' || title || '%') "
@@ -383,28 +385,67 @@ def resolve_date(expr: str, today: date | None = None) -> date | None:
     return None
 
 
-def extract_date_from_text(text: str, today: date | None = None) -> date | None:
-    """First explicit date (DD.MM.[YYYY] or ISO) found in a request text, or None.
-    Used to correct the model's computed dates: Python wins, not the model."""
+def extract_dates_from_text(text: str, today: date | None = None,
+                            roll: bool = False) -> list[date]:
+    """All explicit dates (DD.MM.[YYYY] or ISO) in a request text, in order.
+    Without an explicit year the current year is assumed; roll=True moves past
+    dates to the following year (create semantics), matching existing entries
+    uses roll=False (move/delete target matching)."""
     if not text:
-        return None
+        return []
+    today = today or now().date()
+    out: list[date] = []
+    seen: set[tuple[int, int, int]] = set()
     for m in re.finditer(r"\b(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?\b", text):
         d, mo, y = int(m[1]), int(m[2]), m[3]
         try:
-            year = int(y) + (2000 if len(y) == 2 else 0) if y else None
-        except ValueError:
-            continue
-        try:
-            if year:
-                return date(year, mo, d)
-            return resolve_date(f"{m[1]}.{m[2]}.", today)
+            if y:
+                out.append(date(int(y) + (2000 if len(y) == 2 else 0), mo, d))
+                continue
+            got = date(today.year, mo, d)
+            if roll and got < today:
+                got = got.replace(year=got.year + 1)
+            out.append(got)
         except ValueError:
             continue
     for m in re.finditer(r"\b(20\d{2})-(\d{2})-(\d{2})\b", text):
         try:
-            return date(int(m[1]), int(m[2]), int(m[3]))
+            out.append(date(int(m[1]), int(m[2]), int(m[3])))
         except ValueError:
             continue
+    return [d for d in out if (d.year, d.month, d.day) not in seen
+            and not seen.add((d.year, d.month, d.day))]
+
+
+def extract_date_from_text(text: str, today: date | None = None,
+                           roll: bool = False) -> date | None:
+    """First explicit date in a request text, or None."""
+    dates = extract_dates_from_text(text, today, roll)
+    return dates[0] if dates else None
+
+
+_TIME_AT = re.compile(r"\b(?:um|at)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?", re.I)
+_TIME_COLON = re.compile(r"\b(\d{1,2}):(\d{2})\b")
+_TIME_UHR = re.compile(r"\b(\d{1,2})\s*uhr\b", re.IGNORECASE)
+
+
+def extract_time_from_text(text: str) -> time | None:
+    """First explicit time of day (HH:MM, 'um 14 Uhr', '17Uhr', 'at 3 pm') in the
+    text, or None when the text names no time of day."""
+    if not text:
+        return None
+    m = _TIME_COLON.search(text)
+    if m:
+        return resolve_time(m[0].strip())
+    m = _TIME_AT.search(text)
+    if m:
+        expr = f"{m[1]}:{m[2]}" if m[2] else m[1]
+        if m[3]:
+            expr += f" {m[3]}"
+        return resolve_time(expr)
+    m = _TIME_UHR.search(text)
+    if m:
+        return resolve_time(f"{m[1]} uhr")
     return None
 
 
