@@ -344,13 +344,14 @@ _REL_OFFSET = re.compile(r"in\s+(\d+)\s*(min(?:ute[n]?)?|h|hour[s]?|stunde[n]?|t
                          re.IGNORECASE)
 
 
-def resolve_date(expr: str, today: date | None = None) -> date | None:
+def resolve_date(expr: str, today: date | None = None, roll: bool = True) -> date | None:
     """Resolve a symbolic/absolute date expression to a concrete local date.
 
     Understands: today/tomorrow/day after tomorrow (+ German), weekday names
     (optional 'next'), ISO YYYY-MM-DD, German DD.MM.[YYYY], 'DD month' and
     'month DD' in German and English. Returns None when nothing matches.
-    """
+    roll=False keeps year-less past dates in the current year (read queries
+    must allow the past as written)."""
     if not expr or not expr.strip():
         return None
     e = expr.strip().lower()
@@ -365,6 +366,10 @@ def resolve_date(expr: str, today: date | None = None) -> date | None:
         return date.fromisoformat(e)
     except ValueError:
         pass
+    try:
+        return datetime.fromisoformat(e).date()  # model emits ISO datetimes too
+    except ValueError:
+        pass
     m = re.match(r"^(\d{1,2})\.(\d{1,2})\.?(\d{2,4})?$", e)
     if m:
         d, mo, y = int(m[1]), int(m[2]), m[3]
@@ -373,7 +378,7 @@ def resolve_date(expr: str, today: date | None = None) -> date | None:
             out = date(year, mo, d)
         except ValueError:
             return None
-        if not y and out < today:
+        if roll and not y and out < today:
             out = out.replace(year=out.year + 1)
         return out
     m = re.match(r"^(\d{1,2})\.?\s+([a-zäöüß]+)$", e) or re.match(r"^([a-zäöüß]+)\s+(\d{1,2})$", e)
@@ -384,7 +389,7 @@ def resolve_date(expr: str, today: date | None = None) -> date | None:
             out = date(today.year, month, d)
         except ValueError:
             return None
-        if out < today:
+        if roll and out < today:
             out = out.replace(year=out.year + 1)
         return out
     nxt = re.match(r"(?:next|nächste[nr]?|kommende[nr]?)\s+([a-zäöüß]+)", e)

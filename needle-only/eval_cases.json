@@ -192,5 +192,161 @@
     "expected_tool": null,
     "should_execute": false,
     "category": "off-topic"
+  },
+  {
+    "input": "Was hatte ich am 7.9.?",
+    "expected_tool": "calendar_list",
+    "should_execute": true,
+    "category": "historical read",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Zahnarzt",
+          "date": "2026-09-07",
+          "time": "10:00"
+        }
+      }
+    ],
+    "expected": {
+      "result_contains": "Zahnarzt"
+    }
+  },
+  {
+    "input": "Welche Termine hatte ich vom 1. bis 9. September?",
+    "expected_tool": "calendar_list",
+    "should_execute": true,
+    "category": "range read",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Meeting",
+          "date": "2026-09-09",
+          "time": "14:00"
+        }
+      }
+    ],
+    "expected": {
+      "result_contains": "Meeting"
+    }
+  },
+  {
+    "input": "Meeting am 17.9. von 13 bis 16 Uhr",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "explicit end time",
+    "expected": {
+      "title_contains": "meeting",
+      "all_day": false,
+      "start_time": "13:00",
+      "end_time": "16:00"
+    }
+  },
+  {
+    "input": "Trag am 17.9. um 10 Uhr Zahnarzt ein, am 18.9. um 11 Uhr Friseur und am 10.10. um 9 Uhr TÜV.",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "multi-create",
+    "expected": {
+      "exists": [
+        {
+          "title_contains": "zahnarzt",
+          "start_date": "2026-09-17"
+        },
+        {
+          "title_contains": "friseur",
+          "start_date": "2026-09-18"
+        },
+        {
+          "title_contains": "tüv",
+          "start_date": "2026-10-10"
+        }
+      ]
+    }
+  },
+  {
+    "input": "Lege Termin Kino am 5.10. um 20 Uhr an, verschiebe Alt-Kino auf den 6.10. und lösche den Termin Sonderfall.",
+    "expected_tool": "calendar_create",
+    "should_execute": true,
+    "category": "mixed multi-action",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Alt-Kino",
+          "date": "2026-10-05",
+          "time": "19:00"
+        }
+      },
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Sonderfall",
+          "date": "2026-10-07",
+          "time": "12:00"
+        }
+      }
+    ],
+    "expected": {
+      "exists": [
+        {
+          "title_contains": "kino",
+          "start_date": "2026-10-06"
+        }
+      ],
+      "absent": [
+        "Sonderfall",
+        "Alt-Kino"
+      ]
+    }
+  },
+  {
+    "input": "Verschieb das Meeting mit Lisa.",
+    "expected_tool": null,
+    "should_execute": false,
+    "category": "ambiguity -> ask user",
+    "hybrid_only": true,
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Meeting Lisa",
+          "date": "2026-09-18",
+          "time": "10:00"
+        }
+      },
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Meeting Lisa",
+          "date": "2026-09-20",
+          "time": "14:00"
+        }
+      }
+    ],
+    "expected": {
+      "result_contains": "?"
+    }
+  },
+  {
+    "input": "Verschieb das Meeting mit Lisa dahin, wo wir nächste Woche beide 90 Minuten frei haben.",
+    "expected_tool": null,
+    "should_execute": true,
+    "hybrid_only": true,
+    "category": "find-slot -> move",
+    "setup": [
+      {
+        "tool": "calendar_create",
+        "args": {
+          "title": "Meeting Lisa",
+          "date": "2026-09-18",
+          "time": "10:00"
+        }
+      }
+    ],
+    "expected": {
+      "title_contains": "meeting lisa"
+    }
   }
 ]

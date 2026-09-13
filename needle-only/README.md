@@ -110,8 +110,20 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
 - **Mehrtägige Absences**: Enddatum landet mitunter im falschen Feld; der
   Resolver toleriert das, und zwei Datumsangaben im Text bilden die Zeitspanne.
 - **Hybrid (+Gemma)** stabilisiert deutsche Umgangssprache (95 % Tool-Accuracy
-  vs ~80 %), kostet auf dem Pi aber ~7 s/Request gegenüber ~1 s needle-only.
-  Beide Modi sind bewusst je startbar (`--mode`).
+  vs ~80 %), kostet auf dem Pi aber ~7 s/Gemma-Call gegenüber ~1 s needle-only;
+  der Controller-Loop addiert je Iteration einen Aufruf (Design-Dokumentiert,
+  bewusst akzeptiert). Beide Modi sind je startbar (`--mode`).
+- `calendar_list` versteht konkrete Tage/Zeiträume (auch in der Vergangenheit,
+  ohne Jahres-Roll), `calendar_create` explizite Zeitbereiche (`end_time`, mit
+  end>time-Verifikation) und Multi-Create-Requests (Needle multi-call bzw.
+  Gemma-Zerlegung).
+- **Gemma ist jetzt ein iterativer Controller** (continue / ask_user / finish):
+  Mehr-Item-Anfragen werden vor Needle in einzelne Schritte zerlegt, Observationen
+  (Ergebnisse, Fehler + Kalenderinhalt) fließen nach jedem Schritt zurück,
+  Ambiguitäten führen zu Rückfragen, deren Antwort den Task fortsetzt
+  (minimale Pending-State). Safety-Ceiling: 8 Agent-Iterationen + Loop-Guards
+  (identische Instruction/Observation). Needle bleibt alleiniger Dispatcher;
+  `MAX_TOOL_CALLS_PER_STEP=10`, `MAX_AGENT_STEPS=8` (env-konfigurierbar).
 - Repair-Schleife greift auf allen drei Pfaden (leere Calls, niedrige Confidence,
   fehlgeschlagene Ausführung). Gemma bekommt dabei die exakte Fehlermeldung **und
   den aktuellen Kalenderinhalt** (nächste 30 Tage), korrigiert die Instruction

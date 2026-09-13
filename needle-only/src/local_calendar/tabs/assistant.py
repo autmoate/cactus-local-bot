@@ -42,6 +42,43 @@ def pipeline_text(trace: dict) -> str:
     return "\n".join(lines)
 
 
+def iterations_text(trace: dict) -> str:
+    """Phase 14: one readable block per agent iteration — Gemma's decision,
+    the instruction given to Needle, and what Needle did."""
+    if not trace.get("steps"):
+        return ""
+    lines = []
+    step_no = 0
+    for s in trace.get("steps") or []:
+        name = s["name"]
+        if name.startswith("controller"):
+            step_no += 1
+            d = s.get("output") or {}
+            if hasattr(d, "model_dump"):  # ControllerDecision
+                d = d.model_dump()
+            action = (d.get("action") if isinstance(d, dict) else None) or "—"
+            detail = (d.get("instruction") if isinstance(d, dict) else "") \
+                or (d.get("message") if isinstance(d, dict) else "") or ""
+            lines.append(f"**STEP {step_no} — Gemma: {action}**"
+                         + (f"\n> {detail}" if detail else ""))
+        elif name == "needle_complete":
+            calls = (s.get("output") or {}).get("function_calls") or []
+            tools = ", ".join(c.get("name", "?") for c in calls) or "—"
+            lines.append(f"  · Needle: {tools or 'kein Call (Refusal)'}")
+        elif name.startswith("execute"):
+            out = s.get("output") or {}
+            msg = (out.get("message") if isinstance(out, dict) else "") or ""
+            for line in msg.splitlines()[:3]:
+                lines.append(f"  · {line}")
+        elif name.startswith("resolve"):
+            r = s.get("output") or {}
+            if isinstance(r, dict) and r.get("timing"):
+                lines.append(f"  · aufgelöst: {r['timing']}")
+    if not lines:
+        return ""
+    return "\n".join(lines)
+
+
 def details(trace: dict) -> dict:
     tool = args = None
     for s in trace.get("steps") or []:
@@ -74,6 +111,7 @@ def build_assistant_tab(agent) -> None:
         status = gr.Markdown("Bereit.")
         pipeline = gr.Markdown()
         result = gr.Markdown(label="Ergebnis")
+        iterations = gr.Markdown(label="Agent-Iterationen")
         details_json = gr.JSON(label="Trace-Detail")
 
         def _run(text):
@@ -81,10 +119,12 @@ def build_assistant_tab(agent) -> None:
             for trace in agent.handle(text):
                 agent_trace = trace
                 yield (status_text(trace), pipeline_text(trace),
-                       trace.get("result") or "…", details(trace))
+                       trace.get("result") or "…", iterations_text(trace),
+                       details(trace))
             _ = agent_trace
 
         run_btn.click(_run, inputs=inp,
-                      outputs=[status, pipeline, result, details_json])
-        clear_btn.click(lambda: ("", "Bereit.", "", "", None),
-                        outputs=[inp, status, pipeline, result, details_json])
+                      outputs=[status, pipeline, result, iterations, details_json])
+        clear_btn.click(lambda: ("", "Bereit.", "", "", None, None),
+                        outputs=[inp, status, pipeline, result, iterations,
+                                 details_json])

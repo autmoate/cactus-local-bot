@@ -29,26 +29,63 @@ def load_cases() -> list[dict]:
 
 
 def check_expected(agent: Agent, case: dict) -> bool:
-    """Final-semantics check (plan §48): the executed event must match the
-    expected fields — not just the tool name. Applies to creates/moves."""
+    """Final-semantics check (plan §48): the final DB state / execution status /
+    final response must match the expected fields — not just the tool name."""
     want = case.get("expected")
     if not want:
         return True
+    if "result_contains" in want:
+        if want["result_contains"].lower() not in (case.get("_result") or "").lower():
+            return False
+    if "result_not_contains" in want:
+        if want["result_not_contains"].lower() in (case.get("_result") or "").lower():
+            return False
+    if "absent" in want:  # no entry with this title may remain
+        for absent_title in want["absent"]:
+            for ev in agent.store.events_between(
+                    cal.now() - cal.timedelta(days=400),
+                    cal.now() + cal.timedelta(days=400)):
+                if absent_title.lower() in ev.title.lower():
+                    return False
+    if "exists" in want:  # multi-item: every described entry must exist
+        for want_ev in want["exists"]:
+            if not _event_matches(agent.store, want_ev):
+                return False
+        return True
+    if not any(k in want for k in ("all_day", "title_contains", "span_days",
+                                   "start_date", "start_time", "end_time",
+                                   "participants")):
+        return True  # response-only expectation (reads, ask_user)
     events = agent.store.events_between(
-        cal.now() - cal.timedelta(days=1), cal.now() + cal.timedelta(days=400))
+        cal.now() - cal.timedelta(days=400), cal.now() + cal.timedelta(days=400))
     if not events:
         return False
     ev = max(events, key=lambda e: e.id or 0)  # the entry the run just wrote
-    if "all_day" in want and ev.all_day != want["all_day"]:
-        return False
+    return _event_fields_match(ev, want)
+
+
+def _event_matches(store, want: dict) -> bool:
+    events = store.events_between(
+        cal.now() - cal.timedelta(days=400), cal.now() + cal.timedelta(days=400))
+    return any(_event_fields_match(ev, want) for ev in events)
+
+
+def _event_fields_match(ev, want: dict) -> bool:
     if "title_contains" in want and want["title_contains"].lower() not in ev.title.lower():
+        return False
+    if "all_day" in want and ev.all_day != want["all_day"]:
         return False
     if "span_days" in want and (ev.end.date() - ev.start.date()).days != want["span_days"]:
         return False
+    if "start_date" in want and ev.start.date().isoformat() != want["start_date"]:
+        return False
+    if "start_time" in want and ev.start.strftime("%H:%M") != want["start_time"]:
+        return False
+    if "end_time" in want and ev.end.strftime("%H:%M") != want["end_time"]:
+        return False
     if "participants" in want:
         have = {p.lower() for p in ev.participants}
-        if not set(want["participants"]) <= {p.capitalize() for p in have} \
-                and not set(p.lower() for p in want["participants"]) <= have:
+        if not set(p.lower() for p in want["participants"]) <= have:
             return False
     return True
 
@@ -64,6 +101,7 @@ def run_case(agent: Agent, case: dict) -> dict:
     got = (last.get("function_calls") or [{}])[0]
     want = case.get("expected_tool")
     tool_ok = (got.get("name") == want) if want else not got.get("name")
+    case["_result"] = final.get("result") or ""
     return {
         "input": case["input"],
         "tool": got.get("name"),
@@ -79,7 +117,8 @@ def run_case(agent: Agent, case: dict) -> dict:
 
 
 def test_eval_suite(capsys):
-    cases = load_cases()
+    # the suite runs needle-only; controller cases (hybrid_only) run via main(--hybrid)
+    cases = [c for c in load_cases() if not c.get("hybrid_only")]
     rows = []
     for case in cases:
         store = CalendarStore(Path(tempfile.mkdtemp()) / "eval.db")
@@ -89,7 +128,7 @@ def test_eval_suite(capsys):
         ok = r["tool_ok"] and r["executed"] == r["should_execute"] and r["semantic_ok"]
         print(f"{'OK ' if ok else 'FAIL'} {r['input'][:52]!r:56} -> {r['tool']} "
               f"conf={r['confidence']} executed={r['executed']} "
-              f"sem={r['semantic_ok']}")
+              f"sem={r['semantic_ok']} | {r['result'][:60]}")
     hits = sum(1 for r in rows
                if r["tool_ok"] and r["executed"] == r["should_execute"]
                and r["semantic_ok"])
@@ -103,6 +142,8 @@ def main() -> None:
     repeat = int(sys.argv[sys.argv.index("--repeat") + 1]) if "--repeat" in sys.argv else 1
     mode = "hybrid" if "--hybrid" in sys.argv else "needle"
     cases = load_cases()
+    if mode != "hybrid":
+        cases = [c for c in cases if not c.get("hybrid_only")]
     rows: list[dict] = []
     for r in range(repeat):
         for i, case in enumerate(cases):
