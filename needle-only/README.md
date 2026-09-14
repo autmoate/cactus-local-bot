@@ -162,6 +162,18 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
   `data/traces.jsonl` (eine JSON-Zeile pro Request, inkl. Canonical, Steps,
   Confidence, `ungrounded`, Fehler) — Grundlage für gezieltes Debugging.
 
+## Needle-Bakeoff (experiments/)
+
+`experiments/needle_bakeoff.py` misst Toolset-Varianten gegen dasselbe Case-Set
+(tool accuracy / argument accuracy / refusals / confidence / latency — raw und
+getrennt reportet, keine post-hoc Fixe in der Messung). Ergebnis (Basis-Needle,
+Sep 13): die Produktion (calendar_*-Namen, create-first-Order) ist die stärkste
+Variante — Tool-Order wirkt real (0.75 vs 0.50 list-first), short verbs (0.62)
+und der create_event/create_absence-Split (0.50, mehr Refusals) wurden verworfen.
+`run()` verweigert berechnete ISO-Argumente über strict grounding; `extract()`
+liefert keine Multi-Item-Arrays — complete() bleibt der Produktionspfad. FT
+erst auf das eingefrorene Toolset (Plan §17).
+
 ## Telegram (optional)
 
 ```sh

@@ -206,6 +206,24 @@ class CalendarStore:
             return filtered
         return events
 
+    def find_by_window(self, day: date,
+                       t: time | None = None,
+                       window: timedelta = timedelta(minutes=30)
+                       ) -> list[CalendarEvent]:
+        """Events covering `day`, optionally narrowed to a ±window start-time
+        band. Deterministic event resolution for title-less requests like
+        'Lösche den Termin am 15.9. 10 Uhr' (plan §2, Fall 1 — no NLU)."""
+        from datetime import datetime as _dt
+        day_start = _dt.combine(day, time(0, 0))
+        day_end = day_start + timedelta(days=1)
+        cands = [e for e in self.events_between(day_start, day_end)]
+        if t is not None:
+            lo = _dt.combine(day, t) - window
+            hi = _dt.combine(day, t) + window
+            cands = [e for e in cands
+                     if e.start <= hi and e.end > lo]
+        return sorted(cands, key=lambda e: e.start)
+
     def find_by_title(self, title: str, near: datetime | date | None = None) -> CalendarEvent | None:
         """Case-insensitive substring match in both directions; prefers the next
         upcoming match relative to `near` (default: now), else the latest past one."""

@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 import tempfile
 
+from local_calendar import calendar as cal
 from local_calendar.agent import Agent, execute_call
 from local_calendar.calendar import (
     CalendarEvent, CalendarStore, _canonical_person, create_event, delete_event,
@@ -184,13 +185,15 @@ def test_participant_filtering(store):
 
 
 def test_find_by_title_substring_both_ways(store):
+    from datetime import datetime as _dt
     create_event(store, "Zahnarzt", dt(2026, 9, 14, 14), dt(2026, 9, 14, 15), False, ["Ich"])
     create_event(store, "Zahnarzt Kontrolle", dt(2026, 10, 1, 9), dt(2026, 10, 1, 10),
                  False, ["Ich"])
+    ref = dt(2026, 9, 14, 10)  # deterministic 'now' — no date-dependent flake
     # query longer than stored title
-    assert store.find_by_title("Zahnarzttermin").title == "Zahnarzt"
-    # query shorter: prefer upcoming
-    found = store.find_by_title("zahn")
+    assert store.find_by_title("Zahnarzttermin", near=ref).title == "Zahnarzt"
+    # query shorter: prefer upcoming relative to ref
+    found = store.find_by_title("zahn", near=ref)
     assert found.title == "Zahnarzt"  # earliest upcoming wins
 
 
@@ -482,3 +485,146 @@ def test_telegram_widget_selection_uses_trace():
     assert TelegramBot._executed_tools(trace) == {"calendar_find_slot"}
     resolved = TelegramBot._resolved(trace, "calendar_find_slot")
     assert resolved["duration_min"] == 90 and len(resolved["slots"]) == 1
+
+
+# ------------------------------------- real Telegram delete regressions (§30)
+
+def test_delete_generic_title_time_window(store):
+    """Real trace: 'Lösche bitte den Termin am 15.9. 10Uhr!' — generic title
+    'Termin' matches nothing; the explicit date+time window resolves it."""
+    from local_calendar.agent import execute_call
+    create_event(store, "Frisör appointment", dt(2026, 9, 15, 10), dt(2026, 9, 15, 11),
+                 False, ["Ich"])
+    create_event(store, "Meetup", dt(2026, 9, 15, 14), dt(2026, 9, 15, 15),
+                 False, ["Ich"])
+    out = execute_call(store, "calendar_delete",
+                       {"title": "Termin", "date": "15.9. 10:00"},
+                       "Lösche den Termin am 15.9. 10Uhr.")
+    assert out["ok"], out["message"]
+    remaining = store.events_between(dt(2026, 9, 1), dt(2026, 10, 1))
+    assert [e.title for e in remaining] == ["Meetup"]
+
+
+def test_delete_time_window_multi_candidates_asks(store):
+    """Two events inside the time window -> ambiguity, nothing deleted."""
+    from local_calendar.agent import execute_call
+    create_event(store, "A Termin", dt(2026, 9, 15, 9, 45), dt(2026, 9, 15, 10, 15),
+                 False, ["Ich"])
+    create_event(store, "B Termin", dt(2026, 9, 15, 10, 10), dt(2026, 9, 15, 11),
+                 False, ["Ich"])
+    out = execute_call(store, "calendar_delete",
+                       {"title": "Termin", "date": "15.9. 10Uhr"},
+                       "Lösche den Termin am 15.9. 10Uhr!")
+    assert not out["ok"] and "Mehrere" in out["message"]
+    assert len(store.events_between(dt(2026, 9, 1), dt(2026, 10, 1))) == 2
+
+
+def test_delete_hard_date_filter_regression(store):
+    """Review case: Meeting 09.09. + Meeting 17.09., delete with 12.9.
+    -> nothing deleted (hard filter, no ranking fallback)."""
+    from local_calendar.agent import execute_call
+    create_event(store, "Meeting", dt(2026, 9, 9, 10), dt(2026, 9, 9, 11),
+                 False, ["Ich"])
+    create_event(store, "Meeting", dt(2026, 9, 17, 10), dt(2026, 9, 17, 11),
+                 False, ["Ich"])
+    out = execute_call(store, "calendar_delete",
+                       {"title": "Meeting", "date": "12.9."},
+                       "Lösch Meeting am 12.9.")
+    assert not out["ok"]
+    assert len(store.events_between(dt(2026, 9, 1), dt(2026, 10, 1))) == 2
+
+
+def test_delete_ambiguous_titles_asks(store):
+    from local_calendar.agent import execute_call
+    create_event(store, "Meeting Lisa", dt(2026, 9, 18, 10), dt(2026, 9, 18, 11),
+                 False, ["Ich", "Lisa"])
+    create_event(store, "Meeting Lisa", dt(2026, 9, 20, 14), dt(2026, 9, 20, 15),
+                 False, ["Ich", "Lisa"])
+    out = execute_call(store, "calendar_delete", {"title": "Meeting Lisa"},
+                       "Lösch das Meeting mit Lisa.")
+    assert not out["ok"] and "Mehrere" in out["message"]
+    assert len(store.events_between(dt(2026, 9, 1), dt(2026, 10, 1))) == 2
+
+
+def test_delete_partial_match_both_directions(store):
+    """Real trace: 'Lösch Zahnarzttermin' vs stored 'Zahnarzt' — bidirectional
+    substring semantics, no regex."""
+    from local_calendar.agent import execute_call
+    create_event(store, "Zahnarzt", dt(2026, 9, 18, 10), dt(2026, 9, 18, 11),
+                 False, ["Ich"])
+    out = execute_call(store, "calendar_delete", {"title": "Zahnarzttermin"},
+                       "Lösch Zahnarzttermin.")
+    assert out["ok"]
+    assert store.events_between(dt(2026, 9, 1), dt(2026, 10, 1)) == []
+
+
+# --------------------------------------------- widget data selection (Phase 4)
+
+def test_week_widget_data_selection(store):
+    """Phase 4: the renderer must draw exactly what the store holds — test the
+    selection layer (store -> events in week window) for every widget case."""
+    from datetime import date as _d
+    week = _d(2026, 9, 14)  # Mo 14.09. – So 20.09.
+    rng = (dt(2026, 9, 14), dt(2026, 9, 21))
+    # 1) normal appointment
+    create_event(store, "Zahnarzt", dt(2026, 9, 16, 10), dt(2026, 9, 16, 11),
+                 False, ["Ich"])
+    # 2) two events on the same day
+    create_event(store, "Meeting", dt(2026, 9, 17, 13), dt(2026, 9, 17, 16),
+                 False, ["Ich"])
+    create_event(store, "Kaffee", dt(2026, 9, 17, 16, 30),
+                 dt(2026, 9, 17, 17), False, ["Ich"])
+    # 3) multi-day absence + appointment of ANOTHER person in it
+    create_event(store, "Urlaub", dt(2026, 9, 14), dt(2026, 9, 19), True,
+                 ["Lisa"], kind="absence")
+    create_event(store, "Lisas Termin", dt(2026, 9, 15, 9), dt(2026, 9, 15, 10),
+                 False, ["Lisa"])
+    # 4) long title
+    create_event(store, "Sehr langer Titel der ueber die Spalte laufen koennte",
+                 dt(2026, 9, 18, 8), dt(2026, 9, 18, 9), False, ["Ich"])
+    # 5) event exactly on week start and one at midnight boundary
+    create_event(store, "Wochenstart", dt(2026, 9, 14, 7), dt(2026, 9, 14, 8),
+                 False, ["Ich"])
+    create_event(store, "Ueber Mitternacht", dt(2026, 9, 19, 23),
+                 dt(2026, 9, 20, 1), False, ["Ich"])
+    # 6) event outside the week (next Sunday)
+    create_event(store, "Ausserhalb", dt(2026, 9, 22, 10), dt(2026, 9, 22, 11),
+                 False, ["Ich"])
+
+    from local_calendar.render import _events_for
+    all_events = _events_for(store, [week + cal.timedelta(days=i)
+                                     for i in range(7)], ["all"])
+    titles = sorted(e.title for e in all_events)
+    assert "Ausserhalb" not in titles  # next week's event is not in view
+    assert titles.count("Meeting") == 1  # 2) both events present, no duplicates
+    assert "Kaffee" in titles and "Wochenstart" in titles
+    assert "Sehr langer Titel der ueber die Spalte laufen koennte" in titles
+    assert titles.count("Ueber Mitternacht") == 1
+    # 7) participant filter: only Lisa's view
+    lisas = _events_for(store, [week + cal.timedelta(days=i) for i in range(7)],
+                        ["Lisa"])
+    assert {e.title for e in lisas} == {"Urlaub", "Lisas Termin"}
+    # Sunday event inside the week range:
+    assert "Ueber Mitternacht" in titles
+
+
+def test_week_widget_after_mutation(store):
+    """Phase 4: widget data after create/move/delete reflects the store —
+    the renderer draws the fresh truth (auto-refresh data path)."""
+    from datetime import date as _d
+    from local_calendar.agent import execute_call
+    from local_calendar.render import _events_for
+    week = _d(2026, 9, 14)
+    days = [week + cal.timedelta(days=i) for i in range(7)]
+    out = execute_call(store, "calendar_create",
+                       {"title": "Neu", "date": "2026-09-17", "time": "10:00"},
+                       "Termin Neu am 17.9. um 10 Uhr")
+    assert out["ok"]
+    assert [e.title for e in _events_for(store, days, ["all"])] == ["Neu"]
+    execute_call(store, "calendar_move", {"title": "Neu", "date": "18.9."},
+                 "Verschiebe Neu auf den 18.9.")
+    assert all(e.start.date() != _d(2026, 9, 17)
+               for e in _events_for(store, days, ["all"]))
+    execute_call(store, "calendar_delete", {"title": "Neu", "date": "18.9."},
+                 "Lösch Neu am 18.9.")
+    assert _events_for(store, days, ["all"]) == []

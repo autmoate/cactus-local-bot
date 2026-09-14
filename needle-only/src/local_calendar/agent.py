@@ -422,6 +422,18 @@ def _do_delete(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
     # Phase 1.2/1.3: candidates instead of silent pick; the date hint is a HARD
     # filter — 'Lösch Meeting am 12.9.' must never delete the 17.9. meeting.
     candidates = store.find_candidates(str(args.get("title", "")), near)
+    # Event resolution fallback (plan §2 Fall 1): a generic title that matches
+    # nothing but carries an explicit date/time resolves through the time
+    # window — deterministic, no NLU ('Lösche den Termin am 15.9. 10 Uhr').
+    if not candidates and near is not None:
+        t_time = cal.extract_time_from_text(date_expr) \
+            or (cal.extract_time_from_text(context) if context else None)
+        window_candidates = store.find_by_window(near, t_time)
+        if len(window_candidates) == 1 or t_time is not None:
+            candidates = window_candidates
+            checks.append({"check": "Titel ohne Treffer — Zeitfenster", "ok": True,
+                           "value": f"{near:%d.%m.}" +
+                                    (f" {t_time:%H:%M}" if t_time else "")})
     if not candidates:
         if near is not None:
             return {"ok": False, "checks": checks, "resolved": {},

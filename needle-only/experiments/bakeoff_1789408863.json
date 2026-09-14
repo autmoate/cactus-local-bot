@@ -1,0 +1,406 @@
+[
+ {
+  "variant": "A+O1 create-first",
+  "tool_acc": 0.75,
+  "args_acc": 0.125,
+  "refusals": 2,
+  "median_conf": 0.034,
+  "median_ms": 524,
+  "rows": [
+   {
+    "input": "Create an appointment tomorrow at 14:00",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 258,
+    "conf": 0.9901
+   },
+   {
+    "input": "Termin Zahnarzt morgen um 14 Uhr",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-14",
+     "time": "14:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 586,
+    "conf": 0.0442
+   },
+   {
+    "input": "Move my dentist appointment to Friday",
+    "tool": "calendar_move",
+    "args": {
+     "title": "dentist appointment",
+     "date": "2026-09-16"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 468,
+    "conf": 0.013
+   },
+   {
+    "input": "Lösch den Zahnarzttermin.",
+    "tool": "calendar_delete",
+    "args": {
+     "title": "Zahnarzttermin"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "ms": 422,
+    "conf": 0.9226
+   },
+   {
+    "input": "Show my appointments next week",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 268,
+    "conf": 0.9896
+   },
+   {
+    "input": "I am on vacation from August 3 to August 18",
+    "tool": "calendar_create",
+    "args": {
+     "title": "vacation",
+     "date": "2026-08-03",
+     "end_time": "",
+     "participants": ""
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 581,
+    "conf": 0.0003
+   },
+   {
+    "input": "When are Lisa and Max free tomorrow afternoon?",
+    "tool": "calendar_find_slot",
+    "args": {
+     "persons": "Lisa",
+     "date": "2026-09-14",
+     "until": "",
+     "days": ""
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 915,
+    "conf": 0.0022
+   },
+   {
+    "input": "Meeting am 17.9. von 13 bis 16 Uhr",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Meeting",
+     "date": "2026-09-17",
+     "end_time": "16:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 719,
+    "conf": 0.0235
+   }
+  ]
+ },
+ {
+  "variant": "A+O2 list-first",
+  "tool_acc": 0.5,
+  "args_acc": 0.0,
+  "refusals": 4,
+  "median_conf": 0.302,
+  "median_ms": 484,
+  "rows": [
+   {
+    "input": "Create an appointment tomorrow at 14:00",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 250,
+    "conf": 0.994
+   },
+   {
+    "input": "Termin Zahnarzt morgen um 14 Uhr",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-14",
+     "time": "14:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 649,
+    "conf": 0.0731
+   },
+   {
+    "input": "Move my dentist appointment to Friday",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 249,
+    "conf": 0.8536
+   },
+   {
+    "input": "Lösch den Zahnarzttermin.",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 365,
+    "conf": 0.5309
+   },
+   {
+    "input": "Show my appointments next week",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 241,
+    "conf": 0.9919
+   },
+   {
+    "input": "I am on vacation from August 3 to August 18",
+    "tool": "calendar_create",
+    "args": {
+     "title": "August 3 vacation",
+     "date": "2026-08-03",
+     "end_time": "2026-08-18",
+     "participants": ""
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 675,
+    "conf": 0.0005
+   },
+   {
+    "input": "When are Lisa and Max free tomorrow afternoon?",
+    "tool": "calendar_find_slot",
+    "args": {
+     "persons": "Lisa",
+     "date": "2026-09-14",
+     "until": "2026-09-14",
+     "days": "afternoon"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 1079,
+    "conf": 0.0002
+   },
+   {
+    "input": "Meeting am 17.9. von 13 bis 16 Uhr",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Meeting",
+     "date": "2026-09-17",
+     "end_time": "16:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 603,
+    "conf": 0.0271
+   }
+  ]
+ },
+ {
+  "variant": "B",
+  "tool_acc": 0.62,
+  "args_acc": 0.125,
+  "refusals": 3,
+  "median_conf": 0.608,
+  "median_ms": 391,
+  "rows": [
+   {
+    "input": "Create an appointment tomorrow at 14:00",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 162,
+    "conf": 0.9896
+   },
+   {
+    "input": "Termin Zahnarzt morgen um 14 Uhr",
+    "tool": "create",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-14",
+     "time": "14:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 457,
+    "conf": 0.2498
+   },
+   {
+    "input": "Move my dentist appointment to Friday",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 128,
+    "conf": 0.9871
+   },
+   {
+    "input": "Lösch den Zahnarzttermin.",
+    "tool": "delete",
+    "args": {
+     "title": "Zahnarzttermin"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "ms": 325,
+    "conf": 0.9661
+   },
+   {
+    "input": "Show my appointments next week",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 158,
+    "conf": 0.9887
+   },
+   {
+    "input": "I am on vacation from August 3 to August 18",
+    "tool": "create",
+    "args": {
+     "title": "vacation",
+     "date": "2026-08-03",
+     "end_time": "2026-08-18T23:59:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 664,
+    "conf": 0.0006
+   },
+   {
+    "input": "When are Lisa and Max free tomorrow afternoon?",
+    "tool": "find",
+    "args": {
+     "persons": "Lisa",
+     "date": "2026-09-14",
+     "until": "2026-09-14"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 720,
+    "conf": 0.0014
+   },
+   {
+    "input": "Meeting am 17.9. von 13 bis 16 Uhr",
+    "tool": "create",
+    "args": {
+     "title": "Meeting",
+     "date": "2026-09-17T13:00:00",
+     "end_time": "2026-09-17T16:00:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 708,
+    "conf": 0.0081
+   }
+  ]
+ },
+ {
+  "variant": "C",
+  "tool_acc": 0.5,
+  "args_acc": 0.0,
+  "refusals": 4,
+  "median_conf": 0.935,
+  "median_ms": 1390,
+  "rows": [
+   {
+    "input": "Create an appointment tomorrow at 14:00",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 1343,
+    "conf": 0.9336
+   },
+   {
+    "input": "Termin Zahnarzt morgen um 14 Uhr",
+    "tool": "create_event",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-14",
+     "time": "14:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 1465,
+    "conf": 0.9865
+   },
+   {
+    "input": "Move my dentist appointment to Friday",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 1230,
+    "conf": 1.0
+   },
+   {
+    "input": "Lösch den Zahnarzttermin.",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 1224,
+    "conf": 0.7751
+   },
+   {
+    "input": "Show my appointments next week",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "ms": 1259,
+    "conf": 0.9931
+   },
+   {
+    "input": "I am on vacation from August 3 to August 18",
+    "tool": "create_absence",
+    "args": {
+     "title": "vacation",
+     "date": "2026-08-03",
+     "until": "2026-08-18"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 1436,
+    "conf": 0.5438
+   },
+   {
+    "input": "When are Lisa and Max free tomorrow afternoon?",
+    "tool": "find_free_slots",
+    "args": {
+     "persons": "Lisa",
+     "duration_min": "120",
+     "days": "tomorrow"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 2102,
+    "conf": 0.0
+   },
+   {
+    "input": "Meeting am 17.9. von 13 bis 16 Uhr",
+    "tool": "create_event",
+    "args": {
+     "title": "Meeting",
+     "date": "2026-09-17",
+     "time": "13:00",
+     "end_time": "16:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "ms": 1477,
+    "conf": 0.9374
+   }
+  ]
+ }
+]

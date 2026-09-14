@@ -131,6 +131,14 @@ class TelegramBot:
             "'Wann können Lisa und ich nächste Woche 90 Minuten?'\n"
             "Befehle: /week · /today · /debug (nur Owner)")
 
+    async def cmd_cancel(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        chat = update.effective_chat.id
+        if not self._allowed_chat(chat):
+            return
+        dropped = self.agent.pending.pop(str(chat), None)
+        await update.message.reply_text(
+            "Offene Rückfrage verworfen." if dropped else "Keine offene Rückfrage.")
+
     async def cmd_week(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat = update.effective_chat.id
         if not self._allowed_chat(chat):
@@ -305,6 +313,7 @@ def main() -> None:
     bot = TelegramBot(Agent(CalendarStore(args.db), mode=args.mode), owner, allowed)
     app = Application.builder().token(token).build()
     app.add_handler(CommandHandler("start", bot.cmd_start))
+    app.add_handler(CommandHandler("cancel", bot.cmd_cancel))
     app.add_handler(CommandHandler("week", bot.cmd_week))
     app.add_handler(CommandHandler("today", bot.cmd_today))
     app.add_handler(CommandHandler("debug", bot.cmd_debug))
