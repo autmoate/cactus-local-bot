@@ -162,17 +162,29 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
   `data/traces.jsonl` (eine JSON-Zeile pro Request, inkl. Canonical, Steps,
   Confidence, `ungrounded`, Fehler) — Grundlage für gezieltes Debugging.
 
-## Needle-Bakeoff (experiments/)
+## Needle-Bakeoff v2 (experiments/, kontrollierte Ablation)
 
-`experiments/needle_bakeoff.py` misst Toolset-Varianten gegen dasselbe Case-Set
-(tool accuracy / argument accuracy / refusals / confidence / latency — raw und
-getrennt reportet, keine post-hoc Fixe in der Messung). Ergebnis (Basis-Needle,
-Sep 13): die Produktion (calendar_*-Namen, create-first-Order) ist die stärkste
-Variante — Tool-Order wirkt real (0.75 vs 0.50 list-first), short verbs (0.62)
-und der create_event/create_absence-Split (0.50, mehr Refusals) wurden verworfen.
-`run()` verweigert berechnete ISO-Argumente über strict grounding; `extract()`
-liefert keine Multi-Item-Arrays — complete() bleibt der Produktionspfad. FT
-erst auf das eingefrorene Toolset (Plan §17).
+`needle_bakeoff_v2.py` misst mit 21 Cases × 2 Formen (raw + kanonisch) × 3
+Repeats, echten Produktionsschemas (Literal, Field), drei getrennten Metriken
+(tool role / argument semantic via Resolver / final DB state) und
+exact-call-stability. Ergebnisse (Basis-Needle):
+
+- **Production (calendar_*)**: tool 0.905, args 0.476, final 0.619,
+  Refusals 0.095 — stärkste Variante
+- **Naming** (create_event/…, isoliert, gleiche Params): 0.786 — calendar_*
+  gewinnt; **Tool-Order**: 10 Permutationen identisch (0.738) — kein Effekt
+- **Split create_event/create_absence**: 0.714 isoliert (5 Tools), 0.69 mit
+  Retrieval — verworfen, ohne Konfundierung gemessen
+- **run()**: strict grounding verweigert berechnete ISO-Argumente
+  (10/20 ungrounded — die Engine erwartet verbatim-evidenced Werte);
+  **extract()**: single-Item exakt, Arrays 0, iterativ-solo halluziniert →
+  nutzbarer Weg: Gemma-Zerlegung → extract(single)
+- **Loop-Vergleich** (6 komplexe Tasks): Controller gewinnt multi-create
+  (Dekomposition), needle-raw gewinnt simple Reads (12× schneller);
+  komplexeste Kette (find-slot → move) scheitert in beiden — offener Punkt
+
+args_ok (0.476) ist der Flaschenhals → Needle-FT (Plan §17) auf das
+eingefrorene Toolset ist der richtige nächste Schritt.
 
 ## Telegram (optional)
 

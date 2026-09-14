@@ -1,0 +1,18 @@
+{
+ "run": [
+  {
+   "run_strict": true,
+   "ok": 2,
+   "ungrounded_fail": 10,
+   "refusals": 8,
+   "n": 20
+  },
+  {
+   "run_strict": false,
+   "ok": 2,
+   "ungrounded_fail": 10,
+   "refusals": 8,
+   "n": 20
+  }
+ ]
+}

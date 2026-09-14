@@ -369,12 +369,12 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
                            "value": f"{text_time:%H:%M}"})
         else:
             new_time = None
-    # Source resolution with candidates: ambiguity must ask, never guess (plan §2)
-    candidates = store.find_candidates(str(args.get("title", "")))
-    if not candidates:
-        return {"ok": False, "checks": checks, "resolved": {},
-                "message": f"❌ Kein Eintrag '{args.get('title')}' gefunden."}
-    if len(candidates) > 1:
+    # Event resolution: ambiguity must ask, never guess (plan §2)
+    candidates, status = store.resolve_event(str(args.get("title", "")))
+    if status != "unique":
+        if status == "not_found":
+            return {"ok": False, "checks": checks, "resolved": {},
+                    "message": f"❌ Kein Eintrag '{args.get('title')}' gefunden."}
         listing = "; ".join(_describe(c) for c in candidates[:5])
         return {"ok": False, "checks": checks, "resolved": {},
                 "message": (f"⚠️ Mehrere Einträge '{args.get('title')}' — "
@@ -421,27 +421,18 @@ def _do_delete(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
         near = cal.extract_date_from_text(context, roll=False)
     # Phase 1.2/1.3: candidates instead of silent pick; the date hint is a HARD
     # filter — 'Lösch Meeting am 12.9.' must never delete the 17.9. meeting.
-    candidates = store.find_candidates(str(args.get("title", "")), near)
-    # Event resolution fallback (plan §2 Fall 1): a generic title that matches
-    # nothing but carries an explicit date/time resolves through the time
-    # window — deterministic, no NLU ('Lösche den Termin am 15.9. 10 Uhr').
-    if not candidates and near is not None:
-        t_time = cal.extract_time_from_text(date_expr) \
-            or (cal.extract_time_from_text(context) if context else None)
-        window_candidates = store.find_by_window(near, t_time)
-        if len(window_candidates) == 1 or t_time is not None:
-            candidates = window_candidates
-            checks.append({"check": "Titel ohne Treffer — Zeitfenster", "ok": True,
-                           "value": f"{near:%d.%m.}" +
-                                    (f" {t_time:%H:%M}" if t_time else "")})
-    if not candidates:
+    t_time = cal.resolve_time(date_expr) \
+        or (cal.extract_time_from_text(context) if context else None)
+    candidates, status = store.resolve_event(str(args.get("title", "")) or None,
+                                             day=near, t=t_time)
+    if status == "not_found":
         if near is not None:
             return {"ok": False, "checks": checks, "resolved": {},
                     "message": f"❌ Kein Eintrag '{args.get('title')}' am "
                                f"{near:%d.%m.%Y} gefunden."}
         return {"ok": False, "checks": checks, "resolved": {},
                 "message": f"❌ Kein Eintrag '{args.get('title')}' gefunden."}
-    if len(candidates) > 1:
+    if status == "ambiguous":
         listing = "; ".join(_describe(c) for c in candidates[:5])
         return {"ok": False, "checks": checks, "resolved": {},
                 "message": (f"⚠️ Mehrere Einträge '{args.get('title')}' — "

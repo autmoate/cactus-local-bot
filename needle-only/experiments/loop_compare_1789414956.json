@@ -1,0 +1,98 @@
+[
+ {
+  "case": "multi-create",
+  "path": "controller",
+  "final_ok": true,
+  "seconds": 83.8,
+  "model_calls": 4,
+  "result": "Alle drei Termine wurden eingetragen."
+ },
+ {
+  "case": "multi-create",
+  "path": "needle-raw",
+  "final_ok": false,
+  "seconds": 1.3,
+  "model_calls": 1,
+  "result": "✅ Erstellt: Zahnarzt (Do 17.09. 10:00–11:00)\n✅ Erstellt: Friseur (Do 17.09. 11:00–12:00)\n✅ Erstellt: TÜV (Do 17.09. 09:0"
+ },
+ {
+  "case": "find-slot -> move",
+  "path": "controller",
+  "final_ok": false,
+  "seconds": 20.8,
+  "model_calls": 1,
+  "result": "Welche Tage nächste Woche hast du 90 Minuten frei?"
+ },
+ {
+  "case": "find-slot -> move",
+  "path": "needle-raw",
+  "final_ok": false,
+  "seconds": 0.5,
+  "model_calls": 1,
+  "result": "Free slots:\n• Mo 21.09. 09:00–17:00"
+ },
+ {
+  "case": "ambiguous delete",
+  "path": "controller",
+  "final_ok": true,
+  "seconds": 16.1,
+  "model_calls": 1,
+  "result": ""
+ },
+ {
+  "case": "ambiguous delete",
+  "path": "needle-raw",
+  "final_ok": true,
+  "seconds": 0.2,
+  "model_calls": 1,
+  "result": "❌ Kein Eintrag 'Meeting mit Lisa' gefunden."
+ },
+ {
+  "case": "list -> identify -> move",
+  "path": "controller",
+  "final_ok": true,
+  "seconds": 31.3,
+  "model_calls": 2,
+  "result": "Termin verschoben."
+ },
+ {
+  "case": "list -> identify -> move",
+  "path": "needle-raw",
+  "final_ok": true,
+  "seconds": 2.7,
+  "model_calls": 1,
+  "result": "✏️ Verschoben: Testtreffen (So 20.09. 15:00–16:00)"
+ },
+ {
+  "case": "find-slot -> create",
+  "path": "controller",
+  "final_ok": true,
+  "seconds": 60.1,
+  "model_calls": 3,
+  "result": "Loop erkannt (identische Instruction) — 🚫 Absence eingetragen: meeting with Lisa (Do 17.09., ganztägig) Bitte formuliere"
+ },
+ {
+  "case": "find-slot -> create",
+  "path": "needle-raw",
+  "final_ok": true,
+  "seconds": 3.5,
+  "model_calls": 1,
+  "result": "Free slots:\n• Do 17.09. 09:00–17:00\n🚫 Absence eingetragen: Meeting (Do 17.09., ganztägig)"
+ },
+ {
+  "case": "historical list",
+  "path": "controller",
+  "final_ok": true,
+  "seconds": 19.3,
+  "model_calls": 1,
+  "result": "Welche Art von Ereignissen suchst du am 7.9.?"
+ },
+ {
+  "case": "historical list",
+  "path": "needle-raw",
+  "final_ok": true,
+  "seconds": 0.4,
+  "model_calls": 1,
+  "result": "**Mo 07.09.**\n• 10:00–11:00 Historisch (Ich)"
+ }
+]

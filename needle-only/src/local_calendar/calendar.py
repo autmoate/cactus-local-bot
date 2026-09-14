@@ -187,42 +187,46 @@ class CalendarStore:
             people = self._load_people(c, [r["id"] for r in rows])
         return [self._event(r, people.get(r["id"], [])) for r in rows]
 
-    def find_candidates(self, title: str, near_date: date | None = None
-                        ) -> list[CalendarEvent]:
-        """All case-insensitive substring matches (both directions). Mutating
-        operations must not silently pick one when several match (plan §2)."""
-        if not title.strip():
-            return []
-        t = title.strip()
-        with self._conn() as c:
-            rows = c.execute(
-                "SELECT * FROM events WHERE title LIKE ? OR ? LIKE ('%' || title || '%') "
-                "ORDER BY start", (f"%{t}%", t)).fetchall()
-            people = self._load_people(c, [r["id"] for r in rows])
-        events = [self._event(r, people.get(r["id"], [])) for r in rows]
-        if near_date is not None:  # hard date filter for mutations (plan §3):
-            # an explicit date must never silently delete/move a different day
-            filtered = [e for e in events if _covers(e, near_date)]
-            return filtered
-        return events
+    def resolve_event(self, title: str | None = None,
+                      day: date | None = None, t: time | None = None
+                      ) -> tuple[list[CalendarEvent], str]:
+        """General event identification (plan §2 refactor): every given
+        identifier is an optional constraint, AND-combined — never ranking.
+        title: bidirectional case-insensitive substring match.
+        day:   hard filter — the event must cover this calendar day.
+        t:     start-time band ±30 min (identification by time of day).
 
-    def find_by_window(self, day: date,
-                       t: time | None = None,
-                       window: timedelta = timedelta(minutes=30)
-                       ) -> list[CalendarEvent]:
-        """Events covering `day`, optionally narrowed to a ±window start-time
-        band. Deterministic event resolution for title-less requests like
-        'Lösche den Termin am 15.9. 10 Uhr' (plan §2, Fall 1 — no NLU)."""
-        from datetime import datetime as _dt
-        day_start = _dt.combine(day, time(0, 0))
-        day_end = day_start + timedelta(days=1)
-        cands = [e for e in self.events_between(day_start, day_end)]
-        if t is not None:
-            lo = _dt.combine(day, t) - window
-            hi = _dt.combine(day, t) + window
-            cands = [e for e in cands
-                     if e.start <= hi and e.end > lo]
-        return sorted(cands, key=lambda e: e.start)
+        Returns (candidates, status) with status in
+        not_found / unique / ambiguous / no_identifiers.
+        Mutating callers must never silently pick from ambiguous."""
+        title = (title or "").strip()
+        if not title and day is None and t is None:
+            return [], "no_identifiers"
+        candidates: list[CalendarEvent] = []
+        if title:
+            with self._conn() as c:
+                rows = c.execute(
+                    "SELECT * FROM events WHERE title LIKE ? "
+                    "OR ? LIKE ('%' || title || '%') ORDER BY start",
+                    (f"%{title}%", title)).fetchall()
+                people = self._load_people(c, [r["id"] for r in rows])
+            candidates = [self._event(r, people.get(r["id"], []))
+                          for r in rows]
+        if day is not None:  # hard filter: an explicit day excludes other days
+            if candidates:
+                candidates = [e for e in candidates if _covers(e, day)]
+            else:
+                day_start = datetime.combine(day, time(0, 0))
+                candidates = self.events_between(
+                    day_start, day_start + timedelta(days=1))
+        if t is not None and day is not None:
+            from datetime import datetime as _dt
+            lo, hi = _dt.combine(day, t) - timedelta(minutes=30), \
+                _dt.combine(day, t) + timedelta(minutes=30)
+            candidates = [e for e in candidates if e.start <= hi and e.end > lo]
+        if not candidates:
+            return [], "not_found"
+        return candidates, ("unique" if len(candidates) == 1 else "ambiguous")
 
     def find_by_title(self, title: str, near: datetime | date | None = None) -> CalendarEvent | None:
         """Case-insensitive substring match in both directions; prefers the next

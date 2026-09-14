@@ -1,0 +1,35 @@
+{
+ "extract": {
+  "single": {
+   "title": "Termin Zahnarzt",
+   "date": "2026-09-17",
+   "until": null,
+   "time": "10:00",
+   "end_time": null
+  },
+  "list_items": 0,
+  "iterative": [
+   {
+    "title": "Zahnarzt",
+    "date": "2026-09-17",
+    "until": "2026-09-16",
+    "time": "10:00",
+    "end_time": "13:00"
+   },
+   {
+    "title": "TÜV 9 Uhr",
+    "date": "2026-09-13",
+    "until": null,
+    "time": "17:00",
+    "end_time": "13:00"
+   },
+   {
+    "title": "End Time",
+    "date": "2026-09-17",
+    "until": null,
+    "time": "10:00",
+    "end_time": "16:00"
+   }
+  ]
+ }
+}

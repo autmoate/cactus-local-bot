@@ -1,0 +1,1219 @@
+{
+ "prod": {
+  "variant": "prod",
+  "repeats": 3,
+  "n_cases": 42,
+  "metrics": {
+   "tool_ok_all_reps": 0.905,
+   "tool_ok_any_rep": 0.905,
+   "args_ok_all_reps": 0.476,
+   "args_ok_any_rep": 0.476,
+   "final_ok_all_reps": 0.619,
+   "final_ok_any_rep": 0.619,
+   "refusal_rate": 0.095,
+   "exact_call_stability": 1,
+   "median_ms": 619,
+   "median_conf": 0.034
+  },
+  "rows": [
+   {
+    "id": "cr-t1",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Appointment",
+     "date": "tomorrow at 14:00",
+     "time": "14:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 384,
+    "conf": 0.0069
+   },
+   {
+    "id": "cr-t2",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-14",
+     "time": "14:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 576,
+    "conf": 0.0539
+   },
+   {
+    "id": "cr-t3",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-17",
+     "time": "10:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 572,
+    "conf": 0.3149
+   },
+   {
+    "id": "cr-t4",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Meeting",
+     "date": "2026-09-17",
+     "end_time": "16:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 723,
+    "conf": 0.0265
+   },
+   {
+    "id": "cr-t5",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Sport",
+     "date": "2026-09-16",
+     "time": "09:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 456,
+    "conf": 0.1367
+   },
+   {
+    "id": "cr-t6",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Zug",
+     "date": "2026-09-14",
+     "time": "08:30"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 548,
+    "conf": 0.0043
+   },
+   {
+    "id": "cr-t7",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Friseur rein",
+     "date": "2026-09-14T14:00:00",
+     "time": "2026-09-14T14:00:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 737,
+    "conf": 0.0001
+   },
+   {
+    "id": "cr-t8",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Testeintrag",
+     "date": "2026-09-07",
+     "time": "13:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 679,
+    "conf": 0.4946
+   },
+   {
+    "id": "cr-t9",
+    "tool": "calendar_create",
+    "args": {
+     "title": "JourFixe",
+     "date": "2026-09-14T14:00:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 853,
+    "conf": 0.1344
+   },
+   {
+    "id": "cr-a1",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Urlaub",
+     "date": "2026-09-14"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 588,
+    "conf": 0.0062
+   },
+   {
+    "id": "cr-a2",
+    "tool": "calendar_create",
+    "args": {
+     "title": "August 3 vacation",
+     "date": "2026-08-03",
+     "end_time": "",
+     "participants": ""
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 726,
+    "conf": 0.0013
+   },
+   {
+    "id": "cr-a3",
+    "tool": "calendar_move",
+    "args": {
+     "title": "Komplettweg",
+     "date": "2026-09-23",
+     "time": "14:00"
+    },
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 699,
+    "conf": 0.0
+   },
+   {
+    "id": "cr-a4",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Urlaub",
+     "date": "2026-09-23",
+     "until": "",
+     "participants": ""
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 752,
+    "conf": 0.0003
+   },
+   {
+    "id": "cr-a5",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Home Office",
+     "date": "2026-09-16",
+     "end_time": "2026-09-17",
+     "participants": ""
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 824,
+    "conf": 0.0
+   },
+   {
+    "id": "cr-a6",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Urlaub",
+     "date": "2026-09-23",
+     "time": "09:00",
+     "participants": "Lisa"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 937,
+    "conf": 0.0
+   },
+   {
+    "id": "mv1",
+    "tool": "calendar_move",
+    "args": {
+     "title": "dentist appointment",
+     "date": "2026-09-16"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 532,
+    "conf": 0.0086
+   },
+   {
+    "id": "mv2",
+    "tool": "calendar_move",
+    "args": {
+     "title": "Zahnarzttermin",
+     "date": "2026-09-14"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 621,
+    "conf": 0.013
+   },
+   {
+    "id": "mv3",
+    "tool": "calendar_move",
+    "args": {
+     "title": "Einkaufen",
+     "date": "2026-09-20",
+     "time": "10:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 320,
+    "conf": 0.3037
+   },
+   {
+    "id": "mv4",
+    "tool": "calendar_move",
+    "args": {
+     "title": "Frisörtermin",
+     "date": "2026-09-16",
+     "time": "15:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 580,
+    "conf": 0.1343
+   },
+   {
+    "id": "del1",
+    "tool": "calendar_delete",
+    "args": {
+     "title": "dentist appointment"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 198,
+    "conf": 0.8299
+   },
+   {
+    "id": "del2",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": true,
+    "ms": 294,
+    "conf": 0.5773
+   },
+   {
+    "id": "del3",
+    "tool": "calendar_delete",
+    "args": {
+     "title": "Frisör",
+     "date": "2026-09-15"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 558,
+    "conf": 0.0172
+   },
+   {
+    "id": "del3",
+    "tool": "calendar_delete",
+    "args": {
+     "title": "Termin",
+     "date": "2026-09-15"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 471,
+    "conf": 0.0415
+   },
+   {
+    "id": "del4",
+    "tool": "calendar_delete",
+    "args": {
+     "title": "Meeting",
+     "date": "2026-09-12"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 414,
+    "conf": 0.1017
+   },
+   {
+    "id": "del5",
+    "tool": "calendar_delete",
+    "args": {
+     "title": "Kurzcheck",
+     "date": "2026-09-14"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 589,
+    "conf": 0.0001
+   },
+   {
+    "id": "del6",
+    "tool": "calendar_delete",
+    "args": {
+     "title": "Zahnarzt"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 393,
+    "conf": 0.7536
+   },
+   {
+    "id": "ls1",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": true,
+    "ms": 353,
+    "conf": 0.9719
+   },
+   {
+    "id": "ls2",
+    "tool": "calendar_list",
+    "args": {
+     "date": "7.9."
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 454,
+    "conf": 0.2611
+   },
+   {
+    "id": "ls3",
+    "tool": "calendar_list",
+    "args": {
+     "date": "2026-09-01",
+     "until": "2026-09-09"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 683,
+    "conf": 0.0893
+   },
+   {
+    "id": "ls4",
+    "tool": "calendar_list",
+    "args": {
+     "person": "Lisa",
+     "date": "2026-09-13",
+     "until": "2026-09-13",
+     "horizon": "week"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 689,
+    "conf": 0.0001
+   },
+   {
+    "id": "ls5",
+    "tool": "calendar_list",
+    "args": {
+     "date": "September"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 417,
+    "conf": 0.3392
+   },
+   {
+    "id": "fs1",
+    "tool": "calendar_find_slot",
+    "args": {
+     "persons": "Lisa",
+     "duration_min": 30,
+     "date": "tomorrow"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 3681,
+    "conf": 0.0005
+   },
+   {
+    "id": "fs2",
+    "tool": "calendar_find_slot",
+    "args": {
+     "persons": "Lisa",
+     "duration_min": 30,
+     "date": "2026-09-13"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 3945,
+    "conf": 0.0001
+   },
+   {
+    "id": "fs3",
+    "tool": "calendar_find_slot",
+    "args": {
+     "persons": "Lisa",
+     "duration_min": 90,
+     "date": "2026-09-13"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 819,
+    "conf": 0.0002
+   },
+   {
+    "id": "fs4",
+    "tool": "calendar_find_slot",
+    "args": {
+     "persons": "Lisa",
+     "duration_min": 120,
+     "date": "2026-09-17"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 700,
+    "conf": 0.1779
+   },
+   {
+    "id": "fs5",
+    "tool": "calendar_find_slot",
+    "args": {
+     "persons": "Lisa und Max",
+     "date": "2026-09-17",
+     "until": "2026-09-18"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 929,
+    "conf": 0.084
+   },
+   {
+    "id": "amb1",
+    "tool": "calendar_move",
+    "args": {
+     "title": "Meeting mit Lisa",
+     "date": "2026-09-13",
+     "time": "14:00"
+    },
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 455,
+    "conf": 0.0028
+   },
+   {
+    "id": "amb2",
+    "tool": "calendar_delete",
+    "args": {
+     "title": "Meeting mit Lisa"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 479,
+    "conf": 0.73
+   },
+   {
+    "id": "mi1",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-17",
+     "time": "10:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 1101,
+    "conf": 0.0031
+   },
+   {
+    "id": "mi2",
+    "tool": "calendar_create",
+    "args": {
+     "title": "Meeting",
+     "date": "2026-09-17",
+     "time": "13:00",
+     "end_time": "16:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 975,
+    "conf": 0.0248
+   },
+   {
+    "id": "ot1",
+    "tool": null,
+    "args": {},
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": true,
+    "ms": 293,
+    "conf": 0.9854
+   },
+   {
+    "id": "ot2",
+    "tool": null,
+    "args": {},
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": true,
+    "ms": 348,
+    "conf": 0.9658
+   }
+  ]
+ },
+ "naming": {
+  "variant": "naming",
+  "repeats": 3,
+  "n_cases": 42,
+  "metrics": {
+   "tool_ok_all_reps": 0.786,
+   "tool_ok_any_rep": 0.786,
+   "args_ok_all_reps": 0.476,
+   "args_ok_any_rep": 0.476,
+   "final_ok_all_reps": 0.571,
+   "final_ok_any_rep": 0.571,
+   "refusal_rate": 0.19,
+   "exact_call_stability": 1,
+   "median_ms": 553,
+   "median_conf": 0.072
+  },
+  "rows": [
+   {
+    "id": "cr-t1",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": true,
+    "ms": 265,
+    "conf": 0.7965
+   },
+   {
+    "id": "cr-t2",
+    "tool": "create_event",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-14",
+     "time": "14:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 629,
+    "conf": 0.1702
+   },
+   {
+    "id": "cr-t3",
+    "tool": "create_event",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "2026-09-17",
+     "time": "10:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 714,
+    "conf": 0.3407
+   },
+   {
+    "id": "cr-t4",
+    "tool": "create_event",
+    "args": {
+     "title": "Meeting",
+     "date": "2026-09-17",
+     "time": "13:00",
+     "end_time": "16:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 710,
+    "conf": 0.0118
+   },
+   {
+    "id": "cr-t5",
+    "tool": "create_event",
+    "args": {
+     "title": "Sport",
+     "date": "2026-09-16",
+     "time": "09:00"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 494,
+    "conf": 0.1165
+   },
+   {
+    "id": "cr-t6",
+    "tool": "create_event",
+    "args": {
+     "title": "Zug",
+     "date": "2026-09-14",
+     "time": "08:30"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 628,
+    "conf": 0.0013
+   },
+   {
+    "id": "cr-t7",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": true,
+    "ms": 318,
+    "conf": 0.829
+   },
+   {
+    "id": "cr-t8",
+    "tool": "create_event",
+    "args": {
+     "title": "Testeintrag",
+     "date": "2026-09-07",
+     "time": "13:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 563,
+    "conf": 0.2476
+   },
+   {
+    "id": "cr-t9",
+    "tool": "create_event",
+    "args": {
+     "title": "JourFixe",
+     "date": "2026-09-14",
+     "time": "14:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 656,
+    "conf": 0.2606
+   },
+   {
+    "id": "cr-a1",
+    "tool": "create_event",
+    "args": {
+     "title": "Urlaub",
+     "date": "2026-09-14"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 512,
+    "conf": 0.0297
+   },
+   {
+    "id": "cr-a2",
+    "tool": "create_event",
+    "args": {
+     "title": "vacation",
+     "date": "2026-08-03",
+     "time": ""
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 565,
+    "conf": 0.0002
+   },
+   {
+    "id": "cr-a3",
+    "tool": "delete_event",
+    "args": {
+     "title": "Komplettweg",
+     "date": "23. bis 27"
+    },
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 677,
+    "conf": 0.0
+   },
+   {
+    "id": "cr-a4",
+    "tool": "create_event",
+    "args": {
+     "title": "Urlaub",
+     "date": "2026-09-23",
+     "end_time": "2026-09-27"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 786,
+    "conf": 0.0231
+   },
+   {
+    "id": "cr-a5",
+    "tool": "create_event",
+    "args": {
+     "title": "Home Office",
+     "date": "2026-09-16"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 666,
+    "conf": 0.3031
+   },
+   {
+    "id": "cr-a6",
+    "tool": "create_event",
+    "args": {
+     "title": "Lisa-Visit",
+     "date": "2026-09-23",
+     "end_time": "2026-09-27"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 816,
+    "conf": 0.0009
+   },
+   {
+    "id": "mv1",
+    "tool": "move_event",
+    "args": {
+     "title": "dentist appointment",
+     "date": "2026-09-14"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 546,
+    "conf": 0.0035
+   },
+   {
+    "id": "mv2",
+    "tool": "move_event",
+    "args": {
+     "title": "Zahnarzttermin",
+     "date": "2026-09-16"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 522,
+    "conf": 0.0451
+   },
+   {
+    "id": "mv3",
+    "tool": "move_event",
+    "args": {
+     "title": "Einkaufen",
+     "date": "2026-09-20",
+     "time": "10:00"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 297,
+    "conf": 0.485
+   },
+   {
+    "id": "mv4",
+    "tool": "move_event",
+    "args": {
+     "title": "Frisörtermin",
+     "date": "2026-09-16",
+     "time": ""
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 611,
+    "conf": 0.0002
+   },
+   {
+    "id": "del1",
+    "tool": "delete_event",
+    "args": {
+     "title": "dentist appointment"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 180,
+    "conf": 0.8541
+   },
+   {
+    "id": "del2",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": true,
+    "ms": 302,
+    "conf": 0.4313
+   },
+   {
+    "id": "del3",
+    "tool": "delete_event",
+    "args": {
+     "title": "Frisör",
+     "date": "2026-09-15"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 598,
+    "conf": 0.0082
+   },
+   {
+    "id": "del3",
+    "tool": "delete_event",
+    "args": {
+     "title": "Termin",
+     "date": "2026-09-15"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 490,
+    "conf": 0.0037
+   },
+   {
+    "id": "del4",
+    "tool": "delete_event",
+    "args": {
+     "title": "Meeting",
+     "date": "12.9"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 457,
+    "conf": 0.0508
+   },
+   {
+    "id": "del5",
+    "tool": "delete_event",
+    "args": {
+     "title": "Kurzcheck",
+     "date": "2026-09-14"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 627,
+    "conf": 0.0001
+   },
+   {
+    "id": "del6",
+    "tool": "delete_event",
+    "args": {
+     "title": "Zahnarzt"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 451,
+    "conf": 0.8446
+   },
+   {
+    "id": "ls1",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": true,
+    "ms": 252,
+    "conf": 0.672
+   },
+   {
+    "id": "ls2",
+    "tool": "list_events",
+    "args": {
+     "date": "7.9."
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 490,
+    "conf": 0.2365
+   },
+   {
+    "id": "ls3",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": true,
+    "ms": 392,
+    "conf": 0.1983
+   },
+   {
+    "id": "ls4",
+    "tool": "list_events",
+    "args": {
+     "person": "Lisa",
+     "date": "September 20"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 522,
+    "conf": 0.0003
+   },
+   {
+    "id": "ls5",
+    "tool": "list_events",
+    "args": {
+     "person": "",
+     "date": "September",
+     "until": "",
+     "horizon": "week"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 528,
+    "conf": 0.0005
+   },
+   {
+    "id": "fs1",
+    "tool": "find_free_slots",
+    "args": {
+     "persons": "Lisa",
+     "duration_min": 30,
+     "date": "tomorrow afternoon"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 4243,
+    "conf": 0.0013
+   },
+   {
+    "id": "fs2",
+    "tool": "find_free_slots",
+    "args": {
+     "persons": "Lisa, Max"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 485,
+    "conf": 0.2392
+   },
+   {
+    "id": "fs3",
+    "tool": "find_free_slots",
+    "args": {
+     "persons": "Lisa",
+     "duration_min": 90,
+     "date": "2026-09-14"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 680,
+    "conf": 0.0015
+   },
+   {
+    "id": "fs4",
+    "tool": "find_free_slots",
+    "args": {
+     "persons": "Lisa",
+     "duration_min": 1,
+     "date": "2026-09-17"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 624,
+    "conf": 0.0931
+   },
+   {
+    "id": "fs5",
+    "tool": "find_free_slots",
+    "args": {
+     "persons": "Lisa und Max",
+     "date": "2026-09-17",
+     "until": "2026-09-18"
+    },
+    "tool_ok": true,
+    "args_ok": true,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 729,
+    "conf": 0.0407
+   },
+   {
+    "id": "amb1",
+    "tool": null,
+    "args": {},
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": true,
+    "ms": 387,
+    "conf": 0.4462
+   },
+   {
+    "id": "amb2",
+    "tool": "delete_event",
+    "args": {
+     "title": "Meeting mit Lisa"
+    },
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 461,
+    "conf": 0.6967
+   },
+   {
+    "id": "mi1",
+    "tool": "delete_event",
+    "args": {
+     "title": "Zahnarzt",
+     "date": "17.9."
+    },
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": false,
+    "refusal": false,
+    "ms": 862,
+    "conf": 0.0034
+   },
+   {
+    "id": "mi2",
+    "tool": "delete_event",
+    "args": {
+     "title": "Meeting",
+     "date": "17.9. 13:00-16:00"
+    },
+    "tool_ok": false,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": false,
+    "ms": 710,
+    "conf": 0.0298
+   },
+   {
+    "id": "ot1",
+    "tool": null,
+    "args": {},
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": true,
+    "ms": 297,
+    "conf": 0.9887
+   },
+   {
+    "id": "ot2",
+    "tool": null,
+    "args": {},
+    "tool_ok": true,
+    "args_ok": false,
+    "final_ok": true,
+    "refusal": true,
+    "ms": 381,
+    "conf": 0.9764
+   }
+  ]
+ }
+}

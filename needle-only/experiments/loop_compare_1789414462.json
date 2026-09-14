@@ -1,0 +1,74 @@
+[
+ {
+  "case": "multi-create",
+  "path": "controller",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "multi-create",
+  "path": "needle-raw",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "find-slot -> move",
+  "path": "controller",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "find-slot -> move",
+  "path": "needle-raw",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "ambiguous delete",
+  "path": "controller",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "ambiguous delete",
+  "path": "needle-raw",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "list -> identify -> move",
+  "path": "controller",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "list -> identify -> move",
+  "path": "needle-raw",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "find-slot -> create",
+  "path": "controller",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "find-slot -> create",
+  "path": "needle-raw",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "historical list",
+  "path": "controller",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ },
+ {
+  "case": "historical list",
+  "path": "needle-raw",
+  "final_ok": false,
+  "error": "'CalendarStore' object has no attribute 'now'"
+ }
+]
