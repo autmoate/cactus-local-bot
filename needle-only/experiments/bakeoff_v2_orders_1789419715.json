@@ -1,0 +1,104 @@
+{
+ "orders": [
+  {
+   "order": [
+    "calendar_create",
+    "calendar_move",
+    "calendar_delete",
+    "calendar_list",
+    "calendar_find_slot"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_find_slot",
+    "calendar_list",
+    "calendar_delete",
+    "calendar_move",
+    "calendar_create"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_create",
+    "calendar_move",
+    "calendar_list",
+    "calendar_delete",
+    "calendar_find_slot"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_create",
+    "calendar_move",
+    "calendar_list",
+    "calendar_find_slot",
+    "calendar_delete"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_create",
+    "calendar_move",
+    "calendar_find_slot",
+    "calendar_delete",
+    "calendar_list"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_create",
+    "calendar_move",
+    "calendar_find_slot",
+    "calendar_list",
+    "calendar_delete"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_create",
+    "calendar_delete",
+    "calendar_move",
+    "calendar_list",
+    "calendar_find_slot"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_create",
+    "calendar_delete",
+    "calendar_move",
+    "calendar_find_slot",
+    "calendar_list"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_create",
+    "calendar_delete",
+    "calendar_list",
+    "calendar_move",
+    "calendar_find_slot"
+   ],
+   "tool_acc": 0.048
+  },
+  {
+   "order": [
+    "calendar_create",
+    "calendar_delete",
+    "calendar_list",
+    "calendar_find_slot",
+    "calendar_move"
+   ],
+   "tool_acc": 0.048
+  }
+ ]
+}

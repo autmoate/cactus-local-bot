@@ -1,0 +1,18 @@
+{
+ "A": {
+  "variant": "A",
+  "n_calls": 120,
+  "tool_ok": 0.9,
+  "args_ok": 0.4,
+  "final_ok": 0.725,
+  "refusals": 0.05
+ },
+ "B": {
+  "variant": "B",
+  "n_calls": 120,
+  "tool_ok": 0.65,
+  "args_ok": 0.375,
+  "final_ok": 0.65,
+  "refusals": 0.275
+ }
+}

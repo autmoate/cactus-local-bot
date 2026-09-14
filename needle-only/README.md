@@ -162,7 +162,33 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
   `data/traces.jsonl` (eine JSON-Zeile pro Request, inkl. Canonical, Steps,
   Confidence, `ungrounded`, Fehler) — Grundlage für gezieltes Debugging.
 
-## Needle-Bakeoff v2 (experiments/, kontrollierte Ablation)
+## Needle-Bakeoff v2.1 (experiments/, kontrollierte Ablation, korrigierte Messung)
+
+v2 hatte Messfehler (Orders wurden nicht wirklich reihenfolgend, strict nie
+übergeben, Args nur Stringvergleich, geteilte Stores). v2.1 behebt alle und
+misst mit 21 Cases × raw/canon × 3 Repeats (fresh engine init), echten
+Produktionsschemas und drei getrennten Metriken + exact-call-stability:
+
+- **Tool role (Production)**: 0.905 — gut genug
+- **Args semantic: 0.476** — der Flaschenhals, unabhängig vom Toolset
+- **Final DB: 0.725**
+- Naming (create_event): 0.786 — calendar_* bleibt
+- Split (isoliert 5-Tool / 6-Tool-Retrieval): 0.714 / 0.69 — verworfen
+- Tool-Order: 10 echte Permutationen → 0.69–0.762, kein robuster Effekt
+- `run()` mit korrekt übergebenem strict=False: identische ungrounded-Quote
+  (10/20) — die Engine erwartet verbatim-evidenced Werte; unser Symbolik-
+  Determinismus (Python rechnet) ist das Gegenteil → Design-Entscheidung, kein Bug
+- `extract(single)`: 8/17 create-Cases sinnvoll befüllt, Arrays 0,
+  iterativ-solo halluziniert — nur nach Gemma-Zerlegung sinnvoll
+- **Contract-Ablation** (`contract_ablation.py`): symbolische Arg-Namen
+  (date_expression/…) schlagen das aktuelle Contract NICHT
+  (tool 0.65 vs 0.90, Refusals 0.275 vs 0.05) — verworfen
+- **Loop-Vergleich** (`loop_compare.py`): Controller gewinnt multi-create
+  (Dekomposition), needle-raw gewinnt simple Reads (12× schneller);
+  find-slot → move scheitert in beiden (offen)
+
+Modell-Evals sind probabilistisch und als solche markiert; deterministische
+Korrektheit lebt zu 100 % in `tests/test_calendar.py`.
 
 `needle_bakeoff_v2.py` misst mit 21 Cases × 2 Formen (raw + kanonisch) × 3
 Repeats, echten Produktionsschemas (Literal, Field), drei getrennten Metriken

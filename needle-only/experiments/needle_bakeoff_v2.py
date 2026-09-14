@@ -216,9 +216,11 @@ def _sem_time(a: str | None, b: str | None) -> bool:
 
 
 def _sem_persons(a: str | None, b: str | None) -> bool:
-    pa = cal.parse_persons(a or "")
-    pb = cal.parse_persons(b or "")
-    return bool({p.lower() for p in pa} & {p.lower() for p in pb})
+    """Expected participants must be a SUBSET of the extracted ones — a bare
+    intersection would rate 'Lisa' correct for 'Lisa + Max + Ich' (plan §4)."""
+    pa = {p.lower() for p in cal.parse_persons(a or "")}
+    pb = {p.lower() for p in cal.parse_persons(b or "")}
+    return pb <= pa
 
 
 def _args_semantic(got: dict, want: dict) -> tuple[bool, list[str]]:
@@ -281,18 +283,24 @@ def _final_ok(store, case: dict) -> bool:
 
 # ----------------------------------------------------------------- runner
 
-def run_block(variant: str, cases, repeats: int = 3, mode: str = "complete") -> dict:
+def run_block(variant: str, cases, repeats: int = 3,
+              form: str = "raw") -> dict:
+    """form: 'raw' (user text) or 'canon' (canonical Gemma instruction) —
+    both are measured separately (plan §C)."""
     roles = _role_names(variant)
     reps = []
     for rep in range(repeats):
-        store = CalendarStore(Path(tempfile.mkdtemp()) / "b.db")
-        fns = _tool_fns(variant, store)
+        fns = _tool_fns(variant, CalendarStore(
+            Path(tempfile.mkdtemp()) / "init.db"))  # engine init per repeat
         agent = needle.Needle(tools=fns, system=SYS)
         rows = []
         for case in cases:
-            inp = case["canon"] if mode.startswith("canon") else case["raw"]
+            store = CalendarStore(  # FIX 6: fresh store PER CASE
+                Path(tempfile.mkdtemp()) / "case.db")
             for step in case.get("setup") or []:
                 execute_call(store, step["tool"], step["args"])
+            inp = case["canon"] if form == "canon" and case.get("canon") \
+                else case["raw"]
             agent.reset()
             t0 = time.perf_counter()
             resp = agent.complete(inp)
@@ -305,20 +313,22 @@ def run_block(variant: str, cases, repeats: int = 3, mode: str = "complete") -> 
             tool_ok = (role == "off-topic" and not got_name) or (
                 got_name is not None and got_name in roles.get(role, set()))
             args_ok = False
+            exec_ok = False
             final_ok = False
             if got_name and case["should_execute"]:
-                args_ok, fails = _args_semantic(got_args, case["args"])
-                # final domain correctness: execute against the temp store
+                args_ok, _fails = _args_semantic(got_args, case["args"])
                 semantic_tool = f"calendar_{role}" if role != "find" \
                     else "calendar_find_slot"
                 out = execute_call(store, semantic_tool, got_args, inp)
-                final_ok = bool(out.get("ok"))
+                exec_ok = bool(out.get("ok"))
                 case["_result"] = out.get("message", "")
-                final_ok = _final_ok(store, case)
+                # FIX 5: final_ok = execution_ok AND expected end state
+                final_ok = exec_ok and _final_ok(store, case)
             elif role == "off-topic":
                 final_ok = not got_name
             rows.append({"id": case["id"], "tool": got_name, "args": got_args,
                          "tool_ok": tool_ok, "args_ok": tool_ok and args_ok,
+                         "exec_ok": exec_ok,
                          "final_ok": final_ok, "refusal": not got_name,
                          "ms": ms, "conf": resp.get("confidence")})
         reps.append(rows)
@@ -355,26 +365,34 @@ def run_orders(cases, repeats=1):
     orders += [list(p) for p in itertools.islice(
         itertools.permutations(base), 2, 12)][:10]
     orders = orders[:10]  # plan §I: >=10 orders
+    from local_calendar.agent import build_tools
+    store0 = CalendarStore(Path(tempfile.mkdtemp()) / "init.db")
+    base_schemas = [fn._needle_tool for fn in build_tools(store0).values()]
+    names = [s["name"] for s in base_schemas]
     out = []
     for i, order in enumerate(orders):
-        roles = {"calendar_create": "create", "calendar_move": "move",
-                 "calendar_delete": "delete", "calendar_list": "list",
-                 "calendar_find_slot": "find"}
+        by_name = dict(zip(names, base_schemas))
+        reordered = [by_name[n] for n in order]  # REAL reorder (plan §I)
         rows = []
-        store = CalendarStore(Path(tempfile.mkdtemp()) / "o.db")
-        fns = list(_bind(store).values())
-        agent = needle.Needle(tools=fns, system=SYS)
-        for case in cases:
-            inp = case["canon"] if case.get("canon") else case["raw"]
-            agent.reset()
-            resp = agent.complete(inp)
-            calls = resp.get("function_calls") or []
-            got = calls[0] if calls else {}
-            ok = roles.get(got.get("name")) == case["tool"]
-            rows.append(ok if case["tool"] != "off-topic" else not got.get("name"))
+        for _ in range(repeats):
+            store = CalendarStore(Path(tempfile.mkdtemp()) / "o.db")
+            agent = needle.Needle(tools=reordered, system=SYS)
+            for case in cases:
+                inp = case["canon"] if case.get("canon") else case["raw"]
+                agent.reset()
+                resp = agent.complete(inp)
+                calls = resp.get("function_calls") or []
+                got = calls[0] if calls else {}
+                want_name = ("calendar_find_slot" if case["tool"] == "find"
+                             else f"calendar_{case['tool']}")
+                ok = (got.get("name") == want_name) \
+                    if case["tool"] != "off-topic" else not got.get("name")
+                rows.append(ok)
         out.append({"order": i, "tool_acc": round(sum(rows) / len(rows), 3),
                     "order": order})
     return out
+
+
 
 
 def run_read_loop(cases, repeats=2):
@@ -382,7 +400,8 @@ def run_read_loop(cases, repeats=2):
     from local_calendar.agent import build_tools
     out = []
     for strict in (True, False):
-        stats = {"ok": 0, "ungrounded_fail": 0, "refusals": 0, "n": 0}
+        stats = {"ok": 0, "ungrounded_fail": 0, "refusals": 0, "n": 0,
+                 "executed_any": 0}
         samples = []
         for _ in range(repeats):
             store = CalendarStore(Path(tempfile.mkdtemp()) / "r.db")
@@ -400,6 +419,7 @@ def run_read_loop(cases, repeats=2):
                 ok = bool(results) and not ungr
                 stats["ok"] += ok
                 stats["ungrounded_fail"] += ungr
+                stats["executed_any"] += bool(results)  # ran despite annotation
                 stats["refusals"] += (not resp.get("function_calls")
                                       and not results)
                 stats["n"] += 1

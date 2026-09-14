@@ -1,0 +1,16 @@
+{
+ "A": {
+  "variant": "A",
+  "tool_ok": 0,
+  "args_ok": 0,
+  "final_ok": 0,
+  "refusals": 0.05
+ },
+ "B": {
+  "variant": "B",
+  "tool_ok": 0,
+  "args_ok": 0,
+  "final_ok": 0,
+  "refusals": 0.275
+ }
+}
