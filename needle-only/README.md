@@ -162,6 +162,26 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
   `data/traces.jsonl` (eine JSON-Zeile pro Request, inkl. Canonical, Steps,
   Confidence, `ungrounded`, Fehler) — Grundlage für gezieltes Debugging.
 
+## ArgEx-Pass (experiments/argx_pipeline.py — Argument-Robustheit)
+
+Phase 1 per-field: 70 % des Args-Problems sind temporal — date 0.63,
+until 0.33 (fehlt meist ganz), time 0.64, horizon 0.00; title 0.80,
+end_time/duration 1.00. Phase 2-5 Two-Call-Pipeline (tool-select →
+extract(args)) gemessen: **alle Varianten deutlich schlechter als
+complete()** — plain 0.05-0.125, None-defaults identisch, Temporal-
+Expressions-Variante 0.025. Verifikation am Weg: extract() mit
+Aktions-namigen Schemas/Docs flippt die Grammar in Refusals („to create"
+→ null; „described in text" → exakt) — Schema-Name/-Docstring sind
+Verhaltensfaktoren. Auch mit neutralen Schemas und System-Facts bleibt
+die Two-Call-Pipeline unter der Ein-Call-Baseline: **complete() bleibt
+Produktionspfad** (Needle's Stärke ist der EINMALIGE constrained Call;
+eine Zweit-Extraction verliert Task-Kontext und Grounding-Lizenz).
+Phase 7/8: Mutationen laufen bereits by event_id nach resolve_event
+(candidate → id → mutate). Phase 9 field-repair: verworfen — der Hebel
+existiert nicht, solange extract generisch <50 % liefert.
+**args_ok ≈ 0.4-0.48 ist die harte Grenze des Base-Needle** → FT (Plan
+§14) ist der nächste Schritt, Gemma bleibt für Planning/Splitting.
+
 ## Needle-Bakeoff v2.1 (experiments/, kontrollierte Ablation, korrigierte Messung)
 
 v2 hatte Messfehler (Orders wurden nicht wirklich reihenfolgend, strict nie

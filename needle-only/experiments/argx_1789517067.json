@@ -1,0 +1,30 @@
+{
+ "baseline": {
+  "pipeline": "baseline-complete",
+  "tool_ok": 0.9,
+  "args_ok": 0.4,
+  "final_ok": 0.65,
+  "needle_calls_per_request": 1.0
+ },
+ "argx": {
+  "pipeline": "argx",
+  "tool_ok": 0.9,
+  "args_ok": 0.075,
+  "final_ok": 0.2,
+  "needle_calls_per_request": 1.88
+ },
+ "argx_none": {
+  "pipeline": "argx_none",
+  "tool_ok": 0.9,
+  "args_ok": 0.075,
+  "final_ok": 0.15,
+  "needle_calls_per_request": 1.88
+ },
+ "argx_expr": {
+  "pipeline": "argx_expr",
+  "tool_ok": 0.9,
+  "args_ok": 0.05,
+  "final_ok": 0.15,
+  "needle_calls_per_request": 1.88
+ }
+}
