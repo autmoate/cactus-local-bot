@@ -1,0 +1,144 @@
+[
+ {
+  "name": "calendar_list",
+  "description": "List calendar entries for a person, a specific day or a date range.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "person": {
+     "type": "string",
+     "description": "participant name to filter by, empty for the user themself"
+    },
+    "date": {
+     "type": "string",
+     "description": "specific day like '7.9.' or 'September 1'; empty uses horizon"
+    },
+    "until": {
+     "type": "string",
+     "description": "last day of a range (inclusive) like 'September 7'"
+    },
+    "horizon": {
+     "type": "string",
+     "enum": [
+      "today",
+      "week",
+      "month"
+     ],
+     "description": "'today', 'week' or 'month' when no date is given"
+    }
+   }
+  }
+ },
+ {
+  "name": "calendar_find_slot",
+  "description": "Find common free time slots for a group of persons.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "persons": {
+     "type": "string",
+     "description": "comma-separated participant names"
+    },
+    "duration_min": {
+     "type": "integer",
+     "description": "minimum slot length in minutes"
+    },
+    "date": {
+     "type": "string",
+     "description": "first day like 'tomorrow afternoon' or 'September 20'"
+    },
+    "until": {
+     "type": "string",
+     "description": "last day of the search range like 'September 24'; empty with date means one day"
+    },
+    "days": {
+     "type": "integer",
+     "description": "search horizon in days (from today) when no date is given"
+    }
+   },
+   "required": [
+    "persons"
+   ]
+  }
+ },
+ {
+  "name": "calendar_create",
+  "description": "Create a calendar entry or all-day absence (vacation, trip).",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "title": {
+     "type": "string",
+     "description": "short entry title"
+    },
+    "date": {
+     "type": "string",
+     "description": "first day like 'tomorrow' or 'august 3'"
+    },
+    "until": {
+     "type": "string",
+     "description": "last day for multi-day absences like 'august 18'; empty for single day"
+    },
+    "time": {
+     "type": "string",
+     "description": "time of day like '14:00'; empty for all-day absences"
+    },
+    "end_time": {
+     "type": "string",
+     "description": "end time of day like '16:00' for explicit time ranges"
+    },
+    "participants": {
+     "type": "string",
+     "description": "comma-separated participant names"
+    }
+   },
+   "required": [
+    "title"
+   ]
+  }
+ },
+ {
+  "name": "calendar_move",
+  "description": "Move an existing entry to another day and/or time.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "title": {
+     "type": "string",
+     "description": "title of the existing entry to move"
+    },
+    "date": {
+     "type": "string",
+     "description": "new day like 'friday' or 'day after tomorrow'"
+    },
+    "time": {
+     "type": "string",
+     "description": "new time like '15:00'; empty keeps the current time"
+    }
+   },
+   "required": [
+    "title"
+   ]
+  }
+ },
+ {
+  "name": "calendar_delete",
+  "description": "Delete an existing calendar entry.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "title": {
+     "type": "string",
+     "description": "title of the entry to delete"
+    },
+    "date": {
+     "type": "string",
+     "description": "optional day hint to pick the right entry"
+    }
+   },
+   "required": [
+    "title"
+   ]
+  }
+ }
+]

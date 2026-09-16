@@ -1,0 +1,102 @@
+{
+ "errors": [],
+ "error_count": 0,
+ "counts": {
+  "train": 9940,
+  "validation": 1000,
+  "test": 1800
+ },
+ "tools": {
+  "train": {
+   "calendar_move": 1997,
+   "calendar_create": 3267,
+   "calendar_delete": 746,
+   "calendar_list": 816,
+   "negative": 840,
+   "calendar_find_slot": 2274
+  },
+  "validation": {
+   "calendar_find_slot": 210,
+   "calendar_create": 303,
+   "negative": 90,
+   "calendar_move": 192,
+   "calendar_delete": 92,
+   "calendar_list": 113
+  },
+  "test": {
+   "calendar_list": 155,
+   "calendar_move": 362,
+   "calendar_create": 569,
+   "negative": 162,
+   "calendar_find_slot": 403,
+   "calendar_delete": 149
+  }
+ },
+ "temporal": {
+  "train": {
+   "explicit_month_name": 717,
+   "weekday_relative_past": 429,
+   "relative_offset_days": 543,
+   "explicit_iso_dmy": 2077,
+   "weekday_relative": 1076,
+   "none": 1431,
+   "relative_next_day": 1237,
+   "weekday_plain": 739,
+   "relative_today": 596,
+   "explicit_iso_dmy_year": 255
+  },
+  "validation": {
+   "weekday_relative": 102,
+   "weekday_plain": 67,
+   "weekday_relative_past": 67,
+   "explicit_month_name": 240,
+   "relative_offset_days": 102,
+   "explicit_iso_dmy": 235,
+   "explicit_iso_dmy_year": 61,
+   "none": 36
+  },
+  "test": {
+   "explicit_iso_dmy": 351,
+   "none": 356,
+   "explicit_iso_dmy_year": 83,
+   "explicit_month_name": 314,
+   "relative_today": 30,
+   "weekday_relative": 167,
+   "relative_offset_days": 95,
+   "weekday_plain": 75,
+   "relative_next_day": 72,
+   "weekday_relative_past": 95
+  }
+ },
+ "languages": {
+  "train": {
+   "gemma": 2301,
+   "en": 1380,
+   "de": 5419
+  },
+  "validation": {
+   "de": 542,
+   "gemma": 214,
+   "en": 154
+  },
+  "test": {
+   "de": 961,
+   "en": 259,
+   "gemma": 418
+  }
+ },
+ "arg_field_usage": {
+  "title": 7677,
+  "date": 9825,
+  "time": 4250,
+  "participants": 645,
+  "person": 567,
+  "horizon": 1084,
+  "persons": 2887,
+  "duration_min": 2887,
+  "days": 2887,
+  "until": 1982,
+  "end_time": 511
+ },
+ "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484"
+}

@@ -1,0 +1,26 @@
+{
+ "generated_at": "2026-09-16T21:51:32.026943+00:00",
+ "generator_commit": "ac150d1439036243991d5460ae49851c5e149fcf",
+ "seed": 42,
+ "counts": {
+  "train": 9940,
+  "validation": 1000,
+  "test": 1800
+ },
+ "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484",
+ "file_sha256": {
+  "train.jsonl": "d86a28ad58d13399701d9e1cf845432829ab758914ec9521193540dedbddd4c2",
+  "validation.jsonl": "ec6fbd701ae44e6401bbe713dd22b0abb46b63f03964866819724fc06e513e07",
+  "test.jsonl": "12850b7b6338a4a65461e30188c9f97828e4dc1faa1c8128ec8910b623b88645"
+ },
+ "negative_share": 0.09,
+ "target_rates": {
+  "calendar_create": 0.33,
+  "calendar_move": 0.21,
+  "calendar_delete": 0.1,
+  "calendar_list": 0.13,
+  "calendar_find_slot": 0.23
+ },
+ "system_facts": "date: 2026-09-13 Sun 12:00; locale: de-DE; device: raspberry-pi",
+ "gold_convention": "all schema string fields present, empty string when unevidenced; ints/enums carry defaults (duration_min=60, days=7, horizon=week)"
+}

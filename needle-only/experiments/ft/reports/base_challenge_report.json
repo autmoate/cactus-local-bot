@@ -1,0 +1,23 @@
+{
+ "set": "challenge",
+ "n": 25,
+ "repeats": 1,
+ "tool_ok": 0.92,
+ "args_ok": 0.28,
+ "exact_args_ok": 0.0,
+ "refusals": 0.08,
+ "median_ms": 913,
+ "per_field": {
+  "date": 0.857,
+  "until": 0.25,
+  "time": 0.8,
+  "end_time": 1.0,
+  "title": 0.882,
+  "persons": 0.0,
+  "person": 1.0,
+  "horizon": 0.167,
+  "duration_min": 0.0,
+  "days": 0.0,
+  "participants": null
+ }
+}
