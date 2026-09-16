@@ -162,6 +162,19 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
   `data/traces.jsonl` (eine JSON-Zeile pro Request, inkl. Canonical, Steps,
   Confidence, `ungrounded`, Fehler) — Grundlage für gezieltes Debugging.
 
+## Contract-Minimization (experiments/contract_minimize.py — letzte Base-Phase)
+
+Genau eine Frage: Kosten `horizon`/`days` als Schema-Felder Arg-Accuracy?
+Minimal-Contract (list/find ohne horizon/days, Handler-Defaults unverändert)
+gemessen gegen die Produktion — 21 Cases × raw/canon × 3 Repeats:
+**verworfen** — args 0.375 vs 0.400, final 0.60 vs 0.65, Refusals 0.125
+vs 0.05 (2.5×). Isoliert hilft Minimal leicht bei `until` (0.5 vs 0.33),
+kostet aber bei `date` und verdoppelt Refusals. Canon-Form ist generell
+nicht besser als rohe Anfrage (args 0.30 vs 0.40). Base-Needle-Contract
+damit abgeschlossen: **Produktionsschema eingefroren**, FT-Datensatz (§10)
+ist der nächste Schritt — Fokus: date/until/time/ranges/relative dates/
+participant combinations.
+
 ## ArgEx-Pass (experiments/argx_pipeline.py — Argument-Robustheit)
 
 Phase 1 per-field: 70 % des Args-Problems sind temporal — date 0.63,

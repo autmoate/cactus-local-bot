@@ -1,0 +1,202 @@
+{
+ "raw_A": {
+  "contract": "A",
+  "form": "raw",
+  "repeats": 3,
+  "tool_ok": 0.9,
+  "args_ok": 0.4,
+  "final_ok": 0.65,
+  "refusals": 0.05,
+  "median_ms": 1347,
+  "field": {
+   "date": {
+    "present_expected": 90,
+    "present_correct": 57,
+    "missing": 0,
+    "wrong_value": 33,
+    "hallucinated": 15,
+    "acc": 0.633
+   },
+   "until": {
+    "present_expected": 18,
+    "present_correct": 6,
+    "missing": 12,
+    "wrong_value": 0,
+    "hallucinated": 3,
+    "acc": 0.333
+   },
+   "persons": {
+    "present_expected": 15,
+    "present_correct": 6,
+    "missing": 0,
+    "wrong_value": 9,
+    "hallucinated": 0,
+    "acc": 0.4
+   },
+   "duration_min": {
+    "present_expected": 3,
+    "present_correct": 3,
+    "missing": 0,
+    "wrong_value": 0,
+    "hallucinated": 9,
+    "acc": 1.0
+   }
+  },
+  "subset_metrics": {
+   "n": 33,
+   "tool_ok": 0.909,
+   "args_ok": 0.545,
+   "final_ok": 0.636
+  }
+ },
+ "raw_M": {
+  "contract": "M",
+  "form": "raw",
+  "repeats": 3,
+  "tool_ok": 0.85,
+  "args_ok": 0.375,
+  "final_ok": 0.6,
+  "refusals": 0.125,
+  "median_ms": 1256,
+  "field": {
+   "date": {
+    "present_expected": 90,
+    "present_correct": 57,
+    "missing": 3,
+    "wrong_value": 30,
+    "hallucinated": 12,
+    "acc": 0.633
+   },
+   "until": {
+    "present_expected": 18,
+    "present_correct": 9,
+    "missing": 9,
+    "wrong_value": 0,
+    "hallucinated": 0,
+    "acc": 0.5
+   },
+   "persons": {
+    "present_expected": 15,
+    "present_correct": 6,
+    "missing": 0,
+    "wrong_value": 9,
+    "hallucinated": 0,
+    "acc": 0.4
+   },
+   "duration_min": {
+    "present_expected": 3,
+    "present_correct": 3,
+    "missing": 0,
+    "wrong_value": 0,
+    "hallucinated": 9,
+    "acc": 1.0
+   }
+  },
+  "subset_metrics": {
+   "n": 33,
+   "tool_ok": 0.818,
+   "args_ok": 0.545,
+   "final_ok": 0.636
+  }
+ },
+ "canon_A": {
+  "contract": "A",
+  "form": "canon",
+  "repeats": 3,
+  "tool_ok": 0.725,
+  "args_ok": 0.3,
+  "final_ok": 0.5,
+  "refusals": 0.25,
+  "median_ms": 934,
+  "field": {
+   "date": {
+    "present_expected": 90,
+    "present_correct": 57,
+    "missing": 15,
+    "wrong_value": 18,
+    "hallucinated": 6,
+    "acc": 0.633
+   },
+   "until": {
+    "present_expected": 18,
+    "present_correct": 3,
+    "missing": 15,
+    "wrong_value": 0,
+    "hallucinated": 0,
+    "acc": 0.167
+   },
+   "persons": {
+    "present_expected": 15,
+    "present_correct": 6,
+    "missing": 0,
+    "wrong_value": 9,
+    "hallucinated": 0,
+    "acc": 0.4
+   },
+   "duration_min": {
+    "present_expected": 3,
+    "present_correct": 3,
+    "missing": 0,
+    "wrong_value": 0,
+    "hallucinated": 3,
+    "acc": 1.0
+   }
+  },
+  "subset_metrics": {
+   "n": 33,
+   "tool_ok": 0.636,
+   "args_ok": 0.364,
+   "final_ok": 0.455
+  }
+ },
+ "canon_M": {
+  "contract": "M",
+  "form": "canon",
+  "repeats": 3,
+  "tool_ok": 0.725,
+  "args_ok": 0.3,
+  "final_ok": 0.5,
+  "refusals": 0.25,
+  "median_ms": 1076,
+  "field": {
+   "date": {
+    "present_expected": 90,
+    "present_correct": 57,
+    "missing": 12,
+    "wrong_value": 21,
+    "hallucinated": 6,
+    "acc": 0.633
+   },
+   "until": {
+    "present_expected": 18,
+    "present_correct": 6,
+    "missing": 12,
+    "wrong_value": 0,
+    "hallucinated": 0,
+    "acc": 0.333
+   },
+   "persons": {
+    "present_expected": 15,
+    "present_correct": 3,
+    "missing": 0,
+    "wrong_value": 12,
+    "hallucinated": 0,
+    "acc": 0.2
+   },
+   "duration_min": {
+    "present_expected": 3,
+    "present_correct": 3,
+    "missing": 0,
+    "wrong_value": 0,
+    "hallucinated": 6,
+    "acc": 1.0
+   }
+  },
+  "subset_metrics": {
+   "n": 33,
+   "tool_ok": 0.636,
+   "args_ok": 0.364,
+   "final_ok": 0.455
+  }
+ }
+}
