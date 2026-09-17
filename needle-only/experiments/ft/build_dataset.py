@@ -30,6 +30,10 @@ from local_calendar import calendar as cal  # noqa: E402
 from local_calendar.agent import build_tools  # noqa: E402
 
 
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
 def production_schemas() -> tuple[list[dict], str]:
     """Schemas straight from production build_tools (never re-declared)."""
     store = cal.CalendarStore(Path(tempfile.mkdtemp()) / "schema_probe.db")
@@ -101,9 +105,8 @@ def build_split(schemas: list[dict], split: str, n: int, rng, seen: set):
                 "query": inp,
                 "answers": ([] if family["tool"] == "none"
                             else [{"name": family["tool"],
-                                   "arguments": spec._args_full(
-                                       props[family["tool"]], filled,
-                                       family["tool"])}]),
+                                   "arguments": spec._args_sparse(
+                                       filled, inp)}]),
                 "reasoning": spec.gold_reasoning(inp, filled) if filled
                 else "off-topic: no calendar action applies",
                 "meta": _meta(family, filled, lang, inp),
@@ -173,25 +176,40 @@ def main() -> None:
         with open(path, "w", encoding="utf-8") as fh:
             for r in rows:
                 fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+        if len(rows) != n:
+            raise SystemExit(
+                f"count mismatch for {split}: requested {n}, built "
+                f"{len(rows)} — pools/weights exhausted; refusing to write "
+                "a silently short dataset")
         hashes[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         actual[split] = len(rows)
         print(f"  {split:<11}{len(rows):>6}  -> {path.name}")
 
-    commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
-                            text=True, cwd=FT_DIR.parents[2]).stdout.strip()
+    try:
+        commit = subprocess.run(["git", "rev-parse", "HEAD"],
+                                capture_output=True, text=True,
+                                cwd=FT_DIR.parents[2]).stdout.strip()
+    except Exception:
+        commit = ""
     manifest = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "generator_commit": commit,
-        "seed": args.seed,
+        "generated_at_commit": commit,
+        "provenance": {
+            "build_dataset_sha256": _sha256_file(FT_DIR / "build_dataset.py"),
+            "dataset_spec_sha256": _sha256_file(FT_DIR / "dataset_spec.py"),
+            "schema_sha256": schema_hash,
+            "seed": args.seed,
+        },
         "counts": actual,
         "schema_hash": schema_hash,
         "file_sha256": hashes,
         "negative_share": spec.NEGATIVE_SHARE,
         "target_rates": spec.TARGET_RATES,
         "system_facts": spec.SYSTEM_FACTS,
-        "gold_convention": "all schema string fields present, empty string "
-                           "when unevidenced; ints/enums carry defaults "
-                           "(duration_min=60, days=7, horizon=week)",
+        "gold_convention": "sparse/evidenced-only: arguments omitted "
+                           "when the query does not evidence them "
+                           "(needle finetune convention, gold_ab_report); "
+                           "empty arguments dict is legal",
     }
     (FT_DIR / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")

@@ -1,17 +1,22 @@
 {
- "generated_at": "2026-09-16T21:51:32.026943+00:00",
- "generator_commit": "ac150d1439036243991d5460ae49851c5e149fcf",
- "seed": 42,
+ "generated_at": "2026-09-17T11:14:09.461611+00:00",
+ "generated_at_commit": "d5516c236c5f08299bc3d72160f1fae1995a2dcb",
+ "provenance": {
+  "build_dataset_sha256": "6f78dfd6e845e21a02dd1d5938b90c9051c0f53dc63c7207d1629c300b46b2e8",
+  "dataset_spec_sha256": "f17859690a829d4dd0443a23b8b912409e1f964c8401da69cde2a30ff31206a3",
+  "schema_sha256": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484",
+  "seed": 42
+ },
  "counts": {
-  "train": 9940,
+  "train": 10000,
   "validation": 1000,
   "test": 1800
  },
  "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484",
  "file_sha256": {
-  "train.jsonl": "d86a28ad58d13399701d9e1cf845432829ab758914ec9521193540dedbddd4c2",
-  "validation.jsonl": "ec6fbd701ae44e6401bbe713dd22b0abb46b63f03964866819724fc06e513e07",
-  "test.jsonl": "12850b7b6338a4a65461e30188c9f97828e4dc1faa1c8128ec8910b623b88645"
+  "train.jsonl": "4da6dce8381c0bfa25643278a59fcae37fea72d9a5e3d1bd6e1267b92227601c",
+  "validation.jsonl": "00a4f8dfe6a2d209623ba5c1f121f39c2567e7d13afa08d5bedc0e96ad544b93",
+  "test.jsonl": "1847138ee53ffcf725c8bd153ea99dd318c37e1ec7cd620c7bd279ab7e66f4a7"
  },
  "negative_share": 0.09,
  "target_rates": {
@@ -22,5 +27,5 @@
   "calendar_find_slot": 0.23
  },
  "system_facts": "date: 2026-09-13 Sun 12:00; locale: de-DE; device: raspberry-pi",
- "gold_convention": "all schema string fields present, empty string when unevidenced; ints/enums carry defaults (duration_min=60, days=7, horizon=week)"
+ "gold_convention": "sparse/evidenced-only: arguments omitted when the query does not evidence them (needle finetune convention, gold_ab_report); empty arguments dict is legal"
 }

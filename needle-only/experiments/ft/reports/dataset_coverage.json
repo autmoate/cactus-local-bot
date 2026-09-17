@@ -2,18 +2,18 @@
  "errors": [],
  "error_count": 0,
  "counts": {
-  "train": 9940,
+  "train": 10000,
   "validation": 1000,
   "test": 1800
  },
  "tools": {
   "train": {
-   "calendar_move": 1997,
    "calendar_create": 3267,
-   "calendar_delete": 746,
    "calendar_list": 816,
-   "negative": 840,
-   "calendar_find_slot": 2274
+   "calendar_find_slot": 2274,
+   "calendar_move": 1997,
+   "calendar_delete": 746,
+   "negative": 900
   },
   "validation": {
    "calendar_find_slot": 210,
@@ -35,14 +35,14 @@
  "temporal": {
   "train": {
    "explicit_month_name": 717,
-   "weekday_relative_past": 429,
-   "relative_offset_days": 543,
    "explicit_iso_dmy": 2077,
-   "weekday_relative": 1076,
-   "none": 1431,
-   "relative_next_day": 1237,
+   "weekday_relative_past": 429,
    "weekday_plain": 739,
    "relative_today": 596,
+   "none": 1431,
+   "relative_next_day": 1237,
+   "relative_offset_days": 543,
+   "weekday_relative": 1076,
    "explicit_iso_dmy_year": 255
   },
   "validation": {
@@ -71,8 +71,8 @@
  "languages": {
   "train": {
    "gemma": 2301,
-   "en": 1380,
-   "de": 5419
+   "de": 5419,
+   "en": 1380
   },
   "validation": {
    "de": 542,
@@ -89,14 +89,14 @@
   "title": 7677,
   "date": 9825,
   "time": 4250,
-  "participants": 645,
   "person": 567,
-  "horizon": 1084,
-  "persons": 2887,
-  "duration_min": 2887,
-  "days": 2887,
   "until": 1982,
-  "end_time": 511
+  "persons": 2887,
+  "duration_min": 686,
+  "end_time": 511,
+  "participants": 645,
+  "days": 101,
+  "horizon": 244
  },
  "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484"
 }

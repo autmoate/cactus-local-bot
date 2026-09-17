@@ -3,10 +3,10 @@
  "n": 25,
  "repeats": 1,
  "tool_ok": 0.92,
- "args_ok": 0.28,
- "exact_args_ok": 0.0,
+ "args_ok": 0.52,
+ "exact_args_ok": 0.12,
  "refusals": 0.08,
- "median_ms": 913,
+ "median_ms": 1396,
  "per_field": {
   "date": 0.857,
   "until": 0.25,
@@ -15,9 +15,9 @@
   "title": 0.882,
   "persons": 0.0,
   "person": 1.0,
-  "horizon": 0.167,
-  "duration_min": 0.0,
-  "days": 0.0,
+  "horizon": 0.5,
+  "duration_min": null,
+  "days": null,
   "participants": null
  }
 }

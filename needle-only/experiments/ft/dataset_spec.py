@@ -21,10 +21,17 @@ import random
 SYSTEM_FACTS = "date: 2026-09-13 Sun 12:00; locale: de-DE; device: raspberry-pi"
 REF_DATE = "2026-09-13"
 
-# Default values sent for fields the input does not evidence (plan §12).
-GOLD_DEFAULTS = {
-    "calendar_list": {"horizon": "week"},
-    "calendar_find_slot": {"duration_min": 60, "days": 7},
+# Gold-supervision convention (user review Sep 16, gold_ab measurement):
+# SPARSE/evidenced-only — omit every argument the query does not evidence.
+# Needle's own finetune generator prescribes exactly this ("only values
+# evidenced in the query", needle/model/finetune.py) and Base Needle behaves
+# the same way (it drops defaults ~99% of the time; gold_ab_report.json).
+# Production handlers carry identical deterministic defaults, so omission is
+# execution-safe.
+EVIDENCE_TRIGGERS = {
+    "horizon": r"heute|diese woche|nächste woche|diesen monat|this week|today|this month|kommende woche|next week",
+    "duration_min": r"\d+\s*(minute|min\b|stunde|std\b|hour)",
+    "days": r"\bdays?\b|tage",
 }
 
 # Temporal spans the production resolver cannot parse: never used as gold.
@@ -103,18 +110,24 @@ _NEG_TAIL = ["", "!", "?", ".", " Danke.", ""]
 # ----------------------------------------------------------------- gold calls
 
 def _args_full(schema_props: dict, filled: dict, tool: str) -> dict:
-    """All schema string fields present; ints/enums carry their defaults."""
+    """SPARSE gold: only evidenced arguments (overridden below by
+    gold_args, which sees the query)."""
+    return {k: v for k, v in filled.items()}
+
+
+def _args_sparse(filled: dict, query: str) -> dict:
+    """Evidenced-only gold (gold_ab decision): keep non-empty strings;
+    enum/int fields only when the query evidences them (trigger regex).
+    Runs BEFORE default handling — used by build_dataset for every tool."""
+    import re as _re
     out = {}
-    defaults = GOLD_DEFAULTS.get(tool, {})
-    for name, prop in schema_props.items():
-        if name in filled:
-            out[name] = filled[name]
-        elif prop.get("type") == "integer":
-            out[name] = defaults.get(name, 0)
-        elif "enum" in prop:
-            out[name] = defaults.get(name, prop["enum"][0])
-        else:
-            out[name] = ""
+    for k, v in filled.items():
+        if v in ("", None):
+            continue
+        if k in EVIDENCE_TRIGGERS and not _re.search(
+                EVIDENCE_TRIGGERS[k], query, _re.IGNORECASE):
+            continue
+        out[k] = v
     return out
 
 
@@ -644,9 +657,12 @@ def negative_slice(split: str, n: int) -> list[tuple[str, str]]:
         start = int(len(pool) * (0.0 if split == "train" else
                                  0.6 if split == "validation" else 0.8))
         end = start + int(len(pool) * span)
-        k = round(n * (2 / 3 if kind == "offtopic" else 1 / 3))
-        for i in range(min(k, end - start)):
-            out.append((pool[start + (i * 7 + 3) % (end - start)], kind))
+        k = round(n * (0.55 if kind == "offtopic" else 0.45))
+        if k > end - start:
+            raise ValueError(f"negative {kind} pool too small for split "
+                             f"{split}: need {k}, slice has {end - start}")
+        for i in range(k):
+            out.append((pool[start + i], kind))
     return out
 
 

@@ -70,9 +70,12 @@ def validate_row(row: dict, schemas: dict, families_by_split: dict,
     if answers and tool != answers[0].get("name"):
         err(f"{row['id']}: meta.tool {tool} != answers name")
         return {}
-    if not answers or not answers[0].get("arguments"):
-        err(f"{row['id']}: empty gold call on positive row")
+    if not answers:
+        err(f"{row['id']}: no answers on positive row")
         return {}
+    # sparse convention: empty arguments dict is LEGAL when no field is
+    # evidenced (all list/find params are optional with handler defaults) —
+    # required fields are checked separately
     if tool not in schemas:
         err(f"{row['id']}: unknown tool {tool!r}")
         return {}
@@ -104,6 +107,16 @@ def validate_row(row: dict, schemas: dict, families_by_split: dict,
         if prop.get("type") == "string" and v and "enum" not in prop \
                 and v.lower() not in query.lower():
             err(f"{row['id']}: arg {k}={v!r} is not a query substring")
+    # sparse convention: default-carrying fields need query evidence
+    # (user review Sep 16: never supervise handler defaults)
+    for k, trig in spec.EVIDENCE_TRIGGERS.items():
+        v = args.get(k)
+        if v in ("", None):
+            continue
+        import re as _re
+        if not _re.search(trig, query, _re.IGNORECASE):
+            err(f"{row['id']}: {k}={v!r} set without query evidence "
+                "(sparse convention violation)")
     # temporal class validity
     tc = meta.get("temporal_class", "none")
     if tc == "other" and str(args.get("date", "")):
@@ -145,7 +158,7 @@ def main() -> None:
             fam_splits.setdefault(row["meta"]["source_family"], set()).add(split)
             if info.get("negative"):
                 stats[split]["negative"] += 1
-            else:
+            elif info.get("tool"):
                 stats[split][info["tool"]] += 1
                 stats[split]["temporal:" + info["temporal_class"]] += 1
                 stats[split]["lang:" + info["language"]] += 1

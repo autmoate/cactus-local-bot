@@ -29,9 +29,21 @@ DB-Auflösung, Kollisionen, Event-Identifikation — Python bleibt Domainwahrhei
    `language`, `source_family`); die problematischen Klassen
    (ranges, weekday-relative, offsets, dayparts, explicit ISO) sind bewusst
    hoch gewichtet, Coverage-Report zählt sie.
-7. **Gold-Format (§12)** — alle Schema-String-Felder present, nicht
-   evidenzbelegte als `""`; Integer/Enum tragen Schema-Defaults
-   (`duration_min=60`, `days=7`, `horizon="week"`).
+7. **Gold-Format — SPARSE/evidenced-only (A/B-Entscheidung, Sep 16)** —
+   nur evidenzbelegte Argumente: non-empty Strings, enum/int-Felder nur mit
+   Query-Trigger (`heute/diese Woche/diesen Monat/this week/next week` für
+   horizon; `N Minuten/Stunden` für duration). Der erste Stand (full/
+   default-filled: alle Felder, Defaults ins Gold) wurde gemessen und
+   verworfen: `gold_ab.py` bewertet dieselben Base-Needle-Outputs gegen
+   beide Konventionen — exact_full 0.005 vs exact_sparse 0.077 (Test) bzw.
+   0.000 vs 0.160 (Challenge); Base lässt Handler-Defaults mit ~99%
+   Wahrscheinlichkeit weg (`missing_default` 142/142 horizon, 282/282
+   duration_min, 288/288 days). Needle-eigener Finetune-Generator
+   (`needle/model/finetune.py _GEN_TEMPLATE`) schreibt exakt diese Konvention
+   vor: "only values evidenced in the query". Produktionssicherheit: Handler
+   haben identische deterministische Defaults — Omission ist
+   ausführungssicher. Wichtig: leeres `arguments:{}` ist bei sparse LEGAL
+   (z.B. "Wann ist mein Yoga-Termin?" → calendar_list ohne Args).
 8. **Grounding (§13)** — String-Argumentwerte sind literale Substrings des
    Inputs (Validator prüft). Dokumentierte Ausnahmen:
    - `horizon` ist ein Produktion-Enum (strukturierter Wert, kein Span)
@@ -69,31 +81,45 @@ uv run python experiments/ft/validate_dataset.py   # hart, bricht bei Fehlern
 uv run python experiments/ft/base_eval.py          # frozen Base-Baseline
 ```
 
-Manifest (`manifest.json`) hält: generator commit, seed, counts,
-schema-hash, file-sha256, negative_share, system facts, Gold-Konvention.
-Die JSONLs (train 9940 ≈ 20 MB mit Schemas pro Zeile) werden NICHT committet —
-die RTX-Maschine reproduziert exakt denselben Stand via seed + commit
-(manifest hashes verifizieren).
+Manifest (`manifest.json`) hält die Provenienz: `provenance.build_dataset_sha256`
++ `dataset_spec_sha256` (die eigentlichen Reproduzierbarkeits-IDs — der
+Git-Commit allein wäre falsch, weil der Generator erst mit dem Dataset-Commit
+entsteht), `schema_sha256`, `seed`, `file_sha256` pro Split, counts,
+negative_share, System-Facts, Gold-Konvention. Zusätzlich informativ
+`generated_at_commit`. Die JSONLs sind **committet** (train ≈ 5,3 MB,
+validation ≈ 0,5 MB, test ≈ 1,0 MB — Reproduktion ohne Generatorlauf möglich,
+6,8 MB gesamt). Der Generator bricht hart ab, wenn ein Split nicht exakt die
+angeforderte Anzahl erreicht (`count mismatch`) — kein stilles Unterschreiten.
+
+Prüfung auf der RTX-Maschine:
+```bash
+uv run python experiments/ft/build_dataset.py   # seed 42
+uv run python experiments/ft/validate_dataset.py
+# manifest.json: provenance-hashes + file_sha256 gegen den Pi-Stand vergleichen
+```
 
 ## Frozen Base-Baseline (vom Pi, Seed-42-Dataset, 1 Repeat)
 
+Gleiche Modell-Outputs wie beim ersten Stand (rows-Cache `reports/base_*_rows.jsonl`),
+gegen das sparse-Gold neu bewertet (`base_eval.py --from-cache`):
+
 Level 1 (synthetic test, n=1800):
-tool_ok 0.863 · args_ok (semantisch) 0.310 · exact_args_ok 0.057 ·
-refusals 0.081 · median 1140 ms
-per-field: date 0.544 · until 0.357 · time 0.935 · title 0.999 ·
-persons 0.732 · person 0.650 · participants 0.887 · horizon 0.006 ·
-duration_min 0.012 · days 0.002
+tool_ok 0.863 · args_ok 0.449 (produktionstolerant: Extra-Felder erlaubt —
+Handler-Defaults verändern das Verhalten nicht) · exact_args_ok 0.113 ·
+refusals 0.081 · median 1206 ms
+per-field: date 0.551 · until 0.306 · time 0.935 · title 0.999 ·
+persons 0.732 · person 0.650 · participants 0.887
 
 Level 3 (challenge, n=25, 14 reale Telegram-Traces + 11 reale Regressionen):
-tool_ok 0.920 · args_ok 0.280 · exact_args_ok 0.000 · refusals 0.080 ·
-median 913 ms
+tool_ok 0.920 · args_ok 0.520 · exact_args_ok 0.120 · refusals 0.080
 
-Das ist die Frozen Baseline: **args_ok ≈ 0.31 ist die Base-Grenze**, die das
-FT-Dataset gezielt angreift (Erfolgskriterien §22: args_ok ≥ +0.20 absolut,
-final_db_ok ≥ +0.15, Refusals ≤ Base, keine Regression bei Reads/Deletes —
-Zielraum args_ok 0.65-0.70). Exact-args (die FT-Konvention) liegt bei Base
-bei 0.06 — die Feld-Füllung (horizon/duration/days/empty-strings) ist
-der größte konventionelle Shift. Level 2 (final_db_ok) läuft im bestehenden
+**Base-Grenze:** args_ok ≈ 0.45/0.52 produktionsnah, aber exact_args nur
+0.11/0.12 — der Hauptfehler ist der Span-Kopier-Shift (Base liefert
+aufgelöstes ISO `2026-12-03` statt den Input-Span `3.12.`; Auflösen macht
+dann Python). Genau diese Spans trainiert das FT-Dataset. Erfolgskriterien
+§22 (auf Level-1-exact gemessen): exact_args ≥ +0.20 absolut über Base
+(≥ 0.31), args_ok produktionsnah ≥ +0.15, Refusals ≤ Base, keine Regression
+bei Reads/Deletes. Level 2 (final_db_ok) läuft im bestehenden
 Bakeoff-/E2E-Harness.
 
 ## Bekannte Grenzen / dokumentierte Gaps
@@ -107,6 +133,9 @@ Bakeoff-/E2E-Harness.
 - Kollisions-/Absence-Interaktion, Multi-Intent, En-Datumsangaben wie
   "August 3" sind NICHT Teil des Trainings (Produktionstools + Python
   übernehmen das).
+- `gold_ab.py` bleibt Teil des Moduls: sie dokumentiert die Konventions-
+  Entscheidung (sparse) und ist nach dem FT der A/B-Vergleichsmaßstab
+  (exact_full vs exact_sparse gegen FT-Outputs).
 
 ## Pipeline-Schritte nach diesem Commit (extern, RTX 3090)
 
