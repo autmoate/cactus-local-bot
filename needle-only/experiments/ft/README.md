@@ -64,13 +64,16 @@ DB-Auflösung, Kollisionen, Event-Identifikation — Python bleibt Domainwahrhei
 
 | Split | N | create | move | delete | list | find | negative |
 |---|---|---|---|---|---|---|---|
-| train | 9940 | 3193 | 1930 | 875 | 952 | 2150 | 840 (8.4%) |
-| validation | 1000 | 279 | 185 | 112 | 149 | 185 | 90 (9%) |
-| test | 1800 | 539 | 354 | 158 | 213 | 374 | 162 (9%) |
+| train | 10000 | 3267 | 1997 | 746 | 816 | 2274 | 900 (9%) |
+| validation | 1000 | 303 | 192 | 92 | 113 | 210 | 90 (9%) |
+| test | 1800 | 569 | 362 | 149 | 155 | 403 | 162 (9%) |
 
 Zielraten leicht angepasst (§6): list-Query-Raum ist klein (kurze Queries,
 wenige Slots), darum 13% statt 18% — create/find/move tragen die Last, wie
-in §6 vorgesehen. Sprachmix train: de 5435 / gemma 2243 / en 1422.
+in §6 vorgesehen. Sprachmix train: de 5419 / gemma 2301 / en 1380.
+Counts sind exakt garantiert: der Generator bricht hart ab, wenn ein Split
+nicht die angeforderte Anzahl erreicht (negatives: sequenzielle Indices,
+Pool-Guard).
 
 ## Reproduktion
 
