@@ -53,13 +53,23 @@ def _sem_equal(field: str, got, want) -> bool:
     return g.strip().lower() == w.strip().lower()
 
 
+def _make_agent(tools, weights, auto_date: bool | None):
+    """Needle-2/3-kompatibel: `auto_date` gibt es erst ab needle 3."""
+    import inspect
+    kwargs = {"tools": tools, "system": spec.SYSTEM_FACTS, "weights": weights}
+    if auto_date is not None and "auto_date" in inspect.signature(
+            needle.Needle.__init__).parameters:
+        kwargs["auto_date"] = auto_date
+    return needle.Needle(**kwargs)
+
+
 def run_set(name: str, items: list[dict], repeats: int = 1,
-            dump_path: Path | None = None, weights: str | None = None) -> dict:
+            dump_path: Path | None = None, weights: str | None = None,
+            auto_date: bool | None = None) -> dict:
     all_rows = []
     for _ in range(repeats):
         tools = json.load(open(FT_DIR / "tools.json", encoding="utf-8"))
-        agent = needle.Needle(tools=tools, system=spec.SYSTEM_FACTS,
-                              weights=weights)
+        agent = _make_agent(tools, weights, auto_date)
         for item in items:
             agent.reset()
             t0 = time.perf_counter()
@@ -167,6 +177,8 @@ def main() -> None:
     ap.add_argument("--repeats", type=int, default=1)
     ap.add_argument("--weights", default=None,
                     help="optionales .cact (FT-Modell); ohne = Base-Needle")
+    ap.add_argument("--no-auto-date", action="store_true",
+                    help="needle3: auto_date=False (gleiche System-Facts wie FT)")
     ap.add_argument("--tag", default="base",
                     help="Report-Prefix (base = frozen, sonst z.B. Run-Name)")
     ap.add_argument("--from-cache", action="store_true",
@@ -208,11 +220,11 @@ def main() -> None:
         challenge_report = run_set(
             "challenge", ch_items, args.repeats,
             dump_path=reports / f"{args.tag}_challenge_rows.jsonl",
-            weights=args.weights)
+            weights=args.weights, auto_date=(False if args.no_auto_date else None))
         test_report = run_set(
             "synthetic-test", test_items, args.repeats,
             dump_path=reports / f"{args.tag}_test_rows.jsonl",
-            weights=args.weights)
+            weights=args.weights, auto_date=(False if args.no_auto_date else None))
 
     for name, rep, frozen in (("test", test_report, "base_test_report.json"),
                               ("challenge", challenge_report,

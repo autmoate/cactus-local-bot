@@ -1,0 +1,211 @@
+{
+ "tag": "needle3-run",
+ "weights": null,
+ "mode": "run",
+ "auto_date": false,
+ "n": 10,
+ "call_count_ok": 0.2,
+ "order_ok": 0.2,
+ "tool_ok": 0.2,
+ "args_ok": 0.2,
+ "all_actions_correct": 0.2,
+ "median_ms": 1592,
+ "rows": [
+  {
+   "id": "2-create",
+   "n_calls": 1,
+   "want_calls": 2,
+   "n_ok": false,
+   "order_ok": false,
+   "tool_ok": false,
+   "args_ok": false,
+   "all_ok": false,
+   "ms": 1526,
+   "got": [
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "err": null
+  },
+  {
+   "id": "3-create",
+   "n_calls": 1,
+   "want_calls": 3,
+   "n_ok": false,
+   "order_ok": false,
+   "tool_ok": false,
+   "args_ok": false,
+   "all_ok": false,
+   "ms": 1698,
+   "got": [
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_create",
+    "calendar_create",
+    "calendar_create"
+   ],
+   "err": null
+  },
+  {
+   "id": "create+delete",
+   "n_calls": 1,
+   "want_calls": 2,
+   "n_ok": false,
+   "order_ok": false,
+   "tool_ok": false,
+   "args_ok": false,
+   "all_ok": false,
+   "ms": 1284,
+   "got": [
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_create",
+    "calendar_delete"
+   ],
+   "err": null
+  },
+  {
+   "id": "move+create",
+   "n_calls": 2,
+   "want_calls": 2,
+   "n_ok": true,
+   "order_ok": true,
+   "tool_ok": true,
+   "args_ok": true,
+   "all_ok": true,
+   "ms": 1824,
+   "got": [
+    "calendar_move",
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_move",
+    "calendar_create"
+   ],
+   "err": null
+  },
+  {
+   "id": "list+create",
+   "n_calls": 1,
+   "want_calls": 2,
+   "n_ok": false,
+   "order_ok": false,
+   "tool_ok": false,
+   "args_ok": false,
+   "all_ok": false,
+   "ms": 1723,
+   "got": [
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_list",
+    "calendar_create"
+   ],
+   "err": null
+  },
+  {
+   "id": "3-create-days",
+   "n_calls": 1,
+   "want_calls": 3,
+   "n_ok": false,
+   "order_ok": false,
+   "tool_ok": false,
+   "args_ok": false,
+   "all_ok": false,
+   "ms": 1488,
+   "got": [
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_create",
+    "calendar_create",
+    "calendar_create"
+   ],
+   "err": null
+  },
+  {
+   "id": "2-create-en",
+   "n_calls": 2,
+   "want_calls": 2,
+   "n_ok": true,
+   "order_ok": true,
+   "tool_ok": true,
+   "args_ok": true,
+   "all_ok": true,
+   "ms": 1895,
+   "got": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "err": null
+  },
+  {
+   "id": "find+create",
+   "n_calls": 1,
+   "want_calls": 2,
+   "n_ok": false,
+   "order_ok": false,
+   "tool_ok": false,
+   "args_ok": false,
+   "all_ok": false,
+   "ms": 1339,
+   "got": [
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_find_slot",
+    "calendar_create"
+   ],
+   "err": null
+  },
+  {
+   "id": "4-create",
+   "n_calls": 1,
+   "want_calls": 4,
+   "n_ok": false,
+   "order_ok": false,
+   "tool_ok": false,
+   "args_ok": false,
+   "all_ok": false,
+   "ms": 1658,
+   "got": [
+    "calendar_create"
+   ],
+   "want": [
+    "calendar_create",
+    "calendar_create",
+    "calendar_create",
+    "calendar_create"
+   ],
+   "err": null
+  },
+  {
+   "id": "delete+create",
+   "n_calls": 1,
+   "want_calls": 2,
+   "n_ok": false,
+   "order_ok": false,
+   "tool_ok": false,
+   "args_ok": false,
+   "all_ok": false,
+   "ms": 1281,
+   "got": [
+    "calendar_delete"
+   ],
+   "want": [
+    "calendar_delete",
+    "calendar_create"
+   ],
+   "err": null
+  }
+ ]
+}
