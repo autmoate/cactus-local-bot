@@ -1,0 +1,123 @@
+{
+ "generated_at": "2026-09-22T13:06:04.444224+00:00",
+ "source_commit": "890a311945d633c11d87c41f59a0a1d1c5907631",
+ "cactus_needle_version": "2.0.13",
+ "base_checkpoint": "checkpoints/needle2.pkl (HF Cactus-Compute/needle2)",
+ "training_hardware": "NVIDIA RTX 3090 (WSL), LoRA rank16/alpha32/lr1e-4/8ep/batch8",
+ "gold_convention": "sparse/evidenced-only: arguments omitted when the query does not evidence them (needle finetune convention, gold_ab_report); empty arguments dict is legal",
+ "system_facts": "date: 2026-09-13 Sun 12:00; locale: de-DE; device: raspberry-pi",
+ "release_candidate": "sa-r16-lr1e-4-e8-seed44",
+ "runs": [
+  {
+   "run_name": "sa-r16-lr1e-4-e8-seed42",
+   "release_candidate": false,
+   "training_config": {
+    "rank": 16,
+    "alpha": 32.0,
+    "lr": 0.0001,
+    "epochs": 8,
+    "seed": 42,
+    "batch_size": 8,
+    "max_len": 1024,
+    "val_split": 0.1,
+    "qat_bits": "auto"
+   },
+   "dataset": {
+    "split_file_sha256": {
+     "train.jsonl": "4da6dce8381c0bfa25643278a59fcae37fea72d9a5e3d1bd6e1267b92227601c",
+     "validation.jsonl": "00a4f8dfe6a2d209623ba5c1f121f39c2567e7d13afa08d5bedc0e96ad544b93",
+     "test.jsonl": "1847138ee53ffcf725c8bd153ea99dd318c37e1ec7cd620c7bd279ab7e66f4a7"
+    },
+    "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484",
+    "seed": 42,
+    "injected_train_sha256": "c33c57cd0ec88b0f39cd6bc8f9991b4f57c968026135289bd2b526493a0f1650"
+   },
+   "artifacts": {
+    "cact": {
+     "file": "sa-r16-lr1e-4-e8-seed42.cact",
+     "sha256": "3f0d2a20d4494fb4bcb9024d749a20db028e6c7806ed7bba427dfe49686558f1",
+     "bytes": 13737807
+    },
+    "adapter": {
+     "file": "sa-r16-lr1e-4-e8-seed42_lora.pkl",
+     "sha256": "aaa8ba84cdc3ec0752c576e0e1e542ba08b3d0949fbfeabb7b0ccdf666afff6e",
+     "bytes": 7963626
+    }
+   }
+  },
+  {
+   "run_name": "sa-r16-lr1e-4-e8-seed43",
+   "release_candidate": false,
+   "training_config": {
+    "rank": 16,
+    "alpha": 32.0,
+    "lr": 0.0001,
+    "epochs": 8,
+    "seed": 43,
+    "batch_size": 8,
+    "max_len": 1024,
+    "val_split": 0.1,
+    "qat_bits": "auto"
+   },
+   "dataset": {
+    "split_file_sha256": {
+     "train.jsonl": "4da6dce8381c0bfa25643278a59fcae37fea72d9a5e3d1bd6e1267b92227601c",
+     "validation.jsonl": "00a4f8dfe6a2d209623ba5c1f121f39c2567e7d13afa08d5bedc0e96ad544b93",
+     "test.jsonl": "1847138ee53ffcf725c8bd153ea99dd318c37e1ec7cd620c7bd279ab7e66f4a7"
+    },
+    "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484",
+    "seed": 42,
+    "injected_train_sha256": "c33c57cd0ec88b0f39cd6bc8f9991b4f57c968026135289bd2b526493a0f1650"
+   },
+   "artifacts": {
+    "cact": {
+     "file": "sa-r16-lr1e-4-e8-seed43.cact",
+     "sha256": "58e6fcb1e984ea3cb9bd87c3ea1bf1dd8484c4515c887c07f1e5adf937d0b437",
+     "bytes": 13737807
+    },
+    "adapter": {
+     "file": "sa-r16-lr1e-4-e8-seed43_lora.pkl",
+     "sha256": "23c4ba6aa95da2892ad949ed2b9682c38f543cb9362693e8794b393252ca2c3d",
+     "bytes": 7963626
+    }
+   }
+  },
+  {
+   "run_name": "sa-r16-lr1e-4-e8-seed44",
+   "release_candidate": true,
+   "training_config": {
+    "rank": 16,
+    "alpha": 32.0,
+    "lr": 0.0001,
+    "epochs": 8,
+    "seed": 44,
+    "batch_size": 8,
+    "max_len": 1024,
+    "val_split": 0.1,
+    "qat_bits": "auto"
+   },
+   "dataset": {
+    "split_file_sha256": {
+     "train.jsonl": "4da6dce8381c0bfa25643278a59fcae37fea72d9a5e3d1bd6e1267b92227601c",
+     "validation.jsonl": "00a4f8dfe6a2d209623ba5c1f121f39c2567e7d13afa08d5bedc0e96ad544b93",
+     "test.jsonl": "1847138ee53ffcf725c8bd153ea99dd318c37e1ec7cd620c7bd279ab7e66f4a7"
+    },
+    "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484",
+    "seed": 42,
+    "injected_train_sha256": "c33c57cd0ec88b0f39cd6bc8f9991b4f57c968026135289bd2b526493a0f1650"
+   },
+   "artifacts": {
+    "cact": {
+     "file": "sa-r16-lr1e-4-e8-seed44.cact",
+     "sha256": "ba3212abcac8355c026178d98dc6f4d95d2822064fd9cc1d8d4cc57bf471add9",
+     "bytes": 13737807
+    },
+    "adapter": {
+     "file": "sa-r16-lr1e-4-e8-seed44_lora.pkl",
+     "sha256": "b19bcd5d7d746cdcf21bdd8b36e22fd5599420b1371932d01da2e402b9dc58e1",
+     "bytes": 7963626
+    }
+   }
+  }
+ ]
+}
