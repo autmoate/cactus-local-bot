@@ -119,7 +119,8 @@ def main() -> int:
         tool_ok = sorted(g[0] for g in got) == sorted(w[0] for w in want)
         args_ok = (len(got) == len(want)
                    and all(_arg_hit(g[1], w[1]) for g, w in zip(got, want)))
-        rows.append({"id": case["id"], "n_calls": len(got), "want_calls": len(want),
+        rows.append({"id": case["id"], "confidence": resp.get("confidence"),
+                     "n_calls": len(got), "want_calls": len(want),
                      "n_ok": n_ok, "order_ok": order_ok, "tool_ok": tool_ok,
                      "args_ok": args_ok, "all_ok": n_ok and order_ok and args_ok,
                      "ms": ms,
@@ -142,6 +143,11 @@ def main() -> int:
         "median_ms": round(statistics.median(r["ms"] for r in rows)),
         "rows": rows,
     }
+    confs = [r["confidence"] for r in rows if r.get("confidence") is not None]
+    if confs:
+        summary["confidence"] = {
+            "mean": round(sum(confs) / len(confs), 3),
+            "share_below_0.3": round(sum(1 for c in confs if c < 0.3) / len(confs), 3)}
     out = FT_DIR / "reports" / f"multicall_{args.tag}.json"
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=1))
     print(f"\n[{args.tag}] call_count {summary['call_count_ok']} · order {summary['order_ok']}"

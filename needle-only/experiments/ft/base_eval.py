@@ -79,6 +79,7 @@ def run_set(name: str, items: list[dict], repeats: int = 1,
                 resp = {"function_calls": []}
             ms = round((time.perf_counter() - t0) * 1000)
             calls = resp.get("function_calls") or []
+            conf = resp.get("confidence")
             got = calls[0] if calls else {}
             got_name = got.get("name")
             got_args = dict(got.get("arguments") or {})
@@ -99,6 +100,7 @@ def run_set(name: str, items: list[dict], repeats: int = 1,
             all_rows.append({"id": item["id"], "tool_ok": tool_ok,
                              "args_ok": args_ok, "exact_args_ok": exact_ok,
                              "refusal": not got_name, "ms": ms,
+                             "confidence": conf,
                              "got": got_args, "want": item["args"]})
     n = len(all_rows)
     report = {"set": name, "n": n, "repeats": repeats,
@@ -118,6 +120,16 @@ def run_set(name: str, items: list[dict], repeats: int = 1,
     report["per_field"] = {f: (round(v["correct"] / v["expected"], 3)
                                if v["expected"] else None)
                            for f, v in field.items()}
+    confs = [r["confidence"] for r in all_rows if r.get("confidence") is not None]
+    if confs:
+        confs_sorted = sorted(confs)
+        report["confidence"] = {
+            "n": len(confs),
+            "mean": round(sum(confs) / len(confs), 3),
+            "median": round(confs_sorted[len(confs) // 2], 3),
+            "share_below_0.3": round(sum(1 for c in confs if c < 0.3) / len(confs), 3),
+            "share_below_0.5": round(sum(1 for c in confs if c < 0.5) / len(confs), 3),
+        }
     if dump_path is not None:
         with open(dump_path, "w", encoding="utf-8") as fh:
             for r in all_rows:
@@ -158,6 +170,14 @@ def recompute_from_rows(rows_path: Path, labels: dict, name: str) -> dict:
     report["per_field"] = {f: (round(v["correct"] / v["expected"], 3)
                                if v["expected"] else None)
                            for f, v in field.items()}
+    confs = [r["confidence"] for r in rows if r.get("confidence") is not None]
+    if confs:
+        cs = sorted(confs)
+        report["confidence"] = {"n": len(confs),
+                                "mean": round(sum(confs) / len(confs), 3),
+                                "median": round(cs[len(cs) // 2], 3),
+                                "share_below_0.3": round(sum(1 for c in confs if c < 0.3) / len(confs), 3),
+                                "share_below_0.5": round(sum(1 for c in confs if c < 0.5) / len(confs), 3)}
     return report
 
 

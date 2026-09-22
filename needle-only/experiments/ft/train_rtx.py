@@ -42,6 +42,15 @@ MODELS_DIR = FT_DIR / "models"
 DATA_FT = FT_DIR / "data" / "_ft"
 
 
+def _needle_major() -> int:
+    """Installierte cactus-needle-Hauptversion (2 vs 3) — CLI unterscheidet sich."""
+    import importlib.metadata as md
+    try:
+        return int(md.version("cactus-needle").split(".")[0])
+    except Exception:  # noqa: BLE001
+        return 2
+
+
 def _needle_bin() -> str:
     """Console-Script neben dem aktiven Interpreter (sys.prefix, nicht
     sys.executable — das ist unter uv ein Symlink in die Base-Install)."""
@@ -52,10 +61,11 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def inject_training_format(run_name: str, split: str) -> Path:
+def inject_training_format(run_name: str, split: str,
+                           src: Path | None = None) -> Path:
     """tools + system in jede Row schreiben (Produktionskatalog, frozen)."""
     tools = json.loads((FT_DIR / "tools.json").read_text(encoding="utf-8"))
-    src = FT_DIR / "data" / f"{split}.jsonl"
+    src = src or FT_DIR / "data" / f"{split}.jsonl"
     DATA_FT.mkdir(parents=True, exist_ok=True)
     dst = DATA_FT / f"{run_name}_{split}.jsonl"
     n = 0
@@ -68,8 +78,10 @@ def inject_training_format(run_name: str, split: str) -> Path:
             ex["system"] = spec.SYSTEM_FACTS
             out.write(json.dumps(ex, ensure_ascii=False) + "\n")
             n += 1
-    if n != json.loads((FT_DIR / "manifest.json").read_text())["counts"].get(split):
-        raise SystemExit(f"injection {split}: {n} rows (!= manifest count)")
+    if src == FT_DIR / "data" / f"{split}.jsonl":
+        want = json.loads((FT_DIR / "manifest.json").read_text())["counts"].get(split)
+        if n != want:
+            raise SystemExit(f"injection {split}: {n} rows (!= manifest count)")
     print(f"  injected  {split}: {n} rows -> {dst.name}")
     return dst
 
@@ -119,22 +131,31 @@ def main() -> int:
     ap.add_argument("--max-len", type=int, default=1024)
     ap.add_argument("--val-split", type=float, default=0.1)
     ap.add_argument("--qat-bits", default="auto")
-    ap.add_argument("--checkpoint", default=str(ROOT / "checkpoints" / "needle2.pkl"))
+    ap.add_argument("--data", default=str(FT_DIR / "data" / "train.jsonl"),
+                    help="Trainings-JSONL (Default: FT-Dataset v2)")
+    ap.add_argument("--layers", type=int, default=0,
+                    help="needle3: N-Layer-Rung exportieren (2..20)")
+    ap.add_argument("--checkpoint", default=None,
+                    help="Base-Checkpoint; Default: needle lädt die passende "
+                         "Base automatisch (needle2 .pkl bzw. needle3)")
     args = ap.parse_args()
 
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     log_path = RUNS_DIR / f"{args.run_name}.log"
     report_path = RUNS_DIR / f"{args.run_name}.json"
-    adapter = MODELS_DIR / f"{args.run_name}_lora.pkl"
+    major = _needle_major()
+    adapter_ext = ".safetensors" if major >= 3 else ".pkl"
+    adapter = MODELS_DIR / f"{args.run_name}_lora{adapter_ext}"
     cact = MODELS_DIR / f"{args.run_name}.cact"
 
-    if not Path(args.checkpoint).exists():
+    if args.checkpoint and not Path(args.checkpoint).exists():
         raise SystemExit(f"Basischeckpoint fehlt: {args.checkpoint}")
 
     print(f"=== FT-Run {args.run_name} ===")
     t0 = time.time()
-    train_jsonl = inject_training_format(args.run_name, "train")
+    train_jsonl = inject_training_format(args.run_name, "train",
+                                         src=Path(args.data))
 
     env = os.environ.copy()
     env.pop("LD_LIBRARY_PATH", None)          # WSL/CUDA-Lib-Konflikt vermeiden
@@ -155,9 +176,12 @@ def main() -> int:
                 "--max-len", str(args.max_len),
                 "--val-split", str(args.val_split),
                 "--seed", str(args.seed),
-                "--qat-bits", args.qat_bits,
                 "--checkpoint-dir", str(ROOT / "checkpoints"),
                 "--out", str(adapter)]
+    if major < 3:  # needle3 kennt --qat-bits nicht (QAT ist dort implizit)
+        finetune += ["--qat-bits", args.qat_bits]
+    if args.checkpoint:
+        finetune += ["--checkpoint", args.checkpoint]
     log_path.write_bytes(b"")  # frischer Log pro Run
     code = run(finetune, log_path, env)
     train_time = time.time() - t0
@@ -165,8 +189,12 @@ def main() -> int:
         raise SystemExit(f"Finetune fehlgeschlagen (code={code}, adapter={adapter})")
 
     t1 = time.time()
-    build = [_needle_bin(), "build", args.checkpoint,
-             "--lora", str(adapter), "--out", str(cact)]
+    build = [_needle_bin(), "build"]
+    if args.checkpoint:
+        build.append(args.checkpoint)
+    build += ["--lora", str(adapter), "--out", str(cact)]
+    if args.layers:
+        build += ["--layers", str(args.layers)]
     code = run(build, log_path, env)
     build_time = time.time() - t1
     if code != 0 or not cact.exists() or cact.stat().st_size == 0:
@@ -179,7 +207,11 @@ def main() -> int:
         "params": {"rank": args.rank, "alpha": args.alpha, "lr": args.lr,
                    "epochs": args.epochs, "seed": args.seed,
                    "batch_size": args.batch_size, "max_len": args.max_len,
-                   "val_split": args.val_split, "qat_bits": args.qat_bits},
+                   "val_split": args.val_split, "qat_bits": args.qat_bits,
+                   "layers": args.layers or 20,
+                   "needle_major": major,
+                   "checkpoint": args.checkpoint or "auto (needle base)"},
+        "source_data": str(args.data),
         "dataset": {"manifest_file_sha256": manifest["file_sha256"],
                     "schema_hash": manifest["schema_hash"],
                     "seed": manifest["provenance"]["seed"],

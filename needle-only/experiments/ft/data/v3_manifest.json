@@ -1,0 +1,24 @@
+{
+ "generated_at": "2026-09-22T15:50:19.606835+00:00",
+ "seed": 42,
+ "multi_call_share": 0.25,
+ "counts": {
+  "train": 12282,
+  "validation": 1227,
+  "multi_call_train": 2282,
+  "multi_call_val": 227
+ },
+ "mix_train": {
+  "v2": 10000,
+  "multi": 2282
+ },
+ "file_sha256": {
+  "train_v3.jsonl": "c37d1a99bd75171d0b6fd41128bad193f1f657a03ecf8ad636f16ab1bcefaeed",
+  "validation_v3.jsonl": "9b622cb8f4a595a00e8c240906b023cba74bb1d15ccdb50c1a61e355c27ed88b"
+ },
+ "base_dataset": "data/train.jsonl + data/validation.jsonl (v2, atomar)",
+ "gold_convention": "sparse/evidenced-only (wie v2)",
+ "not_trained": [
+  "dependent chains (find_slot->create, resolve->move/delete) — eval-only"
+ ]
+}
