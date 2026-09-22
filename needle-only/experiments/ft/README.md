@@ -140,10 +140,53 @@ Bakeoff-/E2E-Harness.
   Entscheidung (sparse) und ist nach dem FT der A/B-Vergleichsmaßstab
   (exact_full vs exact_sparse gegen FT-Outputs).
 
-## Pipeline-Schritte nach diesem Commit (extern, RTX 3090)
+## Pipeline auf der RTX 3090 (`train_rtx.py`)
 
-1. Training: eigenes `train_rtx.py` (keine Jetson-Hacks; §20).
-2. Hyperparameter-Matrix klein: LoRA rank 8/16, LR 5e-5/1e-4, epochs 3/5/8;
-   mindestens 3 Seeds (§21).
-3. Erfolgskriterien (§22) und 3-Ebenen-Evaluation (§23) vor Training fixiert.
-4. Pi-Abnahme (§24): Accuracy, Latency, RAM, Cold start, Refusal-Verhalten.
+Die committeten JSONLs tragen **kein `tools`/`system`** — `needle finetune`
+rendert sonst `<tools></tools>` (111 statt ~850 Tokens, das Modell sähe den
+Katalog nie). `train_rtx.py` injiziert den Produktionskatalog (`tools.json`) +
+`SYSTEM_FACTS` wrapper-seitig in ein Trainings-Artefakt unter `data/_ft/`;
+Dataset + `manifest.json` bleiben unangetastet und hashbar. Danach
+`needle finetune` (Console-Script — `python -m needle.cli` ist ein No-op) und
+`needle build` → `.cact`. Jeder Run schreibt Log + Run-Manifest
+(`reports/runs/<run>.log|json`: Params, Dataset-Hashes, Zeiten).
+
+```bash
+cd needle-only
+# Root-venv (Python 3.11) statt Projekt-venv: Projekt verlangt >=3.12
+uv pip install --python ../.venv-ft/bin/python -e .   # nur mit py>=3.12; sonst PYTHONPATH=src
+PYTHONPATH=src ../.venv-ft/bin/python experiments/ft/build_dataset.py     # seed 42
+PYTHONPATH=src ../.venv-ft/bin/python experiments/ft/validate_dataset.py  # muss "OK" sagen
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=src ../.venv-ft/bin/python experiments/ft/train_rtx.py \
+    --run-name sa-r16-lr1e-4-e8-seed42 --rank 16 --lr 1e-4 --epochs 8 --seed 42 --batch-size 8
+```
+
+Batch 8 ist Default wegen des WSL-VRAM-Caps (~12 GiB/GPU; 16@1024 OOMt).
+Ein Run (10 k, 8 Epochen, batch 8, 9000 Steps) ≈ **1,9 h** auf der 3090.
+
+### 3-Ebenen-Evaluation
+
+```bash
+# Level 1+3 (synthetic test n=1800 + challenge n=25), §22-Kriterien automatisch:
+PYTHONPATH=src ../.venv-ft/bin/python experiments/ft/base_eval.py \
+    --weights experiments/ft/models/<run>.cact --tag <run>
+# schreibt reports/<run>_test_report.json + <run>_challenge_report.json
+# und prüft exact_args >= base+0.20, args_ok >= base+0.15, refusals <= base
+
+# Level 2 (final_db_ok, 29 Cases aus eval_cases.json) über den Produktions-Agent:
+NEEDLE_WEIGHTS=experiments/ft/models/<run>.cact PYTHONPATH=src \
+    ../.venv-ft/bin/python tests/test_e2e.py            # + --repeat N
+
+# A/B der Gold-Konvention (sparse vs full) gegen FT-Outputs:
+PYTHONPATH=src ../.venv-ft/bin/python experiments/ft/gold_ab.py
+```
+
+### Pi-Abnahme (§24)
+
+```bash
+# auf dem Pi: FT-Modell laden, App + E2E, dann messen
+NEEDLE_WEIGHTS=models/<run>.cact uv run local-calendar --mode needle
+NEEDLE_WEIGHTS=models/<run>.cact uv run python tests/test_e2e.py
+# Kriterien: Accuracy nicht schlechter als Base, Latenz/RAM im Rahmen
+# (Base: ~1 s/Query needle-only, Session ~28 MB), Cold start, Refusals.
+```

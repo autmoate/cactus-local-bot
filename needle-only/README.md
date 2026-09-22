@@ -250,7 +250,14 @@ eingefrorene Toolset ist der richtige nächste Schritt.
 ```sh
 uv sync --extra telegram
 uv run local-calendar-telegram           # Long Polling, keine Webhooks
+uv run local-calendar-telegram --mode needle   # ohne Gemma (schnellster Pfad)
+
+# mit FT-Modell (experiments/ft): Base-Needle wird durch das .cact ersetzt
+NEEDLE_WEIGHTS=experiments/ft/models/<run>.cact uv run local-calendar-telegram --mode needle
 ```
+
+`NEEDLE_WEIGHTS` wird vom gemeinsamen `Agent` gelesen (auch Gradio); ohne
+Angabe läuft Base-Needle. Der Telegram-Adapter braucht keine weitere Anpassung.
 
 Nutzt die bestehenden Variablen aus der Root-`.env` (`TELEGRAM_BOT_TOKEN`,
 `TELEGRAM_OWNER_CHAT_ID`, `TELEGRAM_ALLOWED_CHAT_IDS`) — keine neuen Namen,

@@ -19,8 +19,9 @@ from collections import Counter
 from pathlib import Path
 
 FT_DIR = Path(__file__).resolve().parent
+NEEDLE_ONLY = FT_DIR.parents[1]
 sys.path.insert(0, str(FT_DIR))
-sys.path.insert(0, str(FT_DIR.parent))
+sys.path.insert(0, str(NEEDLE_ONLY / "src"))  # local_calendar (Root-venv)
 
 import dataset_spec as spec  # noqa: E402
 from local_calendar import calendar as cal  # noqa: E402

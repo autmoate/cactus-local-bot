@@ -614,8 +614,11 @@ class Agent:
         self.mode = mode
         self.tools = build_tools(store)
         self.gemma = Gemma() if mode == "hybrid" else None
+        # Optionales FT-Modell: NEEDLE_WEIGHTS=<pfad>.cact (leer = Base-Needle)
+        self.weights = os.environ.get("NEEDLE_WEIGHTS") or None
         self.needle = needle.Needle(tools=list(self.tools.values()),
-                                    system=system_facts())
+                                    system=system_facts(),
+                                    weights=self.weights)
         self._facts_key = system_facts()
         self.history: deque = deque(maxlen=10)
         self.pending: dict[str, dict] = {}  # Phase 12, per session_id (plan §10)
@@ -640,7 +643,7 @@ class Agent:
         if facts != self._facts_key:
             self._facts_key = facts
             self.needle = needle.Needle(tools=list(self.tools.values()),
-                                        system=facts)
+                                        system=facts, weights=self.weights)
         self.needle.reset()  # each request is independent; keep tools loaded
         text = (text or "").strip().rstrip(".!?;:,")  # trailing periods cause refusals
         with self.inference_lock:  # plan §11: one engine call at a time

@@ -129,6 +129,14 @@ def score(rows: list[dict], labels: dict, schemas: dict, kind: str) -> dict:
 
 def main() -> None:
     global TOOL_SCHEMAS
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--tag", default="base",
+                    help="Rows-Prefix (<tag>_test_rows.jsonl); base = frozen")
+    ap.add_argument("--reconstruct-full", action="store_true",
+                    help="full-Gold immer aus sparse+Schema rekonstruieren — "
+                         "nötig für FT-Rows (deren 'want' ist sparse, nicht full)")
+    args = ap.parse_args()
     TOOL_SCHEMAS = {s["name"]: s for s in
                     json.load(open(FT_DIR / "tools.json", encoding="utf-8"))}
     labels = {}
@@ -146,12 +154,17 @@ def main() -> None:
             elif "args" in r:
                 labels[r["id"]] = (r["args"], r.get("input", ""), r["tool"])
     out = {}
-    for name, path in (("test", "base_test_rows.jsonl"),
-                       ("challenge", "base_challenge_rows.jsonl")):
+    for name, path in (("test", f"{args.tag}_test_rows.jsonl"),
+                       ("challenge", f"{args.tag}_challenge_rows.jsonl")):
         rows = [json.loads(l) for l in
                 open(FT_DIR / "reports" / path, encoding="utf-8")]
+        if args.reconstruct_full:
+            for r in rows:
+                r.pop("want", None)  # sonst hält score() sparse für full
         out[name] = score(rows, labels, TOOL_SCHEMAS, name)
-    (FT_DIR / "reports" / "gold_ab_report.json").write_text(
+    out_name = ("gold_ab_report.json" if args.tag == "base"
+                else f"gold_ab_report_{args.tag}.json")
+    (FT_DIR / "reports" / out_name).write_text(
         json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     for name, rep in out.items():
         print(f"== {name} (n={rep['n']})  recon_mismatch={rep['recon_mismatch']}")

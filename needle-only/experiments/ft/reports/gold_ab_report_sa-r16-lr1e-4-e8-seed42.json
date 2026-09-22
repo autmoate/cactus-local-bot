@@ -1,0 +1,20 @@
+{
+ "test": {
+  "kind": "test",
+  "n": 1800,
+  "exact_full": 0.186,
+  "exact_sparse": 0.887,
+  "exact_sparse_norm": 0.887,
+  "args_ok_semantic": 0.888,
+  "recon_mismatch": 0
+ },
+ "challenge": {
+  "kind": "challenge",
+  "n": 25,
+  "exact_full": 0.2,
+  "exact_sparse": 0.68,
+  "exact_sparse_norm": 0.68,
+  "args_ok_semantic": 0.76,
+  "recon_mismatch": 0
+ }
+}

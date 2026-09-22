@@ -1,0 +1,38 @@
+{
+ "run_name": "sa-r16-lr1e-4-e8-seed43",
+ "finished_at": "2026-09-17T23:30:39.312668+00:00",
+ "params": {
+  "rank": 16,
+  "alpha": 32.0,
+  "lr": 0.0001,
+  "epochs": 8,
+  "seed": 43,
+  "batch_size": 8,
+  "max_len": 1024,
+  "val_split": 0.1,
+  "qat_bits": "auto"
+ },
+ "dataset": {
+  "manifest_file_sha256": {
+   "train.jsonl": "4da6dce8381c0bfa25643278a59fcae37fea72d9a5e3d1bd6e1267b92227601c",
+   "validation.jsonl": "00a4f8dfe6a2d209623ba5c1f121f39c2567e7d13afa08d5bedc0e96ad544b93",
+   "test.jsonl": "1847138ee53ffcf725c8bd153ea99dd318c37e1ec7cd620c7bd279ab7e66f4a7"
+  },
+  "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484",
+  "seed": 42,
+  "injected_train_sha256": "c33c57cd0ec88b0f39cd6bc8f9991b4f57c968026135289bd2b526493a0f1650"
+ },
+ "adapter": {
+  "path": "/mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43_lora.pkl",
+  "bytes": 7963626
+ },
+ "cact": {
+  "path": "/mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43.cact",
+  "bytes": 13737807
+ },
+ "times_s": {
+  "train": 10899.7,
+  "build": 31.9
+ },
+ "log": "/mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/reports/runs/sa-r16-lr1e-4-e8-seed43.log"
+}

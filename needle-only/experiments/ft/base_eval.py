@@ -20,8 +20,9 @@ from pathlib import Path
 import needle
 
 FT_DIR = Path(__file__).resolve().parent
+NEEDLE_ONLY = FT_DIR.parents[1]
 sys.path.insert(0, str(FT_DIR))
-sys.path.insert(0, str(FT_DIR.parent))
+sys.path.insert(0, str(NEEDLE_ONLY / "src"))  # local_calendar (Root-venv)
 
 import dataset_spec as spec  # noqa: E402
 from local_calendar import calendar as cal  # noqa: E402
@@ -53,11 +54,12 @@ def _sem_equal(field: str, got, want) -> bool:
 
 
 def run_set(name: str, items: list[dict], repeats: int = 1,
-            dump_path: Path | None = None) -> dict:
+            dump_path: Path | None = None, weights: str | None = None) -> dict:
     all_rows = []
     for _ in range(repeats):
         tools = json.load(open(FT_DIR / "tools.json", encoding="utf-8"))
-        agent = needle.Needle(tools=tools, system=spec.SYSTEM_FACTS)
+        agent = needle.Needle(tools=tools, system=spec.SYSTEM_FACTS,
+                              weights=weights)
         for item in items:
             agent.reset()
             t0 = time.perf_counter()
@@ -163,59 +165,108 @@ def main() -> None:
         FT_DIR / "challenge" / "challenge_traces.jsonl"))
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--repeats", type=int, default=1)
+    ap.add_argument("--weights", default=None,
+                    help="optionales .cact (FT-Modell); ohne = Base-Needle")
+    ap.add_argument("--tag", default="base",
+                    help="Report-Prefix (base = frozen, sonst z.B. Run-Name)")
     ap.add_argument("--from-cache", action="store_true",
-                    help="re-score frozen base_test_rows.jsonl instead of "
-                         "re-inferencing")
+                    help="re-score frozen base_*_rows.jsonl statt "
+                         "re-inferencing (nur sinnvoll mit --tag base)")
     args = ap.parse_args()
-
-    labels = {}
-    for src in (FT_DIR / "data" / "test.jsonl",
-                FT_DIR / "challenge" / "challenge_traces.jsonl"):
-        for line in open(src, encoding="utf-8"):
-            if not line.strip():
-                continue
-            r = json.loads(line)
-            if r.get("answers"):
-                labels[r["id"]] = (r["answers"][0]["arguments"],
-                                   r.get("query", r.get("input", "")))
-            elif "args" in r:
-                labels[r["id"]] = (r["args"], r.get("input", ""))
-    if args.from_cache:
-        test_report = recompute_from_rows(
-            FT_DIR / "reports" / "base_test_rows.jsonl", labels,
-            "synthetic-test")
-        challenge_report = recompute_from_rows(
-            FT_DIR / "reports" / "base_challenge_rows.jsonl", labels,
-            "challenge")
-        reports = FT_DIR / "reports"
-        reports.mkdir(exist_ok=True)
-        (reports / "base_test_report.json").write_text(
-            json.dumps(test_report, ensure_ascii=False, indent=1),
-            encoding="utf-8")
-        (reports / "base_challenge_report.json").write_text(
-            json.dumps(challenge_report, ensure_ascii=False, indent=1),
-            encoding="utf-8")
-        print(json.dumps(test_report, ensure_ascii=False))
-        print(json.dumps(challenge_report, ensure_ascii=False))
-        return
-
-    ch_rows = [json.loads(l) for l in open(args.challenge, encoding="utf-8")
-               if l.strip()]
-    ch_items = [{"id": c["id"], "input": c["input"], "tool": c["tool"],
-                 "args": c["args"]} for c in ch_rows]
-    challenge_report = run_set("challenge", ch_items, args.repeats,
-                               dump_path=FT_DIR / "reports" / "base_challenge_rows.jsonl")
 
     reports = FT_DIR / "reports"
     reports.mkdir(exist_ok=True)
-    (reports / "base_test_report.json").write_text(
-        json.dumps(test_report, ensure_ascii=False, indent=1),
-        encoding="utf-8")
-    (reports / "base_challenge_report.json").write_text(
-        json.dumps(challenge_report, ensure_ascii=False, indent=1),
-        encoding="utf-8")
-    print(json.dumps(test_report, ensure_ascii=False))
-    print(json.dumps(challenge_report, ensure_ascii=False))
+
+    if args.from_cache:
+        labels = {}
+        for src in (FT_DIR / "data" / "test.jsonl",
+                    FT_DIR / "challenge" / "challenge_traces.jsonl"):
+            for line in open(src, encoding="utf-8"):
+                if not line.strip():
+                    continue
+                r = json.loads(line)
+                if r.get("answers"):
+                    labels[r["id"]] = (r["answers"][0]["arguments"],
+                                       r.get("query", r.get("input", "")))
+                elif "args" in r:
+                    labels[r["id"]] = (r["args"], r.get("input", ""))
+        test_report = recompute_from_rows(
+            reports / "base_test_rows.jsonl", labels, "synthetic-test")
+        challenge_report = recompute_from_rows(
+            reports / "base_challenge_rows.jsonl", labels, "challenge")
+    else:
+        test_items = load_items(args.test)
+        ch_rows = [json.loads(l) for l in open(args.challenge, encoding="utf-8")
+                   if l.strip()]
+        ch_items = [{"id": c["id"], "input": c["input"], "tool": c["tool"],
+                     "args": c["args"]} for c in ch_rows]
+        if args.limit:
+            test_items = test_items[:args.limit]
+            ch_items = ch_items[:args.limit]
+        print(f"[{args.tag}] test n={len(test_items)} · challenge n={len(ch_items)} "
+              f"· weights={args.weights or 'base'}")
+        challenge_report = run_set(
+            "challenge", ch_items, args.repeats,
+            dump_path=reports / f"{args.tag}_challenge_rows.jsonl",
+            weights=args.weights)
+        test_report = run_set(
+            "synthetic-test", test_items, args.repeats,
+            dump_path=reports / f"{args.tag}_test_rows.jsonl",
+            weights=args.weights)
+
+    for name, rep, frozen in (("test", test_report, "base_test_report.json"),
+                              ("challenge", challenge_report,
+                               "base_challenge_report.json")):
+        out = reports / (frozen if args.tag == "base"
+                         else f"{args.tag}_{name}_report.json")
+        out.write_text(json.dumps(rep, ensure_ascii=False, indent=1),
+                       encoding="utf-8")
+        print(f"  -> {out.name}: {json.dumps(rep, ensure_ascii=False)}")
+
+    # Erfolgskriterien §22 gegen die Frozen Baseline (nur mit --weights)
+    if args.weights:
+        base = json.loads((reports / "base_test_report.json").read_text())
+        # "Refusals" mischt korrekte Negativ-Refusals mit falschen auf Positiven.
+        # Die Zerlegung macht den §22-Vergleich ehrlich: entscheidend ist, dass
+        # das FT-Modell gültige Anfragen NICHT öfter verweigert als Base.
+        neg_ids = set()
+        for line in open(FT_DIR / "data" / "test.jsonl", encoding="utf-8"):
+            r = json.loads(line)
+            if r["meta"]["tool"] == "none":
+                neg_ids.add(r["id"])
+
+        def false_refusals(rows_path: Path) -> tuple[int, int, int]:
+            n_pos = n_false = n_correct = 0
+            for line in open(rows_path, encoding="utf-8"):
+                r = json.loads(line)
+                if r["id"] in neg_ids:
+                    n_correct += bool(r.get("refusal"))
+                else:
+                    n_pos += 1
+                    n_false += bool(r.get("refusal"))
+            return n_false, n_pos, n_correct
+
+        ft_false, ft_pos, ft_correct = false_refusals(
+            reports / f"{args.tag}_test_rows.jsonl")
+        b_false, b_pos, b_correct = false_refusals(
+            reports / "base_test_rows.jsonl")
+        checks = {
+            "exact_args_ok >= base+0.20": (test_report["exact_args_ok"],
+                                           round(base["exact_args_ok"] + 0.20, 3)),
+            "args_ok >= base+0.15": (test_report["args_ok"],
+                                     round(base["args_ok"] + 0.15, 3)),
+            "refusals <= base": (test_report["refusals"], base["refusals"]),
+            "false_refusals_auf_positiven <= base": (ft_false, b_false),
+        }
+        print("\n§22-Kriterien (Level 1, synthetic test):")
+        ok = True
+        for label, (got, want) in checks.items():
+            passed = got >= want if ">=" in label else got <= want
+            ok = ok and passed
+            print(f"  {'PASS' if passed else 'FAIL'}  {label}: {got} (Ziel {want})")
+        print(f"  Kontext: falsche Refusals {ft_false}/{ft_pos} (Base {b_false}/{b_pos}) · "
+              f"korrekte Negativ-Refusals {ft_correct} (Base {b_correct})")
+        print(f"  §22 gesamt: {'PASS' if ok else 'FAIL'}")
 
 
 if __name__ == "__main__":

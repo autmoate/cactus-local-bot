@@ -1,0 +1,25 @@
+{"id": "ch-01", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 275, "got": {"title": "Besprechung", "date": "7.9.", "time": "13:00"}, "want": {"title": "Besprechung", "date": "7.9.", "time": "13:00"}}
+{"id": "ch-02", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 158, "got": {"date": "7.9.26"}, "want": {"date": "7.9.26"}}
+{"id": "ch-03", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 141, "got": {"date": "7.9.26"}, "want": {"date": "7.9.26"}}
+{"id": "ch-04", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 280, "got": {"title": "Urlaub", "date": "23.09.", "until": "27.09."}, "want": {"title": "Urlaub", "date": "23.09.", "until": "27.09."}}
+{"id": "ch-05", "tool_ok": true, "args_ok": false, "exact_args_ok": false, "refusal": false, "ms": 247, "got": {"title": "Trage", "date": "23.09.", "until": "27.09."}, "want": {"title": "Oberhof", "date": "23.09.", "until": "27.09."}}
+{"id": "ch-06", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 206, "got": {"title": "Oberhof", "date": "23.09."}, "want": {"title": "Oberhof", "date": "23.09."}}
+{"id": "ch-07", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 255, "got": {"title": "JourFixe", "date": "morgen", "time": "14Uhr"}, "want": {"title": "JourFixe", "date": "morgen", "time": "14Uhr"}}
+{"id": "ch-08", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 228, "got": {"title": "Zug", "date": "14.9.", "time": "8:30"}, "want": {"title": "Zug", "date": "14.9.", "time": "8:30"}}
+{"id": "ch-09", "tool_ok": true, "args_ok": false, "exact_args_ok": false, "refusal": false, "ms": 338, "got": {"title": "Meetup", "date": "15.9.", "time": "10 bis 13Uhr", "end_time": "13Uhr"}, "want": {"title": "Meetup Vorbereitung", "date": "15.9.", "time": "10:00", "end_time": "13:00"}}
+{"id": "ch-10", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 202, "got": {"title": "Frisör", "date": "15.9."}, "want": {"title": "Frisör", "date": "15.9."}}
+{"id": "ch-11", "tool_ok": true, "args_ok": false, "exact_args_ok": false, "refusal": false, "ms": 263, "got": {"title": "Lisa", "date": "Frsür am 15."}, "want": {"title": "Frsür", "date": "15.9."}}
+{"id": "ch-12", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 194, "got": {"title": "Termin", "date": "15.9."}, "want": {"title": "Termin", "date": "15.9."}}
+{"id": "ch-13", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 219, "got": {"title": "Termin", "date": "15.9."}, "want": {"title": "Termin", "date": "15.9."}}
+{"id": "ch-14", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 225, "got": {"title": "Home Office", "date": "16.9."}, "want": {"title": "Home Office", "date": "16.9."}}
+{"id": "ch-15", "tool_ok": true, "args_ok": false, "exact_args_ok": false, "refusal": false, "ms": 254, "got": {"title": "Meeting", "date": "17.9.", "time": "13 bis 16 Uhr"}, "want": {"title": "Meeting", "date": "17.9.", "time": "13:00", "end_time": "16:00"}}
+{"id": "ch-16", "tool_ok": false, "args_ok": false, "exact_args_ok": false, "refusal": false, "ms": 204, "got": {"title": "Weg", "date": "3."}, "want": {"title": "Urlaub", "date": "3. August", "until": "18. August"}}
+{"id": "ch-17", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 123, "got": {"date": "7.9."}, "want": {"date": "7.9."}}
+{"id": "ch-18", "tool_ok": true, "args_ok": false, "exact_args_ok": false, "refusal": false, "ms": 204, "got": {"date": "1. bis 9. September"}, "want": {"date": "1. September", "until": "9. September"}}
+{"id": "ch-19", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 137, "got": {"horizon": "week"}, "want": {"horizon": "week"}}
+{"id": "ch-20", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 182, "got": {"person": "Lisa", "horizon": "week"}, "want": {"person": "Lisa", "horizon": "week"}}
+{"id": "ch-21", "tool_ok": true, "args_ok": true, "exact_args_ok": false, "refusal": false, "ms": 269, "got": {"persons": "Lisa and Max", "date": "tomorrow"}, "want": {"persons": "Lisa, Max", "date": "morgen"}}
+{"id": "ch-22", "tool_ok": true, "args_ok": true, "exact_args_ok": false, "refusal": false, "ms": 234, "got": {"persons": "Lisa und Max"}, "want": {"persons": "Lisa, Max"}}
+{"id": "ch-23", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 168, "got": {"title": "dentist", "date": "Friday"}, "want": {"title": "dentist", "date": "Friday"}}
+{"id": "ch-24", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 220, "got": {"title": "Kurzcheck", "date": "letzten Dienstag"}, "want": {"title": "Kurzcheck", "date": "letzten Dienstag"}}
+{"id": "ch-25", "tool_ok": true, "args_ok": true, "exact_args_ok": true, "refusal": false, "ms": 168, "got": {"title": "Zahnarzttermin"}, "want": {"title": "Zahnarzttermin"}}

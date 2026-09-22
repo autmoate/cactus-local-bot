@@ -13,3 +13,6 @@ data/eval/
 data/generated/
 needle-only/data/
 needle-only/.gradio/
+
+# FT-Trainingsartefakte (aus tools.json+SYSTEM_FACTS regenerierbar, train_rtx.py)
+needle-only/experiments/ft/data/_ft/

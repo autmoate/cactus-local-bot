@@ -24,14 +24,19 @@ from .agent import Agent
 from .calendar import CalendarStore
 
 _TRACES = Path(__file__).resolve().parents[2] / "data" / "traces.jsonl"
+_ENV_PATH: Path | None = None
 
 
-def _load_env() -> None:
+def _load_env() -> Path | None:
     """Reuse the existing workspace .env (needle-only/.env, then root .env)."""
+    global _ENV_PATH
     for candidate in (Path(__file__).resolve().parents[2] / ".env",
                       Path(__file__).resolve().parents[3] / ".env"):
         if candidate.exists():
             load_dotenv(candidate)
+            _ENV_PATH = candidate
+            return candidate
+    return None
 
 
 def _monday(today: cal.date) -> cal.date:
@@ -53,6 +58,26 @@ class TelegramBot:
     # ----------------------------------------------------------- security
     def _allowed_chat(self, chat_id: int) -> bool:
         return chat_id == self.owner or chat_id in self.allowed
+
+    def _pair_owner(self, chat_id: int) -> None:
+        """Erstes /start wird Owner (Pairing, §19) und wird in der .env
+        persistiert — solange TELEGRAM_OWNER_CHAT_ID leer ist. Es wird nur
+        die numerische Chat-ID geschrieben, niemals der Token."""
+        self.owner = chat_id
+        if _ENV_PATH is None:
+            return
+        key = "TELEGRAM_OWNER_CHAT_ID="
+        try:
+            lines = _ENV_PATH.read_text(encoding="utf-8").splitlines()
+            for i, line in enumerate(lines):
+                if line.startswith(key):
+                    lines[i] = f"{key}{chat_id}"
+                    break
+            else:
+                lines.append(f"{key}{chat_id}")
+            _ENV_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        except OSError:
+            pass  # Pairing gilt für die laufende Session auch ohne Persistenz
 
     # ------------------------------------------------------------ helpers
     @staticmethod
@@ -124,7 +149,11 @@ class TelegramBot:
     async def cmd_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat = update.effective_chat.id
         if not self._allowed_chat(chat):
-            return  # plan §19: no agent execution for unknown chats
+            if self.owner != 0:
+                return  # plan §19: no agent execution for unknown chats
+            self._pair_owner(chat)  # erstes /start = Owner-Pairing
+            await update.message.reply_text(
+                f"Owner registriert (Chat {chat}).")
         await update.message.reply_text(
             "Kalender-Agent lokal auf dem Raspberry Pi. Schreib mir einfach:\n"
             "'Trag morgen 14 Uhr Zahnarzt ein.' · 'Was hatte ich am 7.9.?'\n"
@@ -321,6 +350,9 @@ def main() -> None:
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, bot.on_message))
     print(f"  Telegram polling aktiv (mode={args.mode}, owner={owner}, "
           f"allowlist={len(allowed)}) — Gradio/Telegram teilen dieselbe SQLite-DB.")
+    if owner == 0:
+        print("  Kein Owner registriert — schreibe /start in den Bot-Chat "
+              "(pairt dich automatisch als Owner).")
     app.run_polling()
 
 
