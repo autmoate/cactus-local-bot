@@ -1,0 +1,73 @@
+cactus-needle collects anonymous usage counts (function name, version, OS) to guide development; no prompts or outputs. Disable with NEEDLE_TELEMETRY=0.
+  fetch     checkpoints/needle3.safetensors  downloading from Hugging Face
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  backend   gpu  float32
+  depth     20 layers
+  fetch     tokenizer tokenizer  downloading from Hugging Face
+  data      10000 examples  seq_len 1024  cap 1024
+  numerics  CQ W4 STE + A8 (matches export)
+  lora      rank 16  alpha 32  5 weight groups
+  schedule  625 steps  warmup 31  cosine decay  clip 1.0  (compiling...)
+  step      12/625  loss 0.8947
+  step      24/625  loss 0.9182
+  step      36/625  loss 0.8800
+  step      48/625  loss 0.7956
+  step      60/625  loss 0.6932
+  step      72/625  loss 0.6545
+  step      84/625  loss 0.4855
+  step      96/625  loss 0.4267
+  step      108/625  loss 0.3218
+  step      120/625  loss 0.3499
+  step      132/625  loss 0.3602
+  step      144/625  loss 0.3967
+  step      156/625  loss 0.2392
+  step      168/625  loss 0.2859
+  step      180/625  loss 0.2248
+  step      192/625  loss 0.2091
+  step      204/625  loss 0.0758
+  step      216/625  loss 0.1217
+  step      228/625  loss 0.0846
+  step      240/625  loss 0.0687
+  step      252/625  loss 0.1787
+  step      264/625  loss 0.1464
+  step      276/625  loss 0.0778
+  step      288/625  loss 0.0903
+  step      300/625  loss 0.0779
+  step      312/625  loss 0.0839
+  step      324/625  loss 0.0905
+  step      336/625  loss 0.0597
+  step      348/625  loss 0.0466
+  step      360/625  loss 0.0498
+  step      372/625  loss 0.0571
+  step      384/625  loss 0.0926
+  step      396/625  loss 0.0546
+  step      408/625  loss 0.0415
+  step      420/625  loss 0.0525
+  step      432/625  loss 0.0412
+  step      444/625  loss 0.1024
+  step      456/625  loss 0.0267
+  step      468/625  loss 0.0419
+  step      480/625  loss 0.0307
+  step      492/625  loss 0.0458
+  step      504/625  loss 0.0908
+  step      516/625  loss 0.0217
+  step      528/625  loss 0.0214
+  step      540/625  loss 0.0426
+  step      552/625  loss 0.0376
+  step      564/625  loss 0.0423
+  step      576/625  loss 0.0211
+  step      588/625  loss 0.0505
+  step      600/625  loss 0.0480
+  step      612/625  loss 0.0901
+  step      624/625  loss 0.0565
+  epoch     1/1  loss 0.0399
+  adapter   /artifacts/n3-v2-r16-e1-s42_lora.safetensors
+  next      needle build checkpoints/needle3.safetensors --lora /artifacts/n3-v2-r16-e1-s42_lora.safetensors
+  note      local tuning leaves the confidence head untrained; needle build drops it and confidence reports None
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  base      /root/.cache/cactus-needle/v3/3.0.1/needle3.cact  35.34 MB
+  merged    5 weight groups  /artifacts/n3-v2-r16-e1-s42_lora.safetensors
+  dropped   the confidence head; it is not trained locally, so confidence reports None
+  depth     20 layers
+  wrote     /artifacts/n3-v2-r16-e1-s42.cact  63.44 MB  574 tensors  W4A8
+  next      needle.Needle(weights='/artifacts/n3-v2-r16-e1-s42.cact', tools=[...])
