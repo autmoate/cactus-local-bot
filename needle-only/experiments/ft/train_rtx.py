@@ -42,6 +42,15 @@ MODELS_DIR = FT_DIR / "models"
 DATA_FT = FT_DIR / "data" / "_ft"
 
 
+def _rel(path) -> str:
+    """Pfad relativ zum Repo-Root — Logs/Manifeste sollen keine Home-Pfade tragen.
+    Der Subprozess läuft mit cwd=ROOT, relative Pfade funktionieren also."""
+    try:
+        return os.path.relpath(str(path), str(ROOT))
+    except ValueError:  # anderes Laufwerk (z.B. Modal) -> unverändert
+        return str(path)
+
+
 def _needle_major() -> int:
     """Installierte cactus-needle-Hauptversion (2 vs 3) — CLI unterscheidet sich."""
     import importlib.metadata as md
@@ -161,13 +170,13 @@ def main() -> int:
     env.pop("LD_LIBRARY_PATH", None)          # WSL/CUDA-Lib-Konflikt vermeiden
     env["NEEDLE_TELEMETRY"] = "0"
     env["PYTHONUNBUFFERED"] = "1"
-    env["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
+    env.setdefault("XLA_PYTHON_CLIENT_PREALLOCATE", "false")
     # Command-Buffers/CUDA-Graphs aus: auf WSL crasht der Stream-Capture-Pfad
     # sporadisch ("Failed to check stream capturing status") — Mathe unverändert.
     env.setdefault("XLA_FLAGS", "--xla_gpu_autotune_level=0 "
                                 "--xla_gpu_enable_command_buffer=")
 
-    finetune = [_needle_bin(), "finetune", str(train_jsonl),
+    finetune = [_needle_bin(), "finetune", _rel(train_jsonl),
                 "--epochs", str(args.epochs),
                 "--batch-size", str(args.batch_size),
                 "--lr", str(args.lr),
@@ -176,12 +185,12 @@ def main() -> int:
                 "--max-len", str(args.max_len),
                 "--val-split", str(args.val_split),
                 "--seed", str(args.seed),
-                "--checkpoint-dir", str(ROOT / "checkpoints"),
-                "--out", str(adapter)]
+                "--checkpoint-dir", _rel(ROOT / "checkpoints"),
+                "--out", _rel(adapter)]
     if major < 3:  # needle3 kennt --qat-bits nicht (QAT ist dort implizit)
         finetune += ["--qat-bits", args.qat_bits]
     if args.checkpoint:
-        finetune += ["--checkpoint", args.checkpoint]
+        finetune += ["--checkpoint", _rel(args.checkpoint)]
     log_path.write_bytes(b"")  # frischer Log pro Run
     code = run(finetune, log_path, env)
     train_time = time.time() - t0
@@ -191,8 +200,8 @@ def main() -> int:
     t1 = time.time()
     build = [_needle_bin(), "build"]
     if args.checkpoint:
-        build.append(args.checkpoint)
-    build += ["--lora", str(adapter), "--out", str(cact)]
+        build.append(_rel(args.checkpoint))
+    build += ["--lora", _rel(adapter), "--out", _rel(cact)]
     if args.layers:
         build += ["--layers", str(args.layers)]
     code = run(build, log_path, env)
@@ -211,15 +220,15 @@ def main() -> int:
                    "layers": args.layers or 20,
                    "needle_major": major,
                    "checkpoint": args.checkpoint or "auto (needle base)"},
-        "source_data": str(args.data),
+        "source_data": _rel(args.data),
         "dataset": {"manifest_file_sha256": manifest["file_sha256"],
                     "schema_hash": manifest["schema_hash"],
                     "seed": manifest["provenance"]["seed"],
                     "injected_train_sha256": _sha256(train_jsonl)},
-        "adapter": {"path": str(adapter), "bytes": adapter.stat().st_size},
-        "cact": {"path": str(cact), "bytes": cact.stat().st_size},
+        "adapter": {"path": _rel(adapter), "bytes": adapter.stat().st_size},
+        "cact": {"path": _rel(cact), "bytes": cact.stat().st_size},
         "times_s": {"train": round(train_time, 1), "build": round(build_time, 1)},
-        "log": str(log_path),
+        "log": _rel(log_path),
     }
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=1))
     print(json.dumps({k: report[k] for k in ("run_name", "times_s", "cact")},

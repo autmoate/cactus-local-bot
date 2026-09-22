@@ -1,0 +1,76 @@
+E0922 23:16:41.106827   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 10.80GiB (11597250560 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.107925   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 9.72GiB (10437525504 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.108849   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 8.75GiB (9393772544 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.109854   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 7.87GiB (8454394880 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.110680   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 7.09GiB (7608955392 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.111458   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 6.38GiB (6848059904 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.112233   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 5.74GiB (6163253760 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.113322   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 5.17GiB (5546928128 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.114079   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 4.65GiB (4992235008 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 23:16:41.114833   51371 cuda_executor.cc:1365] [0] Failed to allocate device memory of 4.18GiB (4493011456 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+  backend   gpu  float32
+  depth     20 layers
+  data      5000 examples  seq_len 1024  cap 1024
+  numerics  CQ W4 STE + A8 (matches export)
+  lora      rank 16  alpha 32  5 weight groups
+  schedule  834 steps  warmup 41  cosine decay  clip 1.0  (compiling...)
+  step      16/834  loss 0.8506
+  step      32/834  loss 0.7932
+  step      48/834  loss 0.6942
+  step      64/834  loss 0.5588
+  step      80/834  loss 0.6909
+  step      96/834  loss 0.4949
+  step      112/834  loss 0.5449
+  step      128/834  loss 0.2169
+  step      144/834  loss 0.2385
+  step      160/834  loss 0.2589

@@ -23,16 +23,16 @@
   "injected_train_sha256": "c33c57cd0ec88b0f39cd6bc8f9991b4f57c968026135289bd2b526493a0f1650"
  },
  "adapter": {
-  "path": "/mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed44_lora.pkl",
+  "path": "<repo>/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed44_lora.pkl",
   "bytes": 7963626
  },
  "cact": {
-  "path": "/mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact",
+  "path": "<repo>/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact",
   "bytes": 13737807
  },
  "times_s": {
   "train": 10582.3,
   "build": 13.1
  },
- "log": "/mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/reports/runs/sa-r16-lr1e-4-e8-seed44.log"
+ "log": "<repo>/needle-only/experiments/ft/reports/runs/sa-r16-lr1e-4-e8-seed44.log"
 }

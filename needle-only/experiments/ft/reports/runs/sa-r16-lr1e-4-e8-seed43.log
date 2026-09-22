@@ -63,10 +63,10 @@ E0917 22:29:07.909565   10466 cuda_executor.cc:1182] [0] Failed to allocate devi
   step      8820/9000  loss 0.0000
   step      9000/9000  loss 0.0000
   epoch     8/8  loss 0.0000  val 0.0002
-  adapter   /mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43_lora.pkl
-  next      needle build checkpoints/needle2.pkl --lora /mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43_lora.pkl
+  adapter   <repo>/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43_lora.pkl
+  next      needle build checkpoints/needle2.pkl --lora <repo>/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43_lora.pkl
   note      confidence reports None with tuned weights; the head is not tuned
-  merged    5 weight groups  /mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43_lora.pkl
+  merged    5 weight groups  <repo>/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43_lora.pkl
   scheme    CQ mixed[embedding=4,mhc=4,default=2] from QAT adapter metadata
-  wrote     /mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43.cact  13.74 MB  405 tensors  mixed[embedding=4,mhc=4,default=2]A8
-  next      needle.Needle(weights='/mnt/e/OliverWelz/projects/cactus-local-bot/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43.cact', tools=[...])
+  wrote     <repo>/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43.cact  13.74 MB  405 tensors  mixed[embedding=4,mhc=4,default=2]A8
+  next      needle.Needle(weights='<repo>/needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed43.cact', tools=[...])

@@ -1,0 +1,42 @@
+{
+ "run_name": "n3-v2-s",
+ "finished_at": "2026-09-22T21:35:59.014847+00:00",
+ "params": {
+  "rank": 16,
+  "alpha": 32.0,
+  "lr": 0.0001,
+  "epochs": 1,
+  "seed": 42,
+  "batch_size": 6,
+  "max_len": 1024,
+  "val_split": 0.0,
+  "qat_bits": "auto",
+  "layers": 20,
+  "needle_major": 3,
+  "checkpoint": "auto (needle base)"
+ },
+ "source_data": "needle-only/experiments/ft/data/train_sub3500.jsonl",
+ "dataset": {
+  "manifest_file_sha256": {
+   "train.jsonl": "4da6dce8381c0bfa25643278a59fcae37fea72d9a5e3d1bd6e1267b92227601c",
+   "validation.jsonl": "00a4f8dfe6a2d209623ba5c1f121f39c2567e7d13afa08d5bedc0e96ad544b93",
+   "test.jsonl": "1847138ee53ffcf725c8bd153ea99dd318c37e1ec7cd620c7bd279ab7e66f4a7"
+  },
+  "schema_hash": "d4fd45a3b03cf59d295f33a1726cf7599bbc1a97c41ca5bd0d7e678fc6f5c484",
+  "seed": 42,
+  "injected_train_sha256": "9343e6e4aea3fdc102a37b5c4552622450b0b6b646ca46a2573dd82f2b6a8787"
+ },
+ "adapter": {
+  "path": "<repo>/needle-only/experiments/ft/models/n3-v2-s_lora.safetensors",
+  "bytes": 7906600
+ },
+ "cact": {
+  "path": "<repo>/needle-only/experiments/ft/models/n3-v2-s.cact",
+  "bytes": 63437076
+ },
+ "times_s": {
+  "train": 845.9,
+  "build": 31.3
+ },
+ "log": "<repo>/needle-only/experiments/ft/reports/runs/n3-v2-s.log"
+}

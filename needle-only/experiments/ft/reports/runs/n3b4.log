@@ -1,0 +1,78 @@
+  backend   gpu  float32
+  depth     20 layers
+  data      10000 examples  seq_len 1024  cap 1024
+  numerics  CQ W4 STE + A8 (matches export)
+  lora      rank 16  alpha 32  5 weight groups
+  schedule  2500 steps  warmup 125  cosine decay  clip 1.0  (compiling...)
+E0922 22:01:20.329079   47315 cuda_executor.cc:1365] [0] Failed to allocate device memory of 4.00GiB (4294967296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: ===
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+  step      50/2500  loss 0.8037
+  step      100/2500  loss 0.7851
+  step      150/2500  loss 0.3438
+  step      200/2500  loss 0.1778
+  step      250/2500  loss 0.1114
+  step      300/2500  loss 0.0549
+  step      350/2500  loss 0.0356
+  step      400/2500  loss 0.1921
+  step      450/2500  loss 0.0160
+  step      500/2500  loss 0.0471
+  step      550/2500  loss 0.0419
+  step      600/2500  loss 0.0069
+  step      650/2500  loss 0.0156
+  step      700/2500  loss 0.0087
+  step      750/2500  loss 0.0243
+  step      800/2500  loss 0.0055
+  step      850/2500  loss 0.0020
+  step      900/2500  loss 0.0017
+  step      950/2500  loss 0.0011
+  step      1000/2500  loss 0.0236
+  step      1050/2500  loss 0.0013
+  step      1100/2500  loss 0.0006
+  step      1150/2500  loss 0.0016
+  step      1200/2500  loss 0.0015
+  step      1250/2500  loss 0.0004
+  step      1300/2500  loss 0.0007
+  step      1350/2500  loss 0.0010
+  step      1400/2500  loss 0.0009
+  step      1450/2500  loss 0.0006
+  step      1500/2500  loss 0.0010
+  step      1550/2500  loss 0.0064
+  step      1600/2500  loss 0.0005
+  step      1650/2500  loss 0.0004
+  step      1700/2500  loss 0.0039
+  step      1750/2500  loss 0.0015
+  step      1800/2500  loss 0.0007
+  step      1850/2500  loss 0.0004
+  step      1900/2500  loss 0.0003
+  step      1950/2500  loss 0.0008
+  step      2000/2500  loss 0.0001
+  step      2050/2500  loss 0.0003
+  step      2100/2500  loss 0.0002
+  step      2150/2500  loss 0.0003
+  step      2200/2500  loss 0.0006
+  step      2250/2500  loss 0.0024
+  step      2300/2500  loss 0.0009
+  step      2350/2500  loss 0.0004
+Traceback (most recent call last):
+  File "<repo>/.venv-ft3/bin/needle", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/needle/cli.py", line 280, in main
+    finetune_local(args)
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/needle/model/finetune.py", line 437, in finetune_local
+    last = float(loss)
+           ^^^^^^^^^^^
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/jax/_src/array.py", line 295, in __float__
+    return self._value.__float__()
+           ^^^^^^^^^^^
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/jax/_src/profiler.py", line 420, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/jax/_src/array.py", line 637, in _value
+    npy_value, did_copy = self._single_device_array_to_np_array_did_copy()
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax.errors.JaxRuntimeError: INTERNAL: Failed to retrieve branch_index value on stream 0x32af03d0: CUDA error: Could not synchronize CUDA stream: CUDA_ERROR_ILLEGAL_INSTRUCTION: an illegal instruction was encountered. [executable_name='jit_train_step']

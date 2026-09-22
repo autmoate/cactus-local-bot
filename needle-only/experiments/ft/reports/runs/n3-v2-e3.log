@@ -1,0 +1,94 @@
+E0922 21:29:29.826740   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 12.00GiB (12884901888 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.827982   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 10.80GiB (11596410880 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.828773   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 9.72GiB (10436769792 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.829581   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 8.75GiB (9393092608 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.830301   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 7.87GiB (8453783040 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.831074   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 7.08GiB (7608404480 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.832062   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 6.38GiB (6847563776 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.833083   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 5.74GiB (6162807296 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.833987   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 5.17GiB (5546526208 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.834898   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 4.65GiB (4991873536 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+E0922 21:29:29.836041   46204 cuda_executor.cc:1365] [0] Failed to allocate device memory of 4.18GiB (4492685824 bytes): RESOURCE_EXHAUSTED: : CUDA_ERROR_OUT_OF_MEMORY: out of memory
+=== Source Location Trace: === 
+external/xla+/xla/stream_executor/cuda/cuda_status.cc:45
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:230
+external/xla+/xla/stream_executor/cuda/cuda_device_allocator.cc:487
+
+  backend   gpu  float32
+  depth     20 layers
+  data      10000 examples  seq_len 1024  cap 1024
+  numerics  CQ W4 STE + A8 (matches export)
+  lora      rank 16  alpha 32  5 weight groups
+  schedule  30000 steps  warmup 1500  cosine decay  clip 1.0  (compiling...)
+  step      600/30000  loss 0.5725
+  step      1200/30000  loss 0.0311
+  step      1800/30000  loss nan
+Traceback (most recent call last):
+  File "<repo>/.venv-ft3/bin/needle", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/needle/cli.py", line 280, in main
+    finetune_local(args)
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/needle/model/finetune.py", line 437, in finetune_local
+    last = float(loss)
+           ^^^^^^^^^^^
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/jax/_src/array.py", line 295, in __float__
+    return self._value.__float__()
+           ^^^^^^^^^^^
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/jax/_src/profiler.py", line 420, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/.venv-ft3/lib/python3.12/site-packages/jax/_src/array.py", line 637, in _value
+    npy_value, did_copy = self._single_device_array_to_np_array_did_copy()
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax.errors.JaxRuntimeError: INTERNAL: Failed to retrieve branch_index value on stream 0x450cd070: CUDA error: Could not synchronize CUDA stream: CUDA_ERROR_LAUNCH_FAILED: unspecified launch failure. [executable_name='jit_train_step']
