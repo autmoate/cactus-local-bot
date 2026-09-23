@@ -198,3 +198,8 @@ keine Telegram-/Ladder-Migration (Budget-Entscheidung des Nutzers).
   → **N3-first + Gemma→N2-Fallback** ist der Rationalisierungspfad (nicht Gemma→N3).
   Offen/zentral: 20 % Silent Omission (Python nicht erkennbar) — von Gemma-first
   abfangbar, hier nicht messbar (kein lokales Gemma).
+
+
+## HF-Release
+
+Der beste N3-Kandidat ist veröffentlicht: **https://huggingface.co/autmoate/cactus-needle3-calendar** (`calendar-needle3-v4-e5.cact`, sha256 0547c56d…, Model Card: `MODEL_CARD_N3.md`). Upload/Verify: `upload_hf.py --release n3 [--dry-run|--verify]` (benötigt `cactus-needle 3.0.4`, engine-versionsgebunden).

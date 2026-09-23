@@ -65,7 +65,7 @@ brauchen **3.0.4** (eigenes venv, wie oben) — `.cact` ist engine-versionsgebun
 | Datei | Größe | Beschaffung |
 |---|---|---|
 | `experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact` (n2-FT) | 13,7 MB | HF `autmoate/cactus-needle2-calendar` → `calendar-needle2-seed44.cact`, oder kopieren |
-| `experiments/ft/models/modal/n3-v4-r32-e5-s42.cact` (n3-preserve e5) | 63,4 MB | **nicht auf HF** → scp/USB kopieren |
+| **n3-preserve e5** (`models/modal/n3-v4-r32-e5-s42.cact`) | 63,4 MB | **HF `autmoate/cactus-needle3-calendar`** → `calendar-needle3-v4-e5.cact` (oder scp) |
 | Needle-3-Base | 8–29 MB | auto-download via `needle download Cactus-Compute/needle3` (oder erster N3-Aufruf) |
 | Datasets | — | `data/test.jsonl` ist committet; v4 JSONLs sind gitignored → `build_v4.py` regeneriert |
 

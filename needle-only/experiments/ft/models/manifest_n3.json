@@ -1,0 +1,72 @@
+{
+ "generated_at": "2026-09-23T22:27:21.656946+00:00",
+ "release": "n3-v4-e5",
+ "base_model": "Cactus-Compute/needle3",
+ "needle_pkg": "cactus-needle[train,gpu]==3.0.4",
+ "needle_version_at_manifest": "3.0.4",
+ "training": {
+  "dataset": "v4",
+  "rows": 25072,
+  "epochs": 5,
+  "rank": 32,
+  "lr": 0.0001,
+  "seed": 42,
+  "batch": 16,
+  "max_len": 1024,
+  "layers": 20,
+  "train_s": 6630.1,
+  "build_s": 19.9
+ },
+ "dataset": {
+  "source": "data/train_v4.jsonl (Preservation-Mix)",
+  "counts": {
+   "train": 25072,
+   "validation": 2785,
+   "atomic": 19850,
+   "multi": 5007,
+   "negative": 3000,
+   "train_by_kind": {
+    "atomic": 17920,
+    "multi": 4466,
+    "negative": 2686
+   },
+   "validation_by_kind": {
+    "multi": 541,
+    "atomic": 1930,
+    "negative": 314
+   }
+  },
+  "mix_train": {
+   "atomic": 0.715,
+   "multi": 0.178,
+   "negative": 0.107
+  },
+  "file_sha256": {
+   "train_v4.jsonl": "f1e533fc16e7b62cce918dc7e146d5d4f3b5187cafac75527f74055b30f45349",
+   "validation_v4.jsonl": "1ac442577d3ea884e9570ebba207e5c7a32b090464ea7533754b0d3845508f6a"
+  },
+  "seed": 42
+ },
+ "artifact": {
+  "file": "calendar-needle3-v4-e5.cact",
+  "local_path": "needle-only/experiments/ft/models/modal/n3-v4-r32-e5-s42.cact",
+  "bytes": 63437076,
+  "sha256": "0547c56d7deff456a2fcf01efef0fb24a575e4d2c334071ade64355e737ad6bd"
+ },
+ "eval_summary": {
+  "A1_atomic_tool_args_exact": [
+   1.0,
+   0.889,
+   0.886
+  ],
+  "A1_challenge_args_exact": [
+   0.72,
+   0.6
+  ],
+  "A2_multi_all_actions": 0.9,
+  "neg_refusal": 1.0,
+  "false_refusal": 0.0,
+  "C_final_db": 0.8,
+  "median_ms": 188
+ }
+}
