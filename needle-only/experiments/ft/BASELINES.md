@@ -80,7 +80,14 @@ A  Model capability          A1 atomic complete()  ·  A2 independent multi comp
   `build_tools(store)`-Callables, nur dependent chains, frischer Fixture.
 - **C entscheidet über Produktion:** `tests/test_e2e.py` → `final_db_ok`.
 
-### Track B — Ergebnis (10 dependent-chain-Fälle)
+> **⚠️ Runde 1 (unten) ist überholt.** Review-Befund: mehrere „dependent"-Fälle
+> enthielten die benötigte Info bereits im Goal, und die Fixtures lagen per
+> Wochentag-Offset teils nicht auf dem im Goal genannten Tag → die Zahlen waren
+> fixture-abhängig. **Maßgeblich ist Runde 2** (echt result-abhängige Goals,
+> Fixtures auf `morgen`/`übermorgen`, Instrumentierung auch für `run()`).
+> Rohdaten Runde 2: `reports/native_agent_*‑r2_*.json`.
+
+### Track B — Runde 1 (HISTORISCH, überholt)
 
 | Modell | manual goal_ok | run() goal_ok | wrong_writes | Bemerkung |
 |---|---|---|---|---|
@@ -94,6 +101,40 @@ messbaren Vorteil gegenüber dem kontrollierten `complete → execute → comple
 aus, überträgt aber das Tool-Resultat (Slot-Zeit) nicht in den Folge-Call.
 Zusätzlich: `run()` exponiert **kein** per-Call-Argument-Transkript (nur `results` +
 `suppressed_calls`) → schlechter auditierbar als der eigene Loop.
+
+### Track B — Runde 2 (maßgeblich, echt result-abhängig)
+
+| Modell | manual goal_ok | run() goal_ok | wrong_writes (manual/run) | Bemerkung |
+|---|---|---|---|---|
+| n2-FT seed44 | **0.0** | **0.0** | 0 / 0 | meist kein Folgeschritt |
+| N3 Base | **0.0** | **0.0** | 6 / 3 | schreibt teils leer/verkehrt |
+| N3-preserve e5 | **0.0** | **0.0** | 4 / **11** | bester Sequenz-Fluss, aber mehr Falsch-Writes |
+
+**Kernbefund (korrigiert):** Bei *echt* result-abhängigen Ketten schließt **kein**
+Modell ein Ziel ab (0/10 in beiden Modi). `run()` = manual (kein Vorteil).
+Fehlermuster: Titel/Entity aus dem ersten Toolresultat wird nicht in den
+Folge-Call übernommen (leerer Titel → Tool-Fehler) oder durch eine Floskel
+ersetzt. N3 schreibt dabei mehr ungewollte Einträge als N2-FT → für autonomes
+Ausführen ist eine deterministische Prüf-/Eskalationsschicht Pflicht.
+
+## Architektur-Bakeoff (P0/P1/P2) — siehe `ARCH_BAKEOFF.md`
+
+133 produktionsnahe Fälle; Ziele: Gemma-Compute sparen ohne Qualitätsverlust.
+
+| Pipeline | goal_ok | autonomous | Gemma-Rate | wrong_writes | Silent-Omission |
+|---|---|---|---|---|---|
+| P1 direct N2-FT | 0.496 | 0.496 | 0 | 13 | 39 % |
+| P1 direct **N3-e5** | **0.662** | 0.662 | 0 | 11 | — |
+| **P2 fallback N3-e5** | **0.662** | **0.662** | **0.143** | **0** | **20 %** |
+| P0 hybrid (Gemma→N2) | n/a — kein lokales Gemma messbar | | | | |
+
+**Fazit:** N3-first schließt ~66 % der Ziele autonom ab; mit der deterministischen
+Eskalation (Ambiguität/unauflösbare Entity/dependent) bleibt P2 bei gleicher
+Zielrate **ohne einen einzigen Falsch-Write** und braucht nur **~14 % Gemma**.
+Residualrisiko: 20 % Silent Omission (fehlende Aktionen sind Python nicht
+erkennbar) — genau das würde Gemma-first abfangen. N2-first ist klar schlechter
+(0.496). **N3-first + Gemma→N2-Fallback ist der Rationalisierungspfad;
+Gemma→N3 wäre verschenkt.**
 
 ## Turn-Semantik (Plan Phase 8/9) — bewiesen
 

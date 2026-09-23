@@ -1,0 +1,2391 @@
+{
+ "tag": "n2ft-seed44",
+ "pipeline": "fallback",
+ "weights": "experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact",
+ "n": 133,
+ "final_goal_ok": 0.496,
+ "autonomous_ok": 0.496,
+ "gemma_invocation_rate": 0.113,
+ "wrong_writes": 0,
+ "missed_actions": 87,
+ "latency_p50_ms": 1351,
+ "latency_p95_ms": 1525,
+ "families": {
+  "atomic_read": {
+   "n": 20,
+   "goal_ok": 20,
+   "esc": 0,
+   "wrong": 0,
+   "missed": 0
+  },
+  "atomic_write": {
+   "n": 30,
+   "goal_ok": 26,
+   "esc": 0,
+   "wrong": 0,
+   "missed": 4
+  },
+  "indep_multi": {
+   "n": 25,
+   "goal_ok": 3,
+   "esc": 0,
+   "wrong": 0,
+   "missed": 46
+  },
+  "bullet_list": {
+   "n": 15,
+   "goal_ok": 0,
+   "esc": 0,
+   "wrong": 0,
+   "missed": 24
+  },
+  "mixed": {
+   "n": 15,
+   "goal_ok": 10,
+   "esc": 0,
+   "wrong": 0,
+   "missed": 5
+  },
+  "ambiguous": {
+   "n": 10,
+   "goal_ok": 0,
+   "esc": 10,
+   "wrong": 0,
+   "missed": 0
+  },
+  "dependent": {
+   "n": 8,
+   "goal_ok": 0,
+   "esc": 2,
+   "wrong": 0,
+   "missed": 8
+  },
+  "offtopic": {
+   "n": 10,
+   "goal_ok": 7,
+   "esc": 3,
+   "wrong": 0,
+   "missed": 0
+  }
+ },
+ "rows": [
+  {
+   "id": "atomic_read-000",
+   "family": "atomic_read",
+   "goal": "Zeig mir meine Termine morgen.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1285,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-001",
+   "family": "atomic_read",
+   "goal": "Was steht morgen an?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1249,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-002",
+   "family": "atomic_read",
+   "goal": "Was steht morgen an?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1235,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-003",
+   "family": "atomic_read",
+   "goal": "Zeig mir meine Termine morgen.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1250,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-004",
+   "family": "atomic_read",
+   "goal": "Was habe ich morgen vor?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1240,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-005",
+   "family": "atomic_read",
+   "goal": "Was habe ich morgen vor?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1251,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-006",
+   "family": "atomic_read",
+   "goal": "Was habe ich morgen vor?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1276,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-007",
+   "family": "atomic_read",
+   "goal": "Was steht morgen an?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1263,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-008",
+   "family": "atomic_read",
+   "goal": "Was steht übermorgen an?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1252,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-009",
+   "family": "atomic_read",
+   "goal": "Was steht morgen an?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1233,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-010",
+   "family": "atomic_read",
+   "goal": "Was steht übermorgen an?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1244,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-011",
+   "family": "atomic_read",
+   "goal": "Was steht morgen an?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1273,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-012",
+   "family": "atomic_read",
+   "goal": "Was habe ich morgen vor?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1245,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-013",
+   "family": "atomic_read",
+   "goal": "Was habe ich übermorgen vor?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1254,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-014",
+   "family": "atomic_read",
+   "goal": "Was steht morgen an?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1262,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-015",
+   "family": "atomic_read",
+   "goal": "Liste meine Termine morgen auf.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1224,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-016",
+   "family": "atomic_read",
+   "goal": "Was habe ich übermorgen vor?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1312,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-017",
+   "family": "atomic_read",
+   "goal": "Was habe ich morgen vor?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1232,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-018",
+   "family": "atomic_read",
+   "goal": "Zeig mir meine Termine übermorgen.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1262,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_read-019",
+   "family": "atomic_read",
+   "goal": "Liste meine Termine morgen auf.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1242,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "atomic_write-020",
+   "family": "atomic_write",
+   "goal": "Trag morgen 14:30 Massage ein.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1367,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-021",
+   "family": "atomic_write",
+   "goal": "Verschieb Physiotherapie auf 09:30.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1349,
+   "why": "ok",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "atomic_write-022",
+   "family": "atomic_write",
+   "goal": "Trag morgen 08:00 Vortrag ein.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1355,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-023",
+   "family": "atomic_write",
+   "goal": "Sag Training ab.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1282,
+   "why": "missed=1",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "atomic_write-024",
+   "family": "atomic_write",
+   "goal": "Neuer Termin Massage übermorgen 08:00 Uhr.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1375,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-025",
+   "family": "atomic_write",
+   "goal": "Verschieb Physiotherapie auf 14:30.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1401,
+   "why": "ok",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "atomic_write-026",
+   "family": "atomic_write",
+   "goal": "Neuer Termin Massage morgen 14:30 Uhr.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1327,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-027",
+   "family": "atomic_write",
+   "goal": "Erstelle einen Termin Friseur übermorgen um 13:00.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1367,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-028",
+   "family": "atomic_write",
+   "goal": "Lösch den Termin Training.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1279,
+   "why": "ok",
+   "writes": [
+    "calendar_delete"
+   ]
+  },
+  {
+   "id": "atomic_write-029",
+   "family": "atomic_write",
+   "goal": "Trag übermorgen 14:30 Friseur ein.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1355,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-030",
+   "family": "atomic_write",
+   "goal": "Lösch den Termin Chorprobe.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1253,
+   "why": "ok",
+   "writes": [
+    "calendar_delete"
+   ]
+  },
+  {
+   "id": "atomic_write-031",
+   "family": "atomic_write",
+   "goal": "Erstelle einen Termin Yoga morgen um 19:00.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1415,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-032",
+   "family": "atomic_write",
+   "goal": "Vorstandssitzung jetzt erst 14:30.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1351,
+   "why": "ok",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "atomic_write-033",
+   "family": "atomic_write",
+   "goal": "Trag übermorgen 09:30 Massage ein.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1343,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-034",
+   "family": "atomic_write",
+   "goal": "Neuer Termin Kino übermorgen 08:00 Uhr.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1372,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-035",
+   "family": "atomic_write",
+   "goal": "Trag morgen 09:30 Chorprobe ein.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1377,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-036",
+   "family": "atomic_write",
+   "goal": "Neuer Termin Kino morgen 16:00 Uhr.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1350,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-037",
+   "family": "atomic_write",
+   "goal": "Neuer Termin Chorprobe übermorgen 19:00 Uhr.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1365,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-038",
+   "family": "atomic_write",
+   "goal": "Sag Yoga ab.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1272,
+   "why": "missed=1",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "atomic_write-039",
+   "family": "atomic_write",
+   "goal": "Sag Workshop ab.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1299,
+   "why": "missed=1",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "atomic_write-040",
+   "family": "atomic_write",
+   "goal": "Neuer Termin Vorstandssitzung übermorgen 19:00 Uhr.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1431,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-041",
+   "family": "atomic_write",
+   "goal": "Verschieb Friseur auf 19:00.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1307,
+   "why": "ok",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "atomic_write-042",
+   "family": "atomic_write",
+   "goal": "Lösch den Termin Chorprobe.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1233,
+   "why": "ok",
+   "writes": [
+    "calendar_delete"
+   ]
+  },
+  {
+   "id": "atomic_write-043",
+   "family": "atomic_write",
+   "goal": "Lösch den Termin Vorstandssitzung.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1275,
+   "why": "ok",
+   "writes": [
+    "calendar_delete"
+   ]
+  },
+  {
+   "id": "atomic_write-044",
+   "family": "atomic_write",
+   "goal": "Neuer Termin Kino übermorgen 09:30 Uhr.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1310,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-045",
+   "family": "atomic_write",
+   "goal": "Erstelle einen Termin Zahnarzt morgen um 13:00.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1394,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "atomic_write-046",
+   "family": "atomic_write",
+   "goal": "Lösch den Termin Vortrag.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1213,
+   "why": "ok",
+   "writes": [
+    "calendar_delete"
+   ]
+  },
+  {
+   "id": "atomic_write-047",
+   "family": "atomic_write",
+   "goal": "Sag Training ab.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1232,
+   "why": "missed=1",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "atomic_write-048",
+   "family": "atomic_write",
+   "goal": "Lösch den Termin Massage.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1221,
+   "why": "ok",
+   "writes": [
+    "calendar_delete"
+   ]
+  },
+  {
+   "id": "atomic_write-049",
+   "family": "atomic_write",
+   "goal": "Neuer Termin Workshop übermorgen 13:00 Uhr.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1351,
+   "why": "ok",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-050",
+   "family": "indep_multi",
+   "goal": "Erstelle Termine: morgen 19:00 Kegelabend; morgen 14:30 Zahnarzt.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1400,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-051",
+   "family": "indep_multi",
+   "goal": "Trag ein: morgen 09:30 Teammeeting, übermorgen 14:30 Physiotherapie.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1395,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-052",
+   "family": "indep_multi",
+   "goal": "Trag ein: übermorgen 08:00 Buchhaltung, morgen 14:30 Teammeeting.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1410,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-053",
+   "family": "indep_multi",
+   "goal": "Trag morgen 11:00 kegelabend ein und trag morgen 16:00 massage ein und trag übermorgen 17:30 yoga ein und trag übermorgen 19:00 friseur ein.",
+   "calls": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 3,
+   "wrong_writes": 0,
+   "ms": 1706,
+   "why": "missed=3",
+   "writes": [
+    "calendar_create",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-054",
+   "family": "indep_multi",
+   "goal": "Trag ein: morgen 14:30 Kino, übermorgen 09:30 Zahnarzt, morgen 11:00 Chorprobe.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 3,
+   "wrong_writes": 0,
+   "ms": 1432,
+   "why": "missed=3",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-055",
+   "family": "indep_multi",
+   "goal": "Erstelle Termine: übermorgen 14:30 Arztbesuch; übermorgen 19:00 Yoga.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1425,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-056",
+   "family": "indep_multi",
+   "goal": "Trag ein: morgen 14:30 Sprachkurs, übermorgen 08:00 Massage.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1388,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-057",
+   "family": "indep_multi",
+   "goal": "Erstelle Termine: übermorgen 16:00 Physiotherapie; morgen 09:30 Yoga.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1449,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-058",
+   "family": "indep_multi",
+   "goal": "Trag morgen 14:30 vortrag ein und trag übermorgen 08:00 yoga ein und trag übermorgen 17:30 vorstandssitzung ein.",
+   "calls": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1525,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-059",
+   "family": "indep_multi",
+   "goal": "Trag ein: übermorgen 17:30 Physiotherapie, morgen 14:30 Kino.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1390,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-060",
+   "family": "indep_multi",
+   "goal": "Trag übermorgen 08:00 kino ein und trag morgen 17:30 massage ein.",
+   "calls": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1699,
+   "why": "ok",
+   "writes": [
+    "calendar_create",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-061",
+   "family": "indep_multi",
+   "goal": "Trag ein: morgen 16:00 Vorstandssitzung, übermorgen 17:30 Kino.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1391,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-062",
+   "family": "indep_multi",
+   "goal": "Trag ein: morgen 11:00 Workshop, übermorgen 09:30 Kegelabend, morgen 17:30 Friseur.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 3,
+   "wrong_writes": 0,
+   "ms": 1412,
+   "why": "missed=3",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-063",
+   "family": "indep_multi",
+   "goal": "Trag übermorgen 11:00 zahnarzt ein und trag morgen 17:30 kino ein und trag morgen 16:00 arztbesuch ein und trag übermorgen 08:00 training ein.",
+   "calls": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 3,
+   "wrong_writes": 0,
+   "ms": 1663,
+   "why": "missed=3",
+   "writes": [
+    "calendar_create",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-064",
+   "family": "indep_multi",
+   "goal": "Trag ein: übermorgen 16:00 Vortrag, übermorgen 11:00 Friseur.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1376,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-065",
+   "family": "indep_multi",
+   "goal": "Trag ein: übermorgen 16:00 Zahnarzt, übermorgen 11:00 Kegelabend.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1380,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-066",
+   "family": "indep_multi",
+   "goal": "Trag ein: übermorgen 08:00 Arztbesuch, morgen 19:00 Kegelabend, übermorgen 11:00 Physiotherapie.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 3,
+   "wrong_writes": 0,
+   "ms": 1780,
+   "why": "missed=3",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-067",
+   "family": "indep_multi",
+   "goal": "Trag ein: übermorgen 17:30 Teammeeting, übermorgen 14:30 Vortrag, morgen 19:00 Sprachkurs.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 3,
+   "wrong_writes": 0,
+   "ms": 1439,
+   "why": "missed=3",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-068",
+   "family": "indep_multi",
+   "goal": "Erstelle Termine: übermorgen 17:30 Workshop; morgen 08:00 Yoga; morgen 16:00 Zahnarzt; übermorgen 11:00 Arztbesuch.",
+   "calls": [
+    "calendar_create",
+    "calendar_create",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 3,
+   "wrong_writes": 0,
+   "ms": 1874,
+   "why": "missed=3",
+   "writes": [
+    "calendar_create",
+    "calendar_create",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-069",
+   "family": "indep_multi",
+   "goal": "Trag morgen 16:00 friseur ein und trag übermorgen 13:00 arztbesuch ein und trag übermorgen 19:00 yoga ein.",
+   "calls": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1543,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-070",
+   "family": "indep_multi",
+   "goal": "Erstelle Termine: übermorgen 11:00 Workshop; morgen 14:30 Vortrag.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1407,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-071",
+   "family": "indep_multi",
+   "goal": "Erstelle Termine: morgen 13:00 Buchhaltung; übermorgen 19:00 Physiotherapie; morgen 14:30 Vorstandssitzung.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1430,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-072",
+   "family": "indep_multi",
+   "goal": "Trag übermorgen 11:00 massage ein und trag morgen 16:00 chorprobe ein und trag übermorgen 08:00 vortrag ein.",
+   "calls": [
+    "calendar_create",
+    "calendar_create",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1608,
+   "why": "ok",
+   "writes": [
+    "calendar_create",
+    "calendar_create",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-073",
+   "family": "indep_multi",
+   "goal": "Trag ein: übermorgen 13:00 Kino, morgen 17:30 Vorstandssitzung, übermorgen 09:30 Buchhaltung.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1468,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "indep_multi-074",
+   "family": "indep_multi",
+   "goal": "Trag übermorgen 09:30 teammeeting ein und trag morgen 13:00 friseur ein.",
+   "calls": [
+    "calendar_create",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1499,
+   "why": "ok",
+   "writes": [
+    "calendar_create",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-075",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 13:00 Vortrag\n- 09:30 Workshop",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1384,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-076",
+   "family": "bullet_list",
+   "goal": "Mach morgen:\n- 11:00 Vorstandssitzung\n- 17:30 Friseur",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1380,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-077",
+   "family": "bullet_list",
+   "goal": "Mach morgen:\n- 09:30 Chorprobe\n- 13:00 Massage\n- 19:00 Vorstandssitzung",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1464,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-078",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 17:30 Massage\n- 19:00 Sprachkurs\n- 14:30 Vorstandssitzung",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1479,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-079",
+   "family": "bullet_list",
+   "goal": "Mach morgen:\n- 13:00 Vortrag\n- 17:30 Chorprobe\n- 16:00 Yoga",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1473,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-080",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 09:30 Chorprobe\n- 16:00 Yoga\n- 11:00 Vortrag",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1464,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-081",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 09:30 Kegelabend\n- 19:00 Training",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1391,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-082",
+   "family": "bullet_list",
+   "goal": "Mach morgen:\n- 11:00 Buchhaltung\n- 16:00 Arztbesuch",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1379,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-083",
+   "family": "bullet_list",
+   "goal": "Mach morgen:\n- 16:00 Vorstandssitzung\n- 14:30 Workshop",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1356,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-084",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 17:30 Teammeeting\n- 13:00 Friseur\n- 14:30 Vorstandssitzung",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 3,
+   "wrong_writes": 0,
+   "ms": 1396,
+   "why": "missed=3",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-085",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 16:00 Vortrag\n- 11:00 Zahnarzt",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1363,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-086",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 14:30 Chorprobe\n- 13:00 Vortrag\n- 17:30 Friseur",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 2,
+   "wrong_writes": 0,
+   "ms": 1387,
+   "why": "missed=2",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-087",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 17:30 Kegelabend\n- 16:00 Vortrag",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1336,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-088",
+   "family": "bullet_list",
+   "goal": "Mach übermorgen:\n- 08:00 Yoga\n- 13:00 Sprachkurs",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1425,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "bullet_list-089",
+   "family": "bullet_list",
+   "goal": "Mach morgen:\n- 19:00 Vorstandssitzung\n- 09:30 Kino",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1369,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-090",
+   "family": "mixed",
+   "goal": "Lösch Teammeeting und trag übermorgen 16:00 Yoga ein.",
+   "calls": [
+    "calendar_delete",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1433,
+   "why": "ok",
+   "writes": [
+    "calendar_delete",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-091",
+   "family": "mixed",
+   "goal": "Verschieb Massage auf 17:30 und trag übermorgen Training ein.",
+   "calls": [
+    "calendar_move",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1433,
+   "why": "ok",
+   "writes": [
+    "calendar_move",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-092",
+   "family": "mixed",
+   "goal": "Lösch Vorstandssitzung und trag morgen 19:00 Yoga ein.",
+   "calls": [
+    "calendar_delete",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1448,
+   "why": "ok",
+   "writes": [
+    "calendar_delete",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-093",
+   "family": "mixed",
+   "goal": "Zeig mir morgen meine Termine und trag 09:30 Training ein.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1259,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "mixed-094",
+   "family": "mixed",
+   "goal": "Lösch Teammeeting und trag morgen 13:00 Buchhaltung ein.",
+   "calls": [
+    "calendar_delete",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1390,
+   "why": "ok",
+   "writes": [
+    "calendar_delete",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-095",
+   "family": "mixed",
+   "goal": "Lösch Zahnarzt und trag morgen 13:00 Sprachkurs ein.",
+   "calls": [
+    "calendar_delete",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1399,
+   "why": "ok",
+   "writes": [
+    "calendar_delete",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-096",
+   "family": "mixed",
+   "goal": "Verschieb Vortrag auf 13:00 und trag morgen Kegelabend ein.",
+   "calls": [
+    "calendar_move",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1412,
+   "why": "ok",
+   "writes": [
+    "calendar_move",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-097",
+   "family": "mixed",
+   "goal": "Zeig mir übermorgen meine Termine und trag 11:00 Buchhaltung ein.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1253,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "mixed-098",
+   "family": "mixed",
+   "goal": "Lösch Friseur und trag morgen 14:30 Buchhaltung ein.",
+   "calls": [
+    "calendar_delete",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1379,
+   "why": "ok",
+   "writes": [
+    "calendar_delete",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-099",
+   "family": "mixed",
+   "goal": "Verschieb Zahnarzt auf 17:30 und trag übermorgen Massage ein.",
+   "calls": [
+    "calendar_move",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1443,
+   "why": "ok",
+   "writes": [
+    "calendar_move",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-100",
+   "family": "mixed",
+   "goal": "Zeig mir morgen meine Termine und trag 09:30 Teammeeting ein.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1257,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "mixed-101",
+   "family": "mixed",
+   "goal": "Verschieb Sprachkurs auf 08:00 und trag morgen Vorstandssitzung ein.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1301,
+   "why": "missed=1",
+   "writes": [
+    "calendar_move"
+   ]
+  },
+  {
+   "id": "mixed-102",
+   "family": "mixed",
+   "goal": "Zeig mir übermorgen meine Termine und trag 09:30 Kegelabend ein.",
+   "calls": [
+    "calendar_list",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1360,
+   "why": "missed=1",
+   "writes": [
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-103",
+   "family": "mixed",
+   "goal": "Lösch Kegelabend und trag übermorgen 19:00 Zahnarzt ein.",
+   "calls": [
+    "calendar_delete",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1401,
+   "why": "ok",
+   "writes": [
+    "calendar_delete",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "mixed-104",
+   "family": "mixed",
+   "goal": "Verschieb Vorstandssitzung auf 11:00 und trag übermorgen Training ein.",
+   "calls": [
+    "calendar_move",
+    "calendar_create"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1469,
+   "why": "ok",
+   "writes": [
+    "calendar_move",
+    "calendar_create"
+   ]
+  },
+  {
+   "id": "ambiguous-105",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Training.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1215,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-106",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Vortrag.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1204,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-107",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Vorstandssitzung.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1222,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-108",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Kegelabend.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1232,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-109",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Kino.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1200,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-110",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Massage.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1209,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-111",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Massage.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1199,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-112",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Kegelabend.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1217,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-113",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Vortrag.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1190,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "ambiguous-114",
+   "family": "ambiguous",
+   "goal": "Lösch den Termin Training.",
+   "calls": [
+    "calendar_delete"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(2)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1191,
+   "why": "escalated(unresolved_entity(2)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "dependent-115",
+   "family": "dependent",
+   "goal": "Finde morgen einen freien Slot mit Lisa und trag dort ein Meeting ein.",
+   "calls": [
+    "calendar_find_slot"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1338,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "dependent-116",
+   "family": "dependent",
+   "goal": "Schau nach, was morgen ansteht, und lösch den Termin.",
+   "calls": [],
+   "escalated": false,
+   "esc_reason": "no_calls_refusal",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1182,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "dependent-117",
+   "family": "dependent",
+   "goal": "Was hat Lisa morgen? Sag ihren Termin ab.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1287,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "dependent-118",
+   "family": "dependent",
+   "goal": "Zeig mir morgen und verschieb den Termin auf 16 Uhr.",
+   "calls": [
+    "calendar_list",
+    "calendar_move"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(0)",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1325,
+   "why": "escalated(unresolved_entity(0)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "dependent-119",
+   "family": "dependent",
+   "goal": "Schau nach, was morgen ansteht, und verschieb den Eintrag auf übermorgen.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(0)",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1299,
+   "why": "escalated(unresolved_entity(0)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "dependent-120",
+   "family": "dependent",
+   "goal": "Wann habe ich übermorgen 90 Minuten frei? Leg dort ein Teammeeting an.",
+   "calls": [
+    "calendar_find_slot"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1384,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "dependent-121",
+   "family": "dependent",
+   "goal": "Prüf, was übermorgen ansteht, und lösch den Eintrag.",
+   "calls": [],
+   "escalated": false,
+   "esc_reason": "no_calls_refusal",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1181,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "dependent-122",
+   "family": "dependent",
+   "goal": "Zeig mir, was morgen ansteht, und sag den Eintrag ab.",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": false,
+   "missed": 1,
+   "wrong_writes": 0,
+   "ms": 1258,
+   "why": "missed=1",
+   "writes": []
+  },
+  {
+   "id": "offtopic-123",
+   "family": "offtopic",
+   "goal": "Wie wird das Wetter morgen?",
+   "calls": [],
+   "escalated": false,
+   "esc_reason": "no_calls_refusal",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1178,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "offtopic-124",
+   "family": "offtopic",
+   "goal": "Erzähl mir einen Witz.",
+   "calls": [],
+   "escalated": false,
+   "esc_reason": "no_calls_refusal",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1178,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "offtopic-125",
+   "family": "offtopic",
+   "goal": "Wie viele Tage hat der September?",
+   "calls": [],
+   "escalated": false,
+   "esc_reason": "no_calls_refusal",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1169,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "offtopic-126",
+   "family": "offtopic",
+   "goal": "Was kostet ein e-Bike?",
+   "calls": [],
+   "escalated": false,
+   "esc_reason": "no_calls_refusal",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1166,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "offtopic-127",
+   "family": "offtopic",
+   "goal": "Übersetze 'good morning' ins Französische.",
+   "calls": [
+    "calendar_move"
+   ],
+   "escalated": true,
+   "esc_reason": "unresolved_entity(0)",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1263,
+   "why": "escalated(unresolved_entity(0)) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "offtopic-128",
+   "family": "offtopic",
+   "goal": "Wer war Mozart?",
+   "calls": [
+    "calendar_list"
+   ],
+   "escalated": false,
+   "esc_reason": "executable",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1200,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "offtopic-129",
+   "family": "offtopic",
+   "goal": "Einkaufsliste: Milch, Brot, Eier.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": true,
+   "esc_reason": "no_date_time",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1380,
+   "why": "escalated(no_date_time) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "offtopic-130",
+   "family": "offtopic",
+   "goal": "Packliste: Zelt, Schlafsack.",
+   "calls": [
+    "calendar_create"
+   ],
+   "escalated": true,
+   "esc_reason": "no_date_time",
+   "goal_ok": false,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1229,
+   "why": "escalated(no_date_time) · gemma_n/a",
+   "writes": []
+  },
+  {
+   "id": "offtopic-131",
+   "family": "offtopic",
+   "goal": "Wie viele Urlaubstage stehen mir zu?",
+   "calls": [],
+   "escalated": false,
+   "esc_reason": "no_calls_refusal",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1378,
+   "why": "kein Write",
+   "writes": []
+  },
+  {
+   "id": "offtopic-132",
+   "family": "offtopic",
+   "goal": "Was ist ein Kalender-Sync?",
+   "calls": [],
+   "escalated": false,
+   "esc_reason": "no_calls_refusal",
+   "goal_ok": true,
+   "missed": 0,
+   "wrong_writes": 0,
+   "ms": 1197,
+   "why": "kein Write",
+   "writes": []
+  }
+ ]
+}

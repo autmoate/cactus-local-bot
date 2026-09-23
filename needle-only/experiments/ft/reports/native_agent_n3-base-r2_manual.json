@@ -1,0 +1,515 @@
+{
+ "tag": "n3-base-r2",
+ "mode": "manual",
+ "weights": null,
+ "n": 10,
+ "goal_completed": 0.0,
+ "wrong_writes": 6,
+ "failed_writes": 5,
+ "extra_writes": 6,
+ "median_steps": 2.0,
+ "median_ms": 443,
+ "rows": [
+  {
+   "id": "find->create-slot",
+   "mode": "manual",
+   "goal": "Finde morgen einen freien Slot mit Lisa und trag dort ein Meeting ein.",
+   "steps": 2,
+   "calls": [
+    "calendar_find_slot",
+    "calendar_create"
+   ],
+   "args": [
+    {
+     "persons": "Lisa"
+    },
+    {
+     "title": "Meeting"
+    }
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 495,
+   "error": null,
+   "writes": 1,
+   "extra_writes": 0,
+   "failed_writes": 1,
+   "wrong_writes": 0,
+   "db_before": {
+    "Blockzeit": "2026-09-24T09:00:00"
+   },
+   "db_after": {
+    "Blockzeit": "2026-09-24T09:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Lisa"
+     },
+     "result": "Free slots:\n• Mi 23.09. 09:00–17:00\n• Do 24.09. 10:00–17:00\n• Fr 25.09. 09:00–17:00\n• Mo 28.09. 09:00–17:00\n• Di 29.09. 09:00–17:00"
+    },
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Meeting"
+     },
+     "result": "❌ Zeitangabe nicht verstanden: None"
+    }
+   ]
+  },
+  {
+   "id": "list->delete-title",
+   "mode": "manual",
+   "goal": "Schau nach, was morgen ansteht, und lösch den Termin.",
+   "steps": 2,
+   "calls": [
+    "calendar_find_slot",
+    "calendar_delete"
+   ],
+   "args": [
+    {
+     "persons": "Morgen",
+     "date": "2026-09-24"
+    },
+    {
+     "title": "Termin"
+    }
+   ],
+   "goal_completed": false,
+   "why": "gone=[]",
+   "ms": 389,
+   "error": null,
+   "writes": 1,
+   "extra_writes": 1,
+   "failed_writes": 1,
+   "wrong_writes": 1,
+   "db_before": {
+    "Kegelabend": "2026-09-24T19:00:00"
+   },
+   "db_after": {
+    "Kegelabend": "2026-09-24T19:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Morgen",
+      "date": "2026-09-24"
+     },
+     "result": "Free slots:\n• Do 24.09. 09:00–17:00"
+    },
+    {
+     "tool": "calendar_delete",
+     "args": {
+      "title": "Termin"
+     },
+     "result": "❌ Kein Eintrag 'Termin' gefunden."
+    }
+   ]
+  },
+  {
+   "id": "list-person->delete",
+   "mode": "manual",
+   "goal": "Was hat Lisa morgen? Sag ihren Termin ab.",
+   "steps": 1,
+   "calls": [
+    "calendar_find_slot"
+   ],
+   "args": [
+    {
+     "persons": "Lisa",
+     "date": "2026-09-24"
+    }
+   ],
+   "goal_completed": false,
+   "why": "gone=[]",
+   "ms": 294,
+   "error": null,
+   "writes": 0,
+   "extra_writes": 0,
+   "failed_writes": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Yoga": "2026-09-24T18:00:00"
+   },
+   "db_after": {
+    "Yoga": "2026-09-24T18:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Lisa",
+      "date": "2026-09-24"
+     },
+     "result": "Free slots:\n• Do 24.09. 09:00–17:00"
+    }
+   ]
+  },
+  {
+   "id": "list->move-time",
+   "mode": "manual",
+   "goal": "Zeig mir morgen und verschieb den Termin auf 16 Uhr.",
+   "steps": 2,
+   "calls": [
+    "calendar_create",
+    "calendar_move"
+   ],
+   "args": [
+    {
+     "title": "Termin",
+     "date": "2026-09-24",
+     "until": "2026-09-24"
+    },
+    {
+     "title": "Termin",
+     "date": "2026-09-24",
+     "time": "16:00"
+    }
+   ],
+   "goal_completed": false,
+   "why": "10:00 want=16:00",
+   "ms": 404,
+   "error": null,
+   "writes": 2,
+   "extra_writes": 1,
+   "failed_writes": 0,
+   "wrong_writes": 1,
+   "db_before": {
+    "Zahnarzt": "2026-09-24T10:00:00"
+   },
+   "db_after": {
+    "Termin": "2026-09-24T00:00:00",
+    "Zahnarzt": "2026-09-24T10:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Termin",
+      "date": "2026-09-24",
+      "until": "2026-09-24"
+     },
+     "result": "🚫 Absence eingetragen: Termin (Do 24.09., ganztägig)"
+    },
+    {
+     "tool": "calendar_move",
+     "args": {
+      "title": "Termin",
+      "date": "2026-09-24",
+      "time": "16:00"
+     },
+     "result": "✏️ Verschoben: Termin (Do 24.09., ganztägig)"
+    }
+   ]
+  },
+  {
+   "id": "list->move-day",
+   "mode": "manual",
+   "goal": "Schau nach, was morgen ansteht, und verschieb den Eintrag auf übermorgen.",
+   "steps": 2,
+   "calls": [
+    "calendar_create",
+    "calendar_move"
+   ],
+   "args": [
+    {
+     "title": "Werstände",
+     "date": "2026-09-24"
+    },
+    {
+     "title": "Werstände",
+     "date": "2026-09-24",
+     "time": "15:00"
+    }
+   ],
+   "goal_completed": false,
+   "why": "2026-09-24 want=2026-09-25",
+   "ms": 583,
+   "error": null,
+   "writes": 2,
+   "extra_writes": 1,
+   "failed_writes": 0,
+   "wrong_writes": 1,
+   "db_before": {
+    "Teammeeting": "2026-09-24T09:00:00"
+   },
+   "db_after": {
+    "Werstände": "2026-09-24T00:00:00",
+    "Teammeeting": "2026-09-24T09:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Werstände",
+      "date": "2026-09-24"
+     },
+     "result": "🚫 Absence eingetragen: Werstände (Do 24.09., ganztägig)"
+    },
+    {
+     "tool": "calendar_move",
+     "args": {
+      "title": "Werstände",
+      "date": "2026-09-24",
+      "time": "15:00"
+     },
+     "result": "✏️ Verschoben: Werstände (Do 24.09., ganztägig)"
+    }
+   ]
+  },
+  {
+   "id": "find->create-90",
+   "mode": "manual",
+   "goal": "Wann habe ich übermorgen 90 Minuten frei? Leg dort ein Teammeeting an.",
+   "steps": 2,
+   "calls": [
+    "calendar_find_slot",
+    "calendar_create"
+   ],
+   "args": [
+    {
+     "persons": "Lieferung",
+     "duration_min": 90,
+     "date": "2026-09-25"
+    },
+    {
+     "title": "Teammeeting"
+    }
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 455,
+   "error": null,
+   "writes": 1,
+   "extra_writes": 0,
+   "failed_writes": 1,
+   "wrong_writes": 0,
+   "db_before": {
+    "Workshop": "2026-09-25T10:00:00"
+   },
+   "db_after": {
+    "Workshop": "2026-09-25T10:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Lieferung",
+      "duration_min": 90,
+      "date": "2026-09-25"
+     },
+     "result": "Free slots:\n• Fr 25.09. 09:00–17:00"
+    },
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Teammeeting"
+     },
+     "result": "❌ Zeitangabe nicht verstanden: None"
+    }
+   ]
+  },
+  {
+   "id": "list->delete-2",
+   "mode": "manual",
+   "goal": "Prüf, was übermorgen ansteht, und lösch den Eintrag.",
+   "steps": 2,
+   "calls": [
+    "calendar_find_slot",
+    "calendar_delete"
+   ],
+   "args": [
+    {
+     "persons": "übermorgen",
+     "date": "übermorgen"
+    },
+    {
+     "title": "Eintrag"
+    }
+   ],
+   "goal_completed": false,
+   "why": "gone=[]",
+   "ms": 431,
+   "error": null,
+   "writes": 1,
+   "extra_writes": 1,
+   "failed_writes": 1,
+   "wrong_writes": 1,
+   "db_before": {
+    "Arztbesuch": "2026-09-25T14:00:00"
+   },
+   "db_after": {
+    "Arztbesuch": "2026-09-25T14:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "übermorgen",
+      "date": "übermorgen"
+     },
+     "result": "Free slots:\n• Fr 25.09. 09:00–17:00"
+    },
+    {
+     "tool": "calendar_delete",
+     "args": {
+      "title": "Eintrag"
+     },
+     "result": "❌ Kein Eintrag 'Eintrag' gefunden."
+    }
+   ]
+  },
+  {
+   "id": "find-person->create",
+   "mode": "manual",
+   "goal": "Finde nächste Woche einen freien Slot mit Max und trag dort einen Termin 'Coaching' ein.",
+   "steps": 2,
+   "calls": [
+    "calendar_find_slot",
+    "calendar_create"
+   ],
+   "args": [
+    {
+     "persons": "Max",
+     "duration_min": 60,
+     "date": "2026-09-23",
+     "until": "2026-09-23"
+    },
+    {
+     "title": "Coaching",
+     "date": "2026-09-23",
+     "until": "2026-09-23"
+    }
+   ],
+   "goal_completed": false,
+   "why": "00:00 in ['09:00', '17:00']",
+   "ms": 685,
+   "error": null,
+   "writes": 1,
+   "extra_writes": 0,
+   "failed_writes": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Blockzeit": "2026-09-25T13:00:00"
+   },
+   "db_after": {
+    "Coaching": "2026-09-23T00:00:00",
+    "Blockzeit": "2026-09-25T13:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Max",
+      "duration_min": 60,
+      "date": "2026-09-23",
+      "until": "2026-09-23"
+     },
+     "result": "Free slots:\n• Mi 23.09. 09:00–17:00"
+    },
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Coaching",
+      "date": "2026-09-23",
+      "until": "2026-09-23"
+     },
+     "result": "🚫 Absence eingetragen: Coaching (Mi 23.09., ganztägig)"
+    }
+   ]
+  },
+  {
+   "id": "list->move-2",
+   "mode": "manual",
+   "goal": "Was steht morgen an? Verschieb den Termin auf 15 Uhr.",
+   "steps": 1,
+   "calls": [
+    "calendar_move"
+   ],
+   "args": [
+    {
+     "title": "Was steht morgen",
+     "date": "2026-09-24",
+     "time": "15:00"
+    }
+   ],
+   "goal_completed": false,
+   "why": "11:00 want=15:00",
+   "ms": 308,
+   "error": null,
+   "writes": 1,
+   "extra_writes": 0,
+   "failed_writes": 1,
+   "wrong_writes": 0,
+   "db_before": {
+    "Friseur": "2026-09-24T11:00:00"
+   },
+   "db_after": {
+    "Friseur": "2026-09-24T11:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_move",
+     "args": {
+      "title": "Was steht morgen",
+      "date": "2026-09-24",
+      "time": "15:00"
+     },
+     "result": "❌ Kein Eintrag 'Was steht morgen' gefunden."
+    }
+   ]
+  },
+  {
+   "id": "list->delete-3",
+   "mode": "manual",
+   "goal": "Zeig mir, was morgen ansteht, und sag den Eintrag ab.",
+   "steps": 2,
+   "calls": [
+    "calendar_create",
+    "calendar_delete"
+   ],
+   "args": [
+    {
+     "title": "Ansteht",
+     "date": "2026-09-24"
+    },
+    {
+     "title": "Ansteht"
+    }
+   ],
+   "goal_completed": false,
+   "why": "gone=[]",
+   "ms": 552,
+   "error": null,
+   "writes": 2,
+   "extra_writes": 2,
+   "failed_writes": 0,
+   "wrong_writes": 2,
+   "db_before": {
+    "Chorprobe": "2026-09-24T20:00:00"
+   },
+   "db_after": {
+    "Chorprobe": "2026-09-24T20:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Ansteht",
+      "date": "2026-09-24"
+     },
+     "result": "🚫 Absence eingetragen: Ansteht (Do 24.09., ganztägig)"
+    },
+    {
+     "tool": "calendar_delete",
+     "args": {
+      "title": "Ansteht"
+     },
+     "result": "🗑️ Gelöscht: Ansteht (Do 24.09., ganztägig)"
+    }
+   ]
+  }
+ ]
+}

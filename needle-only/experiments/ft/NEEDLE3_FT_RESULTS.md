@@ -182,3 +182,19 @@ Kein N3-Kandidat erreicht das Atomic-Gate (bestes 0.886/0.889 vs. 0.95/0.977);
 Track B ergibt keinen run()-Vorteil. **Lokales N3-Tuning bleibt gestoppt**,
 n2-FT + Gemma-Controller + Python bleibt Produktion. Kein Platform-FT,
 keine Telegram-/Ladder-Migration (Budget-Entscheidung des Nutzers).
+
+---
+
+# Nachtrag 2 — Track-B-Runde 2 (korrigiert) + Architektur-Bakeoff
+
+- **Track B korrigiert** (echt result-abhängige Goals, Fixtures auf `morgen`/
+  `übermorgen`, Instrumentierung auch für `run()`): **goal_completed 0.0 bei allen
+  Modellen** in beiden Modi; `run()` == manual; N3 schreibt mehr Falsch-Writes
+  (E5: 4/manual, 11/run) als n2-FT (0). Die Runde-1-Zahlen (0.2/0.4) waren
+  fixture-abhängig und sind in `BASELINES.md` als überholt markiert.
+- **Architektur-Bakeoff (133 Fälle, `ARCH_BAKEOFF.md`):**
+  P1 direct N3-e5 goal_ok 0.662 · P2 fallback N3-e5 goal_ok 0.662 bei nur
+  **14.3 % Gemma-Bedarf und 0 Falsch-Writes** · N2-first 0.496.
+  → **N3-first + Gemma→N2-Fallback** ist der Rationalisierungspfad (nicht Gemma→N3).
+  Offen/zentral: 20 % Silent Omission (Python nicht erkennbar) — von Gemma-first
+  abfangbar, hier nicht messbar (kein lokales Gemma).
