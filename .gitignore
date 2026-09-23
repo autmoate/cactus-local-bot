@@ -23,3 +23,7 @@ needle-only/experiments/ft/data/_ft/
 needle-only/calendar_ft_all/data/
 needle-only/experiments/ft/data/train_sub*.jsonl
 needle-only/experiments/ft/data/train_v3_sub*.jsonl
+
+# v4-Preservation-Dataset (deterministisch via build_v4.py regenerierbar)
+needle-only/experiments/ft/data/train_v4.jsonl
+needle-only/experiments/ft/data/validation_v4.jsonl

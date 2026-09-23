@@ -162,6 +162,17 @@ def main() -> None:
     lat = [r["latency_ms"] for r in rows if r["latency_ms"]]
     if lat:
         print(f"latency: ø {sum(lat) / len(lat):.0f} ms, max {max(lat):.0f} ms")
+    if "--out" in sys.argv:
+        import json as _json
+        out = sys.argv[sys.argv.index("--out") + 1]
+        import statistics as _st
+        Path(out).write_text(_json.dumps({
+            "mode": mode, "n": len(rows), "final_db_ok": round(summarize(rows), 4),
+            "latency_mean_ms": round(sum(lat) / len(lat)) if lat else None,
+            "latency_p95_ms": round(_st.quantiles(lat, n=20)[-1]) if len(lat) > 1 else (lat[0] if lat else None),
+            "latency_max_ms": max(lat) if lat else None,
+        }, ensure_ascii=False, indent=1), encoding="utf-8")
+        print(f"-> {out}")
 
 
 def summarize(rows: list[dict]) -> float:

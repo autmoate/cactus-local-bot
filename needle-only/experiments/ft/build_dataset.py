@@ -154,17 +154,25 @@ def main() -> None:
     ap.add_argument("--train", type=int, default=10000)
     ap.add_argument("--validation", type=int, default=1000)
     ap.add_argument("--test", type=int, default=1800)
+    ap.add_argument("--out-dir", default=str(FT_DIR),
+                    help="Zielverzeichnis (Default: FT_DIR) — für Scratch-Läufe, "
+                         "damit v2/Manifest unangetastet bleiben")
+    ap.add_argument("--only-train", action="store_true",
+                    help="nur train.jsonl schreiben (kein val/test/tools/manifest)")
     args = ap.parse_args()
 
+    out_root = Path(args.out_dir)
     schemas, schema_hash = production_schemas()
-    out = FT_DIR / "data"
-    out.mkdir(exist_ok=True)
-    (FT_DIR / "tools.json").write_text(
-        json.dumps(schemas, ensure_ascii=False, indent=1), encoding="utf-8")
+    out = out_root / "data"
+    out.mkdir(parents=True, exist_ok=True)
+    if args.out_dir == str(FT_DIR):
+        (FT_DIR / "tools.json").write_text(
+            json.dumps(schemas, ensure_ascii=False, indent=1), encoding="utf-8")
 
     seen: set = set()
-    counts = {"train": args.train, "validation": args.validation,
-              "test": args.test}
+    counts = ({"train": args.train} if args.only_train
+              else {"train": args.train, "validation": args.validation,
+                    "test": args.test})
     actual: dict[str, int] = {}
     hashes = {}
     for split, n in counts.items():
@@ -184,6 +192,10 @@ def main() -> None:
         hashes[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         actual[split] = len(rows)
         print(f"  {split:<11}{len(rows):>6}  -> {path.name}")
+
+    if args.only_train:
+        print(f"  (only-train) -> {out / 'train.jsonl'}")
+        return
 
     try:
         commit = subprocess.run(["git", "rev-parse", "HEAD"],

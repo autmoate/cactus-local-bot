@@ -1,0 +1,23 @@
+{
+ "set": "synthetic-test",
+ "n": 1800,
+ "repeats": 1,
+ "tool_ok": 1.0,
+ "args_ok": 0.889,
+ "exact_args_ok": 0.886,
+ "refusals": 0.09,
+ "median_ms": 188,
+ "per_field": {
+  "date": 0.89,
+  "until": 0.861,
+  "time": 1.0,
+  "end_time": null,
+  "title": 1.0,
+  "persons": 0.98,
+  "person": 1.0,
+  "horizon": null,
+  "duration_min": null,
+  "days": null,
+  "participants": 1.0
+ }
+}

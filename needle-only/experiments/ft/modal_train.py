@@ -46,6 +46,7 @@ image = (
     .uv_pip_install(NEEDLE)
     .add_local_file(str(DATA / "train.jsonl"), "/data/v2.jsonl")
     .add_local_file(str(DATA / "train_v3.jsonl"), "/data/v3.jsonl")
+    .add_local_file(str(DATA / "train_v4.jsonl"), "/data/v4.jsonl")
 )
 
 
@@ -64,7 +65,10 @@ def _inject(src: Path, tools: list, system: str, dst: Path) -> int:
     return n
 
 
-@app.function(image=image, volumes={"/artifacts": vol}, timeout=3600)
+MAX_TRAIN_SECONDS = 7 * 3600 + 1800      # 7h30 Watchdog pro Job (Build/Upload folgen)
+
+
+@app.function(image=image, volumes={"/artifacts": vol}, timeout=8 * 3600)
 def train(run_name: str, dataset: str, tools: list, system: str,
           epochs: int, batch: int, max_len: int, rank: int, lr: float,
           seed: int, layers: int) -> dict:
@@ -85,7 +89,8 @@ def train(run_name: str, dataset: str, tools: list, system: str,
              "--lora-rank", str(rank), "--lora-alpha", "32",
              "--max-len", str(max_len), "--val-split", "0",
              "--seed", str(seed), "--out", adapter],
-            stdout=fh, stderr=subprocess.STDOUT)
+            stdout=fh, stderr=subprocess.STDOUT,
+            timeout=MAX_TRAIN_SECONDS)
     train_s = time.time() - t0
     if r.returncode != 0 or not Path(adapter).exists():
         raise RuntimeError(f"{run_name}: finetune failed (rc={r.returncode})")
@@ -118,20 +123,44 @@ def train(run_name: str, dataset: str, tools: list, system: str,
 @app.local_entrypoint()
 def main(runs: str = "v2,v3", epochs: int = 1, batch_size: int = 16,
          max_len: int = 1024, rank: int = 16, lr: float = 1e-4,
-         seeds: str = "42", gpu: str = GPU_DEFAULT, layers: int = 0):
+         seeds: str = "42", gpu: str = GPU_DEFAULT, layers: int = 0,
+         budget_hours: float = 8.0, plan: str = ""):
     tools = json.loads((FT / "tools.json").read_text(encoding="utf-8"))
     system = json.loads((FT / "manifest.json").read_text(
         encoding="utf-8"))["system_facts"]
-    jobs = []
-    for ds in [r.strip() for r in runs.split(",") if r.strip()]:
-        for seed in [int(s) for s in seeds.split(",") if s.strip()]:
-            name = f"n3-{ds}-r{rank}-e{epochs}-s{seed}" + (f"-L{layers}" if layers else "")
-            jobs.append((name, ds, seed))
-    print(f"starte {len(jobs)} Job(s) auf {gpu}: {[j[0] for j in jobs]}")
+    seed_list = [int(s) for s in seeds.split(",") if s.strip()]
+    jobs = []   # (name, dataset, seed, rank, epochs)
+    if plan:    # z.B. "v2:r16:e3,v4:r32:e3" — ein Aufruf, ein Gesamtbudget
+        for item in [x.strip() for x in plan.split(",") if x.strip()]:
+            ds, r, e = item.split(":")
+            for seed in seed_list:
+                jobs.append((f"n3-{ds}-{r}-{e}-s{seed}", ds, seed,
+                             int(r.lstrip("r")), int(e.lstrip("e"))))
+    else:
+        for ds in [r.strip() for r in runs.split(",") if r.strip()]:
+            for seed in seed_list:
+                name = f"n3-{ds}-r{rank}-e{epochs}-s{seed}" + (f"-L{layers}" if layers else "")
+                jobs.append((name, ds, seed, rank, epochs))
+    print(f"starte {len(jobs)} Job(s) auf {gpu}: "
+          f"{[(j[0], f'rank{j[3]}', f'e{j[4]}b{batch_size}') for j in jobs]}")
 
+    # Hartes Gesamtbudget: Abbruch, wenn die GPU-Walltime das Limit überschreitet
+    deadline = time.time() + budget_hours * 3600
+    print(f"Budget: {budget_hours} h (Deadline {time.strftime('%H:%M:%S', time.localtime(deadline))})")
     f = train.with_options(gpu=gpu)
-    handles = [f.spawn(name, ds, tools, system, epochs, batch_size, max_len,
-                       rank, lr, seed, layers) for name, ds, seed in jobs]
+    handles = [f.spawn(name, ds, tools, system, ep, batch_size, max_len,
+                       rk, lr, seed, layers) for name, ds, seed, rk, ep in jobs]
+    ok = True
     for h in handles:
-        m = h.get()
+        remaining = max(1, int(deadline - time.time()))
+        try:
+            m = h.get(timeout=remaining)
+        except TimeoutError:
+            print(f"!! Budget erschöpft — breche {h.object_id} ab")
+            h.cancel()
+            ok = False
+            continue
         print("OK", m["run_name"], m["train_s"], "s", m["cact_bytes"] // 1000000, "MB")
+    print(f"Walltime: {(time.time() - (deadline - budget_hours*3600))/60:.1f} min")
+    if not ok:
+        raise SystemExit("Budget-Limit erreicht — restliche Jobs abgebrochen")

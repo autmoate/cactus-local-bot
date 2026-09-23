@@ -70,3 +70,69 @@ Eval lokal (CPU, wie in `RESULTS.md`):
 CUDA_VISIBLE_DEVICES="" .venv-ft3/bin/python experiments/ft/base_eval.py \
     --weights experiments/ft/models/modal/n3-v3-r16-e1-s42.cact --tag n3-v3-ft --no-auto-date
 ```
+
+---
+
+# Runde 2 — Epochen & Preservation-Mix (Plan-Phasen 1–9)
+
+Nach Runde 1 (1 Epoche, 0.74 atomic) wurde der Evaluator-Gate gehärtet
+(`promotion_gate.py`, alle Achsen getrennt — Details in `BASELINES.md`) und ein
+**Preservation-Dataset v4** gebaut (`build_v4.py`: ~79 % atomic aus drei
+Generator-Seeds, 20 % Multi-Call, 12 % Negatives + Near-Negatives).
+Dependent chains bleiben bewusst eval-only.
+
+## Drei begründete Modal-Runs (A100-40GB, Gesamt-Walltime ~3 h ≪ 8 h Budget)
+
+| Run | Dataset | rank | Epochen | Beispiele | Training | Datei |
+|---|---|---|---|---|---|---|
+| A `n3-v2-r16-e3` | v2 (atomic) | 16 | 3 | 10 000 | 1 636 s | `.cact` 63,4 MB |
+| B `n3-v4-r32-e3` | v4 (preserve) | 32 | 3 | 25 072 | 4 074 s | `.cact` 63,4 MB |
+| C `n3-v4-r32-e5` | v4 (preserve) | 32 | 5 | 25 072 | 6 630 s | `.cact` 63,4 MB |
+
+A+B liefen parallel (68,6 min Wanduhr), C danach (110,9 min).
+
+## Ergebnisse (Vergleich zur Referenz n2-FT)
+
+| Modell | atomic tool/args/exact | challenge args/exact | multi(all) | negRefusal | falseRef | final_db | median |
+|---|---|---|---|---|---|---|---|
+| **n2-FT seed44 (Referenz)** | 0.991/0.977/**0.977** | 0.840/**0.680** | 0.30 | 97.5 % | 0.31 % | 72 % | 261 ms |
+| n3-atomic e1 | 0.839/0.769/0.739 | 0.760/0.520 | 0.40 | 26 % | 0.06 % | 68 % | 425 ms |
+| n3-preserve e3 | 0.998/0.884/0.877 | 0.600/0.480 | 0.70 | 100 % | 0.18 % | 80 % | 438 ms |
+| **n3-preserve e5 (bester N3)** | **1.000/0.889/0.886** | 0.720/0.600 | **0.90** | **100 %** | **0.00 %** | **80 %** | 188 ms |
+
+## Was die Runde gezeigt hat
+
+1. **Epochen sind der dominante Hebel (bis zum Plateau):** 1 → 3 Epochen hoben
+   atomic von 0.739 auf ~0.877 (+14 pp) und die Negativ-Refusals von ~25 % auf
+   100 %. 3 → 5 Epochen brachten nur noch +0.9 pp (0.886) → **Plateau ~0.89**.
+2. **Das Preservation-Dataset wirkt:** Multi-Call steigt mit den Trainingsdaten
+   (0.40 atomar → 0.70 bei v3/v4 mit 20–25 % Multi) und erreicht mit 5 Epochen
+   **0.90 — über Base (0.80) und weit über n2-FT (0.30)**. Off-topic-Refusals
+   sind mit v4 perfekt (162/162, 0 falsche) statt ~25 %.
+3. **Der Multi-Call-„Verlust" ist steuerbar**, kein Strukturproblem: Daten + Epochen.
+4. **Aber: die atomare Lücke schließt sich nicht.** Bestes N3 0.886/0.889 gegen
+   n2-FT 0.977 — bei ~5 pp Abstand zur Gate-Schwelle 0.95 und 9 pp zur Referenz.
+   Lokales N3-4-bit-LoRA (nur Attention, kein Head) erreicht das N2-FT atomar nicht.
+5. **Level 2 (finaler DB-Zustand):** n3-preserve 80 % vs. n2-FT 72 % (Base 56–68 %).
+
+## Turn-Semantik (Phasen 8/9) — bewiesen, keine Migration
+
+`turn_semantics_probe.py` → `reports/turn_semantics_n2ft-seed44.txt`:
+
+- **`reset()` ist Pflicht:** ohne Reset leakt der Titel aus Turn A in Turn C und
+  löscht den falschen Eintrag (`foreign_leak = ["zahnarzt"]`, DB leer). Mit Reset
+  vor jedem unabhängigen Turn: kein Fremd-Leak, korrektes Verhalten.
+- **Dependent chains** lösen weder manueller `complete → execute → complete(result)`-
+  Loop noch `run()` (es bleibt beim ersten Call) → weiterhin Aufgabe einer höheren
+  Schicht (Gemma), nicht des FT.
+- **Confidence ist kein FT-Signal** (`None`): Eskalation nur über deterministische
+  Signale (Liste in `BASELINES.md`, Phase 7).
+
+## Entscheidung (Plan-Entscheidungsbaum)
+
+**N3 bleibt bei ~0.89 atomic → lokales N3-Tuning gestoppt.** Produktionsarchitektur
+bleibt: **n2-FT → Python-Validierung → Gemma nur bei Ambiguität/Multi-Step/Repair.**
+Needle 3 bleibt Forschungsstrang; sein klarer Gewinn (Multi-Call 0.90) ist notiert.
+Keine Ladder-, Telegram- oder Produktionsmigration, solange das Gate nicht hält.
+Optionaler nächster Challenger: **1 Platform-FT-Run** (kalibrierte Confidence +
+Replay der Needle-Daten + 2-Bit) — nur mit Cactus-Plan/API-Key.

@@ -15,7 +15,7 @@ Regeln:
 - Target is ARM64 (RPi 5 8GB); Cactus kernels build and run there, unlike the old x86_64 WSL machine.
 - Python environment is managed with `uv`; dependencies are in `pyproject.toml` and the app is launched with `uv run python scripts/launch.py`. `launch.py` auto-creates `.env` from `.env.example` if missing, so the initial `cp` is optional.
 - Keep Python modules small; user explicitly asked for `.py` modules around 100 lines max and functionality split under `modules/`.
-- **Calendar-FT (neu):** `needle-only/calendar_ft/` enthält task-spezifische Needle-FT-Modelle (calendar_write, calendar_read, reminder) mit Dataset-Builder, Validator, Training, Evaluation und E2E-Tests. Siehe `needle-only/calendar_ft/README.md`.
+- **Calendar-FT (kanonisch):** `needle-only/experiments/ft/` — FT-Dataset v2/v3, `train_rtx.py`, `modal_train.py` (Cloud-FT), `base_eval.py`/`multi_call_bench.py` (Eval), `RESULTS.md`/`NEEDLE3_FT_RESULTS.md`/`TRAINING_ENV.md`/`BASELINES.md` (Doku), `promotion_gate.py` (N3-Gate). **Legacy/Archiv:** `needle-only/calendar_ft/` (ältere Needle-2-3-Adapter: calendar_write/read/reminder, Jetson) und `needle-only/calendar_ft_all/` (verworfenes Merged-Experiment) — nur Referenz, nicht weiterentwickeln. Das Needle-2-FT auf Dataset v2 bleibt Produktionsreferenz, bis ein Needle-3-Kandidat das Promotion-Gate (`BASELINES.md`) hält.
 
 ## Local Commands
 - First run: `cp .env.example .env && uv sync`; use `uv sync --extra needle` for real Needle 2 instead of the heuristic fallback.
@@ -192,6 +192,14 @@ reminder + anything       → ✅ Koexistiert
 ---
 
 ## Calendar-FT: Task-spezifische Needle-Feintuning-Experimente
+
+> **LEGACY/ARCHIV (überholt).** Dieser Abschnitt beschreibt den früheren
+> `needle-only/calendar_ft/`-Strang (Needle-2/3-Adapter auf Jetson). Der
+> **kanonische FT-Pfad ist `needle-only/experiments/ft/`** — siehe
+> `experiments/ft/BASELINES.md` (eingefrorene Baselines + Promotion-Gate),
+> `RESULTS.md` (N2-FT), `NEEDLE3_FT_RESULTS.md` (N3-FT), `TRAINING_ENV.md`
+> (Umgebung/Modal). `calendar_ft_all/` war ein verworfenes Merged-Experiment.
+> Hier nur noch Referenz — nicht weiterentwickeln.
 
 **Ziel:** Verbessert task-spezifisches Needle-FT die Kalenderbedienung signifikant?
 Drei separate LoRA-Adapter (calendar_write, calendar_read, reminder) wurden auf

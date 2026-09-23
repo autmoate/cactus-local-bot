@@ -616,14 +616,23 @@ class Agent:
         self.gemma = Gemma() if mode == "hybrid" else None
         # Optionales FT-Modell: NEEDLE_WEIGHTS=<pfad>.cact (leer = Base-Needle)
         self.weights = os.environ.get("NEEDLE_WEIGHTS") or None
-        self.needle = needle.Needle(tools=list(self.tools.values()),
-                                    system=system_facts(),
-                                    weights=self.weights)
+        # NEEDLE_AUTO_DATE=0 erzwingt statische System-Facts (Trainings-Parität)
+        self.auto_date = (os.environ.get("NEEDLE_AUTO_DATE", "1") == "1")
+        self.needle = needle.Needle(**self._needle_kwargs(system_facts()))
         self._facts_key = system_facts()
         self.history: deque = deque(maxlen=10)
         self.pending: dict[str, dict] = {}  # Phase 12, per session_id (plan §10)
         self.inference_lock = threading.Lock()  # plan §11: needle engine is
         # not reentrant — Telegram threads/Gradio callbacks serialize here
+
+    def _needle_kwargs(self, facts: str) -> dict:
+        """Needle-2/3-kompatibel: `auto_date` gibt es erst ab needle 3."""
+        import inspect
+        kwargs = {"tools": list(self.tools.values()), "system": facts,
+                  "weights": self.weights}
+        if "auto_date" in inspect.signature(needle.Needle.__init__).parameters:
+            kwargs["auto_date"] = self.auto_date
+        return kwargs
 
     def _step(self, trace: dict, name: str, fn, *args):
         t0 = time.perf_counter()
@@ -642,8 +651,7 @@ class Agent:
         facts = system_facts()
         if facts != self._facts_key:
             self._facts_key = facts
-            self.needle = needle.Needle(tools=list(self.tools.values()),
-                                        system=facts, weights=self.weights)
+            self.needle = needle.Needle(**self._needle_kwargs(facts))
         self.needle.reset()  # each request is independent; keep tools loaded
         text = (text or "").strip().rstrip(".!?;:,")  # trailing periods cause refusals
         with self.inference_lock:  # plan §11: one engine call at a time

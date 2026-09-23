@@ -1,0 +1,17 @@
+{
+ "run_name": "n3-v2-r16-e3-s42",
+ "dataset": "v2",
+ "rows": 10000,
+ "epochs": 3,
+ "batch": 16,
+ "max_len": 1024,
+ "rank": 16,
+ "lr": 0.0001,
+ "seed": 42,
+ "layers": 20,
+ "needle_pkg": "cactus-needle[train,gpu]==3.0.4",
+ "train_s": 1635.9,
+ "build_s": 19.4,
+ "adapter_bytes": 7906600,
+ "cact_bytes": 63437076
+}

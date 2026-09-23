@@ -1,0 +1,8 @@
+{
+ "mode": "needle",
+ "n": 25,
+ "final_db_ok": 0.72,
+ "latency_mean_ms": 209,
+ "latency_p95_ms": 650,
+ "latency_max_ms": 812.4
+}
