@@ -1,0 +1,81 @@
+{
+  "task": "calendar_write",
+  "weights": "<repo>/needle-only/calendar_ft/models/calendar_write.cact",
+  "n_examples": 300,
+  "n_positive": 264,
+  "n_negative": 36,
+  "tool_call_accuracy": 1.0,
+  "full_frame_exact_match": 0.7433333333333333,
+  "field_precision": 0.9691075514874142,
+  "field_recall": 0.9338478500551268,
+  "field_f1": 0.9511510387422797,
+  "field_exact_accuracy": {
+    "person": 1.0,
+    "title": 0.9696969696969697,
+    "action_span": 0.9230769230769231,
+    "participants": 1.0,
+    "date": 0.9533333333333334,
+    "time": 0.9790575916230366,
+    "modifier": 0.358974358974359,
+    "end_time": 1.0,
+    "location": 0.8421052631578947
+  },
+  "per_field_support": {
+    "person": 37,
+    "title": 264,
+    "action_span": 169,
+    "participants": 19,
+    "date": 150,
+    "time": 191,
+    "modifier": 39,
+    "end_time": 19,
+    "location": 19
+  },
+  "hallucinated_field_rate": 0.005567928730512249,
+  "missed_field_rate": 0.03969128996692393,
+  "false_positive_tool_rate": 0.2777777777777778,
+  "false_negative_tool_rate": 0.0,
+  "latency_ms": {
+    "mean": 308.3206860224406,
+    "p50": 313.62223625183105,
+    "p95": 493.0853843688965
+  },
+  "per_field": {
+    "person": {
+      "exact_accuracy": 1.0,
+      "support": 37
+    },
+    "title": {
+      "exact_accuracy": 0.9696969696969697,
+      "support": 264
+    },
+    "action_span": {
+      "exact_accuracy": 0.9230769230769231,
+      "support": 169
+    },
+    "participants": {
+      "exact_accuracy": 1.0,
+      "support": 19
+    },
+    "date": {
+      "exact_accuracy": 0.9533333333333334,
+      "support": 150
+    },
+    "time": {
+      "exact_accuracy": 0.9790575916230366,
+      "support": 191
+    },
+    "modifier": {
+      "exact_accuracy": 0.358974358974359,
+      "support": 39
+    },
+    "end_time": {
+      "exact_accuracy": 1.0,
+      "support": 19
+    },
+    "location": {
+      "exact_accuracy": 0.8421052631578947,
+      "support": 19
+    }
+  }
+}

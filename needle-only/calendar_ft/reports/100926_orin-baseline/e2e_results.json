@@ -1,0 +1,120 @@
+{
+  "total": 10,
+  "passed": 9,
+  "failed": 1,
+  "route_accuracy": 1.0,
+  "result_accuracy": 0.9,
+  "pass_rate": 0.9,
+  "results": [
+    {
+      "id": 1,
+      "name": "create_appointment",
+      "query": "Morgen um 14 Uhr Zahnarzt.",
+      "expected_route": "calendar_write",
+      "actual_route": "calendar_write",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "create: Zahnarzt @ 2026-09-12T14:00:00"
+    },
+    {
+      "id": 2,
+      "name": "move_appointment",
+      "query": "Verschieb Zahnarzt auf 15 Uhr.",
+      "expected_route": "calendar_write",
+      "actual_route": "calendar_write",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "create: Zahnarzt @ 2026-09-11T15:00:00"
+    },
+    {
+      "id": 3,
+      "name": "create_with_location",
+      "query": "Trag Zahnarzt am Montag um 9 Uhr im Besprechungsraum ein.",
+      "expected_route": "calendar_write",
+      "actual_route": "calendar_write",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "create: Zahnarzt @ 2026-09-11T09:00:00"
+    },
+    {
+      "id": 4,
+      "name": "create_with_participants",
+      "query": "Teammeeting mit Lisa und Max am Dienstag um 10 Uhr.",
+      "expected_route": "calendar_write",
+      "actual_route": "calendar_write",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "create: Teammeeting @ 2026-09-11T10:00:00"
+    },
+    {
+      "id": 5,
+      "name": "cancel_appointment",
+      "query": "Sag den Termin Zahnarzt ab.",
+      "expected_route": "calendar_write",
+      "actual_route": "calendar_write",
+      "route_ok": true,
+      "result_ok": false,
+      "passed": false,
+      "result_summary": "none (no calendar intent)"
+    },
+    {
+      "id": 6,
+      "name": "read_calendar",
+      "query": "Was steht morgen an?",
+      "expected_route": "calendar_read",
+      "actual_route": "calendar_read",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "read: 2 events (Zahnarzt, Zahnarzt)"
+    },
+    {
+      "id": 7,
+      "name": "read_person_filter",
+      "query": "Wann hat Lisa Termine?",
+      "expected_route": "calendar_read",
+      "actual_route": "calendar_read",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "read: 3 events (Teammeeting, Zahnarzt, Teammeeting)"
+    },
+    {
+      "id": 8,
+      "name": "free_slots_group",
+      "query": "Wann haben Lisa und Max gemeinsam Zeit?",
+      "expected_route": "calendar_read",
+      "actual_route": "calendar_read",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "read: 6 events (Zahnarzt, Teammeeting, Zahnarzt)"
+    },
+    {
+      "id": 9,
+      "name": "set_reminder_relative",
+      "query": "Erinnere mich drei Stunden vorher an den Zahnarzt.",
+      "expected_route": "reminder",
+      "actual_route": "reminder",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "reminder: Zahnarzt @ 2026-09-11T08:40:00"
+    },
+    {
+      "id": 10,
+      "name": "offtopic_no_write",
+      "query": "Was ist PostgreSQL?",
+      "expected_route": "none",
+      "actual_route": "none",
+      "route_ok": true,
+      "result_ok": true,
+      "passed": true,
+      "result_summary": "none (no calendar intent)"
+    }
+  ]
+}

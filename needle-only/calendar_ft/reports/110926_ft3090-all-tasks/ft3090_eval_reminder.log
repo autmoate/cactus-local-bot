@@ -1,0 +1,112 @@
+======================================================================
+CALENDAR-FT EXPERIMENT: reminder
+======================================================================
+
+[1/9] Environment-Check (JAX GPU)
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python -c import jax; d=jax.devices(); print(f'JAX {jax.__version__} devices={d}');assert any('gpu' in str(x).lower() or 'cuda' in str(x).lower() for x in d), 'No GPU device found'
+JAX 0.10.2 devices=[CudaDevice(id=0)]
+  ✓ JAX GPU available
+
+[2/9] Dataset bauen: reminder
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/build_dataset.py --task reminder --count 1200 --seed 42 --out <repo>/needle-only/calendar_ft/data/train/reminder.jsonl
+wrote 1157 examples (1056 positive, 101 negative) -> <repo>/needle-only/calendar_ft/data/train/reminder.jsonl
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/build_dataset.py --task reminder --count 300 --seed 43 --eval --exclude <repo>/needle-only/calendar_ft/data/train/reminder.jsonl --out <repo>/needle-only/calendar_ft/data/eval/reminder.jsonl
+wrote 300 examples (264 positive, 36 negative) -> <repo>/needle-only/calendar_ft/data/eval/reminder.jsonl
+
+[3/9] Dataset validieren: reminder
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/validate_dataset.py --dataset <repo>/needle-only/calendar_ft/data/train/reminder.jsonl --task reminder
+Dataset: <repo>/needle-only/calendar_ft/data/train/reminder.jsonl
+  total: 1157
+  positive: 1056
+  negative: 101
+  max query chars: 72
+  field coverage: {'target': 1020, 'when': 598, 'relative': 458, 'person': 393}
+  action spans: {}
+
+VALIDATION PASSED
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/validate_dataset.py --dataset <repo>/needle-only/calendar_ft/data/eval/reminder.jsonl --task reminder
+Dataset: <repo>/needle-only/calendar_ft/data/eval/reminder.jsonl
+  total: 300
+  positive: 264
+  negative: 36
+  max query chars: 84
+  field coverage: {'target': 252, 'relative': 144, 'when': 120, 'person': 86}
+  action spans: {}
+
+VALIDATION PASSED
+
+[4/9] Base-Modell evaluieren: reminder
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/eval_model.py --task reminder --dataset <repo>/needle-only/calendar_ft/data/eval/reminder.jsonl --out <repo>/needle-only/calendar_ft/reports/base_reminder.json
+
+Evaluation: task=reminder weights=BASE
+  examples: 300 (pos=264, neg=36)
+  tool_call_accuracy:      0.8674
+  full_frame_exact_match:  0.1033
+  field_precision:        0.7195
+  field_recall:           0.4219
+  field_f1:               0.5319
+  hallucinated_field_rate:0.3517
+  missed_field_rate:      0.2292
+  false_positive_tool_rate:0.1944
+  false_negative_tool_rate:0.1326
+  latency_ms (mean/p50/p95): 255/270/380
+
+Report written to <repo>/needle-only/calendar_ft/reports/base_reminder.json
+Worst cases: <repo>/needle-only/calendar_ft/reports/base_reminder_worst_cases.json
+Errors JSONL: <repo>/needle-only/calendar_ft/reports/base_reminder_errors.jsonl
+
+[5-6/9] Skipping training (--skip-train)
+
+[7/9] FT-Modell evaluieren: reminder
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/eval_model.py --task reminder --dataset <repo>/needle-only/calendar_ft/data/eval/reminder.jsonl --weights <repo>/needle-only/calendar_ft/models/reminder.cact --out <repo>/needle-only/calendar_ft/reports/reminder_ft.json
+<repo>/needle-only/calendar_ft/eval_model.py:73: UserWarning: finetuning does not update the confidence head, so scores are uncalibrated for tuned weights; this agent reports confidence as None
+  agent = needle.Needle(tools=[tool_schema], weights=weights)
+
+Evaluation: task=reminder weights=<repo>/needle-only/calendar_ft/models/reminder.cact
+  examples: 300 (pos=264, neg=36)
+  tool_call_accuracy:      1.0000
+  full_frame_exact_match:  0.7867
+  field_precision:        1.0000
+  field_recall:           0.9186
+  field_f1:               0.9576
+  hallucinated_field_rate:0.0017
+  missed_field_rate:      0.0017
+  false_positive_tool_rate:0.4444
+  false_negative_tool_rate:0.0000
+  latency_ms (mean/p50/p95): 193/200/265
+
+Report written to <repo>/needle-only/calendar_ft/reports/reminder_ft.json
+Worst cases: <repo>/needle-only/calendar_ft/reports/reminder_ft_worst_cases.json
+Errors JSONL: <repo>/needle-only/calendar_ft/reports/reminder_ft_errors.jsonl
+
+[8/9] Base vs. FT Vergleich
+--------------------------------------------------
+  Full-frame exact match:  0.1033 → 0.7867 (+68.3%)
+  Field F1:                0.5319 → 0.9576 (+42.6%)
+  Hallucinated field rate: 0.0017
+  False positive tool rate:0.4444
+
+======================================================================
+MINDESKRITERIEN (Nutzer-Spec Abschnitt 21)
+======================================================================
+  ✗ router_accuracy: None (threshold: ?)
+  ✗ required_field_f1: 0.9575757575757576 (threshold: 0.97)
+  ✓ hallucinated_field_rate: 0.0016638935108153079 (threshold: 0.01)
+  ✗ false_positive_tool_rate: 0.4444444444444444 (threshold: 0.01)
+  ✓ full_frame_exact_match_improvement: 0.7866666666666666 (threshold: ?)
+
+======================================================================
+ERGEBNIS: FAIL (thresholds not met)
+======================================================================
+
+======================================================================
+ZUSAMMENFASSUNG
+======================================================================
+  FAIL reminder           (141.3s)
+
+Overall: FAIL

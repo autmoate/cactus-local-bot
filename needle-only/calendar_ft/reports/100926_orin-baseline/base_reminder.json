@@ -1,0 +1,51 @@
+{
+  "task": "reminder",
+  "weights": null,
+  "n_examples": 120,
+  "n_positive": 106,
+  "n_negative": 14,
+  "tool_call_accuracy": 0.8679245283018868,
+  "full_frame_exact_match": 0.09166666666666666,
+  "field_precision": 0.6742424242424242,
+  "field_recall": 0.388646288209607,
+  "field_f1": 0.49307479224376727,
+  "field_exact_accuracy": {
+    "relative": 0.0,
+    "target": 0.6808510638297872,
+    "when": 0.09090909090909091,
+    "person": 0.7241379310344828
+  },
+  "per_field_support": {
+    "relative": 62,
+    "target": 94,
+    "when": 44,
+    "person": 29
+  },
+  "hallucinated_field_rate": 0.36363636363636365,
+  "missed_field_rate": 0.22707423580786026,
+  "false_positive_tool_rate": 0.2857142857142857,
+  "false_negative_tool_rate": 0.1320754716981132,
+  "latency_ms": {
+    "mean": 206.56419197718301,
+    "p50": 220.49713134765625,
+    "p95": 290.53306579589844
+  },
+  "per_field": {
+    "relative": {
+      "exact_accuracy": 0.0,
+      "support": 62
+    },
+    "target": {
+      "exact_accuracy": 0.6808510638297872,
+      "support": 94
+    },
+    "when": {
+      "exact_accuracy": 0.09090909090909091,
+      "support": 44
+    },
+    "person": {
+      "exact_accuracy": 0.7241379310344828,
+      "support": 29
+    }
+  }
+}

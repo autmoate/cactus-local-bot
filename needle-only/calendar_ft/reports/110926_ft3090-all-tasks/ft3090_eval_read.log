@@ -1,0 +1,112 @@
+======================================================================
+CALENDAR-FT EXPERIMENT: calendar_read
+======================================================================
+
+[1/9] Environment-Check (JAX GPU)
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python -c import jax; d=jax.devices(); print(f'JAX {jax.__version__} devices={d}');assert any('gpu' in str(x).lower() or 'cuda' in str(x).lower() for x in d), 'No GPU device found'
+JAX 0.10.2 devices=[CudaDevice(id=0)]
+  ✓ JAX GPU available
+
+[2/9] Dataset bauen: calendar_read
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/build_dataset.py --task calendar_read --count 1200 --seed 42 --out <repo>/needle-only/calendar_ft/data/train/calendar_read.jsonl
+wrote 1157 examples (1056 positive, 101 negative) -> <repo>/needle-only/calendar_ft/data/train/calendar_read.jsonl
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/build_dataset.py --task calendar_read --count 300 --seed 43 --eval --exclude <repo>/needle-only/calendar_ft/data/train/calendar_read.jsonl --out <repo>/needle-only/calendar_ft/data/eval/calendar_read.jsonl
+wrote 300 examples (264 positive, 36 negative) -> <repo>/needle-only/calendar_ft/data/eval/calendar_read.jsonl
+
+[3/9] Dataset validieren: calendar_read
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/validate_dataset.py --dataset <repo>/needle-only/calendar_ft/data/train/calendar_read.jsonl --task calendar_read
+Dataset: <repo>/needle-only/calendar_ft/data/train/calendar_read.jsonl
+  total: 1157
+  positive: 1056
+  negative: 101
+  max query chars: 63
+  field coverage: {'query_span': 1056, 'when': 586, 'person': 458, 'persons': 340, 'target': 88}
+  action spans: {}
+
+VALIDATION PASSED
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/validate_dataset.py --dataset <repo>/needle-only/calendar_ft/data/eval/calendar_read.jsonl --task calendar_read
+Dataset: <repo>/needle-only/calendar_ft/data/eval/calendar_read.jsonl
+  total: 300
+  positive: 264
+  negative: 36
+  max query chars: 71
+  field coverage: {'query_span': 264, 'when': 131, 'target': 59, 'person': 58, 'persons': 58}
+  action spans: {}
+
+VALIDATION PASSED
+
+[4/9] Base-Modell evaluieren: calendar_read
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/eval_model.py --task calendar_read --dataset <repo>/needle-only/calendar_ft/data/eval/calendar_read.jsonl --out <repo>/needle-only/calendar_ft/reports/base_calendar_read.json
+
+Evaluation: task=calendar_read weights=BASE
+  examples: 300 (pos=264, neg=36)
+  tool_call_accuracy:      0.8750
+  full_frame_exact_match:  0.1233
+  field_precision:        0.4320
+  field_recall:           0.1281
+  field_f1:               0.1976
+  hallucinated_field_rate:0.0879
+  missed_field_rate:      0.5895
+  false_positive_tool_rate:0.1389
+  false_negative_tool_rate:0.1250
+  latency_ms (mean/p50/p95): 177/189/263
+
+Report written to <repo>/needle-only/calendar_ft/reports/base_calendar_read.json
+Worst cases: <repo>/needle-only/calendar_ft/reports/base_calendar_read_worst_cases.json
+Errors JSONL: <repo>/needle-only/calendar_ft/reports/base_calendar_read_errors.jsonl
+
+[5-6/9] Skipping training (--skip-train)
+
+[7/9] FT-Modell evaluieren: calendar_read
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/eval_model.py --task calendar_read --dataset <repo>/needle-only/calendar_ft/data/eval/calendar_read.jsonl --weights <repo>/needle-only/calendar_ft/models/calendar_read.cact --out <repo>/needle-only/calendar_ft/reports/calendar_read_ft.json
+<repo>/needle-only/calendar_ft/eval_model.py:73: UserWarning: finetuning does not update the confidence head, so scores are uncalibrated for tuned weights; this agent reports confidence as None
+  agent = needle.Needle(tools=[tool_schema], weights=weights)
+
+Evaluation: task=calendar_read weights=<repo>/needle-only/calendar_ft/models/calendar_read.cact
+  examples: 300 (pos=264, neg=36)
+  tool_call_accuracy:      0.5227
+  full_frame_exact_match:  0.5167
+  field_precision:        1.0000
+  field_recall:           0.5211
+  field_f1:               0.6851
+  hallucinated_field_rate:0.0000
+  missed_field_rate:      0.4456
+  false_positive_tool_rate:0.0000
+  false_negative_tool_rate:0.4773
+  latency_ms (mean/p50/p95): 113/78/200
+
+Report written to <repo>/needle-only/calendar_ft/reports/calendar_read_ft.json
+Worst cases: <repo>/needle-only/calendar_ft/reports/calendar_read_ft_worst_cases.json
+Errors JSONL: <repo>/needle-only/calendar_ft/reports/calendar_read_ft_errors.jsonl
+
+[8/9] Base vs. FT Vergleich
+--------------------------------------------------
+  Full-frame exact match:  0.1233 → 0.5167 (+39.3%)
+  Field F1:                0.1976 → 0.6851 (+48.8%)
+  Hallucinated field rate: 0.0000
+  False positive tool rate:0.0000
+
+======================================================================
+MINDESKRITERIEN (Nutzer-Spec Abschnitt 21)
+======================================================================
+  ✗ router_accuracy: None (threshold: ?)
+  ✗ required_field_f1: 0.6851211072664359 (threshold: 0.97)
+  ✓ hallucinated_field_rate: 0.0 (threshold: 0.01)
+  ✓ false_positive_tool_rate: 0.0 (threshold: 0.01)
+  ✓ full_frame_exact_match_improvement: 0.5166666666666667 (threshold: ?)
+
+======================================================================
+ERGEBNIS: FAIL (thresholds not met)
+======================================================================
+
+======================================================================
+ZUSAMMENFASSUNG
+======================================================================
+  FAIL calendar_read      (94.0s)
+
+Overall: FAIL

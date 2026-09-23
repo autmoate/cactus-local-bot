@@ -1,0 +1,3567 @@
+[
+  {
+    "index": 1,
+    "query": "Wann ist wieder Vorstandssitzung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Vorstandssitzung",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Vorstandssitzung"
+      }
+    },
+    "latency_ms": 195.6768035888672
+  },
+  {
+    "index": 3,
+    "query": "Was hat Anna Ende des Monats vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Anna",
+        "when": "Ende des Monats",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Anna Ende des Monats"
+      }
+    },
+    "latency_ms": 176.224946975708
+  },
+  {
+    "index": 4,
+    "query": "Welche Termine sind am 21. Oktober?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 21. Oktober",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "21. Oktober"
+      }
+    },
+    "latency_ms": 128.3092498779297
+  },
+  {
+    "index": 5,
+    "query": "Wann können Jonas und Paul gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jonas und Paul",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Jonas und Paul"
+      }
+    },
+    "latency_ms": 154.76369857788086
+  },
+  {
+    "index": 6,
+    "query": "Wann läuft Klavierunterricht?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Klavierunterricht",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann läuft Klavierunterricht?"
+      }
+    },
+    "latency_ms": 200.18458366394043
+  },
+  {
+    "index": 7,
+    "query": "Was hat Tom nächsten Freitag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Tom",
+        "when": "nächsten Freitag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Tom",
+        "when": "nächsten Freitag"
+      }
+    },
+    "latency_ms": 156.47077560424805
+  },
+  {
+    "index": 9,
+    "query": "Was hat Emma morgen Vormittag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Emma",
+        "when": "morgen Vormittag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Emma",
+        "when": "morgen Vormittag"
+      }
+    },
+    "latency_ms": 153.99646759033203
+  },
+  {
+    "index": 11,
+    "query": "Was hat Emma kommenden Samstag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Emma",
+        "when": "kommenden Samstag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Emma",
+        "when": "kommenden Samstag"
+      }
+    },
+    "latency_ms": 155.88092803955078
+  },
+  {
+    "index": 12,
+    "query": "Wann können Lisa und Julia gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Lisa und Julia",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Lisa und Julia"
+      }
+    },
+    "latency_ms": 161.28182411193848
+  },
+  {
+    "index": 13,
+    "query": "Wann läuft Projektbesprechung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Projektbesprechung",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Projektbesprechung"
+      }
+    },
+    "latency_ms": 182.9509735107422
+  },
+  {
+    "index": 14,
+    "query": "Zeig mir, was in zwei Wochen ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "in zwei Wochen",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 97.2750186920166
+  },
+  {
+    "index": 15,
+    "query": "Wann ist wieder Friseur?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Friseur",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Friseur?"
+      }
+    },
+    "latency_ms": 166.3212776184082
+  },
+  {
+    "index": 16,
+    "query": "Wann läuft Kegelabend?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Kegelabend",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Kegelabend"
+      }
+    },
+    "latency_ms": 132.2932243347168
+  },
+  {
+    "index": 17,
+    "query": "Welche Termine sind in drei Tagen?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "in drei Tagen",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "drei Tagen"
+      }
+    },
+    "latency_ms": 124.9542236328125
+  },
+  {
+    "index": 18,
+    "query": "Finde einen Termin, wo Lena und Emma beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Lena und Emma",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Lena und Emma",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 110.18681526184082
+  },
+  {
+    "index": 19,
+    "query": "Was ist morgen Mittag geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "morgen Mittag",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist",
+        "when": "morgen"
+      }
+    },
+    "latency_ms": 115.21005630493164
+  },
+  {
+    "index": 20,
+    "query": "Wann läuft Buchhaltung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Buchhaltung",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Buchhaltung"
+      }
+    },
+    "latency_ms": 176.91540718078613
+  },
+  {
+    "index": 21,
+    "query": "Wann können Max und Jonas gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Max und Jonas",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Max und Jonas"
+      }
+    },
+    "latency_ms": 142.6563262939453
+  },
+  {
+    "index": 22,
+    "query": "Was hat Marie Dienstag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Marie",
+        "when": "Dienstag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Marie",
+        "when": "Dienstag"
+      }
+    },
+    "latency_ms": 140.34581184387207
+  },
+  {
+    "index": 24,
+    "query": "Zeig mir, was am Montag ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am Montag",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 75.02603530883789
+  },
+  {
+    "index": 25,
+    "query": "Was ist in drei Tagen geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "in drei Tagen",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 98.1600284576416
+  },
+  {
+    "index": 27,
+    "query": "Was hat Anna kommenden Samstag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Anna",
+        "when": "kommenden Samstag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Anna",
+        "when": "kommenden Samstag"
+      }
+    },
+    "latency_ms": 156.8896770477295
+  },
+  {
+    "index": 28,
+    "query": "Welche Termine sind heute Abend?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "heute Abend",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "heute Nachmittag"
+      }
+    },
+    "latency_ms": 127.66575813293457
+  },
+  {
+    "index": 31,
+    "query": "Zeig mir, was am Mittwoch ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am Mittwoch",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was steht an",
+        "when": "Mittwoch"
+      }
+    },
+    "latency_ms": 132.188081741333
+  },
+  {
+    "index": 32,
+    "query": "Wann ist wieder Yoga?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Yoga",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Yoga"
+      }
+    },
+    "latency_ms": 125.5486011505127
+  },
+  {
+    "index": 34,
+    "query": "Was ist morgen früh geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "morgen früh",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist morgen früh",
+        "when": "morgen"
+      }
+    },
+    "latency_ms": 130.4912567138672
+  },
+  {
+    "index": 35,
+    "query": "Zeig mir, was übernächste Woche ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "übernächste Woche",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Woche"
+      }
+    },
+    "latency_ms": 122.11036682128906
+  },
+  {
+    "index": 36,
+    "query": "Was hat Jana in einer Woche vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Jana",
+        "when": "in einer Woche",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Jana",
+        "when": "einer Woche",
+        "query_span": "Was hat"
+      }
+    },
+    "latency_ms": 121.57583236694336
+  },
+  {
+    "index": 37,
+    "query": "Zeig mir, was in einer Woche ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "in einer Woche",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Woche"
+      }
+    },
+    "latency_ms": 188.34185600280762
+  },
+  {
+    "index": 38,
+    "query": "Kalender von Tim anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Tim",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Tim"
+      }
+    },
+    "latency_ms": 104.9048900604248
+  },
+  {
+    "index": 39,
+    "query": "Wann läuft Nachhilfe?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Nachhilfe",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Nachhilfe"
+      }
+    },
+    "latency_ms": 153.3665657043457
+  },
+  {
+    "index": 40,
+    "query": "Wann ist wieder Nachhilfe?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Nachhilfe",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Nachhilfe",
+        "when": "wieder"
+      }
+    },
+    "latency_ms": 208.07409286499023
+  },
+  {
+    "index": 41,
+    "query": "Wann können Sara und Emma gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Sara und Emma",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Sara und Emma"
+      }
+    },
+    "latency_ms": 148.4379768371582
+  },
+  {
+    "index": 42,
+    "query": "Zeig mir, was Samstag ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "Samstag",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Samstag ansteht"
+      }
+    },
+    "latency_ms": 208.81056785583496
+  },
+  {
+    "index": 45,
+    "query": "Kalender von Max anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Max",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Max"
+      }
+    },
+    "latency_ms": 102.0364761352539
+  },
+  {
+    "index": 46,
+    "query": "Zeig mir, was heute Nachmittag ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "heute Nachmittag",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was steht an",
+        "when": "heute Nachmittag"
+      }
+    },
+    "latency_ms": 139.75191116333008
+  },
+  {
+    "index": 47,
+    "query": "Finde einen Termin, wo Nora und Emma beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Nora und Emma",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Nora und Emma",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 114.11452293395996
+  },
+  {
+    "index": 48,
+    "query": "Finde einen Termin, wo Sara und Tom beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Sara und Tom",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Sara und Tom",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 113.71445655822754
+  },
+  {
+    "index": 49,
+    "query": "Finde einen Termin, wo Jana und Felix beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jana und Felix",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Jana und Felix",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 117.44904518127441
+  },
+  {
+    "index": 50,
+    "query": "Was ist am 5. Dezember geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 5. Dezember",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist",
+        "when": "5. Dezember"
+      }
+    },
+    "latency_ms": 176.73254013061523
+  },
+  {
+    "index": 51,
+    "query": "Finde einen Termin, wo Julia und Felix beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Felix",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Julia und Felix",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 121.8574047088623
+  },
+  {
+    "index": 52,
+    "query": "Wann ist wieder Kino?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Kino",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Kino?"
+      }
+    },
+    "latency_ms": 147.4299430847168
+  },
+  {
+    "index": 53,
+    "query": "Zeig mir, was nächsten Dienstag ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "nächsten Dienstag",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "nächsten Dienstag"
+      }
+    },
+    "latency_ms": 211.64584159851074
+  },
+  {
+    "index": 54,
+    "query": "Zeig mir, was am 7. April ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 7. April",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "was",
+        "when": "am 7. April"
+      }
+    },
+    "latency_ms": 173.41256141662598
+  },
+  {
+    "index": 56,
+    "query": "Wann ist wieder Haartermin?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Haartermin",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Haartermin"
+      }
+    },
+    "latency_ms": 160.28165817260742
+  },
+  {
+    "index": 57,
+    "query": "Was hat Marie am 14. Februar vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Marie",
+        "when": "am 14. Februar",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Marie"
+      }
+    },
+    "latency_ms": 151.6885757446289
+  },
+  {
+    "index": 58,
+    "query": "Welche Termine sind am 30. November?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 30. November",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "30. November"
+      }
+    },
+    "latency_ms": 121.97995185852051
+  },
+  {
+    "index": 59,
+    "query": "Wann ist wieder Augenarzt?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Augenarzt",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder",
+        "target": "Augenarzt"
+      }
+    },
+    "latency_ms": 194.2458152770996
+  },
+  {
+    "index": 60,
+    "query": "Wann können Lena und Tom gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Lena und Tom",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Lena und Tom"
+      }
+    },
+    "latency_ms": 149.0635871887207
+  },
+  {
+    "index": 61,
+    "query": "Wann ist wieder Zahnarzt?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Zahnarzt",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Zahnarzt"
+      }
+    },
+    "latency_ms": 163.47098350524902
+  },
+  {
+    "index": 62,
+    "query": "Finde einen Termin, wo Max und Sara beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Max und Sara",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Max und Sara"
+      }
+    },
+    "latency_ms": 152.2541046142578
+  },
+  {
+    "index": 63,
+    "query": "Finde einen Termin, wo Tim und Lena beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Tim und Lena",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Tim und Lena",
+        "persons": "Termin",
+        "when": "beide Zeit"
+      }
+    },
+    "latency_ms": 141.54696464538574
+  },
+  {
+    "index": 64,
+    "query": "Was hat Lena morgen vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Lena",
+        "when": "morgen",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Lena",
+        "when": "morgen",
+        "target": "Was hat"
+      }
+    },
+    "latency_ms": 151.9908905029297
+  },
+  {
+    "index": 65,
+    "query": "Wann ist wieder Gitarrenunterricht?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Gitarrenunterricht",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Gitarrenunterricht?"
+      }
+    },
+    "latency_ms": 200.68764686584473
+  },
+  {
+    "index": 66,
+    "query": "Wann können Sophie und Sara gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Sophie und Sara",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Sophie und Sara"
+      }
+    },
+    "latency_ms": 154.6018123626709
+  },
+  {
+    "index": 68,
+    "query": "Wann läuft Arzttermin?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Arzttermin",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Arzttermin",
+        "when": "morgen"
+      }
+    },
+    "latency_ms": 186.85245513916016
+  },
+  {
+    "index": 69,
+    "query": "Finde einen Termin, wo Jan und Miriam beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jan und Miriam",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Jan und Miriam"
+      }
+    },
+    "latency_ms": 180.8910369873047
+  },
+  {
+    "index": 70,
+    "query": "Welche Termine sind morgen Vormittag?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "morgen Vormittag",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "morgen"
+      }
+    },
+    "latency_ms": 119.81558799743652
+  },
+  {
+    "index": 71,
+    "query": "Kalender von Nora anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Nora",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Nora"
+      }
+    },
+    "latency_ms": 139.6927833557129
+  },
+  {
+    "index": 73,
+    "query": "Was hat Marie in zwei Wochen vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Marie",
+        "when": "in zwei Wochen",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Marie",
+        "when": "in zwei Wochen"
+      }
+    },
+    "latency_ms": 159.4691276550293
+  },
+  {
+    "index": 74,
+    "query": "Welche Termine sind in vierzehn Tagen?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "in vierzehn Tagen",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 93.95551681518555
+  },
+  {
+    "index": 75,
+    "query": "Wann können Miriam und Felix gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Miriam und Felix",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Miriam und Felix"
+      }
+    },
+    "latency_ms": 152.15730667114258
+  },
+  {
+    "index": 76,
+    "query": "Wann können Miriam und Nora gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Miriam und Nora",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Miriam und Nora"
+      }
+    },
+    "latency_ms": 177.26707458496094
+  },
+  {
+    "index": 79,
+    "query": "Wann können Jonas und Miriam gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jonas und Miriam",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Jonas und Miriam"
+      }
+    },
+    "latency_ms": 152.17208862304688
+  },
+  {
+    "index": 80,
+    "query": "Wann läuft Physiotherapie?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Physiotherapie",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Physiotherapie"
+      }
+    },
+    "latency_ms": 140.2451992034912
+  },
+  {
+    "index": 82,
+    "query": "Wann läuft Kino?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Kino",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Kino"
+      }
+    },
+    "latency_ms": 114.65716361999512
+  },
+  {
+    "index": 83,
+    "query": "Was ist nächsten Montag geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "nächsten Montag",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist nächsten Montag geplant?",
+        "when": "nächsten Montag"
+      }
+    },
+    "latency_ms": 156.07810020446777
+  },
+  {
+    "index": 84,
+    "query": "Was hat Lena nächste Woche vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Lena",
+        "when": "nächste Woche",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Lena",
+        "when": "nächste Woche"
+      }
+    },
+    "latency_ms": 147.02296257019043
+  },
+  {
+    "index": 85,
+    "query": "Zeig mir, was Anfang nächster Woche ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "Anfang nächster Woche",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Anfang nächster Woche"
+      }
+    },
+    "latency_ms": 191.13445281982422
+  },
+  {
+    "index": 86,
+    "query": "Was hat Jan Dienstag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Jan",
+        "when": "Dienstag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Jan",
+        "when": "Dienstag",
+        "target": "Was hat"
+      }
+    },
+    "latency_ms": 159.58881378173828
+  },
+  {
+    "index": 87,
+    "query": "Wann ist wieder Teammeeting?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Teammeeting",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Teammeeting"
+      }
+    },
+    "latency_ms": 147.75705337524414
+  },
+  {
+    "index": 88,
+    "query": "Wann können Sophie und Jan gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Sophie und Jan",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Sophie und Jan"
+      }
+    },
+    "latency_ms": 154.14905548095703
+  },
+  {
+    "index": 89,
+    "query": "Wann läuft Nachmittagstermin?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Nachmittagstermin",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Nachmittagstermin"
+      }
+    },
+    "latency_ms": 188.74049186706543
+  },
+  {
+    "index": 90,
+    "query": "Wann können Julia und Anna gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Anna",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Anna"
+      }
+    },
+    "latency_ms": 140.90251922607422
+  },
+  {
+    "index": 91,
+    "query": "Was ist am 9. Oktober geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 9. Oktober",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist",
+        "when": "9. Oktober"
+      }
+    },
+    "latency_ms": 167.83809661865234
+  },
+  {
+    "index": 92,
+    "query": "Wann können Julia und Jan gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Jan",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Jan"
+      }
+    },
+    "latency_ms": 140.33102989196777
+  },
+  {
+    "index": 93,
+    "query": "Finde einen Termin, wo Lena und Jan beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Lena und Jan",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Lena und Jan",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 111.56511306762695
+  },
+  {
+    "index": 94,
+    "query": "Wann ist wieder Physiotherapie?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Physiotherapie",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Physiotherapie?"
+      }
+    },
+    "latency_ms": 183.3627223968506
+  },
+  {
+    "index": 96,
+    "query": "Was hat Tim am 1. November vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Tim",
+        "when": "am 1. November",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat",
+        "when": "1. November",
+        "person": "Tim"
+      }
+    },
+    "latency_ms": 183.76922607421875
+  },
+  {
+    "index": 97,
+    "query": "Kalender von Tom anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Tom",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Tom"
+      }
+    },
+    "latency_ms": 102.78010368347168
+  },
+  {
+    "index": 98,
+    "query": "Was ist Anfang nächster Woche geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "Anfang nächster Woche",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Anfang nächster Woche"
+      }
+    },
+    "latency_ms": 167.98114776611328
+  },
+  {
+    "index": 102,
+    "query": "Was hat Tom am 1. November vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Tom",
+        "when": "am 1. November",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat",
+        "person": "Tom",
+        "when": "1. November"
+      }
+    },
+    "latency_ms": 192.7340030670166
+  },
+  {
+    "index": 103,
+    "query": "Kalender von Marie anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Marie",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Marie"
+      }
+    },
+    "latency_ms": 109.84349250793457
+  },
+  {
+    "index": 105,
+    "query": "Wann ist wieder Arztbesuch?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Arztbesuch",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Arztbesuch"
+      }
+    },
+    "latency_ms": 160.50124168395996
+  },
+  {
+    "index": 106,
+    "query": "Zeig mir, was am Donnerstag ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am Donnerstag",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was steht an",
+        "when": "Donnerstag"
+      }
+    },
+    "latency_ms": 200.81019401550293
+  },
+  {
+    "index": 107,
+    "query": "Wann können Paul und Nora gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Paul und Nora",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Paul und Nora"
+      }
+    },
+    "latency_ms": 138.0012035369873
+  },
+  {
+    "index": 109,
+    "query": "Welche Termine sind am 9. Oktober?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 9. Oktober",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "9. Oktober"
+      }
+    },
+    "latency_ms": 125.06747245788574
+  },
+  {
+    "index": 110,
+    "query": "Kalender von Felix anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Felix",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Felix"
+      }
+    },
+    "latency_ms": 120.60093879699707
+  },
+  {
+    "index": 111,
+    "query": "Was hat Sara am 20. Juni vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Sara",
+        "when": "am 20. Juni",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat",
+        "person": "Sara",
+        "when": "20. Juni"
+      }
+    },
+    "latency_ms": 199.39851760864258
+  },
+  {
+    "index": 112,
+    "query": "Wann läuft Gitarrenunterricht?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Gitarrenunterricht",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann läuft Gitarrenunterricht"
+      }
+    },
+    "latency_ms": 199.86581802368164
+  },
+  {
+    "index": 113,
+    "query": "Was hat Nora übermorgen vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Nora",
+        "when": "übermorgen",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Nora",
+        "when": "übermorgen"
+      }
+    },
+    "latency_ms": 138.92650604248047
+  },
+  {
+    "index": 116,
+    "query": "Wann läuft Steuerberatung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Steuerberatung",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann läuft Steuerberatung?"
+      }
+    },
+    "latency_ms": 179.69775199890137
+  },
+  {
+    "index": 117,
+    "query": "Wann läuft Zahnarzttermin?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Zahnarzttermin",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Zahnarzttermin"
+      }
+    },
+    "latency_ms": 176.5601634979248
+  },
+  {
+    "index": 118,
+    "query": "Wann können Jana und Miriam gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jana und Miriam",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Jana und Miriam"
+      }
+    },
+    "latency_ms": 146.81529998779297
+  },
+  {
+    "index": 119,
+    "query": "Finde einen Termin, wo Anna und Tim beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Anna und Tim",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Anna und Tim",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 107.96308517456055
+  },
+  {
+    "index": 120,
+    "query": "Was hat Jonas am 30. November vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Jonas",
+        "when": "am 30. November",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat",
+        "person": "Jonas",
+        "when": "30. November"
+      }
+    },
+    "latency_ms": 201.70903205871582
+  },
+  {
+    "index": 121,
+    "query": "Wann ist wieder Betriebsversammlung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Betriebsversammlung",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Betriebsversammlung"
+      }
+    },
+    "latency_ms": 177.60968208312988
+  },
+  {
+    "index": 122,
+    "query": "Wann können Julia und Emma gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Emma",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Emma"
+      }
+    },
+    "latency_ms": 152.29058265686035
+  },
+  {
+    "index": 124,
+    "query": "Was hat Emma am 12. Mai vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Emma",
+        "when": "am 12. Mai",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Emma"
+      }
+    },
+    "latency_ms": 165.6029224395752
+  },
+  {
+    "index": 125,
+    "query": "Wann ist wieder Elternabend?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Elternabend",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Elternabend"
+      }
+    },
+    "latency_ms": 131.39867782592773
+  },
+  {
+    "index": 126,
+    "query": "Welche Termine sind in zwei Wochen?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "in zwei Wochen",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "zwei Wochen"
+      }
+    },
+    "latency_ms": 126.37162208557129
+  },
+  {
+    "index": 127,
+    "query": "Wann läuft Vorstandssitzung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Vorstandssitzung",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Vorstandssitzung"
+      }
+    },
+    "latency_ms": 146.79765701293945
+  },
+  {
+    "index": 128,
+    "query": "Finde einen Termin, wo Max und Paul beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Max und Paul",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Max und Paul"
+      }
+    },
+    "latency_ms": 147.25589752197266
+  },
+  {
+    "index": 129,
+    "query": "Kalender von Lisa anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Lisa",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Lisa"
+      }
+    },
+    "latency_ms": 107.06901550292969
+  },
+  {
+    "index": 130,
+    "query": "Was hat Peter am Montag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Peter",
+        "when": "am Montag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Peter",
+        "when": "am Montag"
+      }
+    },
+    "latency_ms": 132.4625015258789
+  },
+  {
+    "index": 131,
+    "query": "Wann läuft Sprachkurs?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Sprachkurs",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 101.14431381225586
+  },
+  {
+    "index": 132,
+    "query": "Zeig mir, was am 18. September ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 18. September",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "was",
+        "when": "18. September"
+      }
+    },
+    "latency_ms": 178.68828773498535
+  },
+  {
+    "index": 133,
+    "query": "Was hat Lena nächsten Freitag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Lena",
+        "when": "nächsten Freitag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Lena",
+        "when": "nächsten Freitag"
+      }
+    },
+    "latency_ms": 153.07211875915527
+  },
+  {
+    "index": 134,
+    "query": "Kalender von Anna anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Anna",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Anna"
+      }
+    },
+    "latency_ms": 103.13868522644043
+  },
+  {
+    "index": 135,
+    "query": "Finde einen Termin, wo Jana und Sophie beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jana und Sophie",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Jana und Sophie",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 116.05310440063477
+  },
+  {
+    "index": 136,
+    "query": "Finde einen Termin, wo Max und Sophie beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Max und Sophie",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Max und Sophie"
+      }
+    },
+    "latency_ms": 153.8083553314209
+  },
+  {
+    "index": 137,
+    "query": "Kalender von Peter anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Peter",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Peter"
+      }
+    },
+    "latency_ms": 101.6089916229248
+  },
+  {
+    "index": 138,
+    "query": "Zeig mir, was nächsten Montag ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "nächsten Montag",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "nächsten Montag"
+      }
+    },
+    "latency_ms": 196.32768630981445
+  },
+  {
+    "index": 139,
+    "query": "Was ist am 14. Februar geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 14. Februar",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist",
+        "when": "14. Februar"
+      }
+    },
+    "latency_ms": 203.9508819580078
+  },
+  {
+    "index": 140,
+    "query": "Zeig mir, was übermorgen ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "übermorgen",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was steht an",
+        "when": "übermorgen"
+      }
+    },
+    "latency_ms": 128.1147003173828
+  },
+  {
+    "index": 141,
+    "query": "Was ist Anfang der Woche geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "Anfang der Woche",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 89.5693302154541
+  },
+  {
+    "index": 142,
+    "query": "Kalender von Jan anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Jan",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Jan"
+      }
+    },
+    "latency_ms": 101.5315055847168
+  },
+  {
+    "index": 145,
+    "query": "Finde einen Termin, wo Sophie und Jan beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Sophie und Jan",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Sophie und Jan",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 114.1512393951416
+  },
+  {
+    "index": 146,
+    "query": "Kalender von Sophie anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Sophie",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Sophie"
+      }
+    },
+    "latency_ms": 107.35845565795898
+  },
+  {
+    "index": 147,
+    "query": "Wann ist wieder Arzttermin?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Arzttermin",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Arzttermin"
+      }
+    },
+    "latency_ms": 140.3634548187256
+  },
+  {
+    "index": 148,
+    "query": "Zeig mir, was heute Abend ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "heute Abend",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was steht an",
+        "when": "heute Nachmittag"
+      }
+    },
+    "latency_ms": 135.98179817199707
+  },
+  {
+    "index": 149,
+    "query": "Was hat Tom morgen Vormittag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Tom",
+        "when": "morgen Vormittag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Tom",
+        "when": "morgen Vormittag"
+      }
+    },
+    "latency_ms": 152.13704109191895
+  },
+  {
+    "index": 150,
+    "query": "Was ist am Mittwoch geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am Mittwoch",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist",
+        "when": "Mittwoch"
+      }
+    },
+    "latency_ms": 117.05565452575684
+  },
+  {
+    "index": 151,
+    "query": "Was hat Jan am 1. November vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Jan",
+        "when": "am 1. November",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat",
+        "person": "Jan",
+        "when": "1. November"
+      }
+    },
+    "latency_ms": 190.14859199523926
+  },
+  {
+    "index": 152,
+    "query": "Wann können Julia und Tim gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Tim",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Julia und Tim"
+      }
+    },
+    "latency_ms": 157.65953063964844
+  },
+  {
+    "index": 154,
+    "query": "Zeig mir, was diese Woche ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "diese Woche",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "diese Woche"
+      }
+    },
+    "latency_ms": 179.5186996459961
+  },
+  {
+    "index": 157,
+    "query": "Kalender von Miriam anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Miriam",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Miriam"
+      }
+    },
+    "latency_ms": 114.78376388549805
+  },
+  {
+    "index": 158,
+    "query": "Wann können Sara und Felix gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Sara und Felix",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Sara und Felix"
+      }
+    },
+    "latency_ms": 139.2993927001953
+  },
+  {
+    "index": 159,
+    "query": "Zeig mir, was am 12. Mai ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 12. Mai",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was am 12. Mai"
+      }
+    },
+    "latency_ms": 179.63671684265137
+  },
+  {
+    "index": 160,
+    "query": "Wann können Jonas und Emma gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jonas und Emma",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Jonas und Emma"
+      }
+    },
+    "latency_ms": 150.64048767089844
+  },
+  {
+    "index": 161,
+    "query": "Finde einen Termin, wo Max und Miriam beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Max und Miriam",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Max und Miriam"
+      }
+    },
+    "latency_ms": 171.89788818359375
+  },
+  {
+    "index": 162,
+    "query": "Was hat Tom heute Morgen vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Tom",
+        "when": "heute Morgen",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat Tom",
+        "when": "heute Morgen",
+        "person": "Tom"
+      }
+    },
+    "latency_ms": 128.1595230102539
+  },
+  {
+    "index": 163,
+    "query": "Wann läuft Yoga?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Yoga",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Yoga"
+      }
+    },
+    "latency_ms": 142.29631423950195
+  },
+  {
+    "index": 165,
+    "query": "Finde einen Termin, wo Lisa und Jan beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Lisa und Jan",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Lisa und Jan",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 114.46952819824219
+  },
+  {
+    "index": 167,
+    "query": "Was hat Nora morgen Mittag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Nora",
+        "when": "morgen Mittag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat Nora",
+        "when": "morgen Mittag",
+        "person": "Nora"
+      }
+    },
+    "latency_ms": 219.53916549682617
+  },
+  {
+    "index": 168,
+    "query": "Wann ist wieder Workshop?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Workshop",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Workshop"
+      }
+    },
+    "latency_ms": 140.76471328735352
+  },
+  {
+    "index": 169,
+    "query": "Wann können Julia und Marie gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Marie",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Julia und Marie"
+      }
+    },
+    "latency_ms": 161.56363487243652
+  },
+  {
+    "index": 170,
+    "query": "Wann ist wieder Fußballtraining?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Fußballtraining",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 96.88329696655273
+  },
+  {
+    "index": 172,
+    "query": "Zeig mir, was am 20. Juni ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 20. Juni",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Zeig",
+        "when": "20. Juni"
+      }
+    },
+    "latency_ms": 171.46944999694824
+  },
+  {
+    "index": 174,
+    "query": "Wann läuft Augenarzt?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Augenarzt",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann läuft Augenarzt?"
+      }
+    },
+    "latency_ms": 162.17303276062012
+  },
+  {
+    "index": 175,
+    "query": "Zeig mir, was Dienstag ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "Dienstag",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Dienstag"
+      }
+    },
+    "latency_ms": 152.30083465576172
+  },
+  {
+    "index": 176,
+    "query": "Finde einen Termin, wo Sophie und Jonas beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Sophie und Jonas",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Sophie und Jonas",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 118.64280700683594
+  },
+  {
+    "index": 177,
+    "query": "Wann ist wieder Steuerberatung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Steuerberatung",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Steuerberatung?"
+      }
+    },
+    "latency_ms": 179.13246154785156
+  },
+  {
+    "index": 179,
+    "query": "Wann können Anna und Jan gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Anna und Jan",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Anna und Jan"
+      }
+    },
+    "latency_ms": 144.99497413635254
+  },
+  {
+    "index": 180,
+    "query": "Wann ist wieder Sprachkurs?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Sprachkurs",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 85.73222160339355
+  },
+  {
+    "index": 181,
+    "query": "Zeig mir, was heute Morgen ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "heute Morgen",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was steht an",
+        "when": "heute Nachmittag"
+      }
+    },
+    "latency_ms": 137.72130012512207
+  },
+  {
+    "index": 182,
+    "query": "Wann ist wieder Training?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Training",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Training?"
+      }
+    },
+    "latency_ms": 166.1379337310791
+  },
+  {
+    "index": 183,
+    "query": "Wann läuft Betriebsversammlung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Betriebsversammlung",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Betriebsversammlung"
+      }
+    },
+    "latency_ms": 145.96271514892578
+  },
+  {
+    "index": 184,
+    "query": "Wann läuft Schwimmkurs?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Schwimmkurs",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Schwimmkurs"
+      }
+    },
+    "latency_ms": 142.86279678344727
+  },
+  {
+    "index": 185,
+    "query": "Wann können Jan und Emma gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jan und Emma",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Jan und Emma"
+      }
+    },
+    "latency_ms": 133.7134838104248
+  },
+  {
+    "index": 187,
+    "query": "Kalender von Paul anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Paul",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Paul"
+      }
+    },
+    "latency_ms": 106.20737075805664
+  },
+  {
+    "index": 188,
+    "query": "Finde einen Termin, wo Paul und Emma beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Paul und Emma",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termin",
+        "person": "Paul und Emma",
+        "persons": "Zeit",
+        "target": "Zahnarzt"
+      }
+    },
+    "latency_ms": 159.54208374023438
+  },
+  {
+    "index": 189,
+    "query": "Was ist heute Morgen geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "heute Morgen",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist heute Morgen",
+        "when": "heute Nachmittag"
+      }
+    },
+    "latency_ms": 138.72718811035156
+  },
+  {
+    "index": 191,
+    "query": "Wann läuft Chorprobe?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Chorprobe",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Chorprobe"
+      }
+    },
+    "latency_ms": 128.2665729522705
+  },
+  {
+    "index": 192,
+    "query": "Wann ist wieder Buchhaltung?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Buchhaltung",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Buchhaltung",
+        "when": "wieder",
+        "persons": "Buchhaltung",
+        "target": "Wann ist Zahnarzt"
+      }
+    },
+    "latency_ms": 232.7871322631836
+  },
+  {
+    "index": 194,
+    "query": "Was hat Nora kommende Woche vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Nora",
+        "when": "kommende Woche",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat Nora",
+        "when": "kommende Woche"
+      }
+    },
+    "latency_ms": 224.58553314208984
+  },
+  {
+    "index": 196,
+    "query": "Was hat Felix Dienstag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Felix",
+        "when": "Dienstag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Felix",
+        "when": "Dienstag"
+      }
+    },
+    "latency_ms": 141.0379409790039
+  },
+  {
+    "index": 197,
+    "query": "Finde einen Termin, wo Miriam und Nora beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Miriam und Nora",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Miriam und Nora",
+        "when": "beide Zeit",
+        "persons": "beide Zeit",
+        "target": "Zahnarzt"
+      }
+    },
+    "latency_ms": 169.7070598602295
+  },
+  {
+    "index": 198,
+    "query": "Kalender von Sara anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Sara",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Sara"
+      }
+    },
+    "latency_ms": 101.30786895751953
+  },
+  {
+    "index": 199,
+    "query": "Kalender von Emma anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Emma",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Emma"
+      }
+    },
+    "latency_ms": 101.07564926147461
+  },
+  {
+    "index": 201,
+    "query": "Wann läuft Zahnarzt?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Zahnarzt",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Zahnarzt"
+      }
+    },
+    "latency_ms": 161.58270835876465
+  },
+  {
+    "index": 202,
+    "query": "Was hat Sara am 14. Februar vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Sara",
+        "when": "am 14. Februar",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat Sara",
+        "when": "am 14. Februar"
+      }
+    },
+    "latency_ms": 226.95016860961914
+  },
+  {
+    "index": 203,
+    "query": "Was hat Miriam morgen Mittag vor?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Miriam",
+        "when": "morgen Mittag",
+        "query_span": "Was hat"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was hat Miriam",
+        "when": "morgen Mittag"
+      }
+    },
+    "latency_ms": 246.20938301086426
+  },
+  {
+    "index": 204,
+    "query": "Wann läuft Fußballtraining?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Fußballtraining",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann läuft",
+        "persons": "Wann läuft",
+        "target": "Fußballtraining"
+      }
+    },
+    "latency_ms": 231.56309127807617
+  },
+  {
+    "index": 206,
+    "query": "Wann können Julia und Max gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Julia und Max",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Julia",
+        "when": "morgen"
+      }
+    },
+    "latency_ms": 174.06463623046875
+  },
+  {
+    "index": 207,
+    "query": "Wann können Anna und Miriam gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Anna und Miriam",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Anna und Miriam"
+      }
+    },
+    "latency_ms": 148.49591255187988
+  },
+  {
+    "index": 208,
+    "query": "Was ist am 18. September geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 18. September",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist",
+        "when": "18. September"
+      }
+    },
+    "latency_ms": 235.09860038757324
+  },
+  {
+    "index": 209,
+    "query": "Wann können Anna und Tim gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Anna und Tim",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Anna und Tim"
+      }
+    },
+    "latency_ms": 149.72329139709473
+  },
+  {
+    "index": 212,
+    "query": "Welche Termine sind am Wochenende?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am Wochenende",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "Wochenende"
+      }
+    },
+    "latency_ms": 121.96588516235352
+  },
+  {
+    "index": 213,
+    "query": "Was ist nächste Woche geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "nächste Woche",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist nächste Woche",
+        "when": "nächste Woche"
+      }
+    },
+    "latency_ms": 141.05606079101562
+  },
+  {
+    "index": 214,
+    "query": "Wann ist wieder Zahnarzttermin?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Zahnarzttermin",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Zahnarzttermin"
+      }
+    },
+    "latency_ms": 165.0993824005127
+  },
+  {
+    "index": 215,
+    "query": "Wann können Peter und Jonas gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Peter und Jonas",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Peter und Jonas"
+      }
+    },
+    "latency_ms": 140.58160781860352
+  },
+  {
+    "index": 216,
+    "query": "Was ist Freitag geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "Freitag",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was",
+        "when": "Freitag"
+      }
+    },
+    "latency_ms": 180.0711154937744
+  },
+  {
+    "index": 217,
+    "query": "Wann ist wieder Chorprobe?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Chorprobe",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Chorprobe"
+      }
+    },
+    "latency_ms": 129.6846866607666
+  },
+  {
+    "index": 218,
+    "query": "Wann ist wieder Kegelabend?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Kegelabend",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wann ist wieder Kegelabend?"
+      }
+    },
+    "latency_ms": 180.72915077209473
+  },
+  {
+    "index": 219,
+    "query": "Zeig mir, was am 1. November ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 1. November",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "was",
+        "when": "1. November"
+      }
+    },
+    "latency_ms": 166.16296768188477
+  },
+  {
+    "index": 220,
+    "query": "Zeig mir, was nächsten Mittwoch ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "nächsten Mittwoch",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was steht an",
+        "when": "nächsten Mittwoch"
+      }
+    },
+    "latency_ms": 144.5446014404297
+  },
+  {
+    "index": 221,
+    "query": "Was ist in zwei Wochen geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "in zwei Wochen",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Zwei Wochen"
+      }
+    },
+    "latency_ms": 182.12461471557617
+  },
+  {
+    "index": 224,
+    "query": "Zeig mir, was Ende des Monats ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "Ende des Monats",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 94.14863586425781
+  },
+  {
+    "index": 225,
+    "query": "Welche Termine sind am Mittwoch?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am Mittwoch",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "Mittwoch"
+      }
+    },
+    "latency_ms": 120.74136734008789
+  },
+  {
+    "index": 226,
+    "query": "Wann ist wieder Schwimmkurs?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Schwimmkurs",
+        "query_span": "Wann ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Schwimmkurs"
+      }
+    },
+    "latency_ms": 174.1015911102295
+  },
+  {
+    "index": 227,
+    "query": "Wann können Sophie und Marie gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Sophie und Marie",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Sophie und Marie"
+      }
+    },
+    "latency_ms": 153.3215045928955
+  },
+  {
+    "index": 228,
+    "query": "Kalender von Jonas anzeigen.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "person": "Jonas",
+        "query_span": "Kalender von"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Jonas"
+      }
+    },
+    "latency_ms": 108.4744930267334
+  },
+  {
+    "index": 229,
+    "query": "Was ist übermorgen geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "übermorgen",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist übermorgen",
+        "when": "übermorgen"
+      }
+    },
+    "latency_ms": 127.18582153320312
+  },
+  {
+    "index": 230,
+    "query": "Zeig mir, was morgen ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "morgen",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Zeig",
+        "when": "morgen"
+      }
+    },
+    "latency_ms": 116.64319038391113
+  },
+  {
+    "index": 231,
+    "query": "Welche Termine sind am 3. März?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 3. März",
+        "query_span": "Welche Termine"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Welche Termine",
+        "when": "3. März"
+      }
+    },
+    "latency_ms": 126.36923789978027
+  },
+  {
+    "index": 232,
+    "query": "Wann können Jana und Nora gleichzeitig?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jana und Nora",
+        "query_span": "Wann können"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "persons": "Jana und Nora"
+      }
+    },
+    "latency_ms": 145.74694633483887
+  },
+  {
+    "index": 233,
+    "query": "Zeig mir, was am Wochenende ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am Wochenende",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Wochenende"
+      }
+    },
+    "latency_ms": 116.84966087341309
+  },
+  {
+    "index": 235,
+    "query": "Was ist am 3. März geplant?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "am 3. März",
+        "query_span": "Was ist"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Was ist",
+        "when": "3. März"
+      }
+    },
+    "latency_ms": 167.63019561767578
+  },
+  {
+    "index": 236,
+    "query": "Wann läuft Arztbesuch?",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "target": "Arztbesuch",
+        "query_span": "Wann läuft"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Arztbesuch"
+      }
+    },
+    "latency_ms": 125.82874298095703
+  },
+  {
+    "index": 237,
+    "query": "Finde einen Termin, wo Jonas und Nora beide Zeit haben.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "persons": "Jonas und Nora",
+        "query_span": "Finde"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "person": "Jonas und Nora",
+        "query_span": "Zeit"
+      }
+    },
+    "latency_ms": 115.40842056274414
+  },
+  {
+    "index": 239,
+    "query": "Zeig mir, was kommenden Samstag ansteht.",
+    "expected": {
+      "name": "calendar_read",
+      "arguments": {
+        "when": "kommenden Samstag",
+        "query_span": "Zeig mir"
+      }
+    },
+    "got": {
+      "tool": "calendar_read",
+      "arguments": {
+        "query_span": "Samstag"
+      }
+    },
+    "latency_ms": 182.43956565856934
+  }
+]

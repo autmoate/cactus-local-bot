@@ -1,0 +1,2008 @@
+[
+  {
+    "index": 1,
+    "query": "Erinnere mich zehn Minuten vor Workshop.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "zehn Minuten",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 75.73699951171875
+  },
+  {
+    "index": 3,
+    "query": "Erinner mich am 18. September um 14:30 daran, Klavierunterricht zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 18. September um 14:30",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Klavierunterricht",
+        "when": "18. September",
+        "relative": "14:30"
+      }
+    },
+    "latency_ms": 245.67770957946777
+  },
+  {
+    "index": 4,
+    "query": "Erinner mich Samstag um 19:45 daran, Elternabend zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Samstag um 19:45",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Elternabend",
+        "when": "Samstag um 19:45",
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 256.99734687805176
+  },
+  {
+    "index": 5,
+    "query": "Erinner Nora 20 Minuten vorher an Nachhilfe.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Nora",
+        "relative": "20 Minuten",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Nachhilfe",
+        "relative": "20 Minuten vorher",
+        "person": "Nora"
+      }
+    },
+    "latency_ms": 248.3201026916504
+  },
+  {
+    "index": 6,
+    "query": "Erinner mich eine Dreiviertelstunde vorher an Sprachkurs.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Dreiviertelstunde",
+        "target": "Sprachkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Sprachkurs",
+        "relative": "vorher"
+      }
+    },
+    "latency_ms": 205.6121826171875
+  },
+  {
+    "index": 7,
+    "query": "Erinnere Jana übermorgen um 15 Uhr an Nachhilfe.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Jana",
+        "when": "übermorgen um 15 Uhr",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Nachhilfe",
+        "relative": "übermorgen um 15:00",
+        "person": "Jana"
+      }
+    },
+    "latency_ms": 247.46084213256836
+  },
+  {
+    "index": 9,
+    "query": "Erinner mich zwei Stunden davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "zwei Stunden"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 207.48353004455566
+  },
+  {
+    "index": 10,
+    "query": "Erinnere Felix morgen Vormittag um halb sechs an Zahnarzt.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Felix",
+        "when": "morgen Vormittag um halb sechs",
+        "target": "Zahnarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "when": "morgen um 5:30",
+        "relative": "morgen um 18:30"
+      }
+    },
+    "latency_ms": 247.971773147583
+  },
+  {
+    "index": 11,
+    "query": "Erinner mich eine Stunde davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Stunde"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "when": "morgen um 8 Uhr"
+      }
+    },
+    "latency_ms": 145.63417434692383
+  },
+  {
+    "index": 13,
+    "query": "Stell mir in vierzehn Tagen um kurz nach halb zwei eine Erinnerung für Yoga.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "in vierzehn Tagen um kurz nach halb zwei",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 148.1454372406006
+  },
+  {
+    "index": 14,
+    "query": "Stell mir kommende Woche um 12 Uhr eine Erinnerung für Vorstandssitzung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "kommende Woche um 12 Uhr",
+        "target": "Vorstandssitzung"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 122.76983261108398
+  },
+  {
+    "index": 15,
+    "query": "Stell mir am 5. Dezember um 9:15 eine Erinnerung für Arzttermin.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 5. Dezember um 9:15",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Arzttermin",
+        "when": "2025-12-05 09:15"
+      }
+    },
+    "latency_ms": 220.49713134765625
+  },
+  {
+    "index": 16,
+    "query": "Erinner Sophie 20 Minuten vorher an Workshop.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Sophie",
+        "relative": "20 Minuten",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Workshop",
+        "relative": "20 Minuten vorher",
+        "person": "Sophie"
+      }
+    },
+    "latency_ms": 236.24730110168457
+  },
+  {
+    "index": 17,
+    "query": "Erinnere mich eine Stunde vor Teammeeting.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Stunde",
+        "target": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 94.41375732421875
+  },
+  {
+    "index": 18,
+    "query": "Erinner mich eine Stunde vorher an Augenarzt.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Stunde",
+        "target": "Augenarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Augenarzt",
+        "relative": "drei Stunden vorher"
+      }
+    },
+    "latency_ms": 211.16280555725098
+  },
+  {
+    "index": 19,
+    "query": "Erinner mich zehn Minuten vorher an Friseur.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "zehn Minuten",
+        "target": "Friseur"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Friseur",
+        "relative": "morgen um 10:00"
+      }
+    },
+    "latency_ms": 194.40436363220215
+  },
+  {
+    "index": 22,
+    "query": "Erinner Jonas zehn Minuten vorher an Nachhilfe.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Jonas",
+        "relative": "zehn Minuten",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Nachhilfe",
+        "relative": "morgen um 10 Minuten vor dem Termin",
+        "person": "Jonas"
+      }
+    },
+    "latency_ms": 285.1872444152832
+  },
+  {
+    "index": 23,
+    "query": "Erinner mich fünf Minuten vorher an Training.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "fünf Minuten",
+        "target": "Training"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Training",
+        "relative": "vorher"
+      }
+    },
+    "latency_ms": 190.63591957092285
+  },
+  {
+    "index": 24,
+    "query": "Erinner mich 45 Minuten vorher an Arzttermin.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "45 Minuten",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzttermin",
+        "relative": "drei Stunden vorher"
+      }
+    },
+    "latency_ms": 219.32101249694824
+  },
+  {
+    "index": 25,
+    "query": "Erinner mich 90 Minuten vorher an Klavierunterricht.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "90 Minuten",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Klavierunterricht",
+        "relative": "90 Minuten vorher"
+      }
+    },
+    "latency_ms": 219.91300582885742
+  },
+  {
+    "index": 26,
+    "query": "Erinner mich 90 Minuten vorher an Training.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "90 Minuten",
+        "target": "Training"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Training",
+        "relative": "90 Minuten vorher"
+      }
+    },
+    "latency_ms": 183.5165023803711
+  },
+  {
+    "index": 28,
+    "query": "Erinnere Tom morgen Vormittag um 18 Uhr an Friseur.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Tom",
+        "when": "morgen Vormittag um 18 Uhr",
+        "target": "Friseur"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Friseur",
+        "relative": "morgen um 18:00"
+      }
+    },
+    "latency_ms": 220.95894813537598
+  },
+  {
+    "index": 29,
+    "query": "Erinner mich am 5. Dezember um Viertel vor zehn daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 5. Dezember um Viertel vor zehn",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Arzttermin",
+        "when": "2025-12-05 09:45"
+      }
+    },
+    "latency_ms": 242.77281761169434
+  },
+  {
+    "index": 30,
+    "query": "Erinner mich übermorgen um 16 Uhr daran, Physiotherapie zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "übermorgen um 16 Uhr",
+        "target": "Physiotherapie"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Physiotherapie",
+        "relative": "übermorgen um 16:00"
+      }
+    },
+    "latency_ms": 220.02291679382324
+  },
+  {
+    "index": 31,
+    "query": "Erinnere mich fünf Minuten vor Projektbesprechung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "fünf Minuten",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 82.25655555725098
+  },
+  {
+    "index": 32,
+    "query": "Erinnere mich eine Dreiviertelstunde vor Elternabend.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Dreiviertelstunde",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 80.46078681945801
+  },
+  {
+    "index": 33,
+    "query": "Erinnere Emma kommenden Samstag um 8 Uhr an Projektbesprechung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Emma",
+        "when": "kommenden Samstag um 8 Uhr",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Projektbesprechung",
+        "relative": "Samstag um 8:00",
+        "person": "Emma"
+      }
+    },
+    "latency_ms": 281.954288482666
+  },
+  {
+    "index": 35,
+    "query": "Erinner Lena drei Stunden vorher an Yoga.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Lena",
+        "relative": "drei Stunden",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Yoga",
+        "relative": "drei Stunden vorher",
+        "person": "Lena"
+      }
+    },
+    "latency_ms": 240.93866348266602
+  },
+  {
+    "index": 36,
+    "query": "Erinner mich 20 Minuten vorher an Teammeeting.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "20 Minuten",
+        "target": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Teammeeting",
+        "relative": "20 Minuten vorher"
+      }
+    },
+    "latency_ms": 202.30531692504883
+  },
+  {
+    "index": 38,
+    "query": "Erinner mich eine Dreiviertelstunde davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Dreiviertelstunde"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 190.63210487365723
+  },
+  {
+    "index": 39,
+    "query": "Erinner mich Anfang nächster Woche um 17 Uhr daran, Augenarzt zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Anfang nächster Woche um 17 Uhr",
+        "target": "Augenarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Augenarzt",
+        "relative": "nächster Woche um 17:00"
+      }
+    },
+    "latency_ms": 245.81384658813477
+  },
+  {
+    "index": 40,
+    "query": "Erinner mich morgen Mittag um kurz vor halb neun daran, Nachhilfe zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen Mittag um kurz vor halb neun",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Nachhilfe zu machen",
+        "when": "morgen um 20:30",
+        "relative": "morgen um 20:30"
+      }
+    },
+    "latency_ms": 278.19037437438965
+  },
+  {
+    "index": 41,
+    "query": "Erinner Sophie eine Dreiviertelstunde vorher an Physiotherapie.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Sophie",
+        "relative": "eine Dreiviertelstunde",
+        "target": "Physiotherapie"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Physiotherapie",
+        "relative": "drei Stunden vorher",
+        "person": "Sophie"
+      }
+    },
+    "latency_ms": 289.3049716949463
+  },
+  {
+    "index": 42,
+    "query": "Erinner mich eine halbe Stunde davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine halbe Stunde"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "relative": "halb Stunde davor"
+      }
+    },
+    "latency_ms": 182.9850673675537
+  },
+  {
+    "index": 43,
+    "query": "Erinner mich am Samstag um halb sechs daran, Augenarzt zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am Samstag um halb sechs",
+        "target": "Augenarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Augenarzt",
+        "when": "Samstag um 5:30",
+        "relative": "morgen um 18:00"
+      }
+    },
+    "latency_ms": 251.2671947479248
+  },
+  {
+    "index": 44,
+    "query": "Erinner mich übermorgen um halb zwei daran, Friseur zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "übermorgen um halb zwei",
+        "target": "Friseur"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Friseur zu machen",
+        "relative": "übermorgen um 14:30"
+      }
+    },
+    "latency_ms": 233.95776748657227
+  },
+  {
+    "index": 45,
+    "query": "Erinner mich 30 Minuten davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "30 Minuten"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "30 Minuten davor"
+      }
+    },
+    "latency_ms": 176.84650421142578
+  },
+  {
+    "index": 46,
+    "query": "Erinner mich 45 Minuten vorher an Projektbesprechung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "45 Minuten",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Projektbesprechung",
+        "relative": "drei Stunden vorher"
+      }
+    },
+    "latency_ms": 241.10746383666992
+  },
+  {
+    "index": 47,
+    "query": "Erinnere Lisa nächsten Donnerstag um Viertel vor zehn an Projektbesprechung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Lisa",
+        "when": "nächsten Donnerstag um Viertel vor zehn",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Projektbesprechung",
+        "when": "nächsten Donnerstag um 9:45",
+        "relative": "nächsten Donnerstag um 9:45",
+        "person": "Lisa"
+      }
+    },
+    "latency_ms": 400.3617763519287
+  },
+  {
+    "index": 50,
+    "query": "Erinner Lena eine Dreiviertelstunde vorher an Augenarzt.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Lena",
+        "relative": "eine Dreiviertelstunde",
+        "target": "Augenarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Augenarzt",
+        "relative": "drei Stunden vorher",
+        "person": "Lena"
+      }
+    },
+    "latency_ms": 266.7524814605713
+  },
+  {
+    "index": 51,
+    "query": "Erinner mich am 20. Juni um 16:20 daran, Teammeeting zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 20. Juni um 16:20",
+        "target": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Teammeeting",
+        "when": "2025-06-20",
+        "relative": "2025-06-20 16:20"
+      }
+    },
+    "latency_ms": 255.18155097961426
+  },
+  {
+    "index": 52,
+    "query": "Erinner mich zehn Minuten vorher an Teammeeting.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "zehn Minuten",
+        "target": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Teammeeting",
+        "relative": "morgen um 10:00"
+      }
+    },
+    "latency_ms": 205.87778091430664
+  },
+  {
+    "index": 53,
+    "query": "Erinner mich am Montag um 10:30 daran, Friseur zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am Montag um 10:30",
+        "target": "Friseur"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Friseur machen",
+        "relative": "morgen um 10:30"
+      }
+    },
+    "latency_ms": 210.60466766357422
+  },
+  {
+    "index": 54,
+    "query": "Stell mir nächsten Dienstag um Viertel nach elf eine Erinnerung für Yoga.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "nächsten Dienstag um Viertel nach elf",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 110.74280738830566
+  },
+  {
+    "index": 55,
+    "query": "Erinner mich eine Stunde vorher an Vorstandssitzung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Stunde",
+        "target": "Vorstandssitzung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Vorstandssitzung",
+        "relative": "drei Stunden vorher"
+      }
+    },
+    "latency_ms": 234.32445526123047
+  },
+  {
+    "index": 56,
+    "query": "Erinner mich am 9. Oktober um 11 Uhr daran, Elternabend zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 9. Oktober um 11 Uhr",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Elternabend",
+        "when": "2025-10-09",
+        "relative": "2025-10-09 11:00"
+      }
+    },
+    "latency_ms": 251.75046920776367
+  },
+  {
+    "index": 57,
+    "query": "Erinner mich eine Viertelstunde vorher an Projektbesprechung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Viertelstunde",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Projektbesprechung",
+        "relative": "vorher"
+      }
+    },
+    "latency_ms": 219.18177604675293
+  },
+  {
+    "index": 58,
+    "query": "Erinnere mich drei Stunden vor Arzttermin.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "drei Stunden",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 78.31287384033203
+  },
+  {
+    "index": 59,
+    "query": "Erinner mich 20 Minuten vorher an Sprachkurs.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "20 Minuten",
+        "target": "Sprachkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "20 Minuten vorher"
+      }
+    },
+    "latency_ms": 205.31439781188965
+  },
+  {
+    "index": 60,
+    "query": "Erinner Jana drei Stunden vorher an Elternabend.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Jana",
+        "relative": "drei Stunden",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Elternabend",
+        "relative": "drei Stunden vorher",
+        "person": "Jana"
+      }
+    },
+    "latency_ms": 267.27819442749023
+  },
+  {
+    "index": 63,
+    "query": "Erinner mich 20 Minuten vorher an Training.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "20 Minuten",
+        "target": "Training"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Training",
+        "relative": "20 Minuten vorher"
+      }
+    },
+    "latency_ms": 186.7659091949463
+  },
+  {
+    "index": 64,
+    "query": "Erinner mich am 5. Dezember um 8:00 daran, Yoga zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 5. Dezember um 8:00",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Yoga zu machen",
+        "when": "5. Dezember",
+        "relative": "8:00"
+      }
+    },
+    "latency_ms": 227.3564338684082
+  },
+  {
+    "index": 65,
+    "query": "Erinnere mich 20 Minuten vor Schwimmkurs.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "20 Minuten",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "20 Minuten vor Schwimmkurs"
+      }
+    },
+    "latency_ms": 234.6475124359131
+  },
+  {
+    "index": 66,
+    "query": "Erinnere Tim in zwei Wochen um kurz nach zehn an Training.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Tim",
+        "when": "in zwei Wochen um kurz nach zehn",
+        "target": "Training"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Training",
+        "relative": "zwei Wochen um 10:00"
+      }
+    },
+    "latency_ms": 225.7673740386963
+  },
+  {
+    "index": 67,
+    "query": "Erinner mich eine Stunde vorher an Nachhilfe.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Stunde",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Nachhilfe",
+        "relative": "drei Stunden vorher"
+      }
+    },
+    "latency_ms": 218.07479858398438
+  },
+  {
+    "index": 68,
+    "query": "Erinner mich Anfang der Woche um Viertel nach fünf daran, Schwimmkurs zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Anfang der Woche um Viertel nach fünf",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Anfang der Woche",
+        "when": "viertel nach fünf",
+        "relative": "Anfang der Woche"
+      }
+    },
+    "latency_ms": 336.4534378051758
+  },
+  {
+    "index": 69,
+    "query": "Erinner mich 90 Minuten davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "90 Minuten"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 199.38325881958008
+  },
+  {
+    "index": 70,
+    "query": "Stell mir am 5. Dezember um halb zehn eine Erinnerung für Schwimmkurs.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 5. Dezember um halb zehn",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Schwimmkurs",
+        "when": "5. Dezember",
+        "relative": "09:30"
+      }
+    },
+    "latency_ms": 266.5698528289795
+  },
+  {
+    "index": 71,
+    "query": "Erinnere Julia am 9. Oktober um halb sechs an Yoga.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Julia",
+        "when": "am 9. Oktober um halb sechs",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Yoga",
+        "when": "9. Oktober",
+        "relative": "halb sechs",
+        "person": "Julia"
+      }
+    },
+    "latency_ms": 290.4970645904541
+  },
+  {
+    "index": 72,
+    "query": "Erinnere mich 45 Minuten vor Nachhilfe.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "45 Minuten",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 85.48736572265625
+  },
+  {
+    "index": 73,
+    "query": "Erinnere mich 30 Minuten vor Physiotherapie.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "30 Minuten",
+        "target": "Physiotherapie"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Physiotherapie",
+        "relative": "30 Minuten vor dem Termin"
+      }
+    },
+    "latency_ms": 208.2982063293457
+  },
+  {
+    "index": 74,
+    "query": "Erinnere Nora Anfang der Woche um Viertel nach fünf an Arzttermin.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Nora",
+        "when": "Anfang der Woche um Viertel nach fünf",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Arzttermin",
+        "when": "Nora Anfang der Woche",
+        "relative": "viertel nach fünf"
+      }
+    },
+    "latency_ms": 328.3517360687256
+  },
+  {
+    "index": 75,
+    "query": "Erinner Sara drei Stunden vorher an Training.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Sara",
+        "relative": "drei Stunden",
+        "target": "Training"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Training",
+        "relative": "drei Stunden vorher",
+        "person": "Sara"
+      }
+    },
+    "latency_ms": 241.65034294128418
+  },
+  {
+    "index": 76,
+    "query": "Erinner mich eine halbe Stunde vorher an Schwimmkurs.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine halbe Stunde",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Schwimmkurs",
+        "relative": "halb Stunde vorher"
+      }
+    },
+    "latency_ms": 230.26037216186523
+  },
+  {
+    "index": 77,
+    "query": "Erinnere Miriam morgen um 12:05 an Physiotherapie.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Miriam",
+        "when": "morgen um 12:05",
+        "target": "Physiotherapie"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Physiotherapie",
+        "when": "morgen um 12:05",
+        "relative": "morgen um 12:05"
+      }
+    },
+    "latency_ms": 255.91564178466797
+  },
+  {
+    "index": 78,
+    "query": "Erinner mich 90 Minuten vorher an Workshop.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "90 Minuten",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Workshop",
+        "relative": "90 Minuten vorher"
+      }
+    },
+    "latency_ms": 193.9074993133545
+  },
+  {
+    "index": 79,
+    "query": "Erinnere Max nächsten Montag um Viertel vor acht an Yoga.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Max",
+        "when": "nächsten Montag um Viertel vor acht",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Yoga",
+        "relative": "nächsten Montag um 19:45"
+      }
+    },
+    "latency_ms": 237.89048194885254
+  },
+  {
+    "index": 80,
+    "query": "Erinner mich am 9. Oktober um halb acht daran, Zahnarzt zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 9. Oktober um halb acht",
+        "target": "Zahnarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "when": "9. Oktober",
+        "relative": "halb acht"
+      }
+    },
+    "latency_ms": 263.9803886413574
+  },
+  {
+    "index": 81,
+    "query": "Erinnere Tom übermorgen um 12 Uhr an Projektbesprechung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Tom",
+        "when": "übermorgen um 12 Uhr",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Projektbesprechung",
+        "relative": "übermorgen um 12:00"
+      }
+    },
+    "latency_ms": 256.8392753601074
+  },
+  {
+    "index": 82,
+    "query": "Erinnere mich eine Stunde vor Projektbesprechung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Stunde",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 81.47287368774414
+  },
+  {
+    "index": 83,
+    "query": "Erinnere mich eine Stunde vor Klavierunterricht.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Stunde",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 98.91891479492188
+  },
+  {
+    "index": 84,
+    "query": "Stell mir morgen Mittag um 14 Uhr eine Erinnerung für Elternabend.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen Mittag um 14 Uhr",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Erinnerung für Elternabend",
+        "when": "morgen um 14:00"
+      }
+    },
+    "latency_ms": 243.7753677368164
+  },
+  {
+    "index": 85,
+    "query": "Erinner mich drei Stunden davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "drei Stunden"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 211.90476417541504
+  },
+  {
+    "index": 86,
+    "query": "Erinnere mich zwei Stunden vor Arzttermin.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "zwei Stunden",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 78.5207748413086
+  },
+  {
+    "index": 88,
+    "query": "Erinner Anna zehn Minuten vorher an Physiotherapie.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Anna",
+        "relative": "zehn Minuten",
+        "target": "Physiotherapie"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Physiotherapie",
+        "relative": "morgen um 10 Minuten vorher",
+        "person": "Anna"
+      }
+    },
+    "latency_ms": 278.60021591186523
+  },
+  {
+    "index": 89,
+    "query": "Erinnere Miriam nächsten Freitag um halb acht an Arzttermin.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Miriam",
+        "when": "nächsten Freitag um halb acht",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 86.69495582580566
+  },
+  {
+    "index": 90,
+    "query": "Erinner mich nächsten Montag um 13 Uhr daran, Friseur zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "nächsten Montag um 13 Uhr",
+        "target": "Friseur"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Friseur zu machen",
+        "relative": "nächsten Montag um 13:00"
+      }
+    },
+    "latency_ms": 255.1276683807373
+  },
+  {
+    "index": 91,
+    "query": "Erinner mich fünf Minuten davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "fünf Minuten"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 182.55162239074707
+  },
+  {
+    "index": 92,
+    "query": "Erinner mich eine Dreiviertelstunde vorher an Teammeeting.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Dreiviertelstunde",
+        "target": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Teammeeting",
+        "relative": "vorher"
+      }
+    },
+    "latency_ms": 202.62908935546875
+  },
+  {
+    "index": 93,
+    "query": "Erinner mich eine Viertelstunde davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Viertelstunde"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Viertelstunde davor",
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 222.9025363922119
+  },
+  {
+    "index": 94,
+    "query": "Erinner Julia 45 Minuten vorher an Schwimmkurs.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Julia",
+        "relative": "45 Minuten",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "drei Stunden vorher",
+        "person": "Julia"
+      }
+    },
+    "latency_ms": 266.37768745422363
+  },
+  {
+    "index": 95,
+    "query": "Stell mir am Montag um 12:05 eine Erinnerung für Zahnarzt.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am Montag um 12:05",
+        "target": "Zahnarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "morgen um 12:05"
+      }
+    },
+    "latency_ms": 218.8889980316162
+  },
+  {
+    "index": 96,
+    "query": "Erinner Jan eine Viertelstunde vorher an Klavierunterricht.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Jan",
+        "relative": "eine Viertelstunde",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Klavierunterricht",
+        "relative": "vorher",
+        "person": "Jan"
+      }
+    },
+    "latency_ms": 251.99389457702637
+  },
+  {
+    "index": 97,
+    "query": "Erinner mich eine Viertelstunde vorher an Vorstandssitzung.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Viertelstunde",
+        "target": "Vorstandssitzung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Vorstandssitzung",
+        "relative": "vorher"
+      }
+    },
+    "latency_ms": 208.9686393737793
+  },
+  {
+    "index": 98,
+    "query": "Erinnere Felix am 18. September um 8:00 an Klavierunterricht.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Felix",
+        "when": "am 18. September um 8:00",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Klavierunterricht",
+        "when": "18. September um 8:00",
+        "person": "Felix"
+      }
+    },
+    "latency_ms": 290.53306579589844
+  },
+  {
+    "index": 99,
+    "query": "Erinner Sophie 20 Minuten vorher an Augenarzt.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Sophie",
+        "relative": "20 Minuten",
+        "target": "Augenarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Augenarzt",
+        "relative": "20 Minuten vorher",
+        "person": "Sophie"
+      }
+    },
+    "latency_ms": 248.05545806884766
+  },
+  {
+    "index": 100,
+    "query": "Erinnere mich 30 Minuten vor Nachhilfe.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "30 Minuten",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "30 Minuten vor dem Termin"
+      }
+    },
+    "latency_ms": 208.42242240905762
+  },
+  {
+    "index": 101,
+    "query": "Stell mir Ende der Woche um 18 Uhr eine Erinnerung für Schwimmkurs.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Ende der Woche um 18 Uhr",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Schwimmkurs",
+        "when": "Ende der Woche um 18 Uhr",
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 286.9687080383301
+  },
+  {
+    "index": 102,
+    "query": "Erinner mich 30 Minuten vorher an Workshop.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "30 Minuten",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Workshop",
+        "relative": "30 Minuten vorher"
+      }
+    },
+    "latency_ms": 193.01080703735352
+  },
+  {
+    "index": 103,
+    "query": "Erinner mich zehn Minuten davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "zehn Minuten"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 182.6486587524414
+  },
+  {
+    "index": 104,
+    "query": "Erinner mich Anfang nächster Woche um Viertel nach drei daran, Elternabend zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Anfang nächster Woche um Viertel nach drei",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Elternabend",
+        "relative": "nächster Woche um 15:15"
+      }
+    },
+    "latency_ms": 255.2018165588379
+  },
+  {
+    "index": 105,
+    "query": "Erinner mich am 1. November um 16:50 daran, Klavierunterricht zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 1. November um 16:50",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Klavierunterricht",
+        "when": "1. November",
+        "relative": "16:50"
+      }
+    },
+    "latency_ms": 240.2505874633789
+  },
+  {
+    "index": 107,
+    "query": "Erinner Lisa eine Dreiviertelstunde vorher an Yoga.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Lisa",
+        "relative": "eine Dreiviertelstunde",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Yoga",
+        "relative": "vorher",
+        "person": "Lisa"
+      }
+    },
+    "latency_ms": 229.22635078430176
+  },
+  {
+    "index": 108,
+    "query": "Erinnere mich eine Stunde vor Nachhilfe.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Stunde",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": null,
+      "arguments": {}
+    },
+    "latency_ms": 76.87520980834961
+  },
+  {
+    "index": 109,
+    "query": "Erinner mich morgen früh um Viertel vor zwölf daran, Klavierunterricht zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen früh um Viertel vor zwölf",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Klavierunterricht",
+        "when": "morgen um 12:45",
+        "relative": "morgen um 12:45"
+      }
+    },
+    "latency_ms": 295.73726654052734
+  },
+  {
+    "index": 110,
+    "query": "Erinner Marie fünf Minuten vorher an Sprachkurs.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Marie",
+        "relative": "fünf Minuten",
+        "target": "Sprachkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Sprachkurs",
+        "relative": "fünf Minuten vorher",
+        "person": "Marie"
+      }
+    },
+    "latency_ms": 277.27508544921875
+  },
+  {
+    "index": 111,
+    "query": "Stell mir am Wochenende um 13:45 eine Erinnerung für Training.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am Wochenende um 13:45",
+        "target": "Training"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Wochenende um 13:45",
+        "relative": "um 13:45"
+      }
+    },
+    "latency_ms": 212.5873565673828
+  },
+  {
+    "index": 112,
+    "query": "Erinner mich 45 Minuten vorher an Training.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "45 Minuten",
+        "target": "Training"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "drei Stunden vorher"
+      }
+    },
+    "latency_ms": 208.19616317749023
+  },
+  {
+    "index": 113,
+    "query": "Erinner Emma 45 Minuten vorher an Arzttermin.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Emma",
+        "relative": "45 Minuten",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Arzttermin",
+        "relative": "drei Stunden vorher",
+        "person": "Emma"
+      }
+    },
+    "latency_ms": 274.1665840148926
+  },
+  {
+    "index": 114,
+    "query": "Stell mir Ende des Monats um 18 Uhr eine Erinnerung für Elternabend.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Ende des Monats um 18 Uhr",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Erinnerung für Elternabend",
+        "when": "Erinnerung für Elternabend um 18 Uhr",
+        "relative": "Erinnerung für Elternabend um 18:00"
+      }
+    },
+    "latency_ms": 314.70298767089844
+  },
+  {
+    "index": 115,
+    "query": "Erinner Julia drei Stunden vorher an Physiotherapie.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Julia",
+        "relative": "drei Stunden",
+        "target": "Physiotherapie"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Physiotherapie",
+        "relative": "drei Stunden vorher",
+        "person": "Julia"
+      }
+    },
+    "latency_ms": 274.1045951843262
+  },
+  {
+    "index": 116,
+    "query": "Erinner mich 20 Minuten davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "20 Minuten"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "relative": "20 Minuten vor dem Termin"
+      }
+    },
+    "latency_ms": 164.94345664978027
+  },
+  {
+    "index": 117,
+    "query": "Erinner mich in drei Tagen um 12 Uhr daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "in drei Tagen um 12 Uhr",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Arzttermin zu machen",
+        "relative": "drei Tagen um 12:00"
+      }
+    },
+    "latency_ms": 240.76199531555176
+  },
+  {
+    "index": 118,
+    "query": "Erinner mich 45 Minuten davor.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "45 Minuten"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "relative": "drei Stunden vor dem Termin"
+      }
+    },
+    "latency_ms": 198.2111930847168
+  },
+  {
+    "index": 119,
+    "query": "Erinner mich am 12. Mai um 19 Uhr daran, Zahnarzt zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 12. Mai um 19 Uhr",
+        "target": "Zahnarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "target": "Zahnarzt",
+        "when": "12. Mai",
+        "relative": "19:00"
+      }
+    },
+    "latency_ms": 226.4864444732666
+  }
+]

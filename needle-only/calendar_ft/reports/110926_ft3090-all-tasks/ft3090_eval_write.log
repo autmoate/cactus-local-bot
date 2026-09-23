@@ -1,0 +1,147 @@
+======================================================================
+CALENDAR-FT EXPERIMENT: calendar_write
+======================================================================
+
+[1/9] Environment-Check (JAX GPU)
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python -c import jax; d=jax.devices(); print(f'JAX {jax.__version__} devices={d}');assert any('gpu' in str(x).lower() or 'cuda' in str(x).lower() for x in d), 'No GPU device found'
+JAX 0.10.2 devices=[CudaDevice(id=0)]
+  ✓ JAX GPU available
+
+[2/9] Dataset bauen: calendar_write
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/build_dataset.py --task calendar_write --count 2000 --seed 42 --out <repo>/needle-only/calendar_ft/data/train/calendar_write.jsonl
+wrote 1914 examples (1760 positive, 154 negative) -> <repo>/needle-only/calendar_ft/data/train/calendar_write.jsonl
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/build_dataset.py --task calendar_write --count 300 --seed 43 --eval --exclude <repo>/needle-only/calendar_ft/data/train/calendar_write.jsonl --out <repo>/needle-only/calendar_ft/data/eval/calendar_write.jsonl
+wrote 300 examples (264 positive, 36 negative) -> <repo>/needle-only/calendar_ft/data/eval/calendar_write.jsonl
+
+[3/9] Dataset validieren: calendar_write
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/validate_dataset.py --dataset <repo>/needle-only/calendar_ft/data/train/calendar_write.jsonl --task calendar_write
+Dataset: <repo>/needle-only/calendar_ft/data/train/calendar_write.jsonl
+  total: 1914
+  positive: 1760
+  negative: 154
+  max query chars: 85
+  field coverage: {'title': 1760, 'action_span': 1283, 'date': 1173, 'time': 1152, 'person': 271, 'participants': 136, 'modifier': 135, 'end_time': 67, 'location': 67}
+  action spans: {'Lösch': 340, 'Plane': 146, 'Verschieb': 139, 'Nimm': 135, 'Trag': 133, 'Verschiebe': 131, 'Zieh': 71, 'Änder': 64, 'Erstelle': 58, 'Sag': 44, 'Streich': 22}
+
+VALIDATION PASSED
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/validate_dataset.py --dataset <repo>/needle-only/calendar_ft/data/eval/calendar_write.jsonl --task calendar_write
+Dataset: <repo>/needle-only/calendar_ft/data/eval/calendar_write.jsonl
+  total: 300
+  positive: 264
+  negative: 36
+  max query chars: 78
+  field coverage: {'title': 264, 'time': 191, 'action_span': 169, 'date': 150, 'modifier': 39, 'person': 37, 'participants': 19, 'end_time': 19, 'location': 19}
+  action spans: {'Verschieb': 54, 'Trag': 38, 'Lösche': 21, 'Plane': 19, 'Setz': 19, 'Nimm': 18}
+
+VALIDATION PASSED
+
+[4/9] Base-Modell evaluieren: calendar_write
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/eval_model.py --task calendar_write --dataset <repo>/needle-only/calendar_ft/data/eval/calendar_write.jsonl --out <repo>/needle-only/calendar_ft/reports/base_calendar_write.json
+
+Evaluation: task=calendar_write weights=BASE
+  examples: 300 (pos=264, neg=36)
+  tool_call_accuracy:      0.7727
+  full_frame_exact_match:  0.1233
+  field_precision:        0.6855
+  field_recall:           0.2811
+  field_f1:               0.3987
+  hallucinated_field_rate:0.2666
+  missed_field_rate:      0.3638
+  false_positive_tool_rate:0.0556
+  false_negative_tool_rate:0.2273
+  latency_ms (mean/p50/p95): 245/270/414
+
+Report written to <repo>/needle-only/calendar_ft/reports/base_calendar_write.json
+Worst cases: <repo>/needle-only/calendar_ft/reports/base_calendar_write_worst_cases.json
+Errors JSONL: <repo>/needle-only/calendar_ft/reports/base_calendar_write_errors.jsonl
+
+[5-6/9] Skipping training (--skip-train)
+
+[7/9] FT-Modell evaluieren: calendar_write
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/eval_model.py --task calendar_write --dataset <repo>/needle-only/calendar_ft/data/eval/calendar_write.jsonl --weights <repo>/needle-only/calendar_ft/models/calendar_write.cact --out <repo>/needle-only/calendar_ft/reports/calendar_write_ft.json
+<repo>/needle-only/calendar_ft/eval_model.py:73: UserWarning: finetuning does not update the confidence head, so scores are uncalibrated for tuned weights; this agent reports confidence as None
+  agent = needle.Needle(tools=[tool_schema], weights=weights)
+
+Evaluation: task=calendar_write weights=<repo>/needle-only/calendar_ft/models/calendar_write.cact
+  examples: 300 (pos=264, neg=36)
+  tool_call_accuracy:      1.0000
+  full_frame_exact_match:  0.7433
+  field_precision:        0.9691
+  field_recall:           0.9338
+  field_f1:               0.9512
+  hallucinated_field_rate:0.0056
+  missed_field_rate:      0.0397
+  false_positive_tool_rate:0.2778
+  false_negative_tool_rate:0.0000
+  latency_ms (mean/p50/p95): 308/314/493
+
+Report written to <repo>/needle-only/calendar_ft/reports/calendar_write_ft.json
+Worst cases: <repo>/needle-only/calendar_ft/reports/calendar_write_ft_worst_cases.json
+Errors JSONL: <repo>/needle-only/calendar_ft/reports/calendar_write_ft_errors.jsonl
+
+[8/9] Base vs. FT Vergleich
+--------------------------------------------------
+  Full-frame exact match:  0.1233 → 0.7433 (+62.0%)
+  Field F1:                0.3987 → 0.9512 (+55.2%)
+  Hallucinated field rate: 0.0056
+  False positive tool rate:0.2778
+
+[9/9] E2E-Evaluation
+--------------------------------------------------
+  $ <repo>/.venv-ft/bin/python <repo>/needle-only/calendar_ft/e2e_eval.py
+======================================================================
+E2E Evaluation: Calendar-vNext Pipeline
+======================================================================
+
+<repo>/needle-only/calendar_service.py:50: UserWarning: finetuning does not update the confidence head, so scores are uncalibrated for tuned weights; this agent reports confidence as None
+  agent = needle.Needle(
+[models] Loaded calendar_write from <repo>/needle-only/calendar_ft/models/calendar_write.cact
+[models] Loaded calendar_read from <repo>/needle-only/calendar_ft/models/calendar_read.cact
+[models] Loaded reminder from <repo>/needle-only/calendar_ft/models/reminder.cact
+[models] Loaded base model with 3 tools for fallback
+  PASS [ 1] create_appointment             route=calendar_write (expect calendar_write)
+  PASS [ 2] move_appointment               route=calendar_write (expect calendar_write)
+  PASS [ 3] create_with_location           route=calendar_write (expect calendar_write)
+  PASS [ 4] create_with_participants       route=calendar_write (expect calendar_write)
+  PASS [ 5] cancel_appointment             route=calendar_write (expect calendar_write)
+  PASS [ 6] read_calendar                  route=calendar_read (expect calendar_read)
+  PASS [ 7] read_person_filter             route=calendar_read (expect calendar_read)
+  PASS [ 8] free_slots_group               route=calendar_read (expect calendar_read)
+  PASS [ 9] set_reminder_relative          route=reminder (expect reminder)
+  PASS [10] offtopic_no_write              route=none (expect none)
+
+======================================================================
+E2E Results: 10/10 passed (100.0%)
+  Route accuracy:  100.0%
+  Result accuracy: 100.0%
+======================================================================
+
+Results saved to <repo>/needle-only/calendar_ft/reports/e2e_results.json
+
+  E2E Pass Rate: 100.0%
+  Route Accuracy: 100.0%
+
+======================================================================
+MINDESKRITERIEN (Nutzer-Spec Abschnitt 21)
+======================================================================
+  ✓ router_accuracy: 1.0 (threshold: 0.98)
+  ✗ required_field_f1: 0.9511510387422797 (threshold: 0.97)
+  ✓ hallucinated_field_rate: 0.005567928730512249 (threshold: 0.01)
+  ✗ false_positive_tool_rate: 0.2777777777777778 (threshold: 0.01)
+  ✓ full_frame_exact_match_improvement: 0.7433333333333333 (threshold: ?)
+
+======================================================================
+ERGEBNIS: FAIL (thresholds not met)
+======================================================================
+
+======================================================================
+ZUSAMMENFASSUNG
+======================================================================
+  FAIL calendar_write     (179.6s)
+
+Overall: FAIL

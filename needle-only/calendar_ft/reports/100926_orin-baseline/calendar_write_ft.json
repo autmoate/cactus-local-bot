@@ -1,0 +1,81 @@
+{
+  "task": "calendar_write",
+  "weights": "needle-only/calendar_ft/models/calendar_write.cact",
+  "n_examples": 300,
+  "n_positive": 264,
+  "n_negative": 36,
+  "tool_call_accuracy": 0.9090909090909091,
+  "full_frame_exact_match": 0.2866666666666667,
+  "field_precision": 0.9315960912052117,
+  "field_recall": 0.6306504961411246,
+  "field_f1": 0.7521367521367521,
+  "field_exact_accuracy": {
+    "person": 0.4594594594594595,
+    "title": 0.7310606060606061,
+    "action_span": 0.6035502958579881,
+    "participants": 0.5789473684210527,
+    "date": 0.5133333333333333,
+    "time": 0.8010471204188482,
+    "modifier": 0.0,
+    "end_time": 0.631578947368421,
+    "location": 0.3684210526315789
+  },
+  "per_field_support": {
+    "person": 37,
+    "title": 264,
+    "action_span": 169,
+    "participants": 19,
+    "date": 150,
+    "time": 191,
+    "modifier": 39,
+    "end_time": 19,
+    "location": 19
+  },
+  "hallucinated_field_rate": 0.030848329048843187,
+  "missed_field_rate": 0.18853362734288864,
+  "false_positive_tool_rate": 0.05555555555555555,
+  "false_negative_tool_rate": 0.09090909090909091,
+  "latency_ms": {
+    "mean": 239.63253577550253,
+    "p50": 249.88746643066406,
+    "p95": 375.0731945037842
+  },
+  "per_field": {
+    "person": {
+      "exact_accuracy": 0.4594594594594595,
+      "support": 37
+    },
+    "title": {
+      "exact_accuracy": 0.7310606060606061,
+      "support": 264
+    },
+    "action_span": {
+      "exact_accuracy": 0.6035502958579881,
+      "support": 169
+    },
+    "participants": {
+      "exact_accuracy": 0.5789473684210527,
+      "support": 19
+    },
+    "date": {
+      "exact_accuracy": 0.5133333333333333,
+      "support": 150
+    },
+    "time": {
+      "exact_accuracy": 0.8010471204188482,
+      "support": 191
+    },
+    "modifier": {
+      "exact_accuracy": 0.0,
+      "support": 39
+    },
+    "end_time": {
+      "exact_accuracy": 0.631578947368421,
+      "support": 19
+    },
+    "location": {
+      "exact_accuracy": 0.3684210526315789,
+      "support": 19
+    }
+  }
+}

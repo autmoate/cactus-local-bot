@@ -18,3 +18,8 @@ needle-only/.gradio/
 needle-only/experiments/ft/data/_ft/
 .venv-ft/
 .venv-ft3/
+
+# Regenerierbare Trainings-/Experiment-Massen (nicht committen)
+needle-only/calendar_ft_all/data/
+needle-only/experiments/ft/data/train_sub*.jsonl
+needle-only/experiments/ft/data/train_v3_sub*.jsonl

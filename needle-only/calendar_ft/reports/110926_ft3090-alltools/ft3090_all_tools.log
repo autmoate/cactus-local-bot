@@ -1,0 +1,90 @@
+[train] Running: <repo>/.venv-ft/bin/needle finetune needle-only/calendar_ft_all/data/train/calendar_all.jsonl --epochs 6 --lora-rank 16 --lora-alpha 32.0 --lr 0.0001 --batch-size 4 --seed 42 --out <repo>/needle-only/calendar_ft/models/all_tools_lora.pkl
+  backend   gpu  float32
+  data      4154 examples  seq_len 1024  cap 1024
+  numerics  CQ mixed[embedding=4,mhc=4,default=2] STE + A8 (matches export)
+  lora      rank 16  alpha 32  5 weight groups
+  holdout   415 examples for validation
+  schedule  5610 steps  warmup 280  cosine decay  clip 1.0  (compiling...)
+  step      112/5610  loss 0.0000
+  step      224/5610  loss 1.1230
+  step      336/5610  loss 0.0416
+  step      448/5610  loss 0.0122
+  step      560/5610  loss 0.0189
+  step      672/5610  loss 0.0040
+  step      784/5610  loss 0.0009
+  step      896/5610  loss 0.0007
+  epoch     1/6  loss 0.0038  val 0.0291
+  step      1008/5610  loss 0.0044
+  step      1120/5610  loss 0.0021
+  step      1232/5610  loss 0.0003
+  step      1344/5610  loss 0.0006
+  step      1456/5610  loss 0.0025
+  step      1568/5610  loss 0.0000
+  step      1680/5610  loss 0.0000
+  step      1792/5610  loss 0.0001
+  epoch     2/6  loss 0.3365  val 0.0079
+  step      1904/5610  loss 0.0019
+  step      2016/5610  loss 0.0003
+  step      2128/5610  loss 0.0006
+  step      2240/5610  loss 0.0000
+  step      2352/5610  loss 0.0001
+  step      2464/5610  loss 0.0001
+  step      2576/5610  loss 0.0000
+  step      2688/5610  loss 0.0003
+  step      2800/5610  loss 0.0000
+  epoch     3/6  loss 0.0000  val 0.0031
+  step      2912/5610  loss 0.0001
+  step      3024/5610  loss 0.0000
+  step      3136/5610  loss 0.0000
+  step      3248/5610  loss 0.0001
+  step      3360/5610  loss 0.0000
+  step      3472/5610  loss 0.0019
+  step      3584/5610  loss 0.0001
+  step      3696/5610  loss 0.0000
+  epoch     4/6  loss 0.0017  val 0.0033
+  step      3808/5610  loss 0.0000
+  step      3920/5610  loss 0.0000
+  step      4032/5610  loss 0.0000
+  step      4144/5610  loss 0.0000
+  step      4256/5610  loss 0.0000
+  step      4368/5610  loss 0.0000
+  step      4480/5610  loss 0.0000
+  step      4592/5610  loss 0.0029
+  epoch     5/6  loss 0.0001  val 0.0018
+  step      4704/5610  loss 0.0003
+  step      4816/5610  loss 0.0000
+  step      4928/5610  loss 0.0000
+  step      5040/5610  loss 0.0000
+  step      5152/5610  loss 0.0007
+  step      5264/5610  loss 0.0000
+  step      5376/5610  loss 0.0000
+  step      5488/5610  loss 0.0001
+  step      5600/5610  loss 0.0000
+  epoch     6/6  loss 0.0000  val 0.0019
+  adapter   <repo>/needle-only/calendar_ft/models/all_tools_lora.pkl
+  next      needle build checkpoints/needle2.pkl --lora <repo>/needle-only/calendar_ft/models/all_tools_lora.pkl
+  note      confidence reports None with tuned weights; the head is not tuned
+
+[train] Training completed in 3436.7s
+[build] Running: <repo>/.venv-ft/bin/needle build <repo>/checkpoints/needle2.pkl --lora <repo>/needle-only/calendar_ft/models/all_tools_lora.pkl --out <repo>/needle-only/calendar_ft/models/all_tools.cact
+  merged    5 weight groups  <repo>/needle-only/calendar_ft/models/all_tools_lora.pkl
+  scheme    CQ mixed[embedding=4,mhc=4,default=2] from QAT adapter metadata
+  wrote     <repo>/needle-only/calendar_ft/models/all_tools.cact  13.74 MB  405 tensors  mixed[embedding=4,mhc=4,default=2]A8
+  next      needle.Needle(weights='<repo>/needle-only/calendar_ft/models/all_tools.cact', tools=[...])
+
+[build] .cact build completed in 12.4s
+{
+  "task": "all_tools",
+  "epochs": 6,
+  "lora_rank": 16,
+  "lora_alpha": 32.0,
+  "lr": 0.0001,
+  "batch_size": 4,
+  "seed": 42,
+  "train_time_s": 3436.7,
+  "build_time_s": 12.4,
+  "adapter_path": "<repo>/needle-only/calendar_ft/models/all_tools_lora.pkl",
+  "adapter_size_bytes": 7963626,
+  "cact_path": "<repo>/needle-only/calendar_ft/models/all_tools.cact",
+  "cact_size_bytes": 13737807
+}

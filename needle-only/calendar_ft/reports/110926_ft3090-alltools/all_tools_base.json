@@ -1,0 +1,111 @@
+{
+  "task": "all_tools",
+  "weights": null,
+  "n_examples": 916,
+  "n_positive": 792,
+  "n_negative": 124,
+  "tool_call_accuracy": 0.726010101010101,
+  "full_frame_exact_match": 0.09934497816593886,
+  "field_precision": 0.556390977443609,
+  "field_recall": 0.28475228475228476,
+  "field_f1": 0.37671014953865734,
+  "field_exact_accuracy": {
+    "person": 0.712707182320442,
+    "title": 0.5378787878787878,
+    "action_span": 0.13609467455621302,
+    "participants": 0.3157894736842105,
+    "date": 0.29333333333333333,
+    "time": 0.35602094240837695,
+    "modifier": 0.0,
+    "end_time": 0.5789473684210527,
+    "location": 0.05263157894736842,
+    "when": 0.035856573705179286,
+    "query_span": 0.08333333333333333,
+    "persons": 0.017241379310344827,
+    "target": 0.43729903536977494,
+    "relative": 0.0
+  },
+  "per_field_support": {
+    "person": 181,
+    "title": 264,
+    "action_span": 169,
+    "participants": 19,
+    "date": 150,
+    "time": 191,
+    "modifier": 39,
+    "end_time": 19,
+    "location": 19,
+    "when": 251,
+    "query_span": 264,
+    "persons": 58,
+    "target": 311,
+    "relative": 144
+  },
+  "hallucinated_field_rate": 0.2127403846153846,
+  "missed_field_rate": 0.42664742664742666,
+  "false_positive_tool_rate": 0.3790322580645161,
+  "false_negative_tool_rate": 0.15404040404040403,
+  "latency_ms": {
+    "mean": 332.65018645332367,
+    "p50": 326.9796371459961,
+    "p95": 510.67543029785156
+  },
+  "per_field": {
+    "person": {
+      "exact_accuracy": 0.712707182320442,
+      "support": 181
+    },
+    "title": {
+      "exact_accuracy": 0.5378787878787878,
+      "support": 264
+    },
+    "action_span": {
+      "exact_accuracy": 0.13609467455621302,
+      "support": 169
+    },
+    "participants": {
+      "exact_accuracy": 0.3157894736842105,
+      "support": 19
+    },
+    "date": {
+      "exact_accuracy": 0.29333333333333333,
+      "support": 150
+    },
+    "time": {
+      "exact_accuracy": 0.35602094240837695,
+      "support": 191
+    },
+    "modifier": {
+      "exact_accuracy": 0.0,
+      "support": 39
+    },
+    "end_time": {
+      "exact_accuracy": 0.5789473684210527,
+      "support": 19
+    },
+    "location": {
+      "exact_accuracy": 0.05263157894736842,
+      "support": 19
+    },
+    "when": {
+      "exact_accuracy": 0.035856573705179286,
+      "support": 251
+    },
+    "query_span": {
+      "exact_accuracy": 0.08333333333333333,
+      "support": 264
+    },
+    "persons": {
+      "exact_accuracy": 0.017241379310344827,
+      "support": 58
+    },
+    "target": {
+      "exact_accuracy": 0.43729903536977494,
+      "support": 311
+    },
+    "relative": {
+      "exact_accuracy": 0.0,
+      "support": 144
+    }
+  }
+}

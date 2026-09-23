@@ -1,0 +1,915 @@
+[
+  {
+    "index": 0,
+    "query": "Erinner mich Ende des Monats um halb elf daran, Klavierunterricht zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Ende des Monats um halb elf",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Ende des Monats um halb elf",
+        "target": "Klavierunterricht zu machen"
+      }
+    },
+    "latency_ms": 233.77418518066406
+  },
+  {
+    "index": 1,
+    "query": "Erinner mich heute Morgen um 19 Uhr daran, Teammeeting zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "heute Morgen um 19 Uhr",
+        "target": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "heute Morgen um 19 Uhr",
+        "target": "Teammeeting zu machen"
+      }
+    },
+    "latency_ms": 202.78096199035645
+  },
+  {
+    "index": 2,
+    "query": "Stell mir Freitag um halb neun eine Erinnerung für Arzttermin.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Freitag um halb neun",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Freitag um halb neun",
+        "target": "Erinnerung für Arzttermin"
+      }
+    },
+    "latency_ms": 203.00865173339844
+  },
+  {
+    "index": 9,
+    "query": "Erinner mich in vierzehn Tagen um halb elf daran, Nachhilfe zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "in vierzehn Tagen um halb elf",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "in vierzehn Tagen um halb elf",
+        "target": "Nachhilfe zu machen"
+      }
+    },
+    "latency_ms": 231.01282119750977
+  },
+  {
+    "index": 13,
+    "query": "Erinner mich Ende des Monats um halb zwölf daran, Nachhilfe zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Ende des Monats um halb zwölf",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Ende des Monats um halb zwölf",
+        "target": "Nachhilfe zu machen"
+      }
+    },
+    "latency_ms": 218.92809867858887
+  },
+  {
+    "index": 15,
+    "query": "Erinner mich am Donnerstag um 17:05 daran, Augenarzt zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am Donnerstag um 17:05",
+        "target": "Augenarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am Donnerstag um 17:05",
+        "target": "Augenarzt zu machen"
+      }
+    },
+    "latency_ms": 216.97020530700684
+  },
+  {
+    "index": 16,
+    "query": "Erinner mich am 12. Mai um 12 Uhr daran, Projektbesprechung zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 12. Mai um 12 Uhr",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am 12. Mai um 12 Uhr",
+        "target": "Projektbesprechung zu machen"
+      }
+    },
+    "latency_ms": 224.14684295654297
+  },
+  {
+    "index": 86,
+    "query": "Erinner mich Anfang der Woche um 11:45 daran, Workshop zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Anfang der Woche um 11:45",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Anfang der Woche um 11:45",
+        "target": "Workshop zu machen"
+      }
+    },
+    "latency_ms": 389.6970748901367
+  },
+  {
+    "index": 95,
+    "query": "Erinner mich morgen früh um 12:05 daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen früh um 12:05",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "morgen früh um 12:05",
+        "target": "Arzttermin zu machen"
+      }
+    },
+    "latency_ms": 220.08776664733887
+  },
+  {
+    "index": 105,
+    "query": "Erinner mich heute Morgen um Viertel vor drei daran, Schwimmkurs zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "heute Morgen um Viertel vor drei",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "heute Morgen um Viertel vor drei",
+        "target": "Schwimmkurs zu machen"
+      }
+    },
+    "latency_ms": 251.91617012023926
+  },
+  {
+    "index": 109,
+    "query": "Erinner mich am 12. Mai um 14 Uhr daran, Yoga zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 12. Mai um 14 Uhr",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am 12. Mai um 14 Uhr",
+        "target": "Yoga zu machen"
+      }
+    },
+    "latency_ms": 198.23598861694336
+  },
+  {
+    "index": 111,
+    "query": "Erinner mich heute Nachmittag um 7:30 daran, Yoga zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "heute Nachmittag um 7:30",
+        "target": "Yoga"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "heute Nachmittag um 7:30",
+        "target": "Yoga zu machen"
+      }
+    },
+    "latency_ms": 201.34592056274414
+  },
+  {
+    "index": 135,
+    "query": "Erinner mich am Donnerstag um halb sechs daran, Schwimmkurs zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am Donnerstag um halb sechs",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am Donnerstag um halb sechs",
+        "target": "Schwimmkurs zu machen"
+      }
+    },
+    "latency_ms": 248.22354316711426
+  },
+  {
+    "index": 136,
+    "query": "Erinner mich Ende der Woche um 15 Uhr daran, Workshop zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Ende der Woche um 15 Uhr",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Ende der Woche um 15 Uhr",
+        "target": "Workshop zu machen"
+      }
+    },
+    "latency_ms": 206.43019676208496
+  },
+  {
+    "index": 138,
+    "query": "Erinner mich kommenden Samstag um 21 Uhr daran, Klavierunterricht zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "kommenden Samstag um 21 Uhr",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "kommenden Samstag um 21 Uhr",
+        "target": "Klavierunterricht zu machen"
+      }
+    },
+    "latency_ms": 226.5312671661377
+  },
+  {
+    "index": 140,
+    "query": "Erinner mich heute Morgen um 11:45 daran, Friseur zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "heute Morgen um 11:45",
+        "target": "Friseur"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "heute Morgen um 11:45",
+        "target": "Friseur zu machen"
+      }
+    },
+    "latency_ms": 199.1894245147705
+  },
+  {
+    "index": 141,
+    "query": "Stell mir Freitag um 21 Uhr eine Erinnerung für Elternabend.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Freitag um 21 Uhr",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Freitag um 21 Uhr",
+        "target": "Elinerabend"
+      }
+    },
+    "latency_ms": 178.2674789428711
+  },
+  {
+    "index": 142,
+    "query": "Erinner mich in zwei Wochen um 16 Uhr daran, Teammeeting zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "in zwei Wochen um 16 Uhr",
+        "target": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "in zwei Wochen um 16 Uhr",
+        "target": "Teammeeting zu machen"
+      }
+    },
+    "latency_ms": 225.50106048583984
+  },
+  {
+    "index": 144,
+    "query": "Erinner mich morgen Abend um 12 Uhr daran, Schwimmkurs zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen Abend um 12 Uhr",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "morgen Abend um 12 Uhr",
+        "target": "Schwimmkurs zu machen"
+      }
+    },
+    "latency_ms": 214.09344673156738
+  },
+  {
+    "index": 147,
+    "query": "Erinner mich nächsten Freitag um Viertel nach sieben daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "nächsten Freitag um Viertel nach sieben",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "nächsten Freitag um Viertel nach sieben",
+        "target": "Arzttermin zu machen"
+      }
+    },
+    "latency_ms": 241.25099182128906
+  },
+  {
+    "index": 151,
+    "query": "Stell mir in vierzehn Tagen um 16:50 eine Erinnerung für Klavierunterricht.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "in vierzehn Tagen um 16:50",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "vierzehn Tagen um 16:50",
+        "target": "Klavierunterricht"
+      }
+    },
+    "latency_ms": 213.5462760925293
+  },
+  {
+    "index": 152,
+    "query": "Erinner mich am 18. September um 6 Uhr daran, Elternabend zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 18. September um 6 Uhr",
+        "target": "Elternabend"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am 18. September um 6 Uhr",
+        "target": "Elternabend zu machen"
+      }
+    },
+    "latency_ms": 211.73620223999023
+  },
+  {
+    "index": 158,
+    "query": "Erinnere Jan Ende der Woche um 14:30 an Zahnarzt.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "person": "Jan",
+        "when": "Ende der Woche um 14:30",
+        "target": "Zahnarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Jan Ende der Woche um 14:30",
+        "target": "Zahnarzt"
+      }
+    },
+    "latency_ms": 191.45536422729492
+  },
+  {
+    "index": 162,
+    "query": "Erinner mich in einer Woche um Viertel nach drei daran, Friseur zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "in einer Woche um Viertel nach drei",
+        "target": "Friseur"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "in einer Woche um Viertel nach drei",
+        "target": "Friseur zu machen"
+      }
+    },
+    "latency_ms": 228.8379669189453
+  },
+  {
+    "index": 164,
+    "query": "Erinner mich am 18. September um kurz nach zehn daran, Workshop zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 18. September um kurz nach zehn",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am 18. September um kurz nach zehn",
+        "target": "Workshop zu machen"
+      }
+    },
+    "latency_ms": 228.27982902526855
+  },
+  {
+    "index": 168,
+    "query": "Erinner mich morgen Abend um halb zwölf daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen Abend um halb zwölf",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "morgen Abend um halb zwölf",
+        "target": "Arzttermin zu machen"
+      }
+    },
+    "latency_ms": 221.8766212463379
+  },
+  {
+    "index": 176,
+    "query": "Stell mir übermorgen um 13 Uhr eine Erinnerung für Physiotherapie.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "übermorgen um 13 Uhr",
+        "target": "Physiotherapie"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "übermorgen um 13 Uhr",
+        "target": "Erinnerung für Physiotherapie"
+      }
+    },
+    "latency_ms": 204.03647422790527
+  },
+  {
+    "index": 184,
+    "query": "Erinnere mich eine Dreiviertelstunde vor Nachhilfe.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "relative": "eine Dreiviertelstunde",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "relative": "eine Dreiviertelstunde",
+        "target": "vor Nachhilfe"
+      }
+    },
+    "latency_ms": 200.46496391296387
+  },
+  {
+    "index": 188,
+    "query": "Erinner mich nächste Woche um 12:30 daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "nächste Woche um 12:30",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "nächste Woche um 12:30",
+        "target": "Arzttermin zu machen"
+      }
+    },
+    "latency_ms": 197.8163719177246
+  },
+  {
+    "index": 196,
+    "query": "Erinner mich nächste Woche um 11 Uhr daran, Nachhilfe zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "nächste Woche um 11 Uhr",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "nächste Woche um 11 Uhr",
+        "target": "Nachhilfe zu machen"
+      }
+    },
+    "latency_ms": 209.3029022216797
+  },
+  {
+    "index": 205,
+    "query": "Erinner mich nächsten Montag um 19:45 daran, Training zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "nächsten Montag um 19:45",
+        "target": "Training"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "nächsten Montag um 19:45",
+        "target": "Training zu machen"
+      }
+    },
+    "latency_ms": 200.47473907470703
+  },
+  {
+    "index": 221,
+    "query": "Erinner mich am Wochenende um 11:45 daran, Projektbesprechung zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am Wochenende um 11:45",
+        "target": "Projektbesprechung"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am Wochenende um 11:45",
+        "target": "Projektbesprechung zu machen"
+      }
+    },
+    "latency_ms": 223.21581840515137
+  },
+  {
+    "index": 226,
+    "query": "Erinner mich am 18. September um 12 Uhr daran, Nachhilfe zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 18. September um 12 Uhr",
+        "target": "Nachhilfe"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am 18. September um 12 Uhr",
+        "target": "Nachhilfe zu machen"
+      }
+    },
+    "latency_ms": 209.73610877990723
+  },
+  {
+    "index": 228,
+    "query": "Erinner mich Anfang nächster Woche um 19 Uhr daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Anfang nächster Woche um 19 Uhr",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Anfang nächster Woche um 19 Uhr",
+        "target": "Arzttermin zu machen"
+      }
+    },
+    "latency_ms": 223.50502014160156
+  },
+  {
+    "index": 236,
+    "query": "Erinner mich morgen früh um 10 Uhr daran, Sprachkurs zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen früh um 10 Uhr",
+        "target": "Sprachkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "morgen früh um 10 Uhr",
+        "target": "Sprachkurs zu machen"
+      }
+    },
+    "latency_ms": 208.80460739135742
+  },
+  {
+    "index": 237,
+    "query": "Erinner mich morgen Mittag um kurz nach halb zwei daran, Teammeeting zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen Mittag um kurz nach halb zwei",
+        "target": "Teammeeting"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "morgen Mittag um kurz nach halb zwei",
+        "target": "Teammeeting zu machen"
+      }
+    },
+    "latency_ms": 233.4733009338379
+  },
+  {
+    "index": 246,
+    "query": "Erinner mich kommenden Samstag um halb zehn daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "kommenden Samstag um halb zehn",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "kommenden Samstag um halb zehn",
+        "target": "Arzttermin zu machen"
+      }
+    },
+    "latency_ms": 220.04008293151855
+  },
+  {
+    "index": 255,
+    "query": "Erinner mich Dienstag um halb zehn daran, Workshop zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Dienstag um halb zehn",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Dienstag um halb zehn",
+        "target": "Workshop zu machen"
+      }
+    },
+    "latency_ms": 199.5840072631836
+  },
+  {
+    "index": 259,
+    "query": "Erinner mich übernächste Woche um halb neun daran, Augenarzt zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "übernächste Woche um halb neun",
+        "target": "Augenarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "übernächste Woche um halb neun",
+        "target": "Augenarzt zu machen"
+      }
+    },
+    "latency_ms": 225.6791591644287
+  },
+  {
+    "index": 267,
+    "query": "Stell mir in drei Tagen um halb zehn eine Erinnerung für Klavierunterricht.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "in drei Tagen um halb zehn",
+        "target": "Klavierunterricht"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "drei Tagen um halb zehn",
+        "target": "Klavierunterricht"
+      }
+    },
+    "latency_ms": 211.61675453186035
+  },
+  {
+    "index": 273,
+    "query": "Erinner mich am 14. Februar um Viertel nach drei daran, Workshop zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 14. Februar um Viertel nach drei",
+        "target": "Workshop"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am 14. Februar um Viertel nach drei",
+        "target": "Workshop zu machen"
+      }
+    },
+    "latency_ms": 220.08657455444336
+  },
+  {
+    "index": 281,
+    "query": "Erinner mich Ende der Woche um halb zwölf daran, Sprachkurs zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Ende der Woche um halb zwölf",
+        "target": "Sprachkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Ende der Woche um halb zwölf",
+        "target": "Sprachkurs zu machen"
+      }
+    },
+    "latency_ms": 228.2888889312744
+  },
+  {
+    "index": 283,
+    "query": "Erinner mich am 12. Mai um Viertel nach sieben daran, Schwimmkurs zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "am 12. Mai um Viertel nach sieben",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "am 12. Mai um Viertel nach sieben",
+        "target": "Schwimmkurs zu machen"
+      }
+    },
+    "latency_ms": 228.55448722839355
+  },
+  {
+    "index": 288,
+    "query": "Erinner mich nächsten Mittwoch um Viertel vor drei daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "nächsten Mittwoch um Viertel vor drei",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "nächsten Mittwoch um Viertel vor drei",
+        "target": "Arzttermin zu machen"
+      }
+    },
+    "latency_ms": 236.8769645690918
+  },
+  {
+    "index": 291,
+    "query": "Erinner mich Anfang nächster Woche um 9:15 daran, Physiotherapie zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Anfang nächster Woche um 9:15",
+        "target": "Physiotherapie"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Anfang nächster Woche um 9:15",
+        "target": "Physiotherapie zu machen"
+      }
+    },
+    "latency_ms": 219.19870376586914
+  },
+  {
+    "index": 292,
+    "query": "Erinner mich Anfang der Woche um 14:15 daran, Arzttermin zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Anfang der Woche um 14:15",
+        "target": "Arzttermin"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Anfang der Woche um 14:15",
+        "target": "Arzttermin zu machen"
+      }
+    },
+    "latency_ms": 197.1127986907959
+  },
+  {
+    "index": 297,
+    "query": "Erinner mich morgen früh um 15 Uhr daran, Schwimmkurs zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "morgen früh um 15 Uhr",
+        "target": "Schwimmkurs"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "morgen früh um 15 Uhr",
+        "target": "Schwimmkurs zu machen"
+      }
+    },
+    "latency_ms": 212.30626106262207
+  },
+  {
+    "index": 299,
+    "query": "Erinner mich Samstag um Viertel vor zwölf daran, Zahnarzt zu machen.",
+    "expected": {
+      "name": "reminder_parse",
+      "arguments": {
+        "when": "Samstag um Viertel vor zwölf",
+        "target": "Zahnarzt"
+      }
+    },
+    "got": {
+      "tool": "reminder_parse",
+      "arguments": {
+        "when": "Samstag um Viertel vor zwölf",
+        "target": "Zahnarzt zu machen"
+      }
+    },
+    "latency_ms": 225.79431533813477
+  }
+]

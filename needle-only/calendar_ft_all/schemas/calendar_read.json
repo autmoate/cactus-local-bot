@@ -1,0 +1,29 @@
+{
+  "name": "calendar_read",
+  "description": "Answer a calendar question: list upcoming events, look up one event, show a person's calendar, or find joint free time slots. Extract only literal spans that appear in the query. Omit every field without evidence. Never use this for creating, changing, or cancelling entries (use calendar_write) or for setting reminders (use reminder_parse).",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query_span": {
+        "type": "string",
+        "description": "The question-intent span copied verbatim from the query, e.g. 'Was steht an', 'frei', 'Zeig', 'Welche Termine'."
+      },
+      "when": {
+        "type": "string",
+        "description": "Time scope phrase exactly as written, e.g. 'morgen', 'diese Woche', 'heute Nachmittag'."
+      },
+      "person": {
+        "type": "string",
+        "description": "Person name exactly as written when the question is about one person, e.g. 'Lisa'."
+      },
+      "persons": {
+        "type": "string",
+        "description": "Person names exactly as written when the question is about several people, e.g. 'Lisa und Max'."
+      },
+      "target": {
+        "type": "string",
+        "description": "Event title to look up, exactly as written, e.g. 'Zahnarzt' in 'Wann ist Zahnarzt?'."
+      }
+    }
+  }
+}

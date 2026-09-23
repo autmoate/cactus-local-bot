@@ -1,0 +1,51 @@
+{
+  "task": "reminder",
+  "weights": "<repo>/needle-only/calendar_ft/models/reminder.cact",
+  "n_examples": 300,
+  "n_positive": 264,
+  "n_negative": 36,
+  "tool_call_accuracy": 1.0,
+  "full_frame_exact_match": 0.7866666666666666,
+  "field_precision": 1.0,
+  "field_recall": 0.9186046511627907,
+  "field_f1": 0.9575757575757576,
+  "field_exact_accuracy": {
+    "when": 0.975,
+    "target": 0.8214285714285714,
+    "person": 0.9883720930232558,
+    "relative": 1.0
+  },
+  "per_field_support": {
+    "when": 120,
+    "target": 252,
+    "person": 86,
+    "relative": 144
+  },
+  "hallucinated_field_rate": 0.0016638935108153079,
+  "missed_field_rate": 0.0016611295681063123,
+  "false_positive_tool_rate": 0.4444444444444444,
+  "false_negative_tool_rate": 0.0,
+  "latency_ms": {
+    "mean": 192.90397008260092,
+    "p50": 199.782133102417,
+    "p95": 264.9555206298828
+  },
+  "per_field": {
+    "when": {
+      "exact_accuracy": 0.975,
+      "support": 120
+    },
+    "target": {
+      "exact_accuracy": 0.8214285714285714,
+      "support": 252
+    },
+    "person": {
+      "exact_accuracy": 0.9883720930232558,
+      "support": 86
+    },
+    "relative": {
+      "exact_accuracy": 1.0,
+      "support": 144
+    }
+  }
+}
