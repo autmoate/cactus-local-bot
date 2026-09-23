@@ -1,0 +1,37 @@
+{
+ "tag": "n3e5-read",
+ "toolset": "read",
+ "weights": "needle-only/experiments/ft/models/modal/n3-v4-r32-e5-s42.cact",
+ "challenge": false,
+ "n": 720,
+ "median_ms": 464,
+ "by_class": {
+  "read": {
+   "n": 558,
+   "tool_ok": 0.896,
+   "args_ok": 0.659,
+   "exact": 0.6,
+   "refusals": 0.022
+  },
+  "none": {
+   "n": 162,
+   "tool_ok": 0.852,
+   "args_ok": 0.852,
+   "exact": 0.852,
+   "refusals": 0.852
+  }
+ },
+ "per_field": {
+  "date": 0.873,
+  "until": 0.604,
+  "time": null,
+  "end_time": null,
+  "title": null,
+  "persons": 0.906,
+  "person": 0.95,
+  "horizon": null,
+  "duration_min": null,
+  "days": null,
+  "participants": null
+ }
+}

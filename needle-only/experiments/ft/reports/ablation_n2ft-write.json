@@ -1,0 +1,37 @@
+{
+ "tag": "n2ft-write",
+ "toolset": "write",
+ "weights": "needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact",
+ "challenge": false,
+ "n": 1242,
+ "median_ms": 301,
+ "by_class": {
+  "write": {
+   "n": 1080,
+   "tool_ok": 1.0,
+   "args_ok": 0.987,
+   "exact": 0.984,
+   "refusals": 0.0
+  },
+  "none": {
+   "n": 162,
+   "tool_ok": 0.506,
+   "args_ok": 0.506,
+   "exact": 0.506,
+   "refusals": 0.506
+  }
+ },
+ "per_field": {
+  "date": 0.99,
+  "until": 0.991,
+  "time": 0.997,
+  "end_time": null,
+  "title": 0.997,
+  "persons": null,
+  "person": null,
+  "horizon": null,
+  "duration_min": null,
+  "days": null,
+  "participants": 1.0
+ }
+}

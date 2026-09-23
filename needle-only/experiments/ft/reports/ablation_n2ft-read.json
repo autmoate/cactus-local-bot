@@ -1,0 +1,37 @@
+{
+ "tag": "n2ft-read",
+ "toolset": "read",
+ "weights": "needle-only/experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact",
+ "challenge": false,
+ "n": 720,
+ "median_ms": 318,
+ "by_class": {
+  "read": {
+   "n": 558,
+   "tool_ok": 0.977,
+   "args_ok": 0.959,
+   "exact": 0.957,
+   "refusals": 0.023
+  },
+  "none": {
+   "n": 162,
+   "tool_ok": 0.914,
+   "args_ok": 0.914,
+   "exact": 0.914,
+   "refusals": 0.914
+  }
+ },
+ "per_field": {
+  "date": 0.992,
+  "until": 0.982,
+  "time": null,
+  "end_time": null,
+  "title": null,
+  "persons": 0.995,
+  "person": 1.0,
+  "horizon": null,
+  "duration_min": null,
+  "days": null,
+  "participants": null
+ }
+}
