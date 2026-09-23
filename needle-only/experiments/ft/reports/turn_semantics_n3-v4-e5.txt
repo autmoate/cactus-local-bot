@@ -1,0 +1,19 @@
+weights=experiments/ft/models/modal/n3-v4-r32-e5-s42.cact
+
+=== A) Dependent chains (reset 1x pro Goal, dann result-getrieben) ===
+  -- Finde morgen einen freien Slot und trag dort Meeting ein
+     manual: {"mode": "manual", "goal": "Finde morgen einen freien Slot und trag dort Meeting ein", "steps": [{"calls": []}], "db": ["Meeting", "Zahnarzt"]}
+     run() : {"mode": "run()", "goal": "Finde morgen einen freien Slot und trag dort Meeting ein", "results": [], "calls": [], "db": ["Meeting", "Zahnarzt"]}
+  -- Verschieb Zahnarzt auf Freitag
+     manual: {"mode": "manual", "goal": "Verschieb Zahnarzt auf Freitag", "steps": [{"calls": ["calendar_move"], "results": ["✏️ Verschoben: Zahnarzt (Fr 25.09. 09:00–10:00)"]}], "db": ["Meeting", "Zahnarzt"]}
+     run() : {"mode": "run()", "goal": "Verschieb Zahnarzt auf Freitag", "results": ["✏️ Verschoben: Zahnarzt (Fr 25.09. 09:00–10:00)"], "calls": [], "db": ["Meeting", "Zahnarzt"]}
+  -- Lösch Meeting
+     manual: {"mode": "manual", "goal": "Lösch Meeting", "steps": [{"calls": ["calendar_delete"], "results": ["🗑️ Gelöscht: Meeting (Do 24.09. 15:00–16:00)"]}], "db": ["Zahnarzt"]}
+     run() : {"mode": "run()", "goal": "Lösch Meeting", "results": ["🗑️ Gelöscht: Meeting (Do 24.09. 15:00–16:00)"], "calls": [], "db": ["Zahnarzt"]}
+
+=== B) Kontext-Isolation (unabhängige Turns) ===
+  MIT reset() : {"with_reset": true, "A": ["calendar_create"], "B": [], "C": ["calendar_delete"], "titles_A": ["10 uhr", "morgen", "zahnarzt"], "titles_C": ["meeting"], "foreign_leak_A_in_B_or_C": [], "db": ["Zahnarzt"]}
+  OHNE reset(): {"with_reset": false, "A": ["calendar_create"], "B": ["calendar_find_slot"], "C": ["calendar_delete"], "titles_A": ["10 uhr", "morgen", "zahnarzt"], "titles_C": ["meeting"], "foreign_leak_A_in_B_or_C": [], "db": ["Zahnarzt"]}
+
+=== B2) Isolation-Contract (frisch vs. verschmutzter Kontext) ===
+   {"prev_context": "Trag morgen 10 Uhr Zahnarzt ein", "turns": [{"turn": "Wie wird das Wetter morgen?", "fresh": [], "polluted": [["calendar_find_slot", {"persons": "Wetter", "date": "morgen"}]], "diverged": true}, {"turn": "Lösch Meeting", "fresh": [["calendar_delete", {"title": "Meeting"}]], "polluted": [["calendar_delete", {"title": "Meeting"}]], "diverged": false}, {"turn": "Trag übermorgen 9 Uhr Sport ein", "fresh": [["calendar_create", {"title": "Sport", "date": "übermorgen", "time": "9 Uhr"}]], "polluted": [["calendar_create", {"title": "Sport", "date": "übermorgen", "time": "9 Uhr"}]], "diverged": false}], "diverged_count": 1, "n": 3}

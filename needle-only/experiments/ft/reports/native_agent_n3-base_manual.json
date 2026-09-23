@@ -1,0 +1,404 @@
+{
+ "tag": "n3-base",
+ "mode": "manual",
+ "weights": null,
+ "n": 10,
+ "goal_completed": 0.1,
+ "wrong_writes": 1,
+ "extra_calls": 2,
+ "median_steps": 2.0,
+ "median_ms": 460,
+ "rows": [
+  {
+   "id": "find->create",
+   "mode": "manual",
+   "goal": "Finde nächste Woche einen freien Slot mit Lisa und trag dort ein Meeting ein.",
+   "steps": 2,
+   "calls": [
+    "calendar_find_slot",
+    "calendar_create"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 766,
+   "error": null,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Zahnarzt": "2026-09-24T10:00:00",
+    "Morgenrunde": "2026-09-25T09:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-24T10:00:00",
+    "Morgenrunde": "2026-09-25T09:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Lisa"
+     },
+     "result": "Free slots:\n• Mi 23.09. 09:00–17:00\n• Do 24.09. 09:00–17:00\n• Fr 25.09. 09:00–17:00\n• Mo 28.09. 09:00–17:00\n• Di 29.09. 09:00–17:00",
+     "step": 1
+    },
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Meeting"
+     },
+     "result": "❌ Zeitangabe nicht verstanden: None",
+     "step": 2
+    }
+   ]
+  },
+  {
+   "id": "list->move",
+   "mode": "manual",
+   "goal": "Zeig mir, was diese Woche ansteht, und verschieb den Zahnarzt auf Freitag.",
+   "steps": 2,
+   "calls": [
+    "calendar_list",
+    "calendar_move"
+   ],
+   "goal_completed": false,
+   "why": "2026-09-27T10:00:00 wd=6 want=4",
+   "ms": 586,
+   "error": null,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Zahnarzt": "2026-09-24T10:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-27T10:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_list",
+     "args": {
+      "date": "2026-09-27"
+     },
+     "result": "No entries.",
+     "step": 1
+    },
+    {
+     "tool": "calendar_move",
+     "args": {
+      "title": "Zahnarzt",
+      "date": "2026-09-27"
+     },
+     "result": "✏️ Verschoben: Zahnarzt (So 27.09. 10:00–11:00)",
+     "step": 2
+    }
+   ]
+  },
+  {
+   "id": "list->delete",
+   "mode": "manual",
+   "goal": "Schau nach, was am Donnerstag ansteht, und lösch den Eintrag.",
+   "steps": 2,
+   "calls": [
+    "calendar_find_slot",
+    "calendar_delete"
+   ],
+   "goal_completed": false,
+   "why": "absent? gone=[]",
+   "ms": 465,
+   "error": null,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Teammeeting": "2026-09-26T09:00:00"
+   },
+   "db_after": {
+    "Teammeeting": "2026-09-26T09:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Donnerstag"
+     },
+     "result": "Free slots:\n• Mi 23.09. 09:00–17:00\n• Do 24.09. 09:00–17:00\n• Fr 25.09. 09:00–17:00\n• Mo 28.09. 09:00–17:00\n• Di 29.09. 09:00–17:00",
+     "step": 1
+    },
+    {
+     "tool": "calendar_delete",
+     "args": {
+      "title": "Eintrag"
+     },
+     "result": "❌ Kein Eintrag 'Eintrag' gefunden.",
+     "step": 2
+    }
+   ]
+  },
+  {
+   "id": "lookup->time",
+   "mode": "manual",
+   "goal": "Prüf meine Termine am Mittwoch und verschieb den Zahnarzt auf 16 Uhr.",
+   "steps": 2,
+   "calls": [
+    "calendar_create",
+    "calendar_move"
+   ],
+   "goal_completed": false,
+   "why": "10:00 want=16:00",
+   "ms": 671,
+   "error": null,
+   "extra_calls": 1,
+   "wrong_writes": 1,
+   "db_before": {
+    "Zahnarzt": "2026-09-25T10:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-25T10:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Zahnarzt",
+      "date": "2026-09-24",
+      "until": "2026-09-24"
+     },
+     "result": "🚫 Absence eingetragen: Zahnarzt (Do 24.09., ganztägig)",
+     "step": 1
+    },
+    {
+     "tool": "calendar_move",
+     "args": {
+      "title": "Zahnarzt",
+      "date": "2026-09-24",
+      "time": "16:00"
+     },
+     "result": "⚠️ Mehrere Einträge 'Zahnarzt' — bitte präzisieren: Zahnarzt (Do 24.09., ganztägig); Zahnarzt (Fr 25.09. 10:00–11:00)",
+     "step": 2
+    }
+   ]
+  },
+  {
+   "id": "person->delete",
+   "mode": "manual",
+   "goal": "Was hat Lisa diese Woche? Sag ihren Freitagstermin ab.",
+   "steps": 1,
+   "calls": [
+    "calendar_find_slot"
+   ],
+   "goal_completed": false,
+   "why": "absent? gone=[]",
+   "ms": 348,
+   "error": null,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Yoga mit Lisa": "2026-09-27T18:00:00"
+   },
+   "db_after": {
+    "Yoga mit Lisa": "2026-09-27T18:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Lisa",
+      "date": "2026-09-24",
+      "until": "2026-09-24"
+     },
+     "result": "Free slots:\n• Do 24.09. 09:00–17:00",
+     "step": 1
+    }
+   ]
+  },
+  {
+   "id": "find->create-2",
+   "mode": "manual",
+   "goal": "Finde einen freien Slot für mich am Montag und trag einen Termin 'Coaching' ein.",
+   "steps": 2,
+   "calls": [
+    "calendar_find_slot",
+    "calendar_create"
+   ],
+   "goal_completed": false,
+   "why": "00:00 in slots=['09:00', '17:00']…",
+   "ms": 455,
+   "error": null,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Friseur": "2026-09-30T11:00:00"
+   },
+   "db_after": {
+    "Coaching": "2026-09-24T00:00:00",
+    "Friseur": "2026-09-30T11:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Michael",
+      "date": "2026-09-24"
+     },
+     "result": "Free slots:\n• Do 24.09. 09:00–17:00",
+     "step": 1
+    },
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Coaching",
+      "date": "2026-09-24"
+     },
+     "result": "🚫 Absence eingetragen: Coaching (Do 24.09., ganztägig)",
+     "step": 2
+    }
+   ]
+  },
+  {
+   "id": "list->move-2",
+   "mode": "manual",
+   "goal": "Zeig mir meine Erinnerungen und verschieb die Medikamente auf 20 Uhr.",
+   "steps": 2,
+   "calls": [
+    "calendar_list",
+    "calendar_move"
+   ],
+   "goal_completed": false,
+   "why": "15:00 want=20:00",
+   "ms": 454,
+   "error": null,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Medikamente": "2026-09-24T08:00:00"
+   },
+   "db_after": {
+    "Medikamente": "2026-09-23T15:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_list",
+     "args": {
+      "horizon": "today"
+     },
+     "result": "**Do 24.09.**\n• 08:00–09:00 Medikamente (Ich)",
+     "step": 1
+    },
+    {
+     "tool": "calendar_move",
+     "args": {
+      "title": "Medikamente",
+      "date": "2026-09-23",
+      "time": "15:00"
+     },
+     "result": "✏️ Verschoben: Medikamente (Mi 23.09. 15:00–16:00)",
+     "step": 2
+    }
+   ]
+  },
+  {
+   "id": "list->create",
+   "mode": "manual",
+   "goal": "Zeig mir Mittwoch und trag dann 15 Uhr Sport ein.",
+   "steps": 2,
+   "calls": [
+    "calendar_create",
+    "calendar_move"
+   ],
+   "goal_completed": false,
+   "why": "00:00 want=15:00",
+   "ms": 427,
+   "error": null,
+   "extra_calls": 1,
+   "wrong_writes": 0,
+   "db_before": {
+    "Kino": "2026-09-25T19:00:00"
+   },
+   "db_after": {
+    "Sport": "2026-09-24T00:00:00",
+    "Kino": "2026-09-25T19:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_create",
+     "args": {
+      "title": "Sport",
+      "date": "2026-09-24",
+      "until": "2026-09-24"
+     },
+     "result": "🚫 Absence eingetragen: Sport (Do 24.09., ganztägig)",
+     "step": 1
+    },
+    {
+     "tool": "calendar_move",
+     "args": {
+      "title": "Sport",
+      "date": "2026-09-24",
+      "time": "15:00"
+     },
+     "result": "✏️ Verschoben: Sport (Do 24.09., ganztägig)",
+     "step": 2
+    }
+   ]
+  },
+  {
+   "id": "lookup->delete-2",
+   "mode": "manual",
+   "goal": "Prüf meine Termine am Dienstag und lösch den Arztbesuch.",
+   "steps": 1,
+   "calls": [
+    "calendar_delete"
+   ],
+   "goal_completed": true,
+   "why": "absent? gone=['Arztbesuch']",
+   "ms": 303,
+   "error": null,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Arztbesuch": "2026-09-24T14:00:00"
+   },
+   "db_after": {},
+   "trace": [
+    {
+     "tool": "calendar_delete",
+     "args": {
+      "title": "Arztbesuch"
+     },
+     "result": "🗑️ Gelöscht: Arztbesuch (Do 24.09. 14:00–15:00)",
+     "step": 1
+    }
+   ]
+  },
+  {
+   "id": "find->create-3",
+   "mode": "manual",
+   "goal": "Wann habe ich nächste Woche 90 Minuten frei? Leg dort ein Teammeeting an.",
+   "steps": 1,
+   "calls": [
+    "calendar_find_slot"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 489,
+   "error": null,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Workshop": "2026-09-25T10:00:00"
+   },
+   "db_after": {
+    "Workshop": "2026-09-25T10:00:00"
+   },
+   "trace": [
+    {
+     "tool": "calendar_find_slot",
+     "args": {
+      "persons": "Lena",
+      "duration_min": 90
+     },
+     "result": "Free slots:\n• Mi 23.09. 09:00–17:00\n• Do 24.09. 09:00–17:00\n• Fr 25.09. 09:00–17:00\n• Mo 28.09. 09:00–17:00\n• Di 29.09. 09:00–17:00",
+     "step": 1
+    }
+   ]
+  }
+ ]
+}

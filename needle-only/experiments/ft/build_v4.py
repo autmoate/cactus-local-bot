@@ -197,9 +197,14 @@ def main() -> int:
     for name, part in (("train_v4.jsonl", train), ("validation_v4.jsonl", val)):
         (data / name).write_text("\n".join(json.dumps(r, ensure_ascii=False)
                                            for r in part) + "\n", encoding="utf-8")
+    # Mix NACH dem Split aus den tatsächlichen Tags zählen (vorher sums/val-Split=111%-Bug)
+    from collections import Counter as _C
+    tag_train = _C(r["meta"]["v4_kind"] for r in train)
+    tag_val = _C(r["meta"]["v4_kind"] for r in val)
     counts = {"train": len(train), "validation": len(val),
-              "atomic": len(atomic), "multi": len(multi), "negative": len(negatives)}
-    mix = {k: round(counts[k] / counts["train"], 3) for k in ("atomic", "multi", "negative")}
+              "atomic": len(atomic), "multi": len(multi), "negative": len(negatives),
+              "train_by_kind": dict(tag_train), "validation_by_kind": dict(tag_val)}
+    mix = {k: round(tag_train[k] / len(train), 3) for k in ("atomic", "multi", "negative")}
     manifest = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "seed": args.seed, "counts": counts, "mix_train": mix,

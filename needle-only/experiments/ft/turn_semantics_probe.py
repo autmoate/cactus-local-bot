@@ -123,6 +123,36 @@ def isolation(with_reset: bool) -> dict:
                 "db": _titles(store)}
 
 
+def isolation_contract() -> dict:
+    """Robuster Contract-Test (statt Erwartung eines bestimmten Leaks):
+
+    Gleiche DB-Fixture, gleicher Turn — verglichen wird NUR der Kontext-Effekt:
+      frisch:    reset() → complete(turn)
+      verschmutzt: reset() → complete(prev) [nicht ausgeführt] → complete(turn) OHNE reset
+    Abweichung der Calls/Argumente belegt, dass Needle-Historie unabhängige Turns
+    beeinflusst → reset() ist Pflicht.
+    """
+    prev = "Trag morgen 10 Uhr Zahnarzt ein"
+    turns = ["Wie wird das Wetter morgen?", "Lösch Meeting",
+             "Trag übermorgen 9 Uhr Sport ein"]
+    out = []
+    for t in turns:
+        def calls_for(pollute: bool):
+            with tempfile.TemporaryDirectory() as td:
+                store, tools, agent = _new(Path(td))
+                tools["calendar_create"](title="Meeting", date="freitag", time="15 Uhr")
+                agent.reset()
+                if pollute:
+                    agent.complete(prev)          # Kontext setzen, NICHT ausführen
+                got = agent.complete(t).get("function_calls") or []
+                return [(c["name"], c.get("arguments") or {}) for c in got]
+        fresh, polluted = calls_for(False), calls_for(True)
+        out.append({"turn": t, "fresh": fresh, "polluted": polluted,
+                    "diverged": fresh != polluted})
+    return {"prev_context": prev, "turns": out,
+            "diverged_count": sum(r["diverged"] for r in out), "n": len(out)}
+
+
 def main() -> int:
     import os
     print(f"weights={os.environ.get('NEEDLE_WEIGHTS') or 'BASE'}")
@@ -136,6 +166,8 @@ def main() -> int:
     print("\n=== B) Kontext-Isolation (unabhängige Turns) ===")
     print("  MIT reset() :", json.dumps(isolation(True), ensure_ascii=False))
     print("  OHNE reset():", json.dumps(isolation(False), ensure_ascii=False))
+    print("\n=== B2) Isolation-Contract (frisch vs. verschmutzter Kontext) ===")
+    print("  ", json.dumps(isolation_contract(), ensure_ascii=False))
     return 0
 
 

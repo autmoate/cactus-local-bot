@@ -136,3 +136,49 @@ Needle 3 bleibt Forschungsstrang; sein klarer Gewinn (Multi-Call 0.90) ist notie
 Keine Ladder-, Telegram- oder Produktionsmigration, solange das Gate nicht hält.
 Optionaler nächster Challenger: **1 Platform-FT-Run** (kalibrierte Confidence +
 Replay der Needle-Daten + 2-Bit) — nur mit Cactus-Plan/API-Key.
+
+
+---
+
+# Nachtrag — Track B (Agentic) + Korrekturen (eval/doc-hardening, kein Training)
+
+## Korrekturen
+- **v4-Mix** war im Manifest falsch ausgewiesen (Zähler vor, Nenner nach dem
+  Val-Split → 111 %). `build_v4.py` zählt jetzt die tatsächlichen Tags nach dem
+  Split: **71,5 % atomic / 17,8 % multi / 10,7 % negatives** (= geplanter Mix).
+- **A2 zusätzlich differenziert:** der historische 10-Fälle-Score bleibt
+  (`all_actions_correct`), neu daneben `multi_independent` (ohne den dependent
+  Fall `find+create`). Alte Zahlen wurden nicht überschrieben.
+- **Reset-Beweis präzisiert:** nicht mehr ein bestimmter Titel-Leak, sondern der
+  robuste Divergenz-Test (frischer vs. verschmutzter Kontext, gleiche DB):
+  **n2-FT 3/3 divergent, N3-e5 1/3** → `reset()` ist Pflicht.
+- **`--mode run` im `multi_call_bench.py`** ist als **legacy/invalid** markiert
+  (Schema-only-Tools, keine ausführbaren Callables) — native run()-Fähigkeit
+  misst ausschließlich `native_agent_bench.py`.
+
+## Track B — native Agent Capability (10 dependent-chain-Fälle, echte Tools)
+
+| Modell | manual goal_ok | run() goal_ok | wrong_writes | median |
+|---|---|---|---|---|
+| n2-FT seed44 | 0.2 | 0.2 | 0 | ~0.4–0.6 s |
+| N3 Base | 0.1 | 0.1 | **1** (manual) | 0.5–1.5 s |
+| N3-preserve e5 | **0.4** | **0.4** | 0 | ~0.39 s |
+
+**Erkenntnisse**
+1. **`run()` = manual loop** — identische Ergebnisse bei allen drei Modellen.
+   Gate 3: kein messbarer Zusatznutzen der native-Orchestrierung für unsere
+   dependent chains; der Engpass ist das **Resultat-Grounding**, nicht der Loop.
+2. Hauptfehler: richtige Sequenz (`find_slot → create`), aber die **Slot-Zeit aus
+   dem Tool-Resultat wird nicht in den `create`-Call übernommen** → inkorrekt.
+3. **Sicherheit:** N3-Base erzeugte im manuellen Loop **einen falschen Write**;
+   n2-FT und N3-e5: 0. `run()` exponiert nur `results` (kein Argument-Transkript)
+   → für Audits weniger geeignet als der eigene Loop.
+4. dependent chains bleiben damit klar Aufgabe einer höheren Schicht
+   (Gemma-Zerlegung/Planner) — nicht des FT-Modells.
+
+## Entscheidungslage (unverändert)
+
+Kein N3-Kandidat erreicht das Atomic-Gate (bestes 0.886/0.889 vs. 0.95/0.977);
+Track B ergibt keinen run()-Vorteil. **Lokales N3-Tuning bleibt gestoppt**,
+n2-FT + Gemma-Controller + Python bleibt Produktion. Kein Platform-FT,
+keine Telegram-/Ladder-Migration (Budget-Entscheidung des Nutzers).

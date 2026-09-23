@@ -1,0 +1,336 @@
+{
+ "tag": "n2ft-seed44",
+ "mode": "run",
+ "weights": "experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact",
+ "n": 10,
+ "goal_completed": 0.2,
+ "wrong_writes": 0,
+ "extra_calls": 0,
+ "suppressed_calls": 0,
+ "median_steps": 1.0,
+ "median_ms": 410,
+ "rows": [
+  {
+   "id": "find->create",
+   "mode": "run",
+   "goal": "Finde nächste Woche einen freien Slot mit Lisa und trag dort ein Meeting ein.",
+   "steps": 1,
+   "calls": [
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 449,
+   "error": null,
+   "executed": 1,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Zahnarzt": "2026-09-24T10:00:00",
+    "Morgenrunde": "2026-09-25T09:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-24T10:00:00",
+    "Morgenrunde": "2026-09-25T09:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded days'}"
+    }
+   ]
+  },
+  {
+   "id": "list->move",
+   "mode": "run",
+   "goal": "Zeig mir, was diese Woche ansteht, und verschieb den Zahnarzt auf Freitag.",
+   "steps": 2,
+   "calls": [
+    "run()",
+    "run()"
+   ],
+   "goal_completed": true,
+   "why": "2026-09-25T10:00:00 wd=4 want=4",
+   "ms": 644,
+   "error": null,
+   "executed": 2,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Zahnarzt": "2026-09-24T10:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-25T10:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "**Do 24.09.**\n• 10:00–11:00 Zahnarzt (Ich)"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "✏️ Verschoben: Zahnarzt (Fr 25.09. 10:00–11:00)"
+    }
+   ]
+  },
+  {
+   "id": "list->delete",
+   "mode": "run",
+   "goal": "Schau nach, was am Donnerstag ansteht, und lösch den Eintrag.",
+   "steps": 0,
+   "calls": [],
+   "goal_completed": false,
+   "why": "absent? gone=[]",
+   "ms": 104,
+   "error": null,
+   "executed": 0,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Teammeeting": "2026-09-26T09:00:00"
+   },
+   "db_after": {
+    "Teammeeting": "2026-09-26T09:00:00"
+   },
+   "trace": []
+  },
+  {
+   "id": "lookup->time",
+   "mode": "run",
+   "goal": "Prüf meine Termine am Mittwoch und verschieb den Zahnarzt auf 16 Uhr.",
+   "steps": 2,
+   "calls": [
+    "run()",
+    "run()"
+   ],
+   "goal_completed": true,
+   "why": "16:00 want=16:00",
+   "ms": 568,
+   "error": null,
+   "executed": 2,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Zahnarzt": "2026-09-25T10:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-25T16:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "No entries."
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "✏️ Verschoben: Zahnarzt (Fr 25.09. 16:00–17:00)"
+    }
+   ]
+  },
+  {
+   "id": "person->delete",
+   "mode": "run",
+   "goal": "Was hat Lisa diese Woche? Sag ihren Freitagstermin ab.",
+   "steps": 1,
+   "calls": [
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "absent? gone=[]",
+   "ms": 306,
+   "error": null,
+   "executed": 1,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Yoga mit Lisa": "2026-09-27T18:00:00"
+   },
+   "db_after": {
+    "Yoga mit Lisa": "2026-09-27T18:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "No entries."
+    }
+   ]
+  },
+  {
+   "id": "find->create-2",
+   "mode": "run",
+   "goal": "Finde einen freien Slot für mich am Montag und trag einen Termin 'Coaching' ein.",
+   "steps": 2,
+   "calls": [
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 710,
+   "error": null,
+   "executed": 2,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Friseur": "2026-09-30T11:00:00"
+   },
+   "db_after": {
+    "Friseur": "2026-09-30T11:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "Free slots:\n• Mi 23.09. 09:00–17:00\n• Do 24.09. 09:00–17:00\n• Fr 25.09. 09:00–17:00\n• Mo 28.09. 09:00–17:00\n• Di 29.09. 09:00–17:00"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "❌ Zeitangabe nicht verstanden: None"
+    }
+   ]
+  },
+  {
+   "id": "list->move-2",
+   "mode": "run",
+   "goal": "Zeig mir meine Erinnerungen und verschieb die Medikamente auf 20 Uhr.",
+   "steps": 1,
+   "calls": [
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "08:00 want=20:00",
+   "ms": 409,
+   "error": null,
+   "executed": 1,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Medikamente": "2026-09-24T08:00:00"
+   },
+   "db_after": {
+    "Medikamente": "2026-09-24T08:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "**Do 24.09.**\n• 08:00–09:00 Medikamente (Ich)"
+    }
+   ]
+  },
+  {
+   "id": "list->create",
+   "mode": "run",
+   "goal": "Zeig mir Mittwoch und trag dann 15 Uhr Sport ein.",
+   "steps": 2,
+   "calls": [
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 410,
+   "error": null,
+   "executed": 2,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Kino": "2026-09-25T19:00:00"
+   },
+   "db_after": {
+    "Kino": "2026-09-25T19:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "No entries."
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "❌ Zeitangabe nicht verstanden: None 15 Uhr"
+    }
+   ]
+  },
+  {
+   "id": "lookup->delete-2",
+   "mode": "run",
+   "goal": "Prüf meine Termine am Dienstag und lösch den Arztbesuch.",
+   "steps": 0,
+   "calls": [],
+   "goal_completed": false,
+   "why": "absent? gone=[]",
+   "ms": 98,
+   "error": null,
+   "executed": 0,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Arztbesuch": "2026-09-24T14:00:00"
+   },
+   "db_after": {
+    "Arztbesuch": "2026-09-24T14:00:00"
+   },
+   "trace": []
+  },
+  {
+   "id": "find->create-3",
+   "mode": "run",
+   "goal": "Wann habe ich nächste Woche 90 Minuten frei? Leg dort ein Teammeeting an.",
+   "steps": 1,
+   "calls": [
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 394,
+   "error": null,
+   "executed": 1,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Workshop": "2026-09-25T10:00:00"
+   },
+   "db_after": {
+    "Workshop": "2026-09-25T10:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded days'}"
+    }
+   ]
+  }
+ ]
+}

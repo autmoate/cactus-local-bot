@@ -5,6 +5,11 @@ Misst Call-Anzahl, Reihenfolge, Tool- und Argument-Treffer, "alle Aktionen
 korrekt" und Latenz. Venv-agnostisch (nur `import needle`) — läuft mit
 needle 2 (FT) und needle 3 (Base/FT).
 
+DEPENDENT_IDS = {"find+create"}   # braucht ein Tool-RESULTAT -> kein One-shot-Multi
+
+Hinweis: `--mode run` ist LEGACY und für Vergleiche ungeeignet (Schema-only-Tools,
+keine ausführbaren Callables) — native run()-Fähigkeit misst `native_agent_bench.py`.
+
 Usage:
   # needle2-FT
   NEEDLE_WEIGHTS=experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact \
@@ -119,7 +124,8 @@ def main() -> int:
         tool_ok = sorted(g[0] for g in got) == sorted(w[0] for w in want)
         args_ok = (len(got) == len(want)
                    and all(_arg_hit(g[1], w[1]) for g, w in zip(got, want)))
-        rows.append({"id": case["id"], "confidence": resp.get("confidence"),
+        rows.append({"id": case["id"], "dependent": case["id"] in DEPENDENT_IDS,
+                     "confidence": resp.get("confidence"),
                      "n_calls": len(got), "want_calls": len(want),
                      "n_ok": n_ok, "order_ok": order_ok, "tool_ok": tool_ok,
                      "args_ok": args_ok, "all_ok": n_ok and order_ok and args_ok,
@@ -143,6 +149,15 @@ def main() -> int:
         "median_ms": round(statistics.median(r["ms"] for r in rows)),
         "rows": rows,
     }
+    ind = [r for r in rows if not r["dependent"]]
+    dep = [r for r in rows if r["dependent"]]
+    if ind:
+        summary["independent_all_actions"] = round(
+            sum(r["all_ok"] for r in ind) / len(ind), 3)
+        summary["independent_n"] = len(ind)
+    if dep:
+        summary["dependent_all_actions"] = round(
+            sum(r["all_ok"] for r in dep) / len(dep), 3)
     confs = [r["confidence"] for r in rows if r.get("confidence") is not None]
     if confs:
         summary["confidence"] = {
@@ -150,9 +165,12 @@ def main() -> int:
             "share_below_0.3": round(sum(1 for c in confs if c < 0.3) / len(confs), 3)}
     out = FT_DIR / "reports" / f"multicall_{args.tag}.json"
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=1))
-    print(f"\n[{args.tag}] call_count {summary['call_count_ok']} · order {summary['order_ok']}"
-          f" · tool {summary['tool_ok']} · args {summary['args_ok']}"
-          f" · **all_actions_correct {summary['all_actions_correct']}** · {summary['median_ms']}ms")
+    print(f"\n[{args.tag}] [legacy 10] all {summary['all_actions_correct']}"
+          f" · [independent {summary.get('independent_n','-')}] "
+          f"{summary.get('independent_all_actions','-')}"
+          f" (dependent {summary.get('dependent_all_actions','-')})"
+          f" · call_count {summary['call_count_ok']} · order {summary['order_ok']}"
+          f" · {summary['median_ms']}ms")
     print(f"  -> {out}")
     return 0
 

@@ -1,0 +1,779 @@
+{
+ "tag": "n3-base",
+ "mode": "run",
+ "weights": null,
+ "n": 10,
+ "goal_completed": 0.1,
+ "wrong_writes": 0,
+ "extra_calls": 0,
+ "suppressed_calls": 0,
+ "median_steps": 8.0,
+ "median_ms": 1515,
+ "rows": [
+  {
+   "id": "find->create",
+   "mode": "run",
+   "goal": "Finde nächste Woche einen freien Slot mit Lisa und trag dort ein Meeting ein.",
+   "steps": 2,
+   "calls": [
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 642,
+   "error": null,
+   "executed": 2,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Zahnarzt": "2026-09-24T10:00:00",
+    "Morgenrunde": "2026-09-25T09:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-24T10:00:00",
+    "Morgenrunde": "2026-09-25T09:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "Free slots:\n• Mi 23.09. 09:00–17:00\n• Do 24.09. 09:00–17:00\n• Fr 25.09. 09:00–17:00\n• Mo 28.09. 09:00–17:00\n• Di 29.09. 09:00–17:00"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "❌ Zeitangabe nicht verstanden: None"
+    }
+   ]
+  },
+  {
+   "id": "list->move",
+   "mode": "run",
+   "goal": "Zeig mir, was diese Woche ansteht, und verschieb den Zahnarzt auf Freitag.",
+   "steps": 12,
+   "calls": [
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "2026-09-24T10:00:00 wd=3 want=4",
+   "ms": 1814,
+   "error": null,
+   "executed": 12,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Zahnarzt": "2026-09-24T10:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-24T10:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 3,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 4,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 5,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 6,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 7,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 8,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 9,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 10,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 11,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 12,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    }
+   ]
+  },
+  {
+   "id": "list->delete",
+   "mode": "run",
+   "goal": "Schau nach, was am Donnerstag ansteht, und lösch den Eintrag.",
+   "steps": 2,
+   "calls": [
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "absent? gone=[]",
+   "ms": 396,
+   "error": null,
+   "executed": 2,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Teammeeting": "2026-09-26T09:00:00"
+   },
+   "db_after": {
+    "Teammeeting": "2026-09-26T09:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "Free slots:\n• Mi 23.09. 09:00–17:00\n• Do 24.09. 09:00–17:00\n• Fr 25.09. 09:00–17:00\n• Mo 28.09. 09:00–17:00\n• Di 29.09. 09:00–17:00"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "❌ Kein Eintrag 'Eintrag' gefunden."
+    }
+   ]
+  },
+  {
+   "id": "lookup->time",
+   "mode": "run",
+   "goal": "Prüf meine Termine am Mittwoch und verschieb den Zahnarzt auf 16 Uhr.",
+   "steps": 8,
+   "calls": [
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "10:00 want=16:00",
+   "ms": 1488,
+   "error": null,
+   "executed": 8,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Zahnarzt": "2026-09-25T10:00:00"
+   },
+   "db_after": {
+    "Zahnarzt": "2026-09-25T10:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 3,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 4,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 5,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 6,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 7,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 8,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    }
+   ]
+  },
+  {
+   "id": "person->delete",
+   "mode": "run",
+   "goal": "Was hat Lisa diese Woche? Sag ihren Freitagstermin ab.",
+   "steps": 8,
+   "calls": [
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "absent? gone=[]",
+   "ms": 1908,
+   "error": null,
+   "executed": 8,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Yoga mit Lisa": "2026-09-27T18:00:00"
+   },
+   "db_after": {
+    "Yoga mit Lisa": "2026-09-27T18:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, days, until'}"
+    },
+    {
+     "step": 3,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, days, until'}"
+    },
+    {
+     "step": 4,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, days, until'}"
+    },
+    {
+     "step": 5,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, days, until'}"
+    },
+    {
+     "step": 6,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, days, until'}"
+    },
+    {
+     "step": 7,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, days, until'}"
+    },
+    {
+     "step": 8,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, days, until'}"
+    }
+   ]
+  },
+  {
+   "id": "find->create-2",
+   "mode": "run",
+   "goal": "Finde einen freien Slot für mich am Montag und trag einen Termin 'Coaching' ein.",
+   "steps": 9,
+   "calls": [
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 1524,
+   "error": null,
+   "executed": 9,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Friseur": "2026-09-30T11:00:00"
+   },
+   "db_after": {
+    "Friseur": "2026-09-30T11:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, persons'}"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 3,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, persons'}"
+    },
+    {
+     "step": 4,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, persons'}"
+    },
+    {
+     "step": 5,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, persons'}"
+    },
+    {
+     "step": 6,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, persons'}"
+    },
+    {
+     "step": 7,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, persons'}"
+    },
+    {
+     "step": 8,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, persons'}"
+    },
+    {
+     "step": 9,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, persons'}"
+    }
+   ]
+  },
+  {
+   "id": "list->move-2",
+   "mode": "run",
+   "goal": "Zeig mir meine Erinnerungen und verschieb die Medikamente auf 20 Uhr.",
+   "steps": 9,
+   "calls": [
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "08:00 want=20:00",
+   "ms": 1500,
+   "error": null,
+   "executed": 9,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Medikamente": "2026-09-24T08:00:00"
+   },
+   "db_after": {
+    "Medikamente": "2026-09-24T08:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "**Do 24.09.**\n• 08:00–09:00 Medikamente (Ich)"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 3,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 4,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 5,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 6,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 7,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 8,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 9,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    }
+   ]
+  },
+  {
+   "id": "list->create",
+   "mode": "run",
+   "goal": "Zeig mir Mittwoch und trag dann 15 Uhr Sport ein.",
+   "steps": 9,
+   "calls": [
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 1575,
+   "error": null,
+   "executed": 9,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Kino": "2026-09-25T19:00:00"
+   },
+   "db_after": {
+    "Kino": "2026-09-25T19:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 3,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 4,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 5,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 6,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 7,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 8,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    },
+    {
+     "step": 9,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, until'}"
+    }
+   ]
+  },
+  {
+   "id": "lookup->delete-2",
+   "mode": "run",
+   "goal": "Prüf meine Termine am Dienstag und lösch den Arztbesuch.",
+   "steps": 8,
+   "calls": [
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()"
+   ],
+   "goal_completed": true,
+   "why": "absent? gone=['Arztbesuch']",
+   "ms": 1637,
+   "error": null,
+   "executed": 8,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Arztbesuch": "2026-09-24T14:00:00"
+   },
+   "db_after": {},
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "🗑️ Gelöscht: Arztbesuch (Do 24.09. 14:00–15:00)"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 3,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 4,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 5,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 6,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 7,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    },
+    {
+     "step": 8,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date'}"
+    }
+   ]
+  },
+  {
+   "id": "find->create-3",
+   "mode": "run",
+   "goal": "Wann habe ich nächste Woche 90 Minuten frei? Leg dort ein Teammeeting an.",
+   "steps": 8,
+   "calls": [
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()",
+    "run()"
+   ],
+   "goal_completed": false,
+   "why": "neuer Termin fehlt",
+   "ms": 1506,
+   "error": null,
+   "executed": 8,
+   "suppressed": 0,
+   "extra_calls": 0,
+   "wrong_writes": 0,
+   "db_before": {
+    "Workshop": "2026-09-25T10:00:00"
+   },
+   "db_after": {
+    "Workshop": "2026-09-25T10:00:00"
+   },
+   "trace": [
+    {
+     "step": 1,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded persons'}"
+    },
+    {
+     "step": 2,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, participants, time, until'}"
+    },
+    {
+     "step": 3,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 4,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 5,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 6,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 7,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    },
+    {
+     "step": 8,
+     "tool": "run()",
+     "args": "",
+     "result": "{'error': 'ungrounded date, time'}"
+    }
+   ]
+  }
+ ]
+}

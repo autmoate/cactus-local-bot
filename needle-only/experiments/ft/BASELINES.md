@@ -11,7 +11,7 @@ begründet sein.
 |---|---|
 | Dataset **v2** | `data/train.jsonl` — 10 000 atomare Beispiele (5 Produktionstools, sparse Gold) |
 | Dataset **v3** | `data/train_v3.jsonl` — v2 + ~25 % unabhängige Multi-Calls |
-| Dataset **v4** | `data/train_v4.jsonl` — Preservation-Mix: ~79 % atomic / 20 % multi / 12 % negatives+near-neg (25 072) |
+| Dataset **v4** | `data/train_v4.jsonl` — Preservation-Mix: 71.5 % atomic / 17.8 % multi / 10.7 % negatives+near-neg (25 072; nach Split korrekt gezählt) |
 | Modell **n2-FT** | Needle 2, LoRA auf v2, 8 Epochen (SOTA/Produktionsreferenz) |
 | Modell **n3-atomic** | Needle 3 auf v2 (`n3-v2-*`) |
 | Modell **n3-mixed** | Needle 3 auf v3 (`n3-v3-*`) |
@@ -62,13 +62,51 @@ final_db        >= n2-FT
 Ausführen: `PYTHONPATH=src .venv-ft3/bin/python experiments/ft/promotion_gate.py <tags…>`
 (Exit 0, sobald ein Kandidat das Gate hält.)
 
+## Evaluationspyramide (drei getrennte Ebenen, unveränderliche Vergleichslinie)
+
+```
+C  Production E2E            final_db_ok (echter Agent → Resolver → SQLite)
+B  Agentic capability        manual loop  vs  run()   (echte Tools, dependent chains)
+A  Model capability          A1 atomic complete()  ·  A2 independent multi complete()
+```
+
+- **A1/A2 sind eingefroren:** immer `reset()` → `complete(...)`; `base_eval.py`
+  (1800 Test + Challenge) und `multi_call_bench.py` bleiben die Messlatte. `run()`
+  kommt hier **nie** hinein.
+- **A2-Nachtrag (ohne alte Zahlen zu ändern):** `all_actions_correct` bleibt der
+  historische 10-Fälle-Score („legacy"); zusätzlich wird `multi_independent`
+  ausgewiesen (ohne den dependent Fall `find+create`).
+- **B ist neu und ersetzt A nicht:** `native_agent_bench.py` mit echten
+  `build_tools(store)`-Callables, nur dependent chains, frischer Fixture.
+- **C entscheidet über Produktion:** `tests/test_e2e.py` → `final_db_ok`.
+
+### Track B — Ergebnis (10 dependent-chain-Fälle)
+
+| Modell | manual goal_ok | run() goal_ok | wrong_writes | Bemerkung |
+|---|---|---|---|---|
+| n2-FT seed44 | 0.2 | 0.2 | 0 | Sequenz teils ja, Resultat-Grounding nein |
+| N3 Base | 0.1 | 0.1 | **1 (manual)** | Sicherheitshinweis: falscher Write möglich |
+| N3-preserve e5 | **0.4** | **0.4** | 0 | bester N3; scheitert v. a. `find_slot → create` |
+
+**Gate 3 beantwortet:** `run()` bringt bei diesen dependent chains **keinen**
+messbaren Vorteil gegenüber dem kontrollierten `complete → execute → complete`-Loop
+(identische Scores). Häufigster Fehler: das Modell führt die richtige **Sequenz**
+aus, überträgt aber das Tool-Resultat (Slot-Zeit) nicht in den Folge-Call.
+Zusätzlich: `run()` exponiert **kein** per-Call-Argument-Transkript (nur `results` +
+`suppressed_calls`) → schlechter auditierbar als der eigene Loop.
+
 ## Turn-Semantik (Plan Phase 8/9) — bewiesen
 
 `experiments/ft/turn_semantics_probe.py` (Ergebnis: `reports/turn_semantics_n2ft-seed44.txt`):
 
-- **Kontext-Isolation:** mit `reset()` vor jedem unabhängigen Turn → **kein** Fremd-Leak.
-  **Ohne** `reset()` leakt der Titel aus Turn A in Turn C und löscht den falschen
-  Eintrag (`foreign_leak = ["zahnarzt"]`, DB danach leer) → **reset() ist Pflicht**.
+- **Kontext-Isolation (robuster Contract-Test, keine Erwartung eines bestimmten
+  Leaks):** derselbe Turn einmal mit **frischem** Agent und einmal mit
+  **verschmutztem** Kontext (vorheriger Turn ohne `reset`, DB identisch).
+  Ergebnis: **n2-FT divergiert in 3/3 Turns**, N3-preserve e5 in 1/3 → die
+  Needle-Historie beeinflusst unabhängige Turns messbar → **`reset()` ist Pflicht**.
+  (Frühere Einzelläufe zeigten die Wirkung exemplarisch, z. B. ein verfälschtes
+  Title-Argument wie „wiederdas" ohne Reset — die konkrete Fehlform variiert,
+  deshalb jetzt der Divergenz-Test statt eines Titel-Leak-Kriteriums.)
 - **Dependent chains:** weder manueller `complete → execute → complete(result)`-Loop
   noch `run()` lösen `find_slot → create` (n2-FT): es bleibt beim ersten Call.
   Solche Ketten brauchen weiterhin eine höhere Schicht (Gemma) — nicht ins FT.

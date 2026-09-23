@@ -83,7 +83,15 @@ def load(tag: str, neg: set[str]) -> dict:
         m["multi_call_count"] = mc.get("call_count_ok")
         m["multi_order"] = mc.get("order_ok")
         m["multi_args"] = mc.get("args_ok")
-        m["multi_all"] = mc.get("all_actions_correct")
+        m["multi_all"] = mc.get("all_actions_correct")   # legacy: alle 10 Fälle
+        # A2 sauber: nur unabhängige Calls (dependent chains gehören in Track B)
+        if "independent_all_actions" in mc:
+            m["multi_independent"] = mc["independent_all_actions"]
+        else:
+            ind = [r for r in mc.get("rows", []) if not r.get("dependent")]
+            if ind:
+                m["multi_independent"] = round(
+                    sum(r["all_ok"] for r in ind) / len(ind), 3)
     if e2e_p.exists():
         e = json.loads(e2e_p.read_text())
         m["final_db"] = e.get("final_db_ok")
@@ -104,7 +112,7 @@ def main() -> int:
 
     print("\n=== Vollständiger Metrik-Report (je Achse getrennt) ===")
     hdr = (f"{'tag':26s} {'atomic':>18s} {'challenge':>13s} {'multi(all)':>10s} "
-           f"{'negRef':>7s} {'falseRef(n/%)':>15s} {'final_db':>9s} {'ms':>6s}")
+           f"{'negRef':>7s} {'falseRef(n/%)':>15s} {'final_db':>9s} {'ms':>6s} {'multInd':>8s}")
     print(hdr)
     print(f"{'':26s} {'tool/args/exact':>18s} {'args/exact':>13s}")
     for t, m in models.items():
@@ -113,7 +121,8 @@ def main() -> int:
               f"{fmt(m.get('ch_args_ok'))}/{fmt(m.get('ch_exact'))} "
               f"{fmt(m.get('multi_all'))} {fmt(m.get('neg_refusal_rate'))} "
               f"{str(m.get('false_refusal_n'))+'/'+format(m['false_refusal_rate']*100, '.2f')+'%' if m.get('false_refusal_rate') is not None else '  –  '} "
-              f"{fmt(m.get('final_db'))} {m.get('median_ms','–')}")
+              f"{fmt(m.get('final_db'))} {m.get('median_ms','–')} "
+              f"{fmt(m.get('multi_independent'))}")
 
     print("\n=== Promotion-Gate (Ziel: ein Needle-3-Kandidat) ===")
     any_pass = False
