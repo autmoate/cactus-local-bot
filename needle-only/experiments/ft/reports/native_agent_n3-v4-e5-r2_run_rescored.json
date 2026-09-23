@@ -1,0 +1,104 @@
+{
+ "tag": "n3-v4-e5-r2",
+ "mode": "run",
+ "n": 10,
+ "goal_completed": 0.0,
+ "write_attempts": 14,
+ "failed_write_attempts": 14,
+ "successful_mutations": 0,
+ "wrong_mutations": 0,
+ "old_wrong_writes": 11,
+ "old_extra_writes": 11,
+ "rows": [
+  {
+   "id": "find->create-slot",
+   "goal_completed": false,
+   "write_attempts": 0,
+   "failed_write_attempts": 0,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "list->delete-title",
+   "goal_completed": false,
+   "write_attempts": 1,
+   "failed_write_attempts": 1,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "list-person->delete",
+   "goal_completed": false,
+   "write_attempts": 0,
+   "failed_write_attempts": 0,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "list->move-time",
+   "goal_completed": false,
+   "write_attempts": 1,
+   "failed_write_attempts": 1,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "list->move-day",
+   "goal_completed": false,
+   "write_attempts": 1,
+   "failed_write_attempts": 1,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "find->create-90",
+   "goal_completed": false,
+   "write_attempts": 0,
+   "failed_write_attempts": 0,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "list->delete-2",
+   "goal_completed": false,
+   "write_attempts": 9,
+   "failed_write_attempts": 9,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "find-person->create",
+   "goal_completed": false,
+   "write_attempts": 1,
+   "failed_write_attempts": 1,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "list->move-2",
+   "goal_completed": false,
+   "write_attempts": 0,
+   "failed_write_attempts": 0,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  },
+  {
+   "id": "list->delete-3",
+   "goal_completed": false,
+   "write_attempts": 1,
+   "failed_write_attempts": 1,
+   "successful_mutations": 0,
+   "correct_mutations": 0,
+   "wrong_mutations": 0
+  }
+ ]
+}

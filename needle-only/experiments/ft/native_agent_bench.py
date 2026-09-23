@@ -38,6 +38,7 @@ import needle  # noqa: E402
 from local_calendar import calendar as cal  # noqa: E402
 from local_calendar.agent import build_tools  # noqa: E402
 from local_calendar.calendar import CalendarStore  # noqa: E402
+import eval_mutations as mut  # noqa: E402
 
 # check-Typen: created_in_slots | created_at_time | moved_to_time | moved_to_day | absent
 # fixture: (title, "morgen"|"übermorgen", "HH:MM", participants|"")
@@ -159,6 +160,7 @@ def run_case(case, mode: str, weights: str | None) -> dict:
     for title, day, hm, persons in case["fixture"]:
         raw["calendar_create"](title=title, date=day, time=hm, participants=persons)
     before = _db(store)
+    before_snap = mut.snapshot(store)
     agent = needle.Needle(tools=list(tools.values()), system=f"date: {cal.now().date()}",
                           weights=weights)
     agent.reset()
@@ -182,20 +184,32 @@ def run_case(case, mode: str, weights: str | None) -> dict:
             calls = agent.complete(json.dumps(results, ensure_ascii=False)).get("function_calls") or []
     ms = round((time.perf_counter() - t0) * 1000)
     after = _db(store)
+    after_snap = mut.snapshot(store)
     ok, why = _check(case, before, after, trace)
     writes = [t for t in trace if t["tool"] in
               ("calendar_create", "calendar_move", "calendar_delete")]
     failed = [t for t in writes if ("❌" in t["result"] or "Error" in t["result"]
                                      or "Fehler" in t["result"])]
-    expect_writes = 0 if case["check"] == "absent" else 1
+    # real DB mutations (ground truth), not write-call attempts: a rejected
+    # delete leaves the DB untouched and must NOT count as a wrong write;
+    # an expected delete IS a wanted mutation (user review Sep 24).
+    diff = mut.db_diff(before_snap, after_snap)
+    if case["check"] == "absent":
+        present_specs, absent = [], [case["want_title"]]
+    else:
+        present_specs, absent = [(case["want_title"], "", "", "")], []
+    correct_mut, wrong_mut = mut.classify(diff, present_specs, absent)
     return {"id": case["id"], "mode": mode, "goal": case["goal"],
             "steps": len(trace), "calls": [t["tool"] for t in trace],
             "args": [t["args"] for t in trace],
             "goal_completed": ok, "why": why, "ms": ms, "error": error,
-            "writes": len(writes), "extra_writes": max(0, len(writes) - expect_writes),
-            "failed_writes": len(failed),
-            "wrong_writes": max(0, len(writes) - expect_writes),
-            "db_before": before, "db_after": after, "trace": trace}
+            "write_attempts": len(writes),
+            "failed_write_attempts": len(failed),
+            "successful_mutations": mut.mutation_count(diff),
+            "correct_mutations": correct_mut, "wrong_mutations": wrong_mut,
+            "db_before": before, "db_after": after,
+            "db_before_snap": before_snap, "db_after_snap": after_snap,
+            "trace": trace}
 
 
 def main() -> int:
@@ -210,20 +224,24 @@ def main() -> int:
     n = len(rows)
     summary = {"tag": args.tag, "mode": args.mode, "weights": weights, "n": n,
                "goal_completed": round(sum(r["goal_completed"] for r in rows) / n, 3),
-               "wrong_writes": sum(r["wrong_writes"] for r in rows),
-               "failed_writes": sum(r["failed_writes"] for r in rows),
-               "extra_writes": sum(r["extra_writes"] for r in rows),
+               "write_attempts": sum(r["write_attempts"] for r in rows),
+               "failed_write_attempts": sum(r["failed_write_attempts"] for r in rows),
+               "successful_mutations": sum(r["successful_mutations"] for r in rows),
+               "wrong_mutations": sum(r["wrong_mutations"] for r in rows),
                "median_steps": st.median(r["steps"] for r in rows),
                "median_ms": round(st.median(r["ms"] for r in rows)), "rows": rows}
     out = HERE / "reports" / f"native_agent_{args.tag}_{args.mode}.json"
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=1))
     for r in rows:
         print(f"  {'OK ' if r['goal_completed'] else 'FAIL'} {r['id']:<20} "
-              f"steps={r['steps']} writes={r['writes']} wrong={r['wrong_writes']} "
+              f"steps={r['steps']} wr_att={r['write_attempts']} "
+              f"succ_mut={r['successful_mutations']} wrong_mut={r['wrong_mutations']} "
               f"{r['ms']}ms {r['calls']} | {r['why']}"
               + (f" | err={r['error']}" if r["error"] else ""))
     print(f"[{args.tag}/{args.mode}] goal_completed {summary['goal_completed']} "
-          f"· wrong_writes {summary['wrong_writes']} · median {summary['median_ms']}ms")
+          f"· write_attempts {summary['write_attempts']} "
+          f"· successful_mutations {summary['successful_mutations']} "
+          f"· wrong_mutations {summary['wrong_mutations']} · median {summary['median_ms']}ms")
     return 0
 
 

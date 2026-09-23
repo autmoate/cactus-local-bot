@@ -100,7 +100,9 @@ def matrix_free_slots(store, persons: list[str], first_day: date, last_day: date
     return slots
 
 
-def _fixture(seed: int, persons: int, days: int) -> cal.CalendarStore:
+def _fixture(seed: int, persons: int, days: int, offgrid: bool = False):
+    """Random fixtures. offgrid=True adds non-15min times, odd durations and
+    day-boundary/all-day/multi-day/weekend/overlap cases."""
     rng = random.Random(seed)
     store = cal.CalendarStore(Path(tempfile.mkdtemp()) / "avail.db")
     names = ["Lisa", "Max", "Jana", "Peter", "Sophie", "Tim", "Lena", "Jonas"][:persons]
@@ -109,15 +111,57 @@ def _fixture(seed: int, persons: int, days: int) -> cal.CalendarStore:
         p = rng.choice(names)
         day = today + timedelta(days=rng.randint(0, days - 1))
         h0 = rng.choice([9, 10, 11, 13, 14, 15, 16])
-        dur = rng.choice([30, 60, 90, 120])
-        t = datetime.combine(day, time(h0, 0))
+        if offgrid:
+            minute = rng.choice([0, 5, 10, 17, 23, 41, 50])
+            dur = rng.choice([20, 35, 45, 70, 110])
+        else:
+            minute, dur = 0, rng.choice([30, 60, 90, 120])
+        t = datetime.combine(day, time(h0, minute))
         store.add(cal.CalendarEvent(title=f"T{rng.randint(0, 9)}", start=t,
                                     end=t + timedelta(minutes=dur), participants=[p]))
+    if offgrid:
+        d0 = today
+        edge = [
+            ("edge_early", datetime.combine(d0, time(8, 50)),
+             datetime.combine(d0, time(9, 20)), [names[0]]),
+            ("edge_late", datetime.combine(d0, time(16, 40)),
+             datetime.combine(d0, time(17, 10)), [names[0]]),
+            ("all_day", datetime.combine(d0 + timedelta(days=1), time(0, 0)),
+             datetime.combine(d0 + timedelta(days=2), time(0, 0)), [names[0]]),
+            ("multi_day", datetime.combine(d0 + timedelta(days=2), time(9, 7)),
+             datetime.combine(d0 + timedelta(days=4), time(12, 3)),
+             [names[min(1, persons - 1)]]),
+            ("weekend", datetime.combine(d0 + timedelta(days=5), time(10, 13)),
+             datetime.combine(d0 + timedelta(days=5), time(11, 47)),
+             [names[0]]),
+            ("overlap", datetime.combine(d0, time(11, 5)),
+             datetime.combine(d0, time(12, 50)),
+             [names[min(1, persons - 1)]]),
+        ]
+        for title, s, e, parts in edge:
+            store.add(cal.CalendarEvent(title=title, start=s, end=e, participants=parts))
     return store, names
 
 
+def _slot_is_genuinely_free(store, persons, slots) -> bool:
+    """Safety property: a slot the matrix calls free must not overlap any
+    real event of any person inside the work window."""
+    for s, e in slots:
+        for p in persons:
+            for ev in store.events_between(s - timedelta(days=1), e + timedelta(days=1),
+                                           person=p):
+                if ev.start < e and ev.end > s:
+                    return False
+    return True
+
+
+def _free_minutes(slots) -> int:
+    return sum(int((e - s).total_seconds() // 60) for s, e in slots)
+
+
 def selftest(n: int = 60) -> int:
-    mism = 0
+    # 1) on-grid: must be IDENTICAL to the interval logic
+    grid_mism = 0
     for seed in range(n):
         rng = random.Random(seed)
         persons = rng.randint(1, 4)
@@ -129,14 +173,40 @@ def selftest(n: int = 60) -> int:
         b = [(s.isoformat(), e.isoformat()) for s, e in
              matrix_free_slots(store, names, first, last, duration_min=60)]
         if a != b:
-            mism += 1
-            if mism <= 3:
-                print(f"  MISMATCH seed={seed} persons={names} days={days}")
-                print(f"    interval: {a[:3]}")
-                print(f"    matrix  : {b[:3]}")
-    print(f"selftest: {n - mism}/{n} identisch zur Intervall-Logik"
-          + (" ✓" if mism == 0 else " ✗"))
-    return 0 if mism == 0 else 1
+            grid_mism += 1
+            if grid_mism <= 3:
+                print(f"  GRID MISMATCH seed={seed} persons={names} days={days}")
+    print(f"on-grid  : {n - grid_mism}/{n} identisch zur Intervall-Logik"
+          + (" ✓" if grid_mism == 0 else " ✗"))
+
+    # 2) off-grid/edge: the matrix may be MORE conservative (round up busy),
+    #    but must NEVER invent freedom. Report how often it differs.
+    unsafe = 0
+    conservative = 0
+    conservative_5 = 0
+    for seed in range(n):
+        rng = random.Random(seed)
+        persons = rng.randint(1, 4)
+        days = rng.choice([3, 5, 7, 14])
+        store, names = _fixture(seed, persons, days, offgrid=True)
+        first, last = cal.now().date(), cal.now().date() + timedelta(days=days - 1)
+        a = cal.find_free_slots(store, names, first, last, duration_min=60)
+        b = matrix_free_slots(store, names, first, last, duration_min=60)
+        b5 = matrix_free_slots(store, names, first, last, duration_min=60,
+                               slot_minutes=5)
+        if not _slot_is_genuinely_free(store, names, b):
+            unsafe += 1
+        if _free_minutes(a) > _free_minutes(b):
+            conservative += 1
+        if _free_minutes(a) > _free_minutes(b5):
+            conservative_5 += 1
+    print(f"off-grid : {n} Fixtures · {unsafe} unsichere Freiräume (muss 0 sein)"
+          + (" ✓" if unsafe == 0 else " ✗")
+          + f" · konservativer ggü. exakt: 15-min {conservative}/{n}, 5-min {conservative_5}/{n}")
+    ok = grid_mism == 0 and unsafe == 0
+    print("Hinweis: 15-min-Raster ist bewusst konservativ; beliebige Minuten "
+          "brauchen ein feineres Raster (z. B. 5 min) oder die Intervall-Logik.")
+    return 0 if ok else 1
 
 
 def bench(reps: int = 40) -> int:

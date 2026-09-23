@@ -41,6 +41,7 @@ from local_calendar import calendar as cal  # noqa: E402
 from local_calendar.agent import build_tools  # noqa: E402
 from local_calendar.calendar import CalendarStore  # noqa: E402
 from arch_cases import build_cases, _iso  # noqa: E402
+import eval_mutations as mut  # noqa: E402
 
 WRITES = ("calendar_create", "calendar_move", "calendar_delete")
 READS = ("calendar_list", "calendar_find_slot")
@@ -55,7 +56,8 @@ def _wrap(tools, trace):
                     res = fn(**args)
                 except Exception as exc:  # noqa: BLE001
                     res = f"{type(exc).__name__}: {exc}"
-                trace.append({"tool": name, "args": args, "result": str(res)[:200]})
+                # keep enough result text to validate read answers (titles+dates)
+                trace.append({"tool": name, "args": args, "result": str(res)[:600]})
                 return res
             return call
         w = make(fn, name)
@@ -69,35 +71,55 @@ def _events(store):
     return store.events_between(cal.now() - timedelta(days=3), cal.now() + timedelta(days=70))
 
 
-def _match(ev, title, day, hm, persons):
-    if title.lower() not in ev.title.lower():
-        return False
-    if day and ev.start.date().isoformat() != _iso(day):
-        return False
-    if hm and ev.start.strftime("%H:%M") != hm:
-        return False
-    if persons and not any(p.lower() in [x.lower() for x in ev.participants] for p in persons.split(",")):
-        return False
-    return True
+def _specs(present):
+    """(title, day, hm, persons) with symbolic days resolved to ISO."""
+    return [(t, _iso(d) if d else "", hm, p) for (t, d, hm, p) in present]
 
 
-def _check(expect, before, after, trace):
+def _failed(attempt):
+    r = attempt.get("result", "") or ""
+    return "❌" in r or "Error" in r or "Fehler" in r
+
+
+def _check(expect, before: dict, after: dict, trace) -> dict:
+    """Return {ok, missed, correct_mutations, wrong_mutations, why}.
+
+    no_writes/ambiguous now also validate the READ answer content — 'no write
+    happened' alone is not success. Write goals classify real DB mutations
+    (diff), so a create-instead-of-delete is a wrong_mutation even when the
+    call count matches (user review Sep 24).
+    """
+    diff = mut.db_diff(before, after)
     writes = [t for t in trace if t["tool"] in WRITES]
+    present = expect.get("present", [])
+    absent = expect.get("absent", [])
     if expect.get("ambiguous") or expect.get("no_writes"):
-        why = "Rückfrage nötig" if expect.get("ambiguous") else "kein Write"
-        return (not writes), 0, len(writes), why
+        if writes:
+            return {"ok": False, "missed": len(present), "correct_mutations": 0,
+                    "wrong_mutations": mut.mutation_count(diff),
+                    "why": "write obwohl verboten/ungeklärt"}
+        if present and not mut.read_answer_ok(trace, _specs(present)):
+            return {"ok": False, "missed": len(present), "correct_mutations": 0,
+                    "wrong_mutations": 0, "why": "read-antwort fehlt/falsch"}
+        reason = ("ok (Rückfrage)" if expect.get("ambiguous")
+                  else ("ok (read)" if present else "ok (kein Write)"))
+        return {"ok": True, "missed": 0, "correct_mutations": 0,
+                "wrong_mutations": 0, "why": reason}
     missed = 0
-    for (title, day, hm, p) in expect.get("present", []):
-        if not any(_match(e, title, day, hm, p) for e in after):
+    present_specs = _specs(present)
+    for spec in present_specs:
+        if not any(mut.event_matches(e, *spec) for e in after.values()):
             missed += 1
-    for title in expect.get("absent", []):
-        was_there = any(title.lower() in e.title.lower() for e in before)
-        now_gone = not any(title.lower() in e.title.lower() for e in after)
+    for title in absent:
+        was_there = any(title.lower() in e["title"].lower() for e in before.values())
+        now_gone = not any(title.lower() in e["title"].lower() for e in after.values())
         if not (was_there and now_gone):
             missed += 1
-    expected_writes = len(expect.get("present", [])) + len(expect.get("absent", []))
-    wrong = max(0, len(writes) - expected_writes)
-    return (missed == 0), missed, wrong, ("ok" if missed == 0 else f"missed={missed}")
+    correct_mut, wrong_mut = mut.classify(diff, present_specs, absent)
+    ok = missed == 0 and wrong_mut == 0
+    return {"ok": ok, "missed": missed, "correct_mutations": correct_mut,
+            "wrong_mutations": wrong_mut,
+            "why": "ok" if ok else f"missed={missed} wrong_mut={wrong_mut}"}
 
 
 def _inspect(calls, tools, store):
@@ -132,7 +154,7 @@ def run_case(case, pipeline, weights, gemma=None) -> dict:
     tools = _wrap(raw, trace)
     for (title, day, hm, p) in case["fixture"]:
         raw["calendar_create"](title=title, date=day, time=hm, participants=p)
-    before = _events(store)
+    before = mut.snapshot(store)
     t0 = time.perf_counter()
     escalated, esc_reason = False, ""
     agent = needle.Needle(tools=list(tools.values()),
@@ -150,23 +172,35 @@ def run_case(case, pipeline, weights, gemma=None) -> dict:
     if pipeline == "fallback" and not escalated:
         ok_exec, esc_reason = _inspect(calls, tools, store)
         escalated = not ok_exec
+    write_attempts = 0
+    failed_attempts = 0
     if escalated:
         # Kein Write ohne Klärung; im lokalen Setup ohne Gemma bleibt der Fall offen.
-        after = _events(store)
-        ok, missed, wrong, why = _check(case["expect"], before, after, trace)
-        ok = False  # nicht autonom abgeschlossen
-        gemma_note = "gemma_n/a" if gemma is None else "gemma"
-        why = f"escalated({esc_reason}) · {gemma_note}"
+        after = mut.snapshot(store)
+        chk = _check(case["expect"], before, after, trace)
+        chk["ok"] = False  # nicht autonom abgeschlossen
+        gemma_note = "gemma/n/a" if gemma is None else "gemma"
+        chk["why"] = f"escalated({esc_reason}) · {gemma_note}"
     else:
         for c in calls[:6]:
-            tools[c["name"]](**(c.get("arguments") or {})) if c["name"] in tools else None
-        after = _events(store)
-        ok, missed, wrong, why = _check(case["expect"], before, after, trace)
+            if c["name"] in tools:
+                trace_before = len(trace)
+                tools[c["name"]](**(c.get("arguments") or {}))
+                if c["name"] in WRITES:
+                    write_attempts += 1
+                    if len(trace) > trace_before and _failed(trace[-1]):
+                        failed_attempts += 1
+        after = mut.snapshot(store)
+        chk = _check(case["expect"], before, after, trace)
     ms = round((time.perf_counter() - t0) * 1000)
     return {"id": case["id"], "family": case["family"], "goal": case["goal"],
             "calls": [c["name"] for c in calls], "escalated": escalated,
-            "esc_reason": esc_reason, "goal_ok": ok, "missed": missed,
-            "wrong_writes": wrong, "ms": ms, "why": why,
+            "esc_reason": esc_reason, "goal_ok": chk["ok"], "missed": chk["missed"],
+            "correct_mutations": chk["correct_mutations"],
+            "wrong_mutations": chk["wrong_mutations"],
+            "successful_mutations": chk["correct_mutations"] + chk["wrong_mutations"],
+            "write_attempts": write_attempts, "failed_write_attempts": failed_attempts,
+            "ms": ms, "why": chk["why"],
             "writes": [t["tool"] for t in trace if t["tool"] in WRITES]}
 
 
@@ -189,17 +223,23 @@ def main() -> int:
     lats = [r["ms"] for r in rows]
     fams = {}
     for r in rows:
-        f = fams.setdefault(r["family"], {"n": 0, "goal_ok": 0, "esc": 0, "wrong": 0, "missed": 0})
+        f = fams.setdefault(r["family"], {"n": 0, "goal_ok": 0, "esc": 0,
+                                          "wrong_mut": 0, "successful_mut": 0,
+                                          "missed": 0})
         f["n"] += 1
         f["goal_ok"] += r["goal_ok"]
         f["esc"] += r["escalated"]
-        f["wrong"] += r["wrong_writes"]
+        f["wrong_mut"] += r["wrong_mutations"]
+        f["successful_mut"] += r["successful_mutations"]
         f["missed"] += r["missed"]
     summary = {"tag": args.tag, "pipeline": args.pipeline, "weights": weights, "n": n,
                "final_goal_ok": pct(lambda r: r["goal_ok"]),
                "autonomous_ok": pct(lambda r: r["goal_ok"] and not r["escalated"]),
-               "gemma_invocation_rate": pct(lambda r: r["escalated"]),
-               "wrong_writes": sum(r["wrong_writes"] for r in rows),
+               "escalation_rate": pct(lambda r: r["escalated"]),
+               "wrong_mutations": sum(r["wrong_mutations"] for r in rows),
+               "successful_mutations": sum(r["successful_mutations"] for r in rows),
+               "write_attempts": sum(r["write_attempts"] for r in rows),
+               "failed_write_attempts": sum(r["failed_write_attempts"] for r in rows),
                "missed_actions": sum(r["missed"] for r in rows),
                "latency_p50_ms": round(st.median(lats)),
                "latency_p95_ms": round(sorted(lats)[int(n * 0.95) - 1]),
@@ -207,13 +247,13 @@ def main() -> int:
     out = HERE / "reports" / f"arch_{args.tag}_{args.pipeline}.json"
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=1))
     print(f"[{args.tag}/{args.pipeline}] n={n} · goal_ok {summary['final_goal_ok']} "
-          f"· autonomous {summary['autonomous_ok']} · gemma_rate {summary['gemma_invocation_rate']}"
-          f" · wrong_writes {summary['wrong_writes']} · missed {summary['missed_actions']}"
+          f"· autonomous {summary['autonomous_ok']} · escalation_rate {summary['escalation_rate']}"
+          f" · wrong_mutations {summary['wrong_mutations']} · missed {summary['missed_actions']}"
           f" · p50 {summary['latency_p50_ms']}ms p95 {summary['latency_p95_ms']}ms")
     print("  Familien:")
     for fam, f in sorted(fams.items()):
         print(f"    {fam:<14} n={f['n']:<3} goal_ok {f['goal_ok']}/{f['n']} · esc {f['esc']}"
-              f" · wrong {f['wrong']} · missed {f['missed']}")
+              f" · wrong_mut {f['wrong_mut']} · missed {f['missed']}")
     print(f"  -> {out}")
     return 0
 

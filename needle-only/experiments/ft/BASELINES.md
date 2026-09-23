@@ -43,8 +43,6 @@ n2-FT 0.977 — und 3 → 5 Epochen hoben sie nur von 0.877 auf 0.886 (+0.9 pp),
 also **Plateau ~0.89**. Der lokale N3-LoRA-Pfad erreicht das N2-FT atomar nicht.
 Entscheidung (Plan-Entscheidungsbaum): lokales N3-Tuning stoppen, **n2-FT bleibt
 Produktionsreferenz**; n3 bleibt Forschungsstrang (Multi-Call-Stärke notiert).
-Optionaler nächster Challenger: **1 Platform-FT-Run** (Phase 11) — nur mit
-Cactus-Plan/API-Key und erst nach diesem Ergebnis.
 
 ## Promotion-Gate (Needle 3 ersetzt n2-FT nur, wenn ALLE Punkte erfüllt)
 
@@ -104,29 +102,43 @@ Zusätzlich: `run()` exponiert **kein** per-Call-Argument-Transkript (nur `resul
 
 ### Track B — Runde 2 (maßgeblich, echt result-abhängig)
 
-| Modell | manual goal_ok | run() goal_ok | wrong_writes (manual/run) | Bemerkung |
+| Modell | manual goal_ok | run() goal_ok | write_attempts (man/run) | **wrong_mutations (man/run)** |
 |---|---|---|---|---|
-| n2-FT seed44 | **0.0** | **0.0** | 0 / 0 | meist kein Folgeschritt |
-| N3 Base | **0.0** | **0.0** | 6 / 3 | schreibt teils leer/verkehrt |
-| N3-preserve e5 | **0.0** | **0.0** | 4 / **11** | bester Sequenz-Fluss, aber mehr Falsch-Writes |
+| n2-FT seed44 | **0.0** | **0.0** | 3 / 3 | 0 / 0 |
+| N3 Base | **0.0** | **0.0** | 12 / 5 | 2 / 0 |
+| N3-preserve e5 | **0.0** | **0.0** | 8 / 14 | 1 / 0 |
+
+**Metrik-Korrektur (Review Sep 24):** die frühere Tabelle zeigte `wrong_writes`
+= `max(0, write_calls − expected_write_calls)` — das zählte abgelehnte
+Write-*Versuche* (z. B. 14 `calendar_delete` mit leerem Titel, alle mit
+Tool-Fehler, DB unverändert) als Falsch-Writes und übersah zugleich erwartete
+Deletes. `rescore_native.py` rechnete die frozen Reports neu aus (DB-Diff):
+**N3-preserve e5 run: 11 „wrong_writes" → 0 echte wrong_mutations** (14
+Versuche, 14 gescheitert, erfolgreiche Mutation = 0). Safety-Wahrheit ist
+`wrong_mutations`, nicht die Call-Anzahl.
 
 **Kernbefund (korrigiert):** Bei *echt* result-abhängigen Ketten schließt **kein**
 Modell ein Ziel ab (0/10 in beiden Modi). `run()` = manual (kein Vorteil).
 Fehlermuster: Titel/Entity aus dem ersten Toolresultat wird nicht in den
 Folge-Call übernommen (leerer Titel → Tool-Fehler) oder durch eine Floskel
-ersetzt. N3 schreibt dabei mehr ungewollte Einträge als N2-FT → für autonomes
-Ausführen ist eine deterministische Prüf-/Eskalationsschicht Pflicht.
+ersetzt. Der DB bleibt dabei überwiegend unverändert — die Gefahr ist weniger
+ein Falsch-Write als **fehlende Vollständigkeit** (Silent Omission). Für
+autonomes Ausführen ist eine deterministische Prüf-/Eskalationsschicht Pflicht.
 
 ## Architektur-Bakeoff (P0/P1/P2) — siehe `ARCH_BAKEOFF.md`
 
 133 produktionsnahe Fälle; Ziele: Gemma-Compute sparen ohne Qualitätsverlust.
 
-| Pipeline | goal_ok | autonomous | Gemma-Rate | wrong_writes | Silent-Omission |
+| Pipeline | goal_ok | autonomous | escalation_rate | wrong_mutations | Silent-Omission |
 |---|---|---|---|---|---|
-| P1 direct N2-FT | 0.496 | 0.496 | 0 | 13 | 39 % |
-| P1 direct **N3-e5** | **0.662** | 0.662 | 0 | 11 | — |
+| P1 direct N2-FT | 0.496 | 0.496 | 0 | 13* | 39 % |
+| P1 direct **N3-e5** | **0.662** | 0.662 | 0 | 11* | — |
 | **P2 fallback N3-e5** | **0.662** | **0.662** | **0.143** | **0** | **20 %** |
 | P0 hybrid (Gemma→N2) | n/a — kein lokales Gemma messbar | | | | |
+
+\* Call-basiert aus dem Pre-Hardening-Lauf; mit der neuen DB-Diff-Metrik
+(`wrong_mutations`) wird `arch_bench.py` neu gemessen — Reports werden nicht
+überschrieben, neue Tags (z. B. `-h1`).
 
 **Fazit:** N3-first schließt ~66 % der Ziele autonom ab; mit der deterministischen
 Eskalation (Ambiguität/unauflösbare Entity/dependent) bleibt P2 bei gleicher
@@ -168,8 +180,7 @@ execution failure · dependent goal detected
 ```
 
 Base-Needle-3 darf Confidence im Benchmark reporten; die Produktionsarchitektur
-darf nicht davon abhängen, solange lokal trainiert wird (Platform-FTs hätten
-kalibrierte Confidence — separater Challenger, Phase 11).
+darf nicht davon abhängen, solange lokal trainiert wird.
 
 ## Harness-Hinweise (Ehrlichkeit)
 

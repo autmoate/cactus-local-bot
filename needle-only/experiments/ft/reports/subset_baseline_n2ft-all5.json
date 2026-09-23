@@ -1,0 +1,28 @@
+{
+ "tag": "n2ft-all5",
+ "rows": "sa-r16-lr1e-4-e8-seed44_test_rows.jsonl",
+ "read": {
+  "n": 558,
+  "tool_ok": 0.977,
+  "args_ok": 0.948,
+  "exact": 0.948
+ },
+ "write": {
+  "n": 1080,
+  "tool_ok": 1.0,
+  "args_ok": 0.993,
+  "exact": 0.993
+ },
+ "none": {
+  "n": 162,
+  "tool_ok": 0.975,
+  "args_ok": 0.975,
+  "exact": 0.975
+ },
+ "all": {
+  "n": 1800,
+  "tool_ok": 0.991,
+  "args_ok": 0.977,
+  "exact": 0.977
+ }
+}

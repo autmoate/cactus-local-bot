@@ -1,0 +1,28 @@
+{
+ "tag": "n3e5-all5",
+ "rows": "n3-v4-e5_test_rows.jsonl",
+ "read": {
+  "n": 558,
+  "tool_ok": 1.0,
+  "args_ok": 0.855,
+  "exact": 0.849
+ },
+ "write": {
+  "n": 1080,
+  "tool_ok": 1.0,
+  "args_ok": 0.89,
+  "exact": 0.888
+ },
+ "none": {
+  "n": 162,
+  "tool_ok": 1.0,
+  "args_ok": 1.0,
+  "exact": 1.0
+ },
+ "all": {
+  "n": 1800,
+  "tool_ok": 1.0,
+  "args_ok": 0.889,
+  "exact": 0.886
+ }
+}

@@ -56,10 +56,15 @@ QUESTIONS = [
 def _fixture() -> CalendarStore:
     store = CalendarStore(Path(tempfile.mkdtemp()) / "read.db")
     today = cal.now().date()
-    plan = [("Zahnarzt", 1, 10, 60, []), ("Teammeeting", 2, 9, 120, ["Lisa"]),
-            ("Yoga", 3, 18, 60, ["Lisa"]), ("Workshop", 4, 14, 180, ["Max"]),
-            ("Kino", 5, 20, 120, []), ("Friseur", 6, 11, 60, ["Max"]),
-            ("Arztbesuch", 7, 9, 60, ["Lisa", "Max"])]
+    # participants always include the owner ('Ich') — production-safe default;
+    # otherwise 'Ich' availability would silently miss events (user review).
+    plan = [("Zahnarzt", 1, 10, 60, ["Ich"]),
+            ("Teammeeting", 2, 9, 120, ["Ich", "Lisa"]),
+            ("Yoga", 3, 18, 60, ["Ich", "Lisa"]),
+            ("Workshop", 4, 14, 180, ["Ich", "Max"]),
+            ("Kino", 5, 20, 120, ["Ich"]),
+            ("Friseur", 6, 11, 60, ["Ich", "Max"]),
+            ("Arztbesuch", 7, 9, 60, ["Ich", "Lisa", "Max"])]
     for title, off, h, dur, parts in plan:
         t = cal.datetime.combine(today + timedelta(days=off), cal.time(h, 0))
         store.add(cal.CalendarEvent(title=title, start=t,
@@ -67,18 +72,42 @@ def _fixture() -> CalendarStore:
     return store
 
 
+_I_WORDS = ("ich", "mir", "mich", "mein", "meine", "meiner", " wir", "uns")
+
+
+def _mentioned_persons(q: str) -> list[str]:
+    """Persons named in the question, owner-aware. Python does NOT guess the
+    time scope — Gemma picks from the structured snapshot."""
+    names = [n for n in ("Lisa", "Max") if n.lower() in q.lower()]
+    if any(w in f" {q.lower()}" for w in _I_WORDS):
+        names = ["Ich"] + names
+    return names or ["Ich"]
+
+
 def facts_for(q: str, store: CalendarStore) -> str:
-    """Deterministische Fakten (kompakt) — hier absichtlich einfach gehalten."""
+    """Structured, non-semantic facts: a 14-day snapshot (entries + participants)
+    plus joint free slots for the persons named in the question. Python only
+    supplies facts; Gemma interprets the question and selects from them.
+    """
     today = cal.now().date()
-    persons = [p for p in ("Lisa", "Max") if p.lower() in q.lower()]
-    if persons:
-        slots = matrix_free_slots(store, persons, today, today + timedelta(days=7), 60)
-        return "Gemeinsame freie Slots (60 min, Werktage 9-17): " + (
-            "; ".join(f"{s:%a %d.%m. %H:%M}-{e:%H:%M}" for s, e in slots) or "keine")
-    evs = store.events_between(cal.datetime.combine(today, cal.time(0, 0)),
-                               cal.datetime.combine(today + timedelta(days=7), cal.time(0, 0)))
-    return "Termine (7 Tage): " + "; ".join(
-        f"{e.start:%a %d.%m. %H:%M} {e.title}" for e in evs)
+    persons = _mentioned_persons(q)
+    d0 = cal.datetime.combine(today, cal.time(0, 0))
+    d1 = cal.datetime.combine(today + timedelta(days=14), cal.time(0, 0))
+    evs = store.events_between(d0, d1)
+    lines = [f"Zeitraum: {today:%a %d.%m.} – {today + timedelta(days=13):%a %d.%m.}",
+             "Meine Termine (14 Tage):"]
+    for e in evs:
+        who = f" mit {', '.join(p for p in e.participants if p != 'Ich')}" \
+            if any(p != "Ich" for p in e.participants) else ""
+        lines.append(f"- {e.start:%a %d.%m. %H:%M}–{e.end:%H:%M} {e.title}{who}")
+    if not evs:
+        lines.append("- keine")
+    slots = matrix_free_slots(store, persons, today,
+                              today + timedelta(days=6), 60)
+    who = ", ".join(persons)
+    lines.append(f"Gemeinsam freie 60-min-Slots für {who} (Werktage 9–17, 7 Tage):")
+    lines += [f"- {s:%a %d.%m. %H:%M}–{e:%H:%M}" for s, e in slots] or ["- keine"]
+    return "\n".join(lines)
 
 
 def main() -> int:
