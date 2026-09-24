@@ -1,0 +1,142 @@
+[
+ {
+  "kind": "simple",
+  "question": "Was habe ich morgen?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Du hast morgen, Donnerstag 24.09., von 09:00 bis 17:00 Zeit frei.",
+  "ms": 14944
+ },
+ {
+  "kind": "simple",
+  "question": "Zeig mir meine Termine diese Woche.",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Hier sind deine Termine für diese Woche:\n\n*   **Thu 24.09.:** 09:00\\u201317:00 (Frei)\n*   **Fri 25.09.:**\n    *   10:00\\u201311:00 Zahnarzt\n    *   09:00\\u201310:00 (Frei)\n    *   11:00\\u201317:00 (Frei)\n*   **Sat 26.09.:** 09:00\\u201311:00 Teammeeting mit Lisa",
+  "ms": 42800
+ },
+ {
+  "kind": "simple",
+  "question": "Was steht am Freitag an?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Am Freitag, den 25.09., stehen folgende Termine an:\n*   10:00\\u201311:00 Zahnarzt\n*   09:00\\u201310:00 (Freie Zeit)\n*   11:00\\u201317:00 (Freie Zeit)",
+  "ms": 28437
+ },
+ {
+  "kind": "simple",
+  "question": "Habe ich nächste Woche Termine?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Nur für den Kalender zuständig.",
+  "ms": 11867
+ },
+ {
+  "kind": "simple",
+  "question": "Wie viele Termine habe ich morgen?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Du hast morgen (Thu 24.09.) einen Termin von 09:00 bis 17:00.",
+  "ms": 16598
+ },
+ {
+  "kind": "semantic",
+  "question": "Wie voll wird meine Woche?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Ich bin nur für den Kalender zuständig.",
+  "ms": 12443
+ },
+ {
+  "kind": "semantic",
+  "question": "Welcher Tag nächste Woche ist am vollsten?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Nur für den Kalender zuständig.",
+  "ms": 12005
+ },
+ {
+  "kind": "semantic",
+  "question": "Wo könnte ich noch ein 90-Minuten-Meeting unterbringen?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Ich bin nur für den Kalender zuständig.",
+  "ms": 11315
+ },
+ {
+  "kind": "semantic",
+  "question": "Wann habe ich diese Woche den längsten freien Block?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Der längste freie Block ist am Donnerstag, 24.09. von 09:00 bis 17:00.",
+  "ms": 16021
+ },
+ {
+  "kind": "semantic",
+  "question": "Was habe ich vor meinem Zahnarzttermin?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Du hast am Freitag, den 25.09., von 11:00 bis 17:00 Zeit.",
+  "ms": 15752
+ },
+ {
+  "kind": "semantic",
+  "question": "Wie stressig ist mein Donnerstag?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Du hast von 09:00 bis 17:00 einen freien Slot am Donnerstag, den 24.09.",
+  "ms": 16083
+ },
+ {
+  "kind": "group",
+  "question": "Wann haben Lisa und ich diese Woche gemeinsam Zeit?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich, Lisa (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Lisa und du habt am Donnerstag, den 24.09., von 09:00 bis 17:00 sowie am Freitag, den 25.09., von 09:00 bis 10:00 und von 11:00 bis 17:00 gemeinsame Zeit.",
+  "ms": 26473
+ },
+ {
+  "kind": "group",
+  "question": "Wann könnten Lisa, Max und ich nächste Woche 60 Minuten?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich, Lisa, Max (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Die nächsten freien 60-Minuten-Slots für Sie, Lisa und Max sind:\n\n*   **Thu 24.09.:** 09:00\\u201317:00\n*   **Fri 25.09.:** 09:00\\u201310:00\n*   **Fri 25.09.:** 11:00\\u201317:00\n*   **Mon 28.09.:** 09:00\\u201314:00\n*   **Tue 29.09.:** 09:00\\u",
+  "ms": 48406
+ },
+ {
+  "kind": "group",
+  "question": "Sind Max und ich am Dienstag nachmittags beide frei?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich, Max (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Ja, Max und du seid am Dienstag, den 29.09., von 09:00 bis 17:00 frei.",
+  "ms": 17073
+ },
+ {
+  "kind": "group",
+  "question": "Wann hat Lisa diese Woche frei?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Lisa (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–17:00\n- Mon 28.09. 09:00–17:00\n- Tue 29.09. 09:00–17:00\n- Wed 30.09. 09:00–17:00",
+  "answer": "Lisa hat am Donnerstag, den 24.09., von 09:00 bis 17:00 sowie am Freitag, den 25.09., von 09:00 bis 17:00 freie 60-Minuten-Slots.",
+  "ms": 22955
+ },
+ {
+  "kind": "control",
+  "question": "Wie wird das Wetter morgen?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Ich bin nur für den Kalender zuständig.",
+  "ms": 11500
+ },
+ {
+  "kind": "control",
+  "question": "Erzähl mir einen Witz.",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Ich bin nur für den Kalender zuständig.",
+  "ms": 11343
+ },
+ {
+  "kind": "control",
+  "question": "Was kostet ein e-Bike?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Ich bin nur für den Kalender zuständig.",
+  "ms": 11621
+ },
+ {
+  "kind": "control",
+  "question": "Danke, das war hilfreich.",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Gerne.",
+  "ms": 10396
+ },
+ {
+  "kind": "control",
+  "question": "Bist du ein Roboter?",
+  "facts": "Zeitraum: Thu 24.09. – Wed 07.10.\nMeine Termine (14 Tage):\n- Fri 25.09. 10:00–11:00 Zahnarzt\n- Sat 26.09. 09:00–11:00 Teammeeting mit Lisa\n- Sun 27.09. 18:00–19:00 Yoga mit Lisa\n- Mon 28.09. 14:00–17:00 Workshop mit Max\n- Tue 29.09. 20:00–22:00 Kino\n- Wed 30.09. 11:00–12:00 Friseur mit Max\n- Thu 01.10. 09:00–10:00 Arztbesuch mit Lisa, Max\nGemeinsam freie 60-min-Slots für Ich (Werktage 9–17, 7 Tage):\n- Thu 24.09. 09:00–17:00\n- Fri 25.09. 09:00–10:00\n- Fri 25.09. 11:00–17:00\n- Mon 28.09. 09:00–14:00\n- Tue 29.09. 09:00–17:00",
+  "answer": "Ich bin ein Kalender-Assistent.",
+  "ms": 11701
+ }
+]

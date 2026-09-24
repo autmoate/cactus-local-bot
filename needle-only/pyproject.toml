@@ -12,6 +12,7 @@ dependencies = [
 [project.optional-dependencies]
 telegram = ["python-telegram-bot==22.8", "python-dotenv==1.1.1"]
 modal = ["modal>=1.0"]      # Cloud-FT (experiments/ft/modal_train.py)
+cactus = ["cactus-compute==2.1.0"]  # Gemma serve / Cactus engine (aarch64 wheel)
 
 [project.scripts]
 local-calendar = "local_calendar.app:main"
