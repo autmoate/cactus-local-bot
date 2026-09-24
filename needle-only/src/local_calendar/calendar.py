@@ -66,10 +66,11 @@ def now() -> datetime:
 class CalendarEvent(BaseModel):
     id: int | None = None
     title: str
-    kind: EventKind = "appointment"
+    kind: EventKind = "appointment"   # optional display category, NOT domain truth
     start: datetime
     end: datetime
-    all_day: bool = False
+    all_day: bool = False             # time geometry only (clock vs whole day)
+    busy: bool = True                 # availability property (plan: decoupled)
     participants: list[str] = Field(default_factory=list)
     # multi-user scope (V1); nullable so legacy callers keep working
     calendar_id: int | None = None
@@ -97,7 +98,7 @@ class CalendarStore:
     working: `participants` (names) is mapped to/from people on read/write.
     """
 
-    SCHEMA_VERSION = 1
+    SCHEMA_VERSION = 2
 
     def __init__(self, path: str | Path = "data/calendar.db"):
         self.path = str(path)
@@ -128,6 +129,14 @@ class CalendarStore:
             with self._conn() as c:  # columns first so index creation succeeds
                 c.execute("ALTER TABLE events ADD COLUMN calendar_id INTEGER")
                 c.execute("ALTER TABLE events ADD COLUMN created_by_person_id INTEGER")
+        # v1 -> v2: busy is a separate availability property, no longer implied
+        # by all_day/absence. Existing rows default to busy=1 (conservative).
+        needs_busy = has_events and "busy" not in cols
+        if needs_busy:
+            if not legacy:
+                self.backup()
+            with self._conn() as c:
+                c.execute("ALTER TABLE events ADD COLUMN busy INTEGER NOT NULL DEFAULT 1")
         self._ensure_tables()  # creates missing tables + indexes
         with self._conn() as c:
             if legacy:
@@ -192,6 +201,7 @@ class CalendarStore:
                     start   TEXT NOT NULL,
                     end     TEXT NOT NULL,
                     all_day INTEGER NOT NULL DEFAULT 0,
+                    busy    INTEGER NOT NULL DEFAULT 1,
                     calendar_id INTEGER REFERENCES calendars(id),
                     created_by_person_id INTEGER REFERENCES people(id)
                 );
@@ -200,8 +210,14 @@ class CalendarStore:
                     person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
                     PRIMARY KEY (event_id, person_id)
                 );
+                CREATE TABLE IF NOT EXISTS event_shares (
+                    event_id   INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+                    calendar_id INTEGER NOT NULL REFERENCES calendars(id) ON DELETE CASCADE,
+                    PRIMARY KEY (event_id, calendar_id)
+                );
                 CREATE INDEX IF NOT EXISTS events_start_idx ON events(start);
                 CREATE INDEX IF NOT EXISTS events_calendar_idx ON events(calendar_id);
+                CREATE INDEX IF NOT EXISTS event_shares_cal_idx ON event_shares(calendar_id);
             """)
 
     def _finish_v0_migration(self, c: sqlite3.Connection) -> None:
@@ -434,6 +450,14 @@ class CalendarStore:
                           (telegram_user_id,)).fetchone()
             return dict(r) if r else None
 
+    def groups_of_person(self, person_id: int) -> list[int]:
+        with self._conn() as c:
+            return [r["calendar_id"] for r in c.execute(
+                "SELECT cm.calendar_id FROM calendar_members cm "
+                "JOIN calendars cal ON cal.id=cm.calendar_id "
+                "WHERE cm.person_id=? AND cal.kind='group' ORDER BY cm.calendar_id",
+                (person_id,))]
+
     def members_of(self, calendar_id: int) -> list[int]:
         with self._conn() as c:
             return [r["person_id"] for r in c.execute(
@@ -456,10 +480,10 @@ class CalendarStore:
             cid = calendar_id or self._ensure_personal_calendar(
                 c, self._ensure_person(c, "Ich", None))
             cur = c.execute(
-                "INSERT INTO events (title, kind, start, end, all_day, calendar_id, "
-                "created_by_person_id) VALUES (?,?,?,?,?,?,?)",
+                "INSERT INTO events (title, kind, start, end, all_day, busy, "
+                "calendar_id, created_by_person_id) VALUES (?,?,?,?,?,?,?,?)",
                 (ev.title, ev.kind, self._iso(ev.start), self._iso(ev.end),
-                 int(ev.all_day), cid, created_by_person_id))
+                 int(ev.all_day), int(ev.busy), cid, created_by_person_id))
             ev = ev.model_copy(update={"id": cur.lastrowid, "calendar_id": cid,
                                        "created_by_person_id": created_by_person_id})
             self._write_participants(c, ev.id, ev.participants)
@@ -474,10 +498,10 @@ class CalendarStore:
 
     def update(self, ev: CalendarEvent) -> None:
         with self._conn() as c:
-            c.execute("UPDATE events SET title=?, kind=?, start=?, end=?, all_day=? "
-                      "WHERE id=?",
+            c.execute("UPDATE events SET title=?, kind=?, start=?, end=?, all_day=?, "
+                      "busy=? WHERE id=?",
                       (ev.title, ev.kind, self._iso(ev.start), self._iso(ev.end),
-                       int(ev.all_day), ev.id))
+                       int(ev.all_day), int(ev.busy), ev.id))
             self._write_participants(c, ev.id, ev.participants)
 
     def delete(self, event_id: int) -> bool:
@@ -498,7 +522,9 @@ class CalendarStore:
         return CalendarEvent(
             id=row["id"], title=row["title"], kind=row["kind"],
             start=self._dt(row["start"]), end=self._dt(row["end"]),
-            all_day=bool(row["all_day"]), participants=people,
+            all_day=bool(row["all_day"]),
+            busy=bool(row["busy"]) if "busy" in keys else True,
+            participants=people,
             calendar_id=(row["calendar_id"] if "calendar_id" in keys else None),
             created_by_person_id=(row["created_by_person_id"]
                                   if "created_by_person_id" in keys else None))
@@ -532,8 +558,10 @@ class CalendarStore:
         params: list = [self._iso(end), self._iso(start)]
         if calendar_ids is not None:
             marks = ",".join("?" * len(calendar_ids))
-            sql += f" AND calendar_id IN ({marks})"
-            params += list(calendar_ids)
+            # an event belongs to a calendar (calendar_id) OR was shared to it
+            sql += (f" AND (calendar_id IN ({marks}) OR id IN "
+                    f"(SELECT event_id FROM event_shares WHERE calendar_id IN ({marks})))")
+            params += list(calendar_ids) + list(calendar_ids)
         pids = list(person_ids or [])
         if person:
             with self._conn() as pc:
@@ -635,6 +663,37 @@ class CalendarStore:
         with self._conn() as c:
             return c.execute("SELECT COUNT(*) FROM events").fetchone()[0]
 
+    # ---------------------------------------------------------- event sharing
+    def share_event(self, event_id: int, calendar_id: int) -> None:
+        """Share an event to a group calendar (visibility only; plan §3). The
+        event stays owned in its own calendar; title becomes visible there."""
+        with self._conn() as c:
+            c.execute("INSERT OR IGNORE INTO event_shares(event_id, calendar_id) "
+                      "VALUES (?,?)", (event_id, calendar_id))
+
+    def unshare_event(self, event_id: int, calendar_id: int) -> None:
+        with self._conn() as c:
+            c.execute("DELETE FROM event_shares WHERE event_id=? AND calendar_id=?",
+                      (event_id, calendar_id))
+
+    def shares_of(self, event_id: int) -> list[int]:
+        with self._conn() as c:
+            return [r["calendar_id"] for r in c.execute(
+                "SELECT calendar_id FROM event_shares WHERE event_id=?",
+                (event_id,))]
+
+    def is_shared_to(self, event_id: int, calendar_id: int) -> bool:
+        with self._conn() as c:
+            return c.execute("SELECT 1 FROM event_shares WHERE event_id=? "
+                             "AND calendar_id=?", (event_id, calendar_id)
+                             ).fetchone() is not None
+
+    def shared_event_ids(self, calendar_id: int) -> set[int]:
+        with self._conn() as c:
+            return {r["event_id"] for r in c.execute(
+                "SELECT event_id FROM event_shares WHERE calendar_id=?",
+                (calendar_id,))}
+
     def participant_names(self) -> list[str]:
         with self._conn() as c:
             return [r["display_name"] for r in c.execute(
@@ -718,14 +777,14 @@ class CalendarStore:
 
     def is_absent(self, person_ids: list[int], start: datetime, end: datetime,
                   calendar_ids: list[int] | None = None) -> bool:
-        """True when any given person has an absence overlapping [start, end).
-        events_between already restricts to overlapping events, so any all-day
-        hit is an absence on that window (plan §6/§19)."""
+        """True when any given person has a *busy all-day* event (e.g. vacation)
+        overlapping [start, end) — used only for a preview hint (plan §6/§19).
+        Availability uses the `busy` flag independently."""
         if not person_ids:
             return False
         for other in self.events_between(start, end, person_ids=person_ids,
                                          calendar_ids=calendar_ids):
-            if other.all_day:
+            if other.all_day and other.busy:
                 return True
         return False
 
@@ -807,7 +866,8 @@ def busy_intervals(store: CalendarStore, persons: list[str],
     out: list[tuple[datetime, datetime]] = []
     for p in persons:
         for ev in store.events_between(start, end, person=p):
-            out.append((max(ev.start, start), min(ev.end, end)))
+            if ev.busy:
+                out.append((max(ev.start, start), min(ev.end, end)))
     return sorted(out)
 
 
@@ -873,6 +933,8 @@ def busy_intervals_for_people(store: CalendarStore, person_ids: list[int],
     for pid in person_ids:
         for ev in store.events_between(start, end, person_ids=[pid],
                                        calendar_ids=calendar_ids):
+            if not ev.busy:
+                continue
             s, e = max(ev.start, start), min(ev.end, end)
             if s < e:
                 out.append((s, e))

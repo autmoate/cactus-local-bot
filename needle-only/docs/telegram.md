@@ -95,6 +95,57 @@ Normale Gruppennachrichten werden **vor jeder Inferenz** ignoriert.
   pro Tag geklippte Segmente (halboffen). „Büro 29.09. 09–16" erscheint nur am
   Dienstag, nie als Wochenband. Private Events sind **nie** „shared".
 
+## Produktrevision: Trennung von Geometrie / Availability / Sichtbarkeit
+
+`all_day`, `busy` und Sichtbarkeit sind **getrennte Achsen** — kein Bit trägt mehr
+zu viel Semantik:
+
+| Achse | Feld | Beispiel |
+|---|---|---|
+| Zeitgeometrie | `all_day` (nur aus der Zeitangabe) | Geburtstag, Urlaub, Zug |
+| Verfügbarkeit | `busy` (Default 1) | Geburtstag `busy=0`, Urlaub `busy=1` |
+| Sichtbarkeit | `event_shares(event_id, calendar_id)` | Messe „shared", sonst privat |
+
+- **`kind` ist nur noch Anzeige-Kategorie**, keine Domain-Wahrheit. `all_day`
+  erzeugt **nie** mehr automatisch „absence". Ein Default-Create ist ein
+  normales, privates, busy Event.
+- Needle versteht **keines** dieser Attribute; `busy`/Sichtbarkeit sind reine
+  UI/Python-Eigenschaften. Gruppenfreigabe läuft über `event_shares`
+  (Share/Unshare, reversibel, ohne Bestätigung).
+- **Allgemeine Zeitregel:** Enthält der Originaltext eine eindeutig parsebare
+  Uhrzeit (`7:13`, `7:13 Uhr`, `07:13`, `um 7 Uhr`), ist das Event **timed** und
+  die Uhrzeit autoritativ — auch wenn das Modell `all_day` oder gar keine Zeit
+  geliefert hat. Ein `end_time`, das nicht strikt nach dem Start liegt (das
+  Modell echo't oft die Startzeit), wird verworfen statt den Create zu blockieren.
+- **Keine weiteren NLP-Sonderfälle:** „Abwesenheit"/„ganztägig" als Delete-
+  Selektor, „Termin" aus Titeln entfernen, vier Daten beim Move raten,
+  „Ändere X auf Y" über Create/Delete simulieren — all das wird bewusst **nicht**
+  gebaut. Das sind Aufgaben der Event-UI/PWA, nicht des Sprach-Layers.
+
+### Event-Buttons (kein erneutes Identifizieren)
+
+Jede `/day`, `/week` und Listen-Ausgabe hängt **ID-basierte** Buttons an die
+eigenen (privat) bzw. Gruppen-Termine:
+
+```
+🗑 Titel   ↔ Titel   [👥]
+```
+
+- **🗑** löscht über `event_id` → Preview → Confirm (kein Titelmatching).
+- **↔** startet einen id-basierten Move und fragt nach Datum/Uhrzeit; die
+  nächste Nachricht wird **deterministisch** geparst (kein Modell), dann
+  Preview → Confirm.
+- **👥** teilt/entteilt das Event mit der Gruppe (`event_shares`), nur wenn ein
+  eindeutiges Gruppenziel existiert.
+- Scope bleibt hart: Buttons erscheinen nur für Events im aktuellen Kalender;
+  fremde/private Events anderer Mitglieder sind nie editierbar.
+
+### Produktionsmodell erzwungen
+
+Der Telegram-Start lädt **ausschließlich N2-FT seed44**. Fehlt `NEEDLE_WEIGHTS`,
+bricht der Start ab (außer explizit `--allow-base` zum Debuggen). Bei abweichendem
+Weights-SHA (≠ `ba3212ab`) warnt der Start laut. `/status` zeigt Tag + SHA-Prefix.
+
 ## Gemeinsame Verfügbarkeit
 
 `calendar_find_slot` berücksichtigt die **persönlichen Kalender** der genannten

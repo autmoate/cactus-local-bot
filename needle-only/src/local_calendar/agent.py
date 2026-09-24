@@ -327,64 +327,79 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "",
                 "message": (f"❌ Zeitangabe nicht verstanden: "
                             f"{args.get('date')!r} {args.get('time') or ''}".strip())}
     start, end, all_day = timing
-    # explicit time range (plan: date+time+end_time -> explicit interval,
-    # end_time is verified, no silent corrections)
+    # ---- deterministic time geometry (plan: Python computes, not the model) ----
+    # all_day is ONLY a geometry decision (clock time vs whole day) and is fully
+    # decoupled from any "absence" category. An explicit clock time in the user
+    # text is authoritative and ALWAYS yields a timed event.
+    context = context or ""
+    text_time = cal.extract_time_from_text(context) if context else None
+    text_dates = cal.extract_dates_from_text(context, roll=True)
+    wd = cal.extract_weekday_from_text(context)
+    signal = cal.has_time_signal(context) if context else True
+    model_day = start.date()
+    if text_dates and (text_dates[0].month, text_dates[0].day) \
+            != (model_day.month, model_day.day):
+        day = text_dates[0]        # text date differs -> authoritative
+    elif wd is not None and (wd.month, wd.day) != (model_day.month, model_day.day):
+        day = wd
+    else:
+        day = model_day           # keep the model's year when day/month agree
+    if text_time is not None:
+        dur = (end - start) if (not all_day and end - start > cal.timedelta(0)) \
+            else cal.timedelta(minutes=cal.DEFAULT_DURATION_MIN)
+        start = cal.datetime.combine(day, text_time)
+        end = start + dur
+        all_day = False
+        checks.append({"check": "Uhrzeit aus Text", "ok": True,
+                       "value": f"{day:%d.%m.%Y} {text_time:%H:%M}"})
+    elif not signal:
+        # no clock time anywhere -> all-day; a text date range is authoritative
+        all_day = True
+        if text_dates:
+            first, last = text_dates[0], text_dates[-1]
+            start = cal.datetime.combine(first, cal.time(0, 0))
+            end = (cal.datetime.combine(last + cal.timedelta(days=1), cal.time(0, 0))
+                   if first != last else
+                   start + max(end - start, cal.timedelta(days=1)))
+            checks.append({"check": "Zeit aus Text", "ok": True,
+                           "value": (f"{first:%d.%m.} – {last:%d.%m.}, ganztägig"
+                                     if first != last
+                                     else f"{first:%d.%m.}, ganztägig")})
+        else:
+            start = cal.datetime.combine(day, cal.time(0, 0))
+            end = start + max(end - start, cal.timedelta(days=1))
+    elif (day.month, day.day) != (start.month, start.day):
+        # a day period but no clock time -> keep the model's time, fix the day
+        dur = end - start
+        start = cal.datetime.combine(day, start.time())
+        end = start + dur
+        checks.append({"check": "Datum aus Text korrigiert", "ok": True,
+                       "value": f"{start:%d.%m.%Y}"})
+    # explicit time range (date+time+end_time -> explicit interval, verified)
     end_time_expr = str(args.get("end_time", "")).strip()
     if end_time_expr and not all_day:
         t_end = cal.resolve_time(end_time_expr)
-        if t_end is None:
-            return {"ok": False, "checks": checks, "resolved": {},
-                    "message": f"❌ Endzeit nicht verstanden: {end_time_expr!r}"}
-        end = cal.datetime.combine(start.date(), t_end)
-        if end <= start:
-            return {"ok": False, "checks": checks, "resolved": {},
-                    "message": "❌ Endzeit muss nach der Startzeit liegen."}
-        checks.append({"check": "Endzeit", "ok": True,
-                       "value": f"{start:%H:%M}–{end:%H:%M}"})
-    # Deterministic corrections (plan: Python computes, not the model).
-    # Authority: explicit dates in the text > named weekday > model output.
-    # No time signal in the text -> all-day (the model's invented time is dropped).
-    signal = cal.has_time_signal(context) if context else True
-    text_dates = cal.extract_dates_from_text(context, roll=True)
-    wd = cal.extract_weekday_from_text(context)
-    if text_dates:
-        first, last = text_dates[0], text_dates[-1]
-        if not signal:
-            if first != last:
-                timing2 = cal.resolve_timing(
-                    f"{first:%d.%m.%Y}", "", f"{last:%d.%m.%Y}",
-                    _to_int(args.get("duration_min"), cal.DEFAULT_DURATION_MIN))
-                if timing2 is not None:
-                    start, end, all_day = timing2
-            else:
-                duration = end - start
-                start = cal.datetime.combine(first, cal.time(0, 0))
-                end = start + duration
-            all_day = True
-            checks.append({"check": "Zeit aus Text", "ok": True,
-                           "value": (f"{start:%d.%m.} – {end - cal.timedelta(days=1):%d.%m.},"
-                                     " ganztägig" if first != last
-                                     else f"{start:%d.%m.}, ganztägig")})
-        elif (first.month, first.day) != (start.month, start.day):
-            duration = end - start  # duration first: start must not shift `end`
-            start = cal.datetime.combine(first, start.time())
-            end = start + duration
-            checks.append({"check": "Datum aus Text korrigiert", "ok": True,
-                           "value": f"{start:%d.%m.%Y}"})
-    elif wd is not None and (wd.month, wd.day) != (start.month, start.day):
-        duration = end - start
-        start = cal.datetime.combine(wd, start.time())
-        end = start + duration
-        checks.append({"check": "Wochentag aus Text", "ok": True,
-                       "value": f"{wd:%d.%m.%Y}"})
+        end_candidate = (cal.datetime.combine(start.date(), t_end)
+                         if t_end is not None else None)
+        if end_candidate is None or end_candidate <= start:
+            # an end that is not strictly after the start is not a range. The
+            # model frequently echoes the start time as end_time; that must not
+            # fail the create — fall back to the default duration.
+            checks.append({"check": "Endzeit verworfen", "ok": False,
+                           "value": end_time_expr})
+        else:
+            end = end_candidate
+            checks.append({"check": "Endzeit", "ok": True,
+                           "value": f"{start:%H:%M}–{end:%H:%M}"})
     checks.append({"check": "Zeit aufgelöst", "ok": True,
                    "value": f"{start:%d.%m.%Y %H:%M} – {end:%d.%m.%Y %H:%M}"})
     participants = _resolve_participants(store, scope, args.get("participants", ""))
-    ev = cal.CalendarEvent(
-        title=title, kind="absence" if all_day else "appointment",
-        start=start, end=end, all_day=all_day, participants=participants)
-    # Collision policy (plan §6): overlaps are WARNINGS, never a hard reject.
-    # An absence never blocks a manual timed appointment.
+    # Default create is a normal, private, busy event. kind is only a display
+    # category now — all_day never implies "absence" (plan: decouple).
+    ev = cal.CalendarEvent(title=title, kind="appointment", start=start, end=end,
+                           all_day=all_day, busy=True, participants=participants)
+    # Overlaps are WARNINGS, never a hard reject; an all-day busy entry never
+    # blocks a manual timed appointment.
     warnings = _create_warnings(store, ev, scope)
     if warnings:
         checks.append({"check": "Hinweis", "ok": False,
@@ -395,7 +410,7 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "",
                 "message": f"📌 Neuer Termin: {_describe(ev)}"}
     ev = store.add(ev, calendar_id=(scope.target_calendar_id if scope else None),
                    created_by_person_id=(scope.actor_person_id if scope else None))
-    label = "🚫 Absence eingetragen" if all_day else "✅ Erstellt"
+    label = "✅ Erstellt" if not all_day else "🏖 Ganztägig eingetragen"
     note = ""
     if start.date() < cal.now().date():
         note = " ⚠️ Datum liegt in der Vergangenheit."
@@ -410,9 +425,6 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "",
     time_expr = str(args.get("time", "")).strip()
     new_day = cal.resolve_date(date_expr, roll=False) if date_expr else None
     new_time = cal.resolve_time(time_expr) if time_expr else None
-    if new_day is None and new_time is None:
-        return {"ok": False, "checks": checks, "resolved": {},
-                "message": "❌ Kein neues Datum/keine neue Zeit erkannt."}
     # Deterministic target fix (plan: Python computes): 'Move X on A to B' — the
     # model often repeats the source day A and/or reads the target day as a time.
     # The LAST explicit date in the text is the target; an explicit time in the
@@ -436,12 +448,22 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "",
                            "value": f"{text_time:%H:%M}"})
         else:
             new_time = None
-    # Event resolution: ambiguity must ask, never guess (plan §2). Scoped to the
-    # current calendar (plan §5): a same-named event elsewhere must never cause
-    # ambiguity or be moved.
+    # Event resolution: by explicit id (UI button, no re-identification) or by
+    # title scoped to the current calendar (plan §5). Ambiguity must ask.
     scope_ids = [scope.target_calendar_id] if scope else None
-    candidates, status = store.resolve_event(str(args.get("title", "")),
-                                             calendar_ids=scope_ids)
+    eid = args.get("event_id")
+    if eid is not None:
+        ev = store.get(int(eid))
+        if ev is None:
+            return {"ok": False, "checks": checks, "resolved": {},
+                    "message": "❌ Termin nicht mehr vorhanden."}
+        if scope and ev.calendar_id != scope.target_calendar_id:
+            return {"ok": False, "checks": checks, "resolved": {},
+                    "message": "📌 Dieser Termin liegt in einem anderen Kalender."}
+        candidates, status = [ev], "unique"
+    else:
+        candidates, status = store.resolve_event(str(args.get("title", "")),
+                                                 calendar_ids=scope_ids)
     if status != "unique":
         if status == "not_found":
             return {"ok": False, "checks": checks, "resolved": {},
@@ -498,9 +520,20 @@ def _do_delete(store: cal.CalendarStore, args: dict, context: str = "",
     t_time = cal.resolve_time(date_expr) \
         or (cal.extract_time_from_text(context) if context else None)
     scope_ids = [scope.target_calendar_id] if scope else None
-    candidates, status = store.resolve_event(str(args.get("title", "")) or None,
-                                             day=near, t=t_time,
-                                             calendar_ids=scope_ids)
+    eid = args.get("event_id")
+    if eid is not None:
+        ev = store.get(int(eid))
+        if ev is None:
+            return {"ok": False, "checks": checks, "resolved": {},
+                    "message": "❌ Termin nicht mehr vorhanden."}
+        if scope and ev.calendar_id != scope.target_calendar_id:
+            return {"ok": False, "checks": checks, "resolved": {},
+                    "message": "📌 Dieser Termin liegt in einem anderen Kalender."}
+        candidates, status = [ev], "unique"
+    else:
+        candidates, status = store.resolve_event(
+            str(args.get("title", "")) or None, day=near, t=t_time,
+            calendar_ids=scope_ids)
     if status == "not_found":
         if near is not None:
             return {"ok": False, "checks": checks, "resolved": {},

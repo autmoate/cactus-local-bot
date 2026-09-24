@@ -33,6 +33,18 @@ from .service import AtomicService, preview_lines
 
 _ENV_PATH: Path | None = None
 READ_TOOLS = {"calendar_list", "calendar_find_slot"}
+EXPECTED_N2_FT_SHA_PREFIX = "ba3212ab"   # n2-FT seed44 (HF autmoate/cactus-needle2-calendar)
+
+
+def _verify_weights(path: str) -> None:
+    """Production must run the N2-FT, not silently the base model (plan §1)."""
+    try:
+        h = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    except OSError as exc:
+        raise SystemExit(f"NEEDLE_WEIGHTS nicht lesbar ({path}): {exc}")
+    if not h.startswith(EXPECTED_N2_FT_SHA_PREFIX):
+        print(f"  ⚠️  WARNUNG: Weights-SHA {h[:8]} erwartet "
+              f"{EXPECTED_N2_FT_SHA_PREFIX} (n2-FT seed44) — falsches Modell?")
 
 
 def _load_env() -> Path | None:
@@ -106,6 +118,45 @@ class KalenderPinBot:
         self.username = ""          # set from getMe at startup
         self.bot_id: int | None = None
         self.started = time.time()
+        self.pending_move: dict[tuple[int, int], int] = {}  # (chat, actor) -> id
+
+    # -------------------------------------------- id-based actions (plan §4)
+    def _share_group_id(self, ctx) -> int | None:
+        if ctx.is_group:
+            return ctx.target_calendar_id
+        groups = self.store.groups_of_person(ctx.actor_person_id)
+        return groups[0] if len(groups) == 1 else None
+
+    @staticmethod
+    def _short(title: str) -> str:
+        return title if len(title) <= 16 else title[:15] + "…"
+
+    def _action_keyboard(self, editable: list[tuple[int, str]], ctx):
+        share_gid = self._share_group_id(ctx)
+        rows = []
+        for eid, title in editable[:8]:
+            row = [InlineKeyboardButton(f"🗑 {self._short(title)}",
+                                        callback_data=f"evd:{eid}"),
+                   InlineKeyboardButton(f"↔ {self._short(title)}",
+                                        callback_data=f"evm:{eid}")]
+            if share_gid is not None:
+                row.append(InlineKeyboardButton("👥", callback_data=f"evs:{eid}"))
+            rows.append(row)
+        return InlineKeyboardMarkup(rows) if rows else None
+
+    @staticmethod
+    def _editable_from_view(view) -> list[tuple[int, str]]:
+        seen, out = set(), []
+        for lane in getattr(view, "lanes", []):
+            for b in lane.blocks:
+                if b.editable and b.event_id and b.title and b.event_id not in seen:
+                    seen.add(b.event_id)
+                    out.append((b.event_id, b.title))
+        for c in getattr(view, "shared", []):
+            if c.event_id and c.event_id not in seen:
+                seen.add(c.event_id)
+                out.append((c.event_id, c.title))
+        return out
 
     # ----------------------------------------------------- addressing (§9)
     def _stripped_mention(self, message) -> tuple[bool, str]:
@@ -159,9 +210,28 @@ class KalenderPinBot:
             if not text:
                 await msg.reply_text("📌 Ja? Schreib mir deine Kalenderanfrage.")
                 return
+        # a UI-initiated move waits for the new date/time (id known, no NLP)
+        key = (ctx.chat_id, ctx.actor_person_id)
+        eid = self.pending_move.pop(key, None)
+        if eid is not None and text:
+            if self._parse_when(text):
+                decision = await asyncio.to_thread(
+                    self.service.prepare_move_event, eid, ctx, text)
+                await self._render_decision(msg, ctx, decision, text)
+            else:
+                self.pending_move[key] = eid
+                await msg.reply_text("📌 Kein Datum/keine Uhrzeit erkannt — "
+                                     "z. B. „29.9. 16:00“.")
+            return
         await msg.chat.send_action("typing")
         decision = await asyncio.to_thread(self.service.prepare, text, ctx)
         await self._render_decision(msg, ctx, decision, text)
+
+    @staticmethod
+    def _parse_when(text: str) -> bool:
+        return bool(cal.extract_date_from_text(text, roll=False)
+                    or cal.extract_time_from_text(text)
+                    or temporal.parse_nav_date(text))
 
     async def _render_decision(self, msg, ctx, decision, text=""):
         if decision.kind == "read":
@@ -206,7 +276,8 @@ class KalenderPinBot:
                 png = render.render_week_view(view)
             else:
                 return  # > 7 days: text only, no misleading compact view (plan §13)
-            await msg.reply_photo(png)
+            kb = self._action_keyboard(self._editable_from_view(view), ctx)
+            await msg.reply_photo(png, reply_markup=kb)
         elif decision.tool == "calendar_find_slot":
             if resolved.get("slots") is None:
                 return  # solver produced no result -> never render a widget
@@ -235,8 +306,30 @@ class KalenderPinBot:
                 day = cal.date.fromisoformat(token)
             except ValueError:
                 return
-            await self._send_view(query.message, ctx, day, week=False,
-                                  edit=True)
+            await self._send_view(query.message, ctx, day, week=False)
+        elif action == "evd":  # delete an event by id (no re-identification)
+            try:
+                decision = await asyncio.to_thread(
+                    self.service.prepare_delete_event, int(token), ctx)
+            except ValueError:
+                return
+            await self._render_decision(query.message, ctx, decision)
+        elif action == "evm":  # start an id-based move; ask for the new time
+            try:
+                eid = int(token)
+            except ValueError:
+                return
+            self.pending_move[(ctx.chat_id, ctx.actor_person_id)] = eid
+            await query.message.reply_text(
+                "📌 Wohin verschieben? Antworte mit Datum/Uhrzeit, z. B. „29.9. 16:00“.")
+        elif action == "evs":  # share/unshare to the group (visibility only)
+            try:
+                out = await asyncio.to_thread(
+                    self.service.toggle_share, int(token), ctx,
+                    self._share_group_id(ctx))
+            except ValueError:
+                return
+            await query.message.reply_text(out.get("message", "…"))
 
     # ------------------------------------------------------------- commands
     async def cmd_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -254,13 +347,14 @@ class KalenderPinBot:
         await self.cmd_start(update, context)
 
     async def cmd_cancel(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        if await asyncio.to_thread(self._context, update) is None:
+        ctx = await asyncio.to_thread(self._context, update)
+        if ctx is None:
             return
+        self.pending_move.pop((ctx.chat_id, ctx.actor_person_id), None)
         await update.message.reply_text("📌 Offene Vorschläge verfallen automatisch "
                                         "(5 Minuten) oder per ✖ Abbrechen.")
 
-    async def _send_view(self, target, ctx, day: cal.date, week: bool,
-                         edit: bool = False):
+    async def _send_view(self, target, ctx, day: cal.date, week: bool):
         if week:
             first = day - cal.timedelta(days=day.weekday())
             view = await asyncio.to_thread(views.build_week_view, self.store, ctx, first)
@@ -268,11 +362,8 @@ class KalenderPinBot:
         else:
             view = await asyncio.to_thread(views.build_day_view, self.store, ctx, day)
             png = render.render_day_view(view)
-        if edit and hasattr(target, "edit_media"):
-            from telegram import InputMediaPhoto
-            await target.edit_media(InputMediaPhoto(png))
-        else:
-            await target.reply_photo(png)
+        kb = self._action_keyboard(self._editable_from_view(view), ctx)
+        await target.reply_photo(png, reply_markup=kb)
 
     def _nav_day(self, context) -> cal.date:
         arg = " ".join(context.args or []).strip()
@@ -330,7 +421,16 @@ def main() -> None:
     ap.add_argument("--mode", choices=["needle", "hybrid"], default="needle")
     ap.add_argument("--db", default=os.environ.get("CALENDAR_DB", "data/calendar.db"))
     ap.add_argument("--weights", default=os.environ.get("NEEDLE_WEIGHTS") or None)
+    ap.add_argument("--allow-base", action="store_true",
+                    help="DEBUG only: run without N2-FT (never in production)")
     args = ap.parse_args()
+
+    if not args.weights and not args.allow_base:
+        raise SystemExit(
+            "NEEDLE_WEIGHTS fehlt — Produktion läuft ausschließlich mit N2-FT "
+            "(seed44). Setze NEEDLE_WEIGHTS oder starte bewusst mit --allow-base.")
+    if args.weights:
+        _verify_weights(args.weights)
 
     store = CalendarStore(args.db)
     service = AtomicService(store, weights=args.weights)

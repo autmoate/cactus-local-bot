@@ -304,6 +304,87 @@ def test_availability_render_uses_resolved_day(tmp_path):
     assert png[:8] == b"\x89PNG\r\n\x1a\n" and len(png) > 500
 
 
+# ===================================== PHASE 5: explicit clock time beats all_day
+def test_explicit_clock_time_forces_timed(tmp_path):
+    store = _store(tmp_path)
+    ctx = resolve_private(store, 111, 111, "Oll", owner=True)
+    # the model omitted the time (date only) -> would be all-day without the rule
+    out = execute_call(store, "calendar_create",
+                       {"title": "Zug", "date": "28.9."},
+                       "Termin am 28.9. 7:13 Uhr Zug nach Leipzig", scope=ctx)
+    assert out["ok"]
+    ev = store.get(out["resolved"]["id"])
+    assert ev.all_day is False and (ev.start.hour, ev.start.minute) == (7, 13)
+
+
+# ============================ PHASE 2: all_day is geometry, not 'absence' domain
+def test_all_day_is_not_absence_and_defaults_busy(tmp_path):
+    store = _store(tmp_path)
+    ctx = resolve_private(store, 111, 111, "Oll", owner=True)
+    out = execute_call(store, "calendar_create",
+                       {"title": "Urlaub", "date": "24.9.", "until": "27.9."},
+                       "Trage vom 24.9. bis 27.9. Urlaub ein", scope=ctx)
+    assert out["ok"]
+    ev = store.get(out["resolved"]["id"])
+    assert ev.all_day is True            # geometry
+    assert ev.kind == "appointment"      # NOT forced to 'absence'
+    assert ev.busy is True               # availability property, default busy
+
+
+# ============================================ PHASE 3: event_shares visibility
+def test_event_shares_group_visibility(tmp_path):
+    store = _store(tmp_path)
+    g = resolve_group(store, 500, 111, "Oll", owner=True)
+    store.ensure_personal_calendar(g.actor_person_id)
+    g.member_person_ids = store.members_of(g.target_calendar_id)
+    day = D + timedelta(days=1)
+    ev = _mk(store, "Messe", day, 10, 11,
+             store.calendar_of_person(g.actor_person_id), ("Oll",))
+    v = views.build_day_view(store, g, day)
+    assert [c.title for c in v.shared] == []          # not shared yet
+    store.share_event(ev.id, g.target_calendar_id)
+    v = views.build_day_view(store, g, day)
+    assert [c.title for c in v.shared] == ["Messe"]   # now group-visible
+    store.unshare_event(ev.id, g.target_calendar_id)
+    assert views.build_day_view(store, g, day).shared == []
+
+
+# ==================================== PHASE 4: id-based edits (no re-identifying)
+def test_id_based_delete(tmp_path):
+    store = _store(tmp_path)
+    ctx = resolve_private(store, 111, 111, "Oll", owner=True)
+    ev = _mk(store, "Zahnarzt", D + timedelta(days=1), 10, 11,
+             ctx.target_calendar_id, ("Oll",))
+    svc = _svc(store, [])
+    d = svc.prepare_delete_event(ev.id, ctx)
+    assert d.kind == "write_proposal"
+    assert svc.confirm(d.proposal["token"], ctx)["ok"]
+    assert store.get(ev.id) is None
+
+
+def test_id_based_move_with_followup_text(tmp_path):
+    store = _store(tmp_path)
+    ctx = resolve_private(store, 111, 111, "Oll", owner=True)
+    ev = _mk(store, "Zahnarzt", date(2026, 9, 28), 10, 11,
+             ctx.target_calendar_id, ("Oll",))
+    svc = _svc(store, [])
+    d = svc.prepare_move_event(ev.id, ctx, "29.9. 16:00")
+    assert d.kind == "write_proposal"
+    assert svc.confirm(d.proposal["token"], ctx)["ok"]
+    moved = store.get(ev.id)
+    assert (moved.start.date(), moved.start.hour) == (date(2026, 9, 29), 16)
+
+
+def test_id_edit_rejects_other_calendar(tmp_path):
+    store = _store(tmp_path)
+    a = resolve_private(store, 111, 111, "Anna", owner=True)
+    b = resolve_private(store, 222, 222, "Ben", owner=True)
+    ev_b = _mk(store, "Arzt", D + timedelta(days=1), 10, 11, b.target_calendar_id,
+               ("Ben",))
+    svc = _svc(store, [])
+    assert svc.prepare_delete_event(ev_b.id, a).kind == "error"
+
+
 def test_homonyms_not_silently_resolved(tmp_path):
     store = _store(tmp_path)
     ctx = resolve_private(store, 111, 111, "Oll", owner=True)

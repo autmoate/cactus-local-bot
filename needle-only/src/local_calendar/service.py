@@ -94,6 +94,10 @@ class AtomicService:
     def _propose(self, name: str, args: dict, text: str,
                  ctx: RequestContext) -> Decision:
         out = execute_call(self.store, name, args, text, commit=False, scope=ctx)
+        return self._decision_from(name, args, out, ctx, text)
+
+    def _decision_from(self, name: str, args: dict, out: dict,
+                       ctx: RequestContext, text: str) -> Decision:
         if not out.get("ok"):
             kind = "ambiguous" if "Mehrere Einträge" in out["message"] else "error"
             return Decision(kind, tool=name, message=out["message"])
@@ -117,6 +121,39 @@ class AtomicService:
                         proposal={"token": token, "tool": name, "args": args,
                                   "resolved": resolved}, resolved=resolved,
                         warnings=list(out.get("warnings") or []))
+
+    # ------------------------------------------- id-based edits (no NLP, plan §4)
+    def prepare_delete_event(self, event_id: int, ctx: RequestContext) -> Decision:
+        """Delete an event the UI already identified (by id) — no title match."""
+        args = {"event_id": int(event_id)}
+        out = execute_call(self.store, "calendar_delete", args, "", commit=False,
+                           scope=ctx)
+        return self._decision_from("calendar_delete", args, out, ctx, "")
+
+    def prepare_move_event(self, event_id: int, ctx: RequestContext,
+                           text: str) -> Decision:
+        """Move an event the UI already identified; `text` supplies the new
+        date/time deterministically (same resolver, no new special cases)."""
+        args = {"event_id": int(event_id), "date": text, "time": text}
+        out = execute_call(self.store, "calendar_move", args, text, commit=False,
+                           scope=ctx)
+        return self._decision_from("calendar_move", args, out, ctx, text)
+
+    def toggle_share(self, event_id: int, ctx: RequestContext,
+                     group_calendar_id: int | None) -> dict:
+        """Share/unshare an own event to a group (visibility only, plan §3).
+        Reversible and low-risk, so no confirmation is required."""
+        if group_calendar_id is None:
+            return {"ok": False, "message": "📌 Keine Gruppe zum Teilen gefunden."}
+        ev = self.store.get(int(event_id))
+        if ev is None or (ev.calendar_id != ctx.target_calendar_id
+                          and ev.created_by_person_id != ctx.actor_person_id):
+            return {"ok": False, "message": "📌 Nur eigene Termine teilen."}
+        if self.store.is_shared_to(ev.id, group_calendar_id):
+            self.store.unshare_event(ev.id, group_calendar_id)
+            return {"ok": True, "message": f"🔒 '{ev.title}' nicht mehr geteilt."}
+        self.store.share_event(ev.id, group_calendar_id)
+        return {"ok": True, "message": f"👥 '{ev.title}' mit der Gruppe geteilt."}
 
     def confirm(self, token: str, ctx: RequestContext) -> dict:
         p = self.store.get_proposal(token)

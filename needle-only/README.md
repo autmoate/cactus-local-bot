@@ -43,6 +43,17 @@ NEEDLE_WEIGHTS=experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact \
   uv run local-calendar-telegram --mode needle
 ```
 
+Produktrevision (aktuell): `all_day` (Zeitgeometrie), `busy` (Verfügbarkeit) und
+Sichtbarkeit (`event_shares` privat→Gruppe) sind **getrennte Achsen**; `kind` ist
+nur Anzeige, und `all_day` bedeutet **nicht** mehr „absence". Default-Create ist
+normal/privat/busy. Enthält der Originaltext eine Uhrzeit, ist das Event timed
+(Uhrzeit autoritativ). `/day`, `/week` und Listen hängen **ID-basierte Buttons**
+(🗑/↔/👥) an — bestehende Termine werden nicht mehr sprachlich neu identifiziert.
+Der Telegram-Start lädt erzwungen N2-FT seed44 (kein stiller Base-Fallback;
+`--allow-base` nur zum Debuggen). Bewusst **kein** weiterer NLP-Sonderfall
+(„Abwesenheit"/„ganztägig" als Delete-Selektor, „Ändere X auf Y" usw.) — das ist
+Aufgabe einer Event-UI/PWA.
+
 Round-2-Prinzipien (kurz): interne Identität ist `person_id` (idempotente
 Owner-Reconciliation des Legacy-„Ich"); `move`/`delete` sind strikt auf den
 aktuellen Kalender gescoped; **Absence blockiert keine manuellen Termine**,

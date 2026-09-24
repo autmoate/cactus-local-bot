@@ -29,6 +29,8 @@ class BusyBlock:
     all_day: bool
     title: str | None          # None = private busy of another member
     shared: bool               # group event (title always safe to show)
+    event_id: int | None = None
+    editable: bool = False     # lives in the current target calendar (buttons)
 
 
 @dataclass
@@ -46,6 +48,7 @@ class SharedEventCard:
     end: datetime
     all_day: bool
     participants: list[str]
+    event_id: int | None = None
 
 
 @dataclass
@@ -90,13 +93,20 @@ def _read_events(store, ctx: RequestContext, start: datetime,
                                 calendar_ids=ctx.busy_calendar_ids(store))
 
 
-def _banners(ctx: RequestContext, events, ids_map) -> list[AllDayBanner]:
-    group_target = ctx.target_calendar_id if ctx.is_group else None
+def _group_visible(ctx: RequestContext, e, shared_ids: set[int]) -> bool:
+    """An event is group-visible when it lives in the group calendar or was
+    explicitly shared to it (plan §3)."""
+    return ctx.is_group and (e.calendar_id == ctx.target_calendar_id
+                             or e.id in shared_ids)
+
+
+def _banners(ctx: RequestContext, events, ids_map,
+             shared_ids: set[int]) -> list[AllDayBanner]:
     out: list[AllDayBanner] = []
     for e in events:
         if not e.all_day:
             continue
-        shared = group_target is not None and e.calendar_id == group_target
+        shared = _group_visible(ctx, e, shared_ids)
         if ctx.is_group and not shared:
             continue  # member absences stay in their lane, never in the header
         first, last = cal.allday_span(e)
@@ -104,16 +114,19 @@ def _banners(ctx: RequestContext, events, ids_map) -> list[AllDayBanner]:
     return sorted(out, key=lambda b: b.start_day)
 
 
-def _shared_cards(ctx: RequestContext, events, ids_map) -> list[SharedEventCard]:
+def _shared_cards(ctx: RequestContext, events, ids_map,
+                  shared_ids: set[int]) -> list[SharedEventCard]:
     if not ctx.is_group:
         return []  # plan §9: private events are never shared
-    out = [SharedEventCard(e.title, e.start, e.end, e.all_day, e.participants)
+    out = [SharedEventCard(e.title, e.start, e.end, e.all_day, e.participants,
+                           event_id=e.id)
            for e in events
-           if e.calendar_id == ctx.target_calendar_id and not e.all_day]
+           if _group_visible(ctx, e, shared_ids) and not e.all_day]
     return sorted(out, key=lambda c: c.start)
 
 
-def _lanes(store, ctx: RequestContext, events, ids_map) -> list[MemberLane]:
+def _lanes(store, ctx: RequestContext, events, ids_map,
+           shared_ids: set[int]) -> list[MemberLane]:
     group_target = ctx.target_calendar_id if ctx.is_group else None
     lanes: list[MemberLane] = []
     for pid in ctx.member_person_ids:
@@ -124,9 +137,12 @@ def _lanes(store, ctx: RequestContext, events, ids_map) -> list[MemberLane]:
         for e in events:
             if pid not in ids_map.get(e.id, set()):
                 continue
-            shared = group_target is not None and e.calendar_id == group_target
+            shared = _group_visible(ctx, e, shared_ids)
             title = e.title if (pid == ctx.actor_person_id or shared) else None
-            blocks.append(BusyBlock(e.start, e.end, e.all_day, title, shared))
+            editable = (pid == ctx.actor_person_id
+                        and e.calendar_id == ctx.target_calendar_id)
+            blocks.append(BusyBlock(e.start, e.end, e.all_day, title, shared,
+                                    event_id=e.id, editable=editable))
         lanes.append(MemberLane(pid, p["display_name"],
                                 p["color_key"] or cal.color_for(p["display_name"]),
                                 sorted(blocks, key=lambda b: b.start)))
@@ -141,22 +157,29 @@ def _free(events, ids_map, member_ids, first: date, last: date,
     return cal.free_slots_from_busy(busy, first, last, duration_min)
 
 
+def _shared_ids(store, ctx: RequestContext) -> set[int]:
+    return store.shared_event_ids(ctx.target_calendar_id) if ctx.is_group else set()
+
+
 def build_day_view_from_events(store, ctx: RequestContext, day: date,
                                events) -> DayView:
     ids_map = store.participant_ids_map([e.id for e in events])
-    return DayView(day, ctx.is_group, _banners(ctx, events, ids_map),
-                   _lanes(store, ctx, events, ids_map),
-                   _shared_cards(ctx, events, ids_map),
+    shared_ids = _shared_ids(store, ctx)
+    return DayView(day, ctx.is_group, _banners(ctx, events, ids_map, shared_ids),
+                   _lanes(store, ctx, events, ids_map, shared_ids),
+                   _shared_cards(ctx, events, ids_map, shared_ids),
                    _free(events, ids_map, ctx.member_person_ids, day, day))
 
 
 def build_range_view_from_events(store, ctx: RequestContext, first: date,
                                  last: date, events) -> WeekView:
     ids_map = store.participant_ids_map([e.id for e in events])
+    shared_ids = _shared_ids(store, ctx)
     days = [first + timedelta(days=i) for i in range((last - first).days + 1)]
-    return WeekView(first, days, ctx.is_group, _banners(ctx, events, ids_map),
-                    _lanes(store, ctx, events, ids_map),
-                    _shared_cards(ctx, events, ids_map))
+    return WeekView(first, days, ctx.is_group,
+                    _banners(ctx, events, ids_map, shared_ids),
+                    _lanes(store, ctx, events, ids_map, shared_ids),
+                    _shared_cards(ctx, events, ids_map, shared_ids))
 
 
 def build_day_view(store, ctx: RequestContext, day: date) -> DayView:
