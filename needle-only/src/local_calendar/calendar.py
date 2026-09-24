@@ -15,6 +15,7 @@ No ORM, no repository layer: direct sqlite3 statements where they belong.
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import sqlite3
@@ -70,18 +71,119 @@ class CalendarEvent(BaseModel):
     end: datetime
     all_day: bool = False
     participants: list[str] = Field(default_factory=list)
+    # multi-user scope (V1); nullable so legacy callers keep working
+    calendar_id: int | None = None
+    created_by_person_id: int | None = None
+
+
+def color_for(name: str) -> str:
+    """Deterministic person color (stable across restarts, plan §16)."""
+    palette = ["#2f6fb0", "#c1622a", "#3f8b53", "#8a4fa3", "#b08a2f",
+               "#a63a4b", "#2f8f8f", "#6a6a3a"]
+    h = 0
+    for ch in (name or ""):
+        h = (h * 131 + ord(ch)) & 0xFFFFFFFF
+    return palette[h % len(palette)]
 
 
 # ---------------------------------------------------------------- SQLite store
 
 class CalendarStore:
-    """SQLite persistence. One connection per operation; no shared state."""
+    """SQLite persistence. One connection per operation; no shared state.
+
+    V1 multi-user model (plan §4): people / calendars / calendar_members /
+    action_proposals; events carry calendar_id + created_by_person_id and
+    event_participants references people(id). Legacy name-based callers keep
+    working: `participants` (names) is mapped to/from people on read/write.
+    """
+
+    SCHEMA_VERSION = 1
 
     def __init__(self, path: str | Path = "data/calendar.db"):
         self.path = str(path)
         Path(self.path).parent.mkdir(parents=True, exist_ok=True)
+        self._migrate()
+
+    def _conn(self) -> sqlite3.Connection:
+        c = sqlite3.connect(self.path, timeout=10)
+        c.execute("PRAGMA foreign_keys=ON")
+        c.row_factory = sqlite3.Row
+        return c
+
+    # -------------------------------------------------------- schema / migration
+    def _migrate(self) -> None:
+        with self._conn() as c:
+            version = c.execute("PRAGMA user_version").fetchone()[0]
+            has_events = c.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
+                                   "AND name='events'").fetchone()
+            cols = {r["name"] for r in c.execute("PRAGMA table_info(events)")} \
+                if has_events else set()
+        if version >= self.SCHEMA_VERSION:
+            self._ensure_tables()
+            self._ensure_person_index()
+            return
+        legacy = bool(cols) and "calendar_id" not in cols
+        if legacy:
+            self.backup()  # plan §5/§33: backup before any schema change
+            with self._conn() as c:  # columns first so index creation succeeds
+                c.execute("ALTER TABLE events ADD COLUMN calendar_id INTEGER")
+                c.execute("ALTER TABLE events ADD COLUMN created_by_person_id INTEGER")
+        self._ensure_tables()  # creates missing tables + indexes
+        with self._conn() as c:
+            if legacy:
+                self._finish_v0_migration(c)
+            c.execute(f"PRAGMA user_version={self.SCHEMA_VERSION}")
+        self._ensure_person_index()
+
+    def _ensure_person_index(self) -> None:
+        with self._conn() as c:
+            c.execute("CREATE INDEX IF NOT EXISTS ep_person_idx "
+                      "ON event_participants(person_id)")
+
+    def _ensure_tables(self) -> None:
         with self._conn() as c:
             c.executescript("""
+                CREATE TABLE IF NOT EXISTS people (
+                    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                    telegram_user_id INTEGER UNIQUE,
+                    display_name     TEXT NOT NULL,
+                    color_key        TEXT,
+                    enabled          INTEGER NOT NULL DEFAULT 1,
+                    created_at       TEXT NOT NULL DEFAULT (datetime('now'))
+                );
+                CREATE TABLE IF NOT EXISTS calendars (
+                    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+                    kind             TEXT NOT NULL CHECK (kind IN ('personal','group')),
+                    name             TEXT NOT NULL,
+                    owner_person_id  INTEGER REFERENCES people(id),
+                    telegram_chat_id INTEGER UNIQUE,
+                    created_at       TEXT NOT NULL DEFAULT (datetime('now'))
+                );
+                CREATE TABLE IF NOT EXISTS calendar_members (
+                    calendar_id INTEGER NOT NULL REFERENCES calendars(id) ON DELETE CASCADE,
+                    person_id   INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+                    role        TEXT NOT NULL DEFAULT 'member'
+                                CHECK (role IN ('member','admin')),
+                    can_read    INTEGER NOT NULL DEFAULT 1,
+                    can_write   INTEGER NOT NULL DEFAULT 1,
+                    PRIMARY KEY (calendar_id, person_id)
+                );
+                CREATE TABLE IF NOT EXISTS action_proposals (
+                    id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+                    token              TEXT NOT NULL UNIQUE,
+                    actor_person_id    INTEGER NOT NULL REFERENCES people(id),
+                    chat_id            INTEGER NOT NULL,
+                    calendar_id        INTEGER NOT NULL REFERENCES calendars(id),
+                    tool_name          TEXT NOT NULL,
+                    args_json          TEXT NOT NULL,
+                    resolved_json      TEXT NOT NULL,
+                    context            TEXT NOT NULL DEFAULT '',
+                    target_event_id    INTEGER,
+                    target_fingerprint TEXT,
+                    created_at         TEXT NOT NULL,
+                    expires_at         TEXT NOT NULL,
+                    status             TEXT NOT NULL DEFAULT 'pending'
+                );
                 CREATE TABLE IF NOT EXISTS events (
                     id      INTEGER PRIMARY KEY AUTOINCREMENT,
                     title   TEXT NOT NULL,
@@ -89,24 +191,61 @@ class CalendarStore:
                             CHECK (kind IN ('appointment', 'absence')),
                     start   TEXT NOT NULL,
                     end     TEXT NOT NULL,
-                    all_day INTEGER NOT NULL DEFAULT 0
+                    all_day INTEGER NOT NULL DEFAULT 0,
+                    calendar_id INTEGER REFERENCES calendars(id),
+                    created_by_person_id INTEGER REFERENCES people(id)
                 );
                 CREATE TABLE IF NOT EXISTS event_participants (
-                    event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-                    name     TEXT NOT NULL,
-                    PRIMARY KEY (event_id, name)
-                );
-                CREATE TABLE IF NOT EXISTS participants (
-                    name TEXT PRIMARY KEY
+                    event_id  INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+                    person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+                    PRIMARY KEY (event_id, person_id)
                 );
                 CREATE INDEX IF NOT EXISTS events_start_idx ON events(start);
+                CREATE INDEX IF NOT EXISTS events_calendar_idx ON events(calendar_id);
             """)
 
-    def _conn(self) -> sqlite3.Connection:
-        c = sqlite3.connect(self.path, timeout=10)
-        c.execute("PRAGMA foreign_keys=ON")
-        c.row_factory = sqlite3.Row
-        return c
+    def _finish_v0_migration(self, c: sqlite3.Connection) -> None:
+        """Legacy data -> multi-user values (columns already added). No data loss."""
+        before = c.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+        owner = self._ensure_person(c, "Ich", None)
+        personal = self._ensure_personal_calendar(c, owner)
+        c.execute("UPDATE events SET calendar_id=?, created_by_person_id=?",
+                  (personal, owner))
+        # event_participants(name) -> event_participants(person_id)
+        cols = {r["name"] for r in c.execute("PRAGMA table_info(event_participants)")}
+        if "name" in cols:
+            name_map = {r["name"]: self._ensure_person(c, r["name"], None)
+                        for r in c.execute("SELECT DISTINCT name FROM event_participants")}
+            rows = c.execute("SELECT event_id, name FROM event_participants").fetchall()
+            c.execute("DROP TABLE event_participants")
+            c.execute("""CREATE TABLE event_participants (
+                            event_id  INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+                            person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+                            PRIMARY KEY (event_id, person_id))""")
+            c.executemany("INSERT OR IGNORE INTO event_participants VALUES (?,?)",
+                          [(r["event_id"], name_map[r["name"]]) for r in rows])
+        after = c.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+        if before != after:
+            raise RuntimeError(f"migration lost events: {before} -> {after}")
+
+    def backup(self) -> str | None:
+        """SQLite-consistent backup to <dir>/backups/calendar-YYYYMMDD.db."""
+        import datetime as _dt
+        import shutil
+        try:
+            bdir = Path(self.path).parent / "backups"
+            bdir.mkdir(parents=True, exist_ok=True)
+            dest = bdir / f"calendar-{_dt.date.today():%Y%m%d}.db"
+            src = sqlite3.connect(self.path)
+            dst = sqlite3.connect(dest)
+            with dst:
+                src.backup(dst)  # sqlite backup API, not a blind file copy
+            dst.close()
+            src.close()
+            return str(dest)
+        except Exception:
+            return None  # backup must never crash the bot (plan §33)
+
 
     @staticmethod
     def _iso(dt: datetime) -> str:
@@ -116,30 +255,139 @@ class CalendarStore:
     def _dt(value: str) -> datetime:
         return datetime.fromisoformat(value)
 
-    def add(self, ev: CalendarEvent) -> CalendarEvent:
+    # ----------------------------------------------------- people / calendars
+    def _ensure_person(self, c, name: str, telegram_user_id: int | None) -> int:
+        name = _canonical_person(name) or "Ich"
+        if telegram_user_id is not None:
+            row = c.execute("SELECT id FROM people WHERE telegram_user_id=?",
+                            (telegram_user_id,)).fetchone()
+            if row:
+                return row["id"]
+        row = c.execute("SELECT id FROM people WHERE display_name=? AND enabled=1",
+                        (name,)).fetchone()
+        if row:
+            if telegram_user_id is not None:
+                c.execute("UPDATE people SET telegram_user_id=? WHERE id=?",
+                          (telegram_user_id, row["id"]))
+            return row["id"]
+        cur = c.execute("INSERT INTO people (telegram_user_id, display_name, color_key) "
+                        "VALUES (?,?,?)", (telegram_user_id, name, color_for(name)))
+        return cur.lastrowid
+
+    def ensure_person(self, name: str, telegram_user_id: int | None = None) -> int:
         with self._conn() as c:
+            return self._ensure_person(c, name, telegram_user_id)
+
+    def _ensure_personal_calendar(self, c, person_id: int) -> int:
+        row = c.execute("SELECT id FROM calendars WHERE kind='personal' "
+                        "AND owner_person_id=?", (person_id,)).fetchone()
+        if row:
+            return row["id"]
+        name = c.execute("SELECT display_name FROM people WHERE id=?",
+                         (person_id,)).fetchone()["display_name"]
+        cur = c.execute("INSERT INTO calendars (kind, name, owner_person_id) "
+                        "VALUES ('personal', ?, ?)", (name, person_id))
+        cid = cur.lastrowid
+        c.execute("INSERT OR IGNORE INTO calendar_members "
+                  "(calendar_id, person_id, role) VALUES (?,?, 'admin')",
+                  (cid, person_id))
+        return cid
+
+    def ensure_personal_calendar(self, person_id: int) -> int:
+        with self._conn() as c:
+            return self._ensure_personal_calendar(c, person_id)
+
+    def ensure_group_calendar(self, chat_id: int, name: str = "Gruppe") -> int:
+        with self._conn() as c:
+            row = c.execute("SELECT id FROM calendars WHERE telegram_chat_id=?",
+                            (chat_id,)).fetchone()
+            if row:
+                return row["id"]
+            cur = c.execute("INSERT INTO calendars (kind, name, telegram_chat_id) "
+                            "VALUES ('group', ?, ?)", (name, chat_id))
+            return cur.lastrowid
+
+    def add_member(self, calendar_id: int, person_id: int, role: str = "member",
+                   can_read: int = 1, can_write: int = 1) -> None:
+        with self._conn() as c:
+            c.execute("INSERT OR REPLACE INTO calendar_members "
+                      "(calendar_id, person_id, role, can_read, can_write) "
+                      "VALUES (?,?,?,?,?)",
+                      (calendar_id, person_id, role, int(can_read), int(can_write)))
+
+    def default_calendar_id(self) -> int:
+        with self._conn() as c:
+            owner = self._ensure_person(c, "Ich", None)
+            return self._ensure_personal_calendar(c, owner)
+
+    def calendar_of_person(self, person_id: int) -> int | None:
+        with self._conn() as c:
+            row = c.execute("SELECT id FROM calendars WHERE kind='personal' "
+                            "AND owner_person_id=?", (person_id,)).fetchone()
+            return row["id"] if row else None
+
+    def calendar_of_chat(self, chat_id: int) -> int | None:
+        with self._conn() as c:
+            row = c.execute("SELECT id FROM calendars WHERE telegram_chat_id=?",
+                            (chat_id,)).fetchone()
+            return row["id"] if row else None
+
+    def person(self, person_id: int) -> dict | None:
+        with self._conn() as c:
+            r = c.execute("SELECT * FROM people WHERE id=?", (person_id,)).fetchone()
+            return dict(r) if r else None
+
+    def person_by_telegram(self, telegram_user_id: int) -> dict | None:
+        with self._conn() as c:
+            r = c.execute("SELECT * FROM people WHERE telegram_user_id=?",
+                          (telegram_user_id,)).fetchone()
+            return dict(r) if r else None
+
+    def members_of(self, calendar_id: int) -> list[int]:
+        with self._conn() as c:
+            return [r["person_id"] for r in c.execute(
+                "SELECT person_id FROM calendar_members WHERE calendar_id=?",
+                (calendar_id,))]
+
+    def people_names(self, person_ids: list[int]) -> list[str]:
+        if not person_ids:
+            return []
+        marks = ",".join("?" * len(person_ids))
+        with self._conn() as c:
+            rows = c.execute(f"SELECT display_name FROM people WHERE id IN ({marks}) "
+                             "ORDER BY display_name", person_ids).fetchall()
+        return [r["display_name"] for r in rows]
+
+    # ------------------------------------------------------------- events CRUD
+    def add(self, ev: CalendarEvent, calendar_id: int | None = None,
+            created_by_person_id: int | None = None) -> CalendarEvent:
+        with self._conn() as c:
+            cid = calendar_id or self._ensure_personal_calendar(
+                c, self._ensure_person(c, "Ich", None))
             cur = c.execute(
-                "INSERT INTO events (title, kind, start, end, all_day) VALUES (?,?,?,?,?)",
-                (ev.title, ev.kind, self._iso(ev.start), self._iso(ev.end), int(ev.all_day)))
-            ev = ev.model_copy(update={"id": cur.lastrowid})
-            names = {_canonical_person(p) for p in ev.participants} - {""}
-            c.executemany("INSERT OR IGNORE INTO event_participants VALUES (?,?)",
-                          [(ev.id, n) for n in names])
-            c.executemany("INSERT OR IGNORE INTO participants VALUES (?)",
-                          [(n,) for n in names])
+                "INSERT INTO events (title, kind, start, end, all_day, calendar_id, "
+                "created_by_person_id) VALUES (?,?,?,?,?,?,?)",
+                (ev.title, ev.kind, self._iso(ev.start), self._iso(ev.end),
+                 int(ev.all_day), cid, created_by_person_id))
+            ev = ev.model_copy(update={"id": cur.lastrowid, "calendar_id": cid,
+                                       "created_by_person_id": created_by_person_id})
+            self._write_participants(c, ev.id, ev.participants)
         return ev
+
+    def _write_participants(self, c, event_id: int, names: list[str]) -> None:
+        ids = {self._ensure_person(c, n, None)
+               for n in {_canonical_person(p) for p in names} - {""}}
+        c.execute("DELETE FROM event_participants WHERE event_id=?", (event_id,))
+        c.executemany("INSERT OR IGNORE INTO event_participants VALUES (?,?)",
+                      [(event_id, pid) for pid in ids])
 
     def update(self, ev: CalendarEvent) -> None:
         with self._conn() as c:
-            c.execute("UPDATE events SET title=?, kind=?, start=?, end=?, all_day=? WHERE id=?",
+            c.execute("UPDATE events SET title=?, kind=?, start=?, end=?, all_day=? "
+                      "WHERE id=?",
                       (ev.title, ev.kind, self._iso(ev.start), self._iso(ev.end),
                        int(ev.all_day), ev.id))
-            names = {_canonical_person(p) for p in ev.participants} - {""}
-            c.execute("DELETE FROM event_participants WHERE event_id=?", (ev.id,))
-            c.executemany("INSERT OR IGNORE INTO event_participants VALUES (?,?)",
-                          [(ev.id, n) for n in names])
-            c.executemany("INSERT OR IGNORE INTO participants VALUES (?)",
-                          [(n,) for n in names])
+            self._write_participants(c, ev.id, ev.participants)
 
     def delete(self, event_id: int) -> bool:
         with self._conn() as c:
@@ -155,33 +403,59 @@ class CalendarStore:
         return self._event(row, people.get(event_id, []))
 
     def _event(self, row: sqlite3.Row, people: list[str]) -> CalendarEvent:
+        keys = row.keys()
         return CalendarEvent(
             id=row["id"], title=row["title"], kind=row["kind"],
             start=self._dt(row["start"]), end=self._dt(row["end"]),
-            all_day=bool(row["all_day"]), participants=people)
+            all_day=bool(row["all_day"]), participants=people,
+            calendar_id=(row["calendar_id"] if "calendar_id" in keys else None),
+            created_by_person_id=(row["created_by_person_id"]
+                                  if "created_by_person_id" in keys else None))
 
     def _load_people(self, c: sqlite3.Connection, ids: list[int]) -> dict[int, list[str]]:
         if not ids:
             return {}
         marks = ",".join("?" * len(ids))
         rows = c.execute(
-            f"SELECT event_id, name FROM event_participants WHERE event_id IN ({marks}) "
-            "ORDER BY event_id, name", ids).fetchall()
+            f"SELECT ep.event_id AS eid, p.display_name AS name "
+            f"FROM event_participants ep JOIN people p ON p.id=ep.person_id "
+            f"WHERE ep.event_id IN ({marks}) ORDER BY ep.event_id, p.display_name",
+            ids).fetchall()
         out: dict[int, list[str]] = {}
         for r in rows:
-            out.setdefault(r["event_id"], []).append(r["name"])
+            out.setdefault(r["eid"], []).append(r["name"])
         return out
 
     def events_between(self, start: datetime, end: datetime,
-                       person: str | None = None) -> list[CalendarEvent]:
-        """All events overlapping [start, end), optionally only those of one person."""
+                       person: str | None = None,
+                       calendar_ids: list[int] | None = None,
+                       person_ids: list[int] | None = None) -> list[CalendarEvent]:
+        """All events overlapping [start, end), scoped by calendar and/or person.
+
+        person (legacy name) and person_ids both restrict to events that have at
+        least one of the given persons as participant. calendar_ids restricts to
+        the given calendars (empty list = nothing)."""
+        if calendar_ids is not None and not calendar_ids:
+            return []
         sql = "SELECT * FROM events WHERE start < ? AND end > ?"
         params: list = [self._iso(end), self._iso(start)]
+        if calendar_ids is not None:
+            marks = ",".join("?" * len(calendar_ids))
+            sql += f" AND calendar_id IN ({marks})"
+            params += list(calendar_ids)
+        pids = list(person_ids or [])
         if person:
-            p = _canonical_person(person)
-            sql += (" AND id IN (SELECT event_id FROM event_participants WHERE name = ? "
-                    "COLLATE NOCASE)")
-            params.append(p)
+            with self._conn() as pc:
+                pids += [r["id"] for r in pc.execute(
+                    "SELECT id FROM people WHERE display_name=? COLLATE NOCASE",
+                    (_canonical_person(person),))]
+        if person is not None or person_ids is not None:
+            if not pids:
+                return []
+            marks = ",".join("?" * len(pids))
+            sql += (f" AND id IN (SELECT event_id FROM event_participants "
+                    f"WHERE person_id IN ({marks}))")
+            params += pids
         with self._conn() as c:
             rows = c.execute(sql + " ORDER BY start", params).fetchall()
             people = self._load_people(c, [r["id"] for r in rows])
@@ -250,8 +524,41 @@ class CalendarStore:
 
     def participant_names(self) -> list[str]:
         with self._conn() as c:
-            return [r["name"] for r in
-                    c.execute("SELECT name FROM participants ORDER BY name")]
+            return [r["display_name"] for r in c.execute(
+                "SELECT display_name FROM people WHERE enabled=1 "
+                "ORDER BY display_name")]
+
+    # ------------------------------------------------------- action proposals
+    def create_proposal(self, token: str, actor_person_id: int, chat_id: int,
+                        calendar_id: int, tool_name: str, args: dict,
+                        resolved: dict, target_event_id: int | None,
+                        target_fingerprint: str | None, context: str = "",
+                        ttl_seconds: int = 300) -> None:
+        import datetime as _dt
+        created = now()
+        expires = created + _dt.timedelta(seconds=ttl_seconds)
+        with self._conn() as c:
+            c.execute("""INSERT INTO action_proposals (token, actor_person_id, chat_id,
+                            calendar_id, tool_name, args_json, resolved_json, context,
+                            target_event_id, target_fingerprint, created_at, expires_at,
+                            status)
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,'pending')""",
+                      (token, actor_person_id, chat_id, calendar_id, tool_name,
+                       json.dumps(args, ensure_ascii=False),
+                       json.dumps(resolved, ensure_ascii=False, default=str), context,
+                       target_event_id, target_fingerprint,
+                       self._iso(created), self._iso(expires)))
+
+    def get_proposal(self, token: str) -> dict | None:
+        with self._conn() as c:
+            r = c.execute("SELECT * FROM action_proposals WHERE token=?",
+                          (token,)).fetchone()
+        return dict(r) if r else None
+
+    def set_proposal_status(self, token: str, status: str) -> None:
+        with self._conn() as c:
+            c.execute("UPDATE action_proposals SET status=? WHERE token=?",
+                      (status, token))
 
     def collision(self, ev: CalendarEvent) -> CalendarEvent | None:
         """First conflicting event sharing a participant with ev.

@@ -227,9 +227,11 @@ def _fix_text_date(context: str, day: cal.date, roll: bool = True) -> cal.date:
 
 
 def execute_call(store: cal.CalendarStore, name: str, args: dict,
-                 context: str = "") -> dict:
+                 context: str = "", commit: bool = True, scope=None) -> dict:
     """Resolve symbolic args -> verify -> execute. One structured result per call.
-    `context` (canonical/original text) lets Python correct the model's dates."""
+    `context` (canonical/original text) lets Python correct the model's dates.
+    `commit=False` performs resolve/verify only (no DB mutation) and returns a
+    proposal preview in `resolved` — the AtomicService uses this for writes."""
     args = {k: v for k, v in (args or {}).items() if v not in ("", None)}
     handlers = {"calendar_create": _do_create, "calendar_move": _do_move,
                 "calendar_delete": _do_delete, "calendar_list": _do_list,
@@ -239,13 +241,14 @@ def execute_call(store: cal.CalendarStore, name: str, args: dict,
         return {"ok": False, "message": f"Unbekanntes Tool: {name}",
                 "checks": [], "resolved": {}}
     try:
-        return handler(store, args, context)
+        return handler(store, args, context, commit, scope)
     except Exception as exc:
         return {"ok": False, "message": f"❌ {type(exc).__name__}: {exc}",
                 "checks": [], "resolved": {}}
 
 
-def _do_create(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
+def _do_create(store: cal.CalendarStore, args: dict, context: str = "",
+               commit: bool = True, scope=None) -> dict:
     checks: list = []
     title = str(args.get("title", "")).strip()
     checks.append({"check": "Titel", "ok": bool(title), "value": title or "fehlt"})
@@ -328,7 +331,12 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
         return {"ok": False, "checks": checks, "resolved": ev.model_dump(mode="json"),
                 "message": (f"⚠️ Kollision: '{clash.title}' {reason}. "
                             "Anderen Zeitpunkt wählen?")}
-    ev = store.add(ev)
+    if not commit:
+        return {"ok": True, "dry_run": True, "checks": checks,
+                "resolved": ev.model_dump(mode="json"),
+                "message": f"📌 Neuer Termin: {_describe(ev)}"}
+    ev = store.add(ev, calendar_id=(scope.target_calendar_id if scope else None),
+                   created_by_person_id=(scope.actor_person_id if scope else None))
     label = "🚫 Absence eingetragen" if all_day else "✅ Erstellt"
     note = ""
     if start.date() < cal.now().date():
@@ -337,7 +345,8 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
             "message": f"{label}: {_describe(ev)}{note}"}
 
 
-def _do_move(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
+def _do_move(store: cal.CalendarStore, args: dict, context: str = "",
+             commit: bool = True, scope=None) -> dict:
     checks: list = []
     date_expr = str(args.get("date", "")).strip()
     time_expr = str(args.get("time", "")).strip()
@@ -406,12 +415,19 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
                 "message": (f"⚠️ Kollision: '{clash.title}' belegt bereits "
                             f"{cal._fmt_day(clash.start)} {cal._fmt_time(clash.start)}. "
                             "Nicht verschoben.")}
+    if not commit:
+        return {"ok": True, "dry_run": True, "checks": checks,
+                "resolved": {"before": ev.model_dump(mode="json"),
+                             "after": candidate.model_dump(mode="json")},
+                "message": (f"📌 Termin verschieben: {ev.title} "
+                            f"{_describe(ev)} → {_describe(candidate)}")}
     moved = cal.move_event(store, ev, new_start, new_end)
     return {"ok": True, "checks": checks, "resolved": moved.model_dump(mode="json"),
             "message": f"✏️ Verschoben: {_describe(moved)}"}
 
 
-def _do_delete(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
+def _do_delete(store: cal.CalendarStore, args: dict, context: str = "",
+               commit: bool = True, scope=None) -> dict:
     checks: list = []
     date_expr = str(args.get("date", "")).strip()
     near = cal.resolve_date(date_expr, roll=False) if date_expr else None
@@ -439,12 +455,17 @@ def _do_delete(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
                             f"bitte präzisieren: {listing}")}
     ev = candidates[0]
     checks.append({"check": "Eintrag gefunden", "ok": True, "value": ev.title})
+    if not commit:
+        return {"ok": True, "dry_run": True, "checks": checks,
+                "resolved": ev.model_dump(mode="json"),
+                "message": f"📌 Termin löschen: {_describe(ev)}"}
     cal.delete_event(store, ev.id)
     return {"ok": True, "checks": checks, "resolved": ev.model_dump(mode="json"),
             "message": f"🗑️ Gelöscht: {_describe(ev)}"}
 
 
-def _do_list(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
+def _do_list(store: cal.CalendarStore, args: dict, context: str = "",
+             commit: bool = True, scope=None) -> dict:
     horizon = str(args.get("horizon", "week")).lower()
     days = {"today": 1, "week": 7, "month": 31}.get(horizon, 7)
     person = str(args.get("person", "")).strip()
@@ -473,17 +494,22 @@ def _do_list(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
         start = cal.now()
         end = start + cal.timedelta(days=days)
         resolved = {"person": who, "days": days}
-    events = store.events_between(start, end, person=who)
+    events = store.events_between(start, end, person=(person or None),
+                                  calendar_ids=(scope.read_calendar_ids if scope else None))
     return {"ok": True, "checks": [], "resolved": resolved,
             "message": cal.render_events(events)}
 
 
-def _do_find_slot(store: cal.CalendarStore, args: dict, context: str = "") -> dict:
+def _do_find_slot(store: cal.CalendarStore, args: dict, context: str = "",
+                  commit: bool = True, scope=None) -> dict:
     raw = str(args.get("persons", "")).strip()
     if not raw:
         return {"ok": False, "checks": [], "resolved": {},
                 "message": "❌ Keine Personen angegeben."}
     persons = cal.parse_persons(raw)
+    if scope is not None:
+        actor_name = (store.people_names([scope.actor_person_id]) or ["Ich"])[0]
+        persons = [actor_name if p == "Ich" else p for p in persons]
     duration = max(5, _to_int(args.get("duration_min"), 60))
     date_expr = str(args.get("date", "")).strip()
     until_expr = str(args.get("until", "")).strip()
@@ -648,13 +674,15 @@ class Agent:
         return out
 
     def _ask_needle(self, trace: dict, text: str) -> dict:
-        facts = system_facts()
-        if facts != self._facts_key:
-            self._facts_key = facts
-            self.needle = needle.Needle(**self._needle_kwargs(facts))
-        self.needle.reset()  # each request is independent; keep tools loaded
         text = (text or "").strip().rstrip(".!?;:,")  # trailing periods cause refusals
-        with self.inference_lock:  # plan §11: one engine call at a time
+        # plan §15: facts-check, re-init, reset and complete form ONE critical
+        # section — otherwise a second chat can reset() between our reset/complete.
+        with self.inference_lock:
+            facts = system_facts()
+            if facts != self._facts_key:
+                self._facts_key = facts
+                self.needle = needle.Needle(**self._needle_kwargs(facts))
+            self.needle.reset()  # each request is independent; keep tools loaded
             return self._step(trace, "needle_complete",
                               self.needle.complete, text) or {}
 

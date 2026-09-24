@@ -217,3 +217,108 @@ def render_day_png(store, day: date,
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return buf.getvalue()
+
+
+# ------------------------------------------------ multi-user view rendering
+
+def render_week_view(view) -> bytes:
+    """Week from a WeekView: one column per day, one colored lane per person,
+    shared events as named cards. Private titles of others are already masked
+    in the view data, so they can never render here."""
+    days = view.days
+    lanes = view.lanes
+    lane_h = 34
+    shared = sorted(view.shared, key=lambda c: c.start)
+    shared_h = 30 * len(shared) + (10 if shared else 0)
+    H = HEAD_H + shared_h + lane_h * (len(lanes) + 1) + 40
+    img = Image.new("RGB", (W, max(H, 300)), "white")
+    d = ImageDraw.Draw(img)
+    f_title, f_head, f_body, f_small = _font(30), _font(24), _font(19), _font(13)
+    today = cal.now().date()
+    title = "Gruppenwoche" if view.group else (
+        "Diese Woche" if days[0] == _monday(today)
+        else f"{days[0]:%d.%m.} – {days[-1]:%d.%m.}")
+    d.text((MARGIN, 14), title, font=f_title, fill=INK)
+    for i, day in enumerate(days):
+        x = i * DAY_W
+        d.text((x + 8, TITLE_H), f"{cal.WEEKDAYS_DE[day.weekday()]} {day.day}.",
+               font=f_head if day == today else f_small,
+               fill=INK if day == today else MUTED)
+        d.line([(x + 4, HEAD_H), (x + 4, H)], fill="#eeeeee", width=1)
+    # shared event cards (titles are safe: group events)
+    yy = HEAD_H + 4
+    for c in shared:
+        label = c.title if len(c.participants) <= 1 else \
+            f"{c.title} ({', '.join(c.participants)})"
+        d.rectangle([MARGIN, yy, W - MARGIN, yy + 22], fill="#dcecdc")
+        day_ix = (c.start.date() - days[0]).days
+        prefix = f"{cal.WEEKDAYS_DE[c.start.weekday()]} " if 0 <= day_ix < 7 else ""
+        txt = f"{prefix}{c.start:%H:%M} {label}" if not c.all_day \
+            else f"{prefix}{label} (ganztägig)"
+        d.text((MARGIN + 6, yy + 2), _fit(d, txt, f_small, W - 2 * MARGIN - 12),
+               font=f_small, fill=INK)
+        yy += 28
+    # one lane per person
+    y0 = HEAD_H + shared_h + 4
+    for li, lane in enumerate(lanes):
+        y = y0 + li * lane_h
+        d.rectangle([MARGIN, y + 4, MARGIN + 14, y + lane_h - 6], fill=lane.color)
+        d.text((MARGIN + 20, y + 6), _fit(d, lane.name, f_small, 90),
+               font=f_small, fill=INK)
+        for b in lane.blocks:
+            ix = (b.start.date() - days[0]).days
+            if not (0 <= ix < 7):
+                continue
+            x = ix * DAY_W + 6
+            for row in range(li, len(lanes)):  # first free row for this day
+                if row == li:
+                    break
+            d.rectangle([x, y + 4, x + DAY_W - 12, y + lane_h - 6],
+                        fill=lane.color, outline="white")
+            if b.title:
+                d.text((x + 3, y + 6),
+                       _fit(d, b.title, f_small, DAY_W - 18), font=f_small,
+                       fill="white")
+    # common free text
+    if view.group:
+        d.text((MARGIN, H - 26), "gemeinsam frei: siehe /today", font=f_small,
+               fill=MUTED)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def render_day_view(view) -> bytes:
+    """Day from a DayView: lanes + shared cards + common free slots."""
+    H = 120 + 34 * len(view.lanes) + 26 * len(view.shared) + 40
+    img = Image.new("RGB", (W, max(H, 260)), "white")
+    d = ImageDraw.Draw(img)
+    f_title, f_body, f_small = _font(30), _font(19), _font(14)
+    title = ("Gruppentag" if view.group else
+             ("Heute" if view.day == cal.now().date()
+              else f"{cal.WEEKDAYS_DE[view.day.weekday()]} {view.day:%d.%m.%Y}"))
+    d.text((MARGIN, 14), title, font=f_title, fill=INK)
+    yy = 60
+    for c in view.shared:
+        d.rectangle([MARGIN, yy, W - MARGIN, yy + 24], fill="#dcecdc")
+        d.text((MARGIN + 6, yy + 2),
+               _fit(d, f"{c.start:%H:%M}–{c.end:%H:%M} {c.title}", f_body,
+                    W - 2 * MARGIN - 12), font=f_body, fill=INK)
+        yy += 28
+    for lane in view.lanes:
+        d.rectangle([MARGIN, yy + 4, MARGIN + 14, yy + 24], fill=lane.color)
+        d.text((MARGIN + 20, yy + 4), lane.name, font=f_small, fill=INK)
+        seg = []
+        for b in lane.blocks:
+            seg.append((f"{b.start:%H:%M} {b.title}" if b.title
+                        else f"{b.start:%H:%M} belegt"))
+        d.text((MARGIN + 130, yy + 4),
+               _fit(d, " | ".join(seg) or "frei", f_small, W - MARGIN - 140),
+               font=f_small, fill=MUTED if not seg else INK)
+        yy += 34
+    free = ", ".join(f"{s:%H:%M}–{e:%H:%M}" for s, e in view.free[:6])
+    d.text((MARGIN, yy + 6), f"gemeinsam frei: {free or 'keine'}",
+           font=f_small, fill=MUTED)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()

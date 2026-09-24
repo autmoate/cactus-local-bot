@@ -17,8 +17,8 @@ from .tabs.needle_lab import build_needle_lab_tab
 
 
 def build_app(agent: Agent) -> gr.Blocks:
-    with gr.Blocks(title="Local Calendar Agent") as app:
-        gr.Markdown("# 🗓️ Local Calendar Agent — Needle 2 + Gemma 4 E2B")
+    with gr.Blocks(title="Kalender-Pin") as app:
+        gr.Markdown("# 🧷 Kalender-Pin 📌")
         with gr.Tabs():
             build_assistant_tab(agent)
             build_calendar_tab(agent)
@@ -40,8 +40,9 @@ def _lan_ip() -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser(prog="local-calendar")
-    ap.add_argument("--mode", choices=["needle", "hybrid"], default="hybrid",
-                    help="needle: kein Gemma; hybrid: Gemma-Normalisierung + Repair")
+    ap.add_argument("--mode", choices=["needle", "hybrid"], default="needle",
+                    help="needle: Produktionspfad (kein Gemma); "
+                         "hybrid: nur Research/Debug (Gemma-Normalisierung)")
     ap.add_argument("--db", default=os.environ.get("CALENDAR_DB", "data/calendar.db"))
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("--port", type=int, default=7860)

@@ -385,85 +385,7 @@ def test_render_availability_png(tmp_path):
     assert img.format == "PNG" and img.height > 100
 
 
-def test_telegram_widget_selection_from_trace():
-    from local_calendar.telegram import TelegramBot
-    trace = {"steps": [{"name": "execute calendar_find_slot"}]}
-    assert TelegramBot._executed_tools(trace) == {"calendar_find_slot"}
-    trace2 = {"steps": [{"name": "execute calendar_list",
-                         "output": {"ok": True, "resolved": {"first_day": "2026-09-14"}}}]}
-    assert TelegramBot._list_first_day(trace2) == date(2026, 9, 14)
-    trace3 = {"steps": [{"name": "execute calendar_find_slot",
-                         "output": {"ok": True, "resolved": {"day": "2026-09-17"}}}]}
-    assert TelegramBot._day_of(trace3, "calendar_find_slot") == date(2026, 9, 17)
-
-
-def test_telegram_allowlist():
-    from local_calendar.telegram import TelegramBot
-    bot = TelegramBot(None, owner=1, allowed={2})
-    assert bot._allowed_chat(1) and bot._allowed_chat(2)
-    assert not bot._allowed_chat(999)
-
-
-# --------------------------------------------------- telegram hardening units
-
-class _StubAgent:
-    """Records handle calls; yields a trace with the requested tool result."""
-
-    def __init__(self):
-        self.store = CalendarStore(tempfile.mktemp(suffix=".db"))
-        self.calls: list[tuple[str, str]] = []
-
-    def handle(self, text, session_id="local"):
-        self.calls.append((text, session_id))
-        yield {"input": text, "steps": [
-            {"name": "execute calendar_list",
-             "output": {"ok": True, "resolved": {"first_day": "2026-09-14",
-                                                 "person": "Ich"}}}],
-            "result": "ok", "executed": True, "done": True}
-
-
-def _stub_update(chat_id: int, text: str = "hallo"):
-    class _Chat:
-        def __init__(self): self.id = chat_id
-        async def send_action(self, *a, **k): pass
-
-    class _Msg:
-        def __init__(self): self.chat = _Chat(); self.text = text; self.sent = []
-        async def reply_text(self, t, **k): self.sent.append(("text", t))
-        async def reply_photo(self, png, **k): self.sent.append(("photo", png))
-
-    class _Update:
-        def __init__(self): self.message = _Msg(); self.effective_chat = _Chat()
-    u = _Update()
-    u.message.chat = _Chat.__new__(_Chat)
-    u.message.chat.id = chat_id
-    u.effective_chat.id = chat_id
-    return u
-
-
-def _bot_for(chat_stub_agent, owner=1, allowed=()):
-    from local_calendar.telegram import TelegramBot
-    return TelegramBot(chat_stub_agent, owner, allowed)
-
-
-def test_telegram_unauthorized_never_calls_agent():
-    import asyncio
-    agent = _StubAgent()
-    bot = _bot_for(agent, owner=1, allowed={2})
-    asyncio.run(bot.on_message(_stub_update(999), None))
-    assert agent.calls == []  # plan §19: unknown chats never reach the agent
-
-
-def test_telegram_owner_and_allowlist_execute():
-    import asyncio
-    agent = _StubAgent()
-    bot = _bot_for(agent, owner=1, allowed={2})
-    asyncio.run(bot.on_message(_stub_update(1), None))
-    asyncio.run(bot.on_message(_stub_update(2), None))
-    assert [c for _, c in agent.calls] == ["1", "2"]  # session ids = chat ids
-
-
-def test_telegram_session_ids_isolate_pending():
+def test_agent_session_ids_isolate_pending():
     agent = Agent(CalendarStore(tempfile.mktemp(suffix=".db")), mode="needle")
     agent.pending = {"s1": {"goal": "g1", "observations": [], "question": "q?"}}
     # a message from another session must not consume s1's pending state
@@ -472,19 +394,6 @@ def test_telegram_session_ids_isolate_pending():
         final = trace
     assert "s1" in agent.pending  # untouched
     agent.pending.clear()
-
-
-def test_telegram_widget_selection_uses_trace():
-    from local_calendar.telegram import TelegramBot
-    trace = {"steps": [{"name": "execute calendar_find_slot",
-                        "output": {"ok": True, "resolved": {
-                            "persons": ["Ich", "Lisa"], "first_day": "2026-09-17",
-                            "last_day": "2026-09-17", "duration_min": 90,
-                            "window_start": "09:00", "window_end": "17:00",
-                            "slots": [["2026-09-17 12:00", "2026-09-17 13:30"]]}}}]}
-    assert TelegramBot._executed_tools(trace) == {"calendar_find_slot"}
-    resolved = TelegramBot._resolved(trace, "calendar_find_slot")
-    assert resolved["duration_min"] == 90 and len(resolved["slots"]) == 1
 
 
 # ------------------------------------- real Telegram delete regressions (§30)

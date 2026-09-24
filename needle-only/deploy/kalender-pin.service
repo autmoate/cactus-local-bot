@@ -1,0 +1,28 @@
+# Kalender-Pin 📌 — systemd unit (Raspberry Pi, V1 production)
+#
+# Install (on the Pi, repo at /home/pi/cactus-local-bot):
+#   sudo cp needle-only/deploy/kalender-pin.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now kalender-pin
+#   systemctl status kalender-pin
+#
+# Secrets (TELEGRAM_BOT_TOKEN, allowlists, NEEDLE_WEIGHTS) live ONLY in the
+# referenced environment file — never in this unit and never in git.
+
+[Unit]
+Description=Kalender-Pin Telegram calendar bot (local, Needle-only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/cactus-local-bot/needle-only
+# EnvironmentFile is optional (-): point it at your .env
+EnvironmentFile=-%h/cactus-local-bot/needle-only/.env
+ExecStart=%h/cactus-local-bot/needle-only/.venv/bin/local-calendar-telegram --mode needle
+Restart=on-failure
+RestartSec=3
+# never run as root
+User=%i
+
+[Install]
+WantedBy=default.target
