@@ -21,8 +21,8 @@ EnvironmentFile=-%h/cactus-local-bot/needle-only/.env
 ExecStart=%h/cactus-local-bot/needle-only/.venv/bin/local-calendar-telegram --mode needle
 Restart=on-failure
 RestartSec=3
-# never run as root
-User=%i
+# never run as root — set this to the Pi's login user (and adjust %h paths)
+User=rpi-ai
 
 [Install]
 WantedBy=default.target
