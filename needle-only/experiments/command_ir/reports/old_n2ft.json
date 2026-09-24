@@ -1,0 +1,1077 @@
+{
+  "families": {
+    "old_add": {
+      "n": 15,
+      "tool_ok": 0.0,
+      "compile_ok": 0.0,
+      "final_ok": 0.667,
+      "span_grounding": 0.0,
+      "wrong_mutation": 5,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 0,
+      "ops_pred": 0,
+      "all_intents_covered": 0.0,
+      "silent_omission": 0,
+      "latency_p50": 0.0,
+      "latency_p95": 0.0
+    },
+    "old_change": {
+      "n": 12,
+      "tool_ok": 0.0,
+      "compile_ok": 0.0,
+      "final_ok": 0.583,
+      "span_grounding": 0.0,
+      "wrong_mutation": 4,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 0,
+      "ops_pred": 0,
+      "all_intents_covered": 0.0,
+      "silent_omission": 0,
+      "latency_p50": 0.0,
+      "latency_p95": 0.0
+    },
+    "old_multi": {
+      "n": 21,
+      "tool_ok": 0.0,
+      "compile_ok": 0.0,
+      "final_ok": 0.19,
+      "span_grounding": 0.0,
+      "wrong_mutation": 13,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 0,
+      "ops_pred": 0,
+      "all_intents_covered": 0.0,
+      "silent_omission": 0,
+      "latency_p50": 0.0,
+      "latency_p95": 0.0
+    },
+    "old_negative": {
+      "n": 10,
+      "tool_ok": 0.0,
+      "compile_ok": 0.0,
+      "final_ok": 0.9,
+      "span_grounding": 0.0,
+      "wrong_mutation": 0,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.9,
+      "ops_expected": 0,
+      "ops_pred": 0,
+      "all_intents_covered": 0.0,
+      "silent_omission": 0,
+      "latency_p50": 0.0,
+      "latency_p95": 0.0
+    },
+    "old_remove": {
+      "n": 8,
+      "tool_ok": 0.0,
+      "compile_ok": 0.0,
+      "final_ok": 0.875,
+      "span_grounding": 0.0,
+      "wrong_mutation": 0,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 0,
+      "ops_pred": 0,
+      "all_intents_covered": 0.0,
+      "silent_omission": 0,
+      "latency_p50": 0.0,
+      "latency_p95": 0.0
+    }
+  },
+  "taxonomy": {},
+  "failures": [
+    {
+      "id": "add_zug",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Zug",
+            "date": "28.9.",
+            "time": "7:13 Uhr",
+            "end_time": "07:13"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Zug",
+          "2026-09-28T07:13:00",
+          "2026-09-28T08:13:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Zug nach Leipzig",
+          "2026-09-28T07:13:00",
+          "2026-09-28T08:13:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_office_range",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "B\u00fcro",
+            "date": "29.9.",
+            "time": "9",
+            "end_time": "16 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "B\u00fcro",
+          "2026-09-29T16:00:00",
+          "2026-09-29T17:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T09:00:00",
+          "2026-09-29T16:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_period",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Kaffee",
+            "date": "morgen"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Kaffee",
+          "2026-09-25T00:00:00",
+          "2026-09-26T00:00:00",
+          true
+        ]
+      ],
+      "want": [
+        [
+          "Kaffee",
+          "2026-09-25T14:00:00",
+          "2026-09-25T15:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_range_time",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Workshop",
+            "date": "30.9.",
+            "time": "9",
+            "end_time": "12 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Workshop",
+          "2026-09-30T12:00:00",
+          "2026-09-30T13:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Workshop",
+          "2026-09-30T09:00:00",
+          "2026-09-30T12:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_long_title",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Leipzig Hauptbahnhof",
+            "date": "28.9.",
+            "time": "7:13 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Leipzig Hauptbahnhof",
+          "2026-09-28T07:13:00",
+          "2026-09-28T08:13:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Zug nach Leipzig Hauptbahnhof",
+          "2026-09-28T07:13:00",
+          "2026-09-28T08:13:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_range_shrink",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Vacation",
+            "date": "23.9.",
+            "time": "24.9."
+          }
+        },
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Vacation",
+            "date": "23.9.",
+            "end_time": "27.9."
+          }
+        }
+      ],
+      "got": [
+        [
+          "Vacation",
+          "2026-09-24T00:00:00",
+          "2026-09-29T00:00:00",
+          true
+        ],
+        [
+          "Vacation",
+          "2027-09-23T00:00:00",
+          "2026-09-25T00:00:00",
+          true
+        ]
+      ],
+      "want": [
+        [
+          "Vacation",
+          "2026-09-24T00:00:00",
+          "2026-09-28T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "change_rename",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Zahnarzt",
+            "time": "um"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Kontrolltermin",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_rename_time",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Zahnarzt",
+            "time": "16 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T16:00:00",
+          "2026-09-29T17:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Kontrolltermin",
+          "2026-09-29T16:00:00",
+          "2026-09-29T17:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_time_range",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Meeting",
+            "time": "15"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-30T17:00:00",
+          "2026-09-30T19:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Meeting",
+          "2026-09-30T15:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_weekday_time",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Zahnarzt",
+            "date": "n\u00e4chste Woche Dienstag",
+            "time": "9 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-25T09:00:00",
+          "2026-09-25T10:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Zahnarzt",
+          "2026-09-29T09:00:00",
+          "2026-09-29T10:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "remove_time_only",
+      "calls": [
+        {
+          "name": "calendar_delete",
+          "arguments": {
+            "title": "Meeting",
+            "date": "15 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ],
+        [
+          "Meeting",
+          "2026-09-29T15:00:00",
+          "2026-09-29T16:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Meeting",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_00",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "B\u00fcro",
+            "date": "Dienstag"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T00:00:00",
+          "2026-09-30T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "multi_01",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Sport",
+            "date": "Donnerstag",
+            "time": "18 Uhr"
+          }
+        },
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Meeting",
+            "time": "16 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-30T18:00:00",
+          "2026-09-30T19:00:00",
+          false
+        ],
+        [
+          "Sport",
+          "2026-10-01T18:00:00",
+          "2026-10-01T19:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Meeting",
+          "2026-09-30T16:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ],
+        [
+          "Sport",
+          "2026-10-01T18:00:00",
+          "2026-10-01T19:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_02",
+      "calls": [
+        {
+          "name": "calendar_list",
+          "arguments": {
+            "date": "Mittwoch"
+          }
+        },
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Sport",
+            "date": "Donnerstag",
+            "time": "18 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Sport",
+          "2026-09-30T18:00:00",
+          "2026-09-30T19:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Sport",
+          "2026-10-01T18:00:00",
+          "2026-10-01T19:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_03",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Fr\u00fchst\u00fcck",
+            "date": "morgen",
+            "time": "8 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Fr\u00fchst\u00fcck",
+          "2026-09-25T08:00:00",
+          "2026-09-25T09:00:00",
+          false
+        ],
+        [
+          "Meeting",
+          "2026-09-30T10:00:00",
+          "2026-09-30T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Fr\u00fchst\u00fcck",
+          "2026-09-25T08:00:00",
+          "2026-09-25T09:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_04",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Zahnarzt",
+            "time": "16 Uhr"
+          }
+        },
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Urlaub",
+            "date": "30.9."
+          }
+        }
+      ],
+      "got": [
+        [
+          "Urlaub",
+          "2026-09-30T16:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ],
+        [
+          "Zahnarzt",
+          "2026-09-30T16:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Urlaub",
+          "2026-09-30T00:00:00",
+          "2026-10-01T00:00:00",
+          true
+        ],
+        [
+          "Zahnarzt",
+          "2026-09-29T16:00:00",
+          "2026-09-29T17:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_05",
+      "calls": [
+        {
+          "name": "calendar_delete",
+          "arguments": {
+            "title": "Zahnarzt"
+          }
+        },
+        {
+          "name": "calendar_list",
+          "arguments": {
+            "date": "30.9."
+          }
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": []
+    },
+    {
+      "id": "multi_06",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Zug",
+            "date": "28.9.",
+            "time": "7 Uhr"
+          }
+        },
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "B\u00fcro",
+            "date": "29.9.",
+            "time": "9 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "B\u00fcro",
+          "2026-09-28T07:00:00",
+          "2026-09-28T08:00:00",
+          false
+        ],
+        [
+          "Zug",
+          "2026-09-28T07:00:00",
+          "2026-09-28T08:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T09:00:00",
+          "2026-09-29T10:00:00",
+          false
+        ],
+        [
+          "Zug",
+          "2026-09-28T07:00:00",
+          "2026-09-28T08:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_07",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Zahnarzt",
+            "date": "1.10."
+          }
+        }
+      ],
+      "got": [
+        [
+          "Urlaub",
+          "2026-09-24T00:00:00",
+          "2026-09-28T00:00:00",
+          true
+        ],
+        [
+          "Zahnarzt",
+          "2026-10-01T10:00:00",
+          "2026-10-01T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Zahnarzt",
+          "2026-10-01T10:00:00",
+          "2026-10-01T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_08",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Zahnarzt",
+            "date": "3.9."
+          }
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ],
+        [
+          "Zahnarzt",
+          "2026-09-30T00:00:00",
+          "2027-09-04T00:00:00",
+          true
+        ]
+      ],
+      "want": [
+        [
+          "Kontrolltermin",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_10",
+      "calls": [
+        {
+          "name": "calendar_list",
+          "arguments": {
+            "date": "Dienstag"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-30T10:00:00",
+          "2026-09-30T11:00:00",
+          false
+        ]
+      ],
+      "want": []
+    },
+    {
+      "id": "multi_11",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Meeting",
+            "time": "16 Uhr"
+          }
+        },
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "B\u00fcro",
+            "date": "29.9."
+          }
+        }
+      ],
+      "got": [
+        [
+          "B\u00fcro",
+          "2026-09-29T16:00:00",
+          "2026-09-29T17:00:00",
+          false
+        ],
+        [
+          "Meeting",
+          "2026-09-29T16:00:00",
+          "2026-09-29T17:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T00:00:00",
+          "2026-09-30T00:00:00",
+          true
+        ],
+        [
+          "Meeting",
+          "2026-09-30T16:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_12",
+      "calls": [
+        {
+          "name": "calendar_delete",
+          "arguments": {
+            "title": "Zahnarzt"
+          }
+        },
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Urlaub",
+            "date": "24.9.",
+            "until": "27.9."
+          }
+        }
+      ],
+      "got": [
+        [
+          "Urlaub",
+          "2026-09-24T00:00:00",
+          "2026-09-28T00:00:00",
+          true
+        ],
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Urlaub",
+          "2026-09-24T00:00:00",
+          "2026-09-28T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "multi_14",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Zahnarzt",
+            "date": "30.9."
+          }
+        },
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Sport",
+            "date": "1.10.",
+            "time": "18 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Sport",
+          "2026-09-30T18:00:00",
+          "2026-09-30T19:00:00",
+          false
+        ],
+        [
+          "Zahnarzt",
+          "2026-10-01T18:00:00",
+          "2026-10-01T19:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Sport",
+          "2026-10-01T18:00:00",
+          "2026-10-01T19:00:00",
+          false
+        ],
+        [
+          "Zahnarzt",
+          "2026-09-30T10:00:00",
+          "2026-09-30T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_17",
+      "calls": [
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Meeting",
+            "time": "15"
+          }
+        },
+        {
+          "name": "calendar_delete",
+          "arguments": {
+            "title": "Zahnarzt"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-30T17:00:00",
+          "2026-09-30T18:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Meeting",
+          "2026-09-30T15:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_18",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Zahnarzt",
+            "date": "28.9."
+          }
+        },
+        {
+          "name": "calendar_move",
+          "arguments": {
+            "title": "Zahnarzt",
+            "time": "16 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-28T16:00:00",
+          "2026-09-28T17:00:00",
+          false
+        ],
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Zahnarzt",
+          "2026-09-29T16:00:00",
+          "2026-09-29T17:00:00",
+          false
+        ],
+        [
+          "Zug",
+          "2026-09-28T00:00:00",
+          "2026-09-29T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "multi_19",
+      "calls": [
+        {
+          "name": "calendar_delete",
+          "arguments": {
+            "title": "Urlaub"
+          }
+        },
+        {
+          "name": "calendar_list",
+          "arguments": {
+            "date": "30.9."
+          }
+        }
+      ],
+      "got": [
+        [
+          "Urlaub",
+          "2026-09-24T00:00:00",
+          "2026-09-28T00:00:00",
+          true
+        ]
+      ],
+      "want": []
+    },
+    {
+      "id": "multi_20",
+      "calls": [
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "B\u00fcro",
+            "date": "29.9.",
+            "time": "9 Uhr"
+          }
+        },
+        {
+          "name": "calendar_create",
+          "arguments": {
+            "title": "Meeting",
+            "date": "30.9.",
+            "time": "10 Uhr"
+          }
+        }
+      ],
+      "got": [
+        [
+          "B\u00fcro",
+          "2026-09-29T09:00:00",
+          "2026-09-29T10:00:00",
+          false
+        ],
+        [
+          "Meeting",
+          "2026-09-29T09:00:00",
+          "2026-09-29T10:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T09:00:00",
+          "2026-09-29T10:00:00",
+          false
+        ],
+        [
+          "Meeting",
+          "2026-09-30T10:00:00",
+          "2026-09-30T11:00:00",
+          false
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1233 @@
+{
+  "families": {
+    "add": {
+      "n": 15,
+      "tool_ok": 0.133,
+      "compile_ok": 0.2,
+      "final_ok": 0.0,
+      "span_grounding": 0.806,
+      "wrong_mutation": 1,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 15,
+      "ops_pred": 1,
+      "all_intents_covered": 0.0,
+      "silent_omission": 14,
+      "latency_p50": 776.6,
+      "latency_p95": 1081.4
+    },
+    "availability": {
+      "n": 7,
+      "tool_ok": 0.0,
+      "compile_ok": 0.857,
+      "final_ok": 0.857,
+      "span_grounding": 0.8,
+      "wrong_mutation": 0,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 0,
+      "ops_pred": 0,
+      "all_intents_covered": 0.857,
+      "silent_omission": 0,
+      "latency_p50": 627.1,
+      "latency_p95": 1135.7
+    },
+    "change": {
+      "n": 12,
+      "tool_ok": 0.833,
+      "compile_ok": 0.833,
+      "final_ok": 0.5,
+      "span_grounding": 0.786,
+      "wrong_mutation": 3,
+      "ambiguous_correct": 1.0,
+      "not_found_correct": 1.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 10,
+      "ops_pred": 7,
+      "all_intents_covered": 0.333,
+      "silent_omission": 3,
+      "latency_p50": 606.0,
+      "latency_p95": 959.4
+    },
+    "multi": {
+      "n": 21,
+      "tool_ok": 0.667,
+      "compile_ok": 0.524,
+      "final_ok": 0.333,
+      "span_grounding": 0.841,
+      "wrong_mutation": 3,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 35,
+      "ops_pred": 16,
+      "all_intents_covered": 0.333,
+      "silent_omission": 11,
+      "latency_p50": 866.9,
+      "latency_p95": 1279.9
+    },
+    "negative": {
+      "n": 10,
+      "tool_ok": 0.0,
+      "compile_ok": 1.0,
+      "final_ok": 0.0,
+      "span_grounding": 1.0,
+      "wrong_mutation": 0,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.2,
+      "ops_expected": 0,
+      "ops_pred": 0,
+      "all_intents_covered": 0.0,
+      "silent_omission": 0,
+      "latency_p50": 433.5,
+      "latency_p95": 543.0
+    },
+    "remove": {
+      "n": 8,
+      "tool_ok": 0.875,
+      "compile_ok": 0.75,
+      "final_ok": 0.75,
+      "span_grounding": 0.8,
+      "wrong_mutation": 0,
+      "ambiguous_correct": 1.0,
+      "not_found_correct": 1.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 6,
+      "ops_pred": 4,
+      "all_intents_covered": 0.5,
+      "silent_omission": 2,
+      "latency_p50": 408.0,
+      "latency_p95": 535.7
+    },
+    "show": {
+      "n": 8,
+      "tool_ok": 0.875,
+      "compile_ok": 0.875,
+      "final_ok": 0.875,
+      "span_grounding": 0.556,
+      "wrong_mutation": 0,
+      "ambiguous_correct": 0.0,
+      "not_found_correct": 0.0,
+      "correct_refusal_rate": 0.0,
+      "ops_expected": 0,
+      "ops_pred": 0,
+      "all_intents_covered": 0.875,
+      "silent_omission": 0,
+      "latency_p50": 471.1,
+      "latency_p95": 555.3
+    }
+  },
+  "taxonomy": {
+    "MODEL_TOOL": 16,
+    "MODEL_SPAN": 21,
+    "EXECUTION": 3,
+    "AMBIGUOUS": 1,
+    "COMPILER_TARGET": 5,
+    "MODEL_EXTRA": 8,
+    "COMPILER_TIME": 1,
+    "MODEL_OMISSION": 1
+  },
+  "failures": [
+    {
+      "id": "add_zug",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Zug",
+            "new_title": "Zug"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Zug nach Leipzig",
+          "2026-09-28T07:13:00",
+          "2026-09-28T08:13:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_breakfast",
+      "calls": [
+        {
+          "name": "calendar_add",
+          "arguments": {
+            "title": "Fr\u00fchst\u00fcck",
+            "when": "08:00"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_add",
+          "code": "COMPILER_TIME",
+          "status": "error"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Fr\u00fchst\u00fcck",
+          "2026-09-25T08:00:00",
+          "2026-09-25T09:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_dentist",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Zahnarzt",
+            "new_when": "14:00",
+            "new_title": "Zahnarzt"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Zahnarzt",
+          "2026-09-29T14:00:00",
+          "2026-09-29T15:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_office_range",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "B\u00fcro",
+            "new_when": "29.9. von 9",
+            "new_title": "B\u00fcro"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T09:00:00",
+          "2026-09-29T16:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_allday_single",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "when": "30.9"
+          }
+        }
+      ],
+      "errors": [],
+      "got": [],
+      "want": [
+        [
+          "Urlaub",
+          "2026-09-30T00:00:00",
+          "2026-10-01T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "add_multiday",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {}
+        }
+      ],
+      "errors": [],
+      "got": [],
+      "want": [
+        [
+          "Urlaub",
+          "2026-09-24T00:00:00",
+          "2026-09-28T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "add_weekday",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Zahnarzt",
+            "new_when": "2026-09-25 09:00",
+            "new_title": "Zahnarzt"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Zahnarzt",
+          "2026-09-29T09:00:00",
+          "2026-09-29T10:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_period",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Kaffee",
+            "new_when": "morgen"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Kaffee",
+          "2026-09-25T14:00:00",
+          "2026-09-25T15:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_iso",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Termin",
+            "new_when": "2026-10-05 um 11 Uhr"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Termin",
+          "2026-10-05T11:00:00",
+          "2026-10-05T12:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_monthname",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "T\u00dcV",
+            "new_when": "2026-10-03"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "T\u00dcV",
+          "2026-10-03T09:00:00",
+          "2026-10-03T10:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_range_time",
+      "calls": [
+        {
+          "name": "calendar_add",
+          "arguments": {
+            "title": "Workshop",
+            "when": "2026-09-30"
+          }
+        }
+      ],
+      "errors": [],
+      "got": [
+        [
+          "Workshop",
+          "2026-09-30T00:00:00",
+          "2026-10-01T00:00:00",
+          true
+        ]
+      ],
+      "want": [
+        [
+          "Workshop",
+          "2026-09-30T09:00:00",
+          "2026-09-30T12:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_allday_messe",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Messe",
+            "new_when": "29.9"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Messe",
+          "2026-09-29T00:00:00",
+          "2026-09-30T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "add_long_title",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Zug",
+            "new_title": "Zug"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Zug nach Leipzig Hauptbahnhof",
+          "2026-09-28T07:13:00",
+          "2026-09-28T08:13:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_person",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Meeting mit Ben",
+            "new_when": "10:00",
+            "new_title": "Meeting mit Ben"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Meeting",
+          "2026-09-30T10:00:00",
+          "2026-09-30T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "add_evening",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Sport",
+            "new_when": "18 Uhr"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "Sport",
+          "2026-10-01T18:00:00",
+          "2026-10-01T19:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_range_shrink",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "24.9.",
+            "new_title": "Vacation",
+            "new_when": "24.9."
+          }
+        }
+      ],
+      "errors": [],
+      "got": [
+        [
+          "Vacation",
+          "2026-09-24T00:00:00",
+          "2026-09-29T00:00:00",
+          true
+        ]
+      ],
+      "want": [
+        [
+          "Vacation",
+          "2026-09-24T00:00:00",
+          "2026-09-28T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "change_rename",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "person": "Zahnarzt"
+          }
+        }
+      ],
+      "errors": [],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Kontrolltermin",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_rename_time",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "person": "Zahnarzt"
+          }
+        },
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "16:00",
+            "new_title": "Zahnarzt"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Kontrolltermin",
+          "2026-09-29T16:00:00",
+          "2026-09-29T17:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_time_range",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "15:00",
+            "new_title": "Meeting"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-30T10:00:00",
+          "2026-09-30T12:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Meeting",
+          "2026-09-30T15:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_weekday_time",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Zahnarzt",
+            "new_when": "9:00"
+          }
+        }
+      ],
+      "errors": [],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-25T09:00:00",
+          "2026-09-25T10:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Zahnarzt",
+          "2026-09-29T09:00:00",
+          "2026-09-29T10:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "change_allday_day",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Urlaub",
+            "new_title": "Urlaub"
+          }
+        }
+      ],
+      "errors": [],
+      "got": [
+        [
+          "Urlaub",
+          "2026-09-24T00:00:00",
+          "2026-09-25T00:00:00",
+          true
+        ]
+      ],
+      "want": [
+        [
+          "Urlaub",
+          "2026-09-30T00:00:00",
+          "2026-10-01T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "remove_title_date",
+      "calls": [
+        {
+          "name": "calendar_remove",
+          "arguments": {
+            "target": "Zahnarzt"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_remove",
+          "code": "AMBIGUOUS",
+          "status": "ambiguous"
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ],
+        [
+          "Zahnarzt",
+          "2026-09-30T10:00:00",
+          "2026-09-30T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "remove_time_only",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Meeting",
+            "new_title": "Meeting",
+            "new_when": "15:00"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "AMBIGUOUS",
+          "status": "ambiguous"
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ],
+        [
+          "Meeting",
+          "2026-09-29T15:00:00",
+          "2026-09-29T16:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Meeting",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "show_today",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Was habe ich heute",
+            "new_when": "10:00"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": []
+    },
+    {
+      "id": "avail_duration_min",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "29.9. 30 Minuten",
+            "new_title": "Zeit"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": []
+    },
+    {
+      "id": "negative_0",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "when": "morgen"
+          }
+        }
+      ]
+    },
+    {
+      "id": "negative_1",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {}
+        }
+      ]
+    },
+    {
+      "id": "negative_3",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "when": "danke"
+          }
+        }
+      ]
+    },
+    {
+      "id": "negative_4",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "when": "2 plus 2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "negative_5",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {}
+        }
+      ]
+    },
+    {
+      "id": "negative_6",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {}
+        }
+      ]
+    },
+    {
+      "id": "negative_7",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {}
+        }
+      ]
+    },
+    {
+      "id": "negative_8",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {}
+        }
+      ]
+    },
+    {
+      "id": "multi_00",
+      "calls": [
+        {
+          "name": "calendar_add",
+          "arguments": {
+            "title": "Dienstag B\u00fcro",
+            "when": "Dienstag B\u00fcro"
+          }
+        },
+        {
+          "name": "calendar_remove",
+          "arguments": {
+            "target": "Zahnarzt"
+          }
+        }
+      ],
+      "errors": [],
+      "got": [
+        [
+          "Dienstag B\u00fcro",
+          "2026-09-29T00:00:00",
+          "2026-09-30T00:00:00",
+          true
+        ]
+      ],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T00:00:00",
+          "2026-09-30T00:00:00",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "multi_01",
+      "calls": [
+        {
+          "name": "calendar_add",
+          "arguments": {
+            "title": "Sport",
+            "when": "18 Uhr"
+          }
+        },
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "16"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_add",
+          "code": "COMPILER_TIME",
+          "status": "error"
+        },
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-30T10:00:00",
+          "2026-09-30T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Meeting",
+          "2026-09-30T16:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ],
+        [
+          "Sport",
+          "2026-10-01T18:00:00",
+          "2026-10-01T19:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_02",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "when": "2026-09-24"
+          }
+        },
+        {
+          "name": "calendar_add",
+          "arguments": {
+            "title": "Sport",
+            "when": "2026-09-24"
+          }
+        }
+      ],
+      "errors": [],
+      "got": [
+        [
+          "Sport",
+          "2026-09-24T00:00:00",
+          "2026-09-25T00:00:00",
+          true
+        ]
+      ],
+      "want": [
+        [
+          "Sport",
+          "2026-10-01T18:00:00",
+          "2026-10-01T19:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_06",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Zug",
+            "new_title": "Zug",
+            "new_when": "28.9"
+          }
+        },
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "B\u00fcro",
+            "new_title": "B\u00fcro"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        },
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T09:00:00",
+          "2026-09-29T10:00:00",
+          false
+        ],
+        [
+          "Zug",
+          "2026-09-28T07:00:00",
+          "2026-09-28T08:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_08",
+      "calls": [
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "person": "Zahnarzt",
+            "when": "Zahnarzt"
+          }
+        },
+        {
+          "name": "calendar_show",
+          "arguments": {
+            "person": "Zahnarzt",
+            "when": "30.9"
+          }
+        }
+      ],
+      "errors": [],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Kontrolltermin",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_09",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Kaffee",
+            "new_when": "14:00"
+          }
+        },
+        {
+          "name": "calendar_remove",
+          "arguments": {
+            "target": "Zahnarzt"
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_change",
+          "code": "COMPILER_TARGET",
+          "status": "not_found"
+        }
+      ],
+      "got": [
+        [
+          "Zahnarzt",
+          "2026-09-29T10:00:00",
+          "2026-09-29T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "Kaffee",
+          "2026-09-30T14:00:00",
+          "2026-09-30T15:00:00",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "multi_11",
+      "calls": [
+        {
+          "name": "calendar_change",
+          "arguments": {
+            "target": "Meeting",
+            "new_title": "Meeting",
+            "new_when": "16:00"
+          }
+        },
+        {
+          "name": "calendar_add",
+          "arguments": {
+            "title": "B\u00fcro",
+            "when": ""
+          }
+        }
+      ],
+      "errors": [
+        {
+          "name": "calendar_add",
+          "code": "COMPILER_TIME",
+          "status": "error"
+        }
+      ],
+      "got": [
+        [
+          "Meeting",
+          "2026-09-30T10:00:00",
+          "2026-09-30T11:00:00",
+          false
+        ]
+      ],
+      "want": [
+        [
+          "B\u00fcro",
+          "2026-09-29T00:00:00",
+          "2026-09-30T00:00:00",
+          true
+        ],
+        [
+          "Meeting",
+          "2026-09-30T16:00:00",
+          "2026-09-30T17:00:00",
+          false
+        ]
+      ]
+    }
+  ]
+}
