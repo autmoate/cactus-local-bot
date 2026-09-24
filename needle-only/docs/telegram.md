@@ -21,8 +21,19 @@ Produktionsbetrieb. Gemma/N3 bleiben ausschließlich Research
 - **Änderungen** (`create`, `move`, `delete`) erscheinen als Preview mit
   **[✅ Bestätigen] [✖ Abbrechen]**; erst der Tap mutiert die DB. Vorschläge
   verfallen nach 5 Minuten.
-- **/today · /week** rendern direkt aus Python/SQLite (keine Modellinferenz).
+- **/today · /day [Datum] · /week [Datum]** rendern direkt aus Python/SQLite
+  (keine Modellinferenz). `/day 29.9.` zeigt genau diesen Tag, `/week 29.9.`
+  die Woche, die ihn enthält; `/week next` die nächste Woche.
+- **/status** (owner-only) zeigt Build-SHA, Modus, Modell-Tag, Schema, Eventzahl,
+  Uptime — ohne Secrets und ohne vollständigen Pfad.
 - **/cancel** verwirft offene Vorschläge · **/debug** ist owner-only.
+
+### Overlaps sind Warnungen, keine Blocker
+
+Ein klassischer Kalender darf überlappende Einträge haben. Überschneidungen
+erscheinen im Preview als `⚠️ …`, der Termin kann per **✅ Trotzdem eintragen**
+bestätigt werden. In Gruppen wird nie ein fremder privater Konflikttitel genannt,
+sondern „Eine teilnehmende Person ist zu dieser Zeit bereits belegt."
 
 ### Private Chats
 
@@ -61,13 +72,41 @@ Normale Gruppennachrichten werden **vor jeder Inferenz** ignoriert.
 - Cross-Kalender-Mutationen sind gesperrt: ein Delete im Gruppenchat kann keinen
   privaten Termin löschen.
 
+## Domain-Semantik (Round 2)
+
+- **Identität ist `person_id`.** Der Owner wird idempotent mit dem migrierten
+  Legacy-„Ich" versöhnt (in-place binden oder zusammenführen, Backup vorher).
+  Symbole wie `""`/`"Ich"`/der eigene Anzeigename lösen auf den Actor auf — nie
+  auf eine separate „Ich"-Person.
+- **Absence blockiert keine manuellen Termine.** Urlaub 24.–27. + Frühstück
+  25. 08:00 ist gültig. Absence zählt aber **weiterhin als busy** für
+  `find_slot`/Availability (zwei getrennte Konzepte).
+- **Ein Read = eine Wahrheit:** `calendar_list` führt genau EINE gescopte Query
+  aus; Text und PNG entstehen aus demselben `ReadResult`
+  (`resolved.first_day/last_day/person_ids/calendar_ids` + `data`).
+- **Zeitfenster deterministisch:** explizites Datum/Range im Text > „nächste/
+  diese Woche" > Wochentag > heute/morgen > Modellargs > Default (7 Tage).
+  `nächste Woche` = Mo–So.
+- **Skalierung:** 1 Tag → DayView, 2–7 Tage → Range/WeekView, > 7 Tage → nur Text.
+- **Gescopte Mutation:** move/delete suchen ausschließlich im aktuellen Kalender
+  (privat = persönlich, Gruppe = Gruppenkalender). Gleicher Titel in einem
+  anderen Kalender erzeugt keine Ambiguität und wird nie mutiert.
+- **Darstellungsschichten:** All-Day/Absence als Header-Banner, timed Termine als
+  pro Tag geklippte Segmente (halboffen). „Büro 29.09. 09–16" erscheint nur am
+  Dienstag, nie als Wochenband. Private Events sind **nie** „shared".
+
 ## Gemeinsame Verfügbarkeit
 
 `calendar_find_slot` berücksichtigt die **persönlichen Kalender** der genannten
 Personen plus geteilte Gruppentermine — berechnet mit dem **exakten
-Intervall-Solver** (halboffene Intervalle). Der 15-Minuten-Bitset-Kernel
-(`experiments/ft/availability_kernel.py`) ist bewusst **nur** Rendering/Projektion,
-nicht der Solver (Off-grid-Korrektheit).
+Intervall-Solver** (halboffene Intervalle), ID-basiert und gescopto
+(`find_free_slots_for_people`, kein globaler Namens-Lookup). Der 15-Minuten-
+Bitset-Kernel (`experiments/ft/availability_kernel.py`) ist bewusst **nur**
+Rendering/Projektion, nicht der Solver (Off-grid-Korrektheit).
+Das Availability-Widget rendert `resolved.first_day`, **nie** `now()` — eine
+Abfrage für den 29.09. zeigt nie den 24.09. Schlägt der Read fehl, wird **kein**
+Widget gerendert (nur ein deutscher Fehlertext, optional ein datumsbasierter
+Day-Button ohne zweiten Modellcall).
 
 ## Privacy (korrekt formuliert)
 
@@ -81,10 +120,31 @@ Eine SQLite-DB, normalisiert: `people` · `calendars` · `calendar_members` ·
 `events` (+ `calendar_id`, `created_by_person_id`) · `event_participants`
 (person_id) · `action_proposals` (Token, TTL, Ziel-Fingerprint).
 
+**SQL/exakte Intervalle = Wahrheit.** Views/Telegram sind eine deterministische
+Projektion (X=Tage, Y=Zeit, Z=Personen) — keine Event-Tabelle pro User, keine DB
+pro User. Direktes `sqlite3` bleibt in Ordnung (kein ORM).
+
 Vor jeder Schemaänderung wird automatisch nach `data/backups/calendar-YYYYMMDD.db`
 gesichert (SQLite-Backup-API, keine blinde Dateikopie). Migration ist idempotent
 (`PRAGMA user_version`) und erhält alle Events (Anzahl/Titel/Zeiten/Teilnehmer).
 Der Bot legt zusätzlich täglich ein Backup an; Backup-Fehler crashen nie.
+
+Audit ohne private Inhalte:
+
+```bash
+python scripts/audit_calendar_state.py --db data/calendar.db
+python scripts/audit_calendar_state.py --fix-owner <telegram_user_id> --name Oll
+```
+
+`--fix-owner` sichert vorher und versöhnt das Legacy-„Ich" mit dem autorisierten
+Owner (ID kommt aus der CLI, nie aus `.env`). Es werden nur Counts/IDs/Schema
+ausgegeben, niemals private Event-Titel.
+
+Render-Gallery (dev-only, synthetische Fixtures, gitignored):
+
+```bash
+python scripts/render_regression_gallery.py   # artifacts/render-regression/*.png
+```
 
 ## Betrieb
 

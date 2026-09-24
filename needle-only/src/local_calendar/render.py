@@ -119,10 +119,15 @@ def render_week_png(store, first_day: date,
 def render_availability_png(store, people: list[str],
                             day: date | None = None,
                             resolved: dict | None = None) -> bytes:
-    """Availability widget (plan §26 + §6): the executed solver result is the
-    truth — when the calendar_find_slot result is given (persons, window,
-    slots), the renderer displays exactly that data and never re-schedules."""
-    day = day or cal.now().date()
+    """Availability widget (plan §15/§26/§34): the executed solver result is the
+    truth. The rendered day is resolved.first_day, NEVER cal.now() — otherwise a
+    query for the 29.09. would show the 24.09. The renderer never re-schedules."""
+    if day is None:
+        first = (resolved or {}).get("first_day")
+        try:
+            day = cal.date.fromisoformat(first) if first else cal.now().date()
+        except ValueError:
+            day = cal.now().date()
     if resolved:
         names = [cal._canonical_person(p) for p in resolved.get("persons", [])]
         names = [n for n in names if n] or ["Ich"]
@@ -221,23 +226,43 @@ def render_day_png(store, day: date,
 
 # ------------------------------------------------ multi-user view rendering
 
+def _banner_label(banner) -> str:
+    title = banner.title or "Abwesenheit"
+    if banner.start_day == banner.end_day:
+        span = f"{banner.start_day:%d.%m.}"
+    else:
+        span = f"{banner.start_day:%d.%m.}–{banner.end_day:%d.%m.}"
+    return f"🏖 {title} · {span}"
+
+
+def _block_label(b, day) -> str:
+    seg = cal.segment_event(b, day)
+    if seg is None:
+        return ""
+    s, e = seg
+    text = b.title if b.title else "belegt"
+    if b.all_day:
+        return text
+    return f"{s:%H:%M}–{e:%H:%M} {text}"
+
+
 def render_week_view(view) -> bytes:
-    """Week from a WeekView: one column per day, one colored lane per person,
-    shared events as named cards. Private titles of others are already masked
-    in the view data, so they can never render here."""
+    """Week from a WeekView (plan §22/§24): all-day banners on top, timed cards
+    clipped inside exactly their own day column, one lane per person. Private
+    titles of others are already masked in the view data (plan §9)."""
     days = view.days
     lanes = view.lanes
-    lane_h = 34
-    shared = sorted(view.shared, key=lambda c: c.start)
+    lane_h = 42
+    shared = view.shared
     shared_h = 30 * len(shared) + (10 if shared else 0)
-    H = HEAD_H + shared_h + lane_h * (len(lanes) + 1) + 40
-    img = Image.new("RGB", (W, max(H, 300)), "white")
+    H = HEAD_H + shared_h + lane_h * max(1, len(lanes)) + 56
+    img = Image.new("RGB", (W, max(H, 320)), "white")
     d = ImageDraw.Draw(img)
     f_title, f_head, f_body, f_small = _font(30), _font(24), _font(19), _font(13)
     today = cal.now().date()
-    title = "Gruppenwoche" if view.group else (
-        "Diese Woche" if days[0] == _monday(today)
-        else f"{days[0]:%d.%m.} – {days[-1]:%d.%m.}")
+    title = ("Gruppenwoche" if view.group else
+             ("Diese Woche" if days[0] == _monday(today)
+              else f"{days[0]:%d.%m.} – {days[-1]:%d.%m.}"))
     d.text((MARGIN, 14), title, font=f_title, fill=INK)
     for i, day in enumerate(days):
         x = i * DAY_W
@@ -245,41 +270,47 @@ def render_week_view(view) -> bytes:
                font=f_head if day == today else f_small,
                fill=INK if day == today else MUTED)
         d.line([(x + 4, HEAD_H), (x + 4, H)], fill="#eeeeee", width=1)
-    # shared event cards (titles are safe: group events)
-    yy = HEAD_H + 4
+    # all-day / absence banners: only over the days they actually cover (§7)
+    y_band = HEAD_H + 2
+    for i, day in enumerate(days):
+        yy = y_band
+        for banner in view.banners:
+            if banner.start_day <= day <= banner.end_day:
+                txt = _fit(d, _banner_label(banner), f_small, DAY_W - 16)
+                d.rectangle([i * DAY_W + 4, yy, (i + 1) * DAY_W - 4, yy + 20],
+                            fill=COLORS["absence"])
+                d.text((i * DAY_W + 8, yy + 2), txt, font=f_small, fill=INK)
+                yy += 24
+    y_body = y_band + 28 + (24 * max((b.end_day - b.start_day).days + 1
+                                     for b in view.banners) if view.banners else 0)
+    # shared group event cards (titles are safe: group events)
+    yy = y_body
     for c in shared:
-        label = c.title if len(c.participants) <= 1 else \
-            f"{c.title} ({', '.join(c.participants)})"
+        prefix = f"{cal.WEEKDAYS_DE[c.start.weekday()]} "
+        txt = f"{prefix}{c.start:%H:%M} {c.title}"
         d.rectangle([MARGIN, yy, W - MARGIN, yy + 22], fill="#dcecdc")
-        day_ix = (c.start.date() - days[0]).days
-        prefix = f"{cal.WEEKDAYS_DE[c.start.weekday()]} " if 0 <= day_ix < 7 else ""
-        txt = f"{prefix}{c.start:%H:%M} {label}" if not c.all_day \
-            else f"{prefix}{label} (ganztägig)"
         d.text((MARGIN + 6, yy + 2), _fit(d, txt, f_small, W - 2 * MARGIN - 12),
                font=f_small, fill=INK)
         yy += 28
-    # one lane per person
-    y0 = HEAD_H + shared_h + 4
+    # one lane per person (private: the actor's single lane)
+    y0 = y_body + shared_h + 4
     for li, lane in enumerate(lanes):
         y = y0 + li * lane_h
-        d.rectangle([MARGIN, y + 4, MARGIN + 14, y + lane_h - 6], fill=lane.color)
-        d.text((MARGIN + 20, y + 6), _fit(d, lane.name, f_small, 90),
+        d.rectangle([MARGIN, y + 6, MARGIN + 14, y + lane_h - 8], fill=lane.color)
+        d.text((MARGIN + 20, y + 8), _fit(d, lane.name, f_small, 92),
                font=f_small, fill=INK)
         for b in lane.blocks:
-            ix = (b.start.date() - days[0]).days
-            if not (0 <= ix < 7):
-                continue
-            x = ix * DAY_W + 6
-            for row in range(li, len(lanes)):  # first free row for this day
-                if row == li:
-                    break
-            d.rectangle([x, y + 4, x + DAY_W - 12, y + lane_h - 6],
-                        fill=lane.color, outline="white")
-            if b.title:
-                d.text((x + 3, y + 6),
-                       _fit(d, b.title, f_small, DAY_W - 18), font=f_small,
+            for day in days:
+                label = _block_label(b, day)
+                if not label:
+                    continue
+                ix = (day - days[0]).days
+                x = ix * DAY_W + 6
+                d.rectangle([x, y + 6, x + DAY_W - 12, y + lane_h - 8],
+                            fill=lane.color, outline="white")
+                d.text((x + 3, y + 8),
+                       _fit(d, label, f_small, DAY_W - 18), font=f_small,
                        fill="white")
-    # common free text
     if view.group:
         d.text((MARGIN, H - 26), "gemeinsam frei: siehe /today", font=f_small,
                fill=MUTED)
@@ -289,8 +320,11 @@ def render_week_view(view) -> bytes:
 
 
 def render_day_view(view) -> bytes:
-    """Day from a DayView: lanes + shared cards + common free slots."""
-    H = 120 + 34 * len(view.lanes) + 26 * len(view.shared) + 40
+    """Day from a DayView (plan §21/§23): banner header, shared cards, lanes with
+    masked busy, then free windows. Private context renders the actor's own
+    timed segments as rows."""
+    n_rows = sum(len(l.blocks) for l in view.lanes) + len(view.shared)
+    H = 120 + 30 * n_rows + 34 * max(1, len(view.banners)) + 50
     img = Image.new("RGB", (W, max(H, 260)), "white")
     d = ImageDraw.Draw(img)
     f_title, f_body, f_small = _font(30), _font(19), _font(14)
@@ -299,26 +333,33 @@ def render_day_view(view) -> bytes:
               else f"{cal.WEEKDAYS_DE[view.day.weekday()]} {view.day:%d.%m.%Y}"))
     d.text((MARGIN, 14), title, font=f_title, fill=INK)
     yy = 60
+    for banner in view.banners:  # header layer first (§7)
+        d.rectangle([MARGIN, yy, W - MARGIN, yy + 24], fill=COLORS["absence"])
+        d.text((MARGIN + 8, yy + 2), _fit(d, _banner_label(banner), f_body,
+                                          W - 2 * MARGIN - 16),
+               font=f_body, fill=INK)
+        yy += 30
     for c in view.shared:
         d.rectangle([MARGIN, yy, W - MARGIN, yy + 24], fill="#dcecdc")
-        d.text((MARGIN + 6, yy + 2),
+        d.text((MARGIN + 8, yy + 2),
                _fit(d, f"{c.start:%H:%M}–{c.end:%H:%M} {c.title}", f_body,
-                    W - 2 * MARGIN - 12), font=f_body, fill=INK)
-        yy += 28
+                    W - 2 * MARGIN - 16), font=f_body, fill=INK)
+        yy += 30
     for lane in view.lanes:
-        d.rectangle([MARGIN, yy + 4, MARGIN + 14, yy + 24], fill=lane.color)
-        d.text((MARGIN + 20, yy + 4), lane.name, font=f_small, fill=INK)
-        seg = []
         for b in lane.blocks:
-            seg.append((f"{b.start:%H:%M} {b.title}" if b.title
-                        else f"{b.start:%H:%M} belegt"))
-        d.text((MARGIN + 130, yy + 4),
-               _fit(d, " | ".join(seg) or "frei", f_small, W - MARGIN - 140),
-               font=f_small, fill=MUTED if not seg else INK)
-        yy += 34
+            label = _block_label(b, view.day)
+            if not label:
+                continue
+            color = lane.color if (b.title or b.shared) else "#c9c9c9"
+            d.rectangle([MARGIN, yy, W - MARGIN, yy + 24], fill=color)
+            d.text((MARGIN + 8, yy + 2),
+                   _fit(d, f"{lane.name}: {label}" if view.group else label,
+                        f_body, W - 2 * MARGIN - 16), font=f_body, fill=INK)
+            yy += 30
     free = ", ".join(f"{s:%H:%M}–{e:%H:%M}" for s, e in view.free[:6])
-    d.text((MARGIN, yy + 6), f"gemeinsam frei: {free or 'keine'}",
-           font=f_small, fill=MUTED)
+    prefix = "gemeinsam frei" if view.group else "frei"
+    d.text((MARGIN, yy + 8), f"{prefix}: {free or 'keine'}", font=f_body,
+           fill=MUTED)
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return buf.getvalue()

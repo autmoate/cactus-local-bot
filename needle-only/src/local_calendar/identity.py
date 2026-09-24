@@ -54,11 +54,35 @@ class RequestContext:
     def is_group(self) -> bool:
         return self.chat_type == "group"
 
+    def busy_calendar_ids(self, store) -> list[int]:
+        """Calendars that define these people's busy time (plan §18): private =
+        own personal calendar; group = members' personal calendars + the group
+        calendar. Never other groups or same-named events elsewhere."""
+        if not self.is_group:
+            return list(self.read_calendar_ids)
+        ids: list[int] = []
+        for pid in self.member_person_ids:
+            cid = store.calendar_of_person(pid)
+            if cid and cid not in ids:
+                ids.append(cid)
+        if self.target_calendar_id not in ids:
+            ids.append(self.target_calendar_id)
+        return ids
+
+
+def _actor(store, telegram_user_id: int | None, display_name: str,
+           owner: bool) -> int:
+    """Canonical identity (plan §3): only the authorized owner reconciles the
+    legacy 'Ich' bucket; other allowed users get their own people row."""
+    if owner:
+        return store.reconcile_owner(telegram_user_id, display_name)
+    return store.ensure_person(display_name, telegram_user_id)
+
 
 def resolve_private(store, telegram_user_id: int | None, chat_id: int,
-                    display_name: str) -> RequestContext:
+                    display_name: str, owner: bool = False) -> RequestContext:
     """One allowed user -> one people row + one personal calendar (plan §4)."""
-    person_id = store.ensure_person(display_name, telegram_user_id)
+    person_id = _actor(store, telegram_user_id, display_name, owner)
     personal = store.ensure_personal_calendar(person_id)
     return RequestContext(actor_person_id=person_id, telegram_user_id=telegram_user_id,
                           chat_id=chat_id, chat_type="private",
@@ -67,17 +91,34 @@ def resolve_private(store, telegram_user_id: int | None, chat_id: int,
 
 
 def resolve_group(store, chat_id: int, telegram_user_id: int | None,
-                  display_name: str, group_name: str = "Gruppe") -> RequestContext:
+                  display_name: str, group_name: str = "Gruppe",
+                  owner: bool = False) -> RequestContext:
     """One allowed group chat -> one group calendar; the sender joins as member.
     Private member calendars are used for availability only, never for titles."""
     group_cal = store.ensure_group_calendar(chat_id, group_name)
-    person_id = store.ensure_person(display_name, telegram_user_id)
+    person_id = _actor(store, telegram_user_id, display_name, owner)
     store.add_member(group_cal, person_id, role="member")
     members = store.members_of(group_cal)
     return RequestContext(actor_person_id=person_id, telegram_user_id=telegram_user_id,
                           chat_id=chat_id, chat_type="group",
                           target_calendar_id=group_cal, read_calendar_ids=[group_cal],
                           member_person_ids=members)
+
+
+def resolve_read_person(store, ctx: RequestContext, person_arg: str
+                        ) -> tuple[list[int] | None, str]:
+    """Resolve a read's `person` argument to canonical person ids (plan §4).
+    '' , 'Ich' or the actor's own name -> the actor. Otherwise resolve inside
+    the current scope; never guess between homonyms. Returns (ids, status)."""
+    from .calendar import _canonical_person
+    arg = (person_arg or "").strip()
+    if not arg or arg.lower() in ("ich", "me", "mir", "mich", "myself", "i"):
+        return [ctx.actor_person_id], "ok"
+    actor = store.person(ctx.actor_person_id)
+    if actor and _canonical_person(arg).lower() == actor["display_name"].lower():
+        return [ctx.actor_person_id], "ok"
+    pid, status = resolve_name(store, arg, ctx.member_person_ids)
+    return ([pid] if pid is not None else None), status
 
 
 def resolve_name(store, name: str, member_ids: list[int]) -> tuple[int | None, str]:

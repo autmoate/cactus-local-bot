@@ -278,6 +278,97 @@ class CalendarStore:
         with self._conn() as c:
             return self._ensure_person(c, name, telegram_user_id)
 
+    # ---------------------------------------------- owner reconciliation (§3)
+    @staticmethod
+    def _legacy_owner(c) -> sqlite3.Row | None:
+        """The migrated pre-multiuser owner bucket: a person 'Ich' that has no
+        Telegram id yet. Only this exact bucket is ever reconciled."""
+        return c.execute("SELECT * FROM people WHERE telegram_user_id IS NULL "
+                         "AND enabled=1 AND display_name='Ich' ORDER BY id LIMIT 1"
+                         ).fetchone()
+
+    @staticmethod
+    def _personal_calendar_of(c, person_id: int) -> int | None:
+        r = c.execute("SELECT id FROM calendars WHERE kind='personal' "
+                      "AND owner_person_id=?", (person_id,)).fetchone()
+        return r["id"] if r else None
+
+    def _merge_people(self, c: sqlite3.Connection, src: int, dst: int) -> None:
+        """Merge person src into dst WITHOUT data loss: calendars, events,
+        participants, memberships. src is deleted only when unreferenced."""
+        src_cal = self._personal_calendar_of(c, src)
+        dst_cal = self._personal_calendar_of(c, dst)
+        if src_cal is not None:
+            if dst_cal is not None and dst_cal != src_cal:
+                c.execute("UPDATE events SET calendar_id=? WHERE calendar_id=?",
+                          (dst_cal, src_cal))
+                c.execute("DELETE FROM calendar_members WHERE calendar_id=?",
+                          (src_cal,))
+                c.execute("DELETE FROM calendars WHERE id=?", (src_cal,))
+            elif dst_cal is None:
+                c.execute("UPDATE calendars SET owner_person_id=? WHERE id=?",
+                          (dst, src_cal))
+        c.execute("INSERT OR IGNORE INTO event_participants(event_id, person_id) "
+                  "SELECT event_id, ? FROM event_participants WHERE person_id=?",
+                  (dst, src))
+        c.execute("DELETE FROM event_participants WHERE person_id=?", (src,))
+        c.execute("UPDATE events SET created_by_person_id=? "
+                  "WHERE created_by_person_id=?", (dst, src))
+        c.execute("INSERT OR IGNORE INTO calendar_members(calendar_id, person_id, role) "
+                  "SELECT calendar_id, ?, role FROM calendar_members WHERE person_id=?",
+                  (dst, src))
+        c.execute("DELETE FROM calendar_members WHERE person_id=?", (src,))
+        refs = c.execute(
+            "SELECT (SELECT COUNT(*) FROM event_participants WHERE person_id=?) + "
+            "(SELECT COUNT(*) FROM events WHERE created_by_person_id=?) + "
+            "(SELECT COUNT(*) FROM calendar_members WHERE person_id=?) + "
+            "(SELECT COUNT(*) FROM calendars WHERE owner_person_id=?) + "
+            "(SELECT COUNT(*) FROM action_proposals WHERE actor_person_id=?)",
+            (src, src, src, src, src)).fetchone()[0]
+        if refs == 0:
+            c.execute("DELETE FROM people WHERE id=?", (src,))
+
+    def reconcile_owner(self, telegram_user_id: int | None, display_name: str) -> int:
+        """Idempotently bind the legacy 'Ich' bucket to the authorized owner
+        (plan §3). Fall 1: bind in place (keep calendar + events). Fall 2: if a
+        real owner row already exists, merge the legacy bucket into it without
+        losing events. Backup before any identity merge. Only the owner calls
+        this — allowed non-owner users go through ensure_person()."""
+        name = _canonical_person(display_name) or "Ich"
+        if telegram_user_id is None:  # legacy private test bot (no user id)
+            with self._conn() as c:
+                existing = c.execute("SELECT id FROM people WHERE display_name=? "
+                                     "AND enabled=1", (name,)).fetchone()
+                if existing:
+                    return existing["id"]
+                legacy = self._legacy_owner(c)
+                if legacy is not None:
+                    c.execute("UPDATE people SET display_name=?, color_key=? WHERE id=?",
+                              (name, color_for(name), legacy["id"]))
+                    c.execute("UPDATE calendars SET name=? WHERE kind='personal' "
+                              "AND owner_person_id=?", (name, legacy["id"]))
+                    return legacy["id"]
+            return self.ensure_person(name, None)
+        with self._conn() as c:
+            owner = c.execute("SELECT * FROM people WHERE telegram_user_id=?",
+                              (telegram_user_id,)).fetchone()
+            legacy = self._legacy_owner(c)
+        if owner is not None:
+            if legacy is not None and legacy["id"] != owner["id"]:
+                self.backup()
+                with self._conn() as c:
+                    self._merge_people(c, legacy["id"], owner["id"])
+            return owner["id"]
+        if legacy is not None:
+            with self._conn() as c:
+                c.execute("UPDATE people SET telegram_user_id=?, display_name=?, "
+                          "color_key=? WHERE id=?",
+                          (telegram_user_id, name, color_for(name), legacy["id"]))
+                c.execute("UPDATE calendars SET name=? WHERE kind='personal' "
+                          "AND owner_person_id=?", (name, legacy["id"]))
+            return legacy["id"]
+        return self.ensure_person(name, telegram_user_id)
+
     def _ensure_personal_calendar(self, c, person_id: int) -> int:
         row = c.execute("SELECT id FROM calendars WHERE kind='personal' "
                         "AND owner_person_id=?", (person_id,)).fetchone()
@@ -462,13 +553,16 @@ class CalendarStore:
         return [self._event(r, people.get(r["id"], [])) for r in rows]
 
     def resolve_event(self, title: str | None = None,
-                      day: date | None = None, t: time | None = None
+                      day: date | None = None, t: time | None = None,
+                      calendar_ids: list[int] | None = None
                       ) -> tuple[list[CalendarEvent], str]:
-        """General event identification (plan §2 refactor): every given
+        """General event identification (plan §2 refactor, §5 scope): every given
         identifier is an optional constraint, AND-combined — never ranking.
         title: bidirectional case-insensitive substring match.
         day:   hard filter — the event must cover this calendar day.
         t:     start-time band ±30 min (identification by time of day).
+        calendar_ids: hard scope — a same-named event in another calendar must
+        never create ambiguity or be mutated (plan §5). None = unscoped legacy.
 
         Returns (candidates, status) with status in
         not_found / unique / ambiguous / no_identifiers.
@@ -476,13 +570,20 @@ class CalendarStore:
         title = (title or "").strip()
         if not title and day is None and t is None:
             return [], "no_identifiers"
+        if calendar_ids is not None and not calendar_ids:
+            return [], "not_found"
+        scope_sql, scope_params = "", []
+        if calendar_ids is not None:
+            scope_sql = (" AND calendar_id IN ("
+                         + ",".join("?" * len(calendar_ids)) + ")")
+            scope_params = list(calendar_ids)
         candidates: list[CalendarEvent] = []
         if title:
             with self._conn() as c:
                 rows = c.execute(
-                    "SELECT * FROM events WHERE title LIKE ? "
-                    "OR ? LIKE ('%' || title || '%') ORDER BY start",
-                    (f"%{title}%", title)).fetchall()
+                    "SELECT * FROM events WHERE (title LIKE ? "
+                    "OR ? LIKE ('%' || title || '%'))" + scope_sql + " ORDER BY start",
+                    [f"%{title}%", title] + scope_params).fetchall()
                 people = self._load_people(c, [r["id"] for r in rows])
             candidates = [self._event(r, people.get(r["id"], []))
                           for r in rows]
@@ -492,17 +593,18 @@ class CalendarStore:
             else:
                 day_start = datetime.combine(day, time(0, 0))
                 candidates = self.events_between(
-                    day_start, day_start + timedelta(days=1))
+                    day_start, day_start + timedelta(days=1),
+                    calendar_ids=calendar_ids)
         if t is not None and day is not None:
-            from datetime import datetime as _dt
-            lo, hi = _dt.combine(day, t) - timedelta(minutes=30), \
-                _dt.combine(day, t) + timedelta(minutes=30)
+            lo, hi = datetime.combine(day, t) - timedelta(minutes=30), \
+                datetime.combine(day, t) + timedelta(minutes=30)
             candidates = [e for e in candidates if e.start <= hi and e.end > lo]
         if not candidates:
             return [], "not_found"
         return candidates, ("unique" if len(candidates) == 1 else "ambiguous")
 
-    def find_by_title(self, title: str, near: datetime | date | None = None) -> CalendarEvent | None:
+    def find_by_title(self, title: str, near: datetime | date | None = None,
+                      calendar_ids: list[int] | None = None) -> CalendarEvent | None:
         """Case-insensitive substring match in both directions; prefers the next
         upcoming match relative to `near` (default: now), else the latest past one."""
         if not title.strip():
@@ -510,10 +612,17 @@ class CalendarStore:
         t = title.strip()
         if near is not None and not isinstance(near, datetime):
             near = datetime.combine(near, time(0, 0))
+        scope_sql, scope_params = "", []
+        if calendar_ids is not None:
+            if not calendar_ids:
+                return None
+            scope_sql = (" AND calendar_id IN ("
+                         + ",".join("?" * len(calendar_ids)) + ")")
+            scope_params = list(calendar_ids)
         with self._conn() as c:
             rows = c.execute(
-                "SELECT * FROM events WHERE title LIKE ? OR ? LIKE ('%' || title || '%') "
-                "ORDER BY start", (f"%{t}%", t)).fetchall()
+                "SELECT * FROM events WHERE (title LIKE ? OR ? LIKE ('%' || title || '%'))"
+                + scope_sql + " ORDER BY start", [f"%{t}%", t] + scope_params).fetchall()
             people = self._load_people(c, [r["id"] for r in rows])
         events = [self._event(r, people.get(r["id"], [])) for r in rows]
         if not events:
@@ -522,11 +631,35 @@ class CalendarStore:
         upcoming = [e for e in events if e.end >= ref]
         return upcoming[0] if upcoming else events[-1]
 
+    def event_count(self) -> int:
+        with self._conn() as c:
+            return c.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+
     def participant_names(self) -> list[str]:
         with self._conn() as c:
             return [r["display_name"] for r in c.execute(
                 "SELECT display_name FROM people WHERE enabled=1 "
                 "ORDER BY display_name")]
+
+    def participant_ids(self, event_id: int) -> list[int]:
+        with self._conn() as c:
+            return [r["person_id"] for r in c.execute(
+                "SELECT person_id FROM event_participants WHERE event_id=? "
+                "ORDER BY person_id", (event_id,))]
+
+    def participant_ids_map(self, event_ids: list[int]) -> dict[int, set[int]]:
+        """Bulk participant ids for many events (one query, plan §10)."""
+        if not event_ids:
+            return {}
+        marks = ",".join("?" * len(event_ids))
+        with self._conn() as c:
+            rows = c.execute(
+                f"SELECT event_id, person_id FROM event_participants "
+                f"WHERE event_id IN ({marks})", list(event_ids)).fetchall()
+        out: dict[int, set[int]] = {}
+        for r in rows:
+            out.setdefault(r["event_id"], set()).add(r["person_id"])
+        return out
 
     # ------------------------------------------------------- action proposals
     def create_proposal(self, token: str, actor_person_id: int, chat_id: int,
@@ -560,24 +693,47 @@ class CalendarStore:
             c.execute("UPDATE action_proposals SET status=? WHERE token=?",
                       (status, token))
 
-    def collision(self, ev: CalendarEvent) -> CalendarEvent | None:
-        """First conflicting event sharing a participant with ev.
-        - appointment vs appointment (±30 min overlap): collision
-        - appointment vs absence (shared person): collision — a vacation blocks
-          that person's appointments, consistent with find_free_slots
-        - creating an absence never collides (absences coexist by design)."""
-        if ev.kind != "appointment":
-            return None
-        lo, hi = ev.start - COLLISION_WINDOW, ev.end + COLLISION_WINDOW
+    def overlaps(self, ev: CalendarEvent) -> list[CalendarEvent]:
+        """Timed appointments sharing a participant that overlap ev (half-open).
+
+        Collision policy (plan §6): a classic calendar allows overlapping
+        entries. An absence never blocks a timed appointment. This returns the
+        overlapping *timed* appointments so the caller can surface a warning —
+        it is never used to reject a write."""
+        if ev.all_day:
+            return []
         mine = {_canonical_person(p) for p in ev.participants}
-        for other in self.events_between(lo, hi):
-            if other.id == ev.id or other.kind not in ("appointment", "absence"):
+        if not mine:
+            return []
+        out: list[CalendarEvent] = []
+        for other in self.events_between(ev.start - COLLISION_WINDOW,
+                                         ev.end + COLLISION_WINDOW):
+            if other.id == ev.id or other.all_day:
                 continue
             if not (mine & {_canonical_person(p) for p in other.participants}):
                 continue
             if event_overlaps(ev, other):
-                return other
-        return None
+                out.append(other)
+        return out
+
+    def is_absent(self, person_ids: list[int], start: datetime, end: datetime,
+                  calendar_ids: list[int] | None = None) -> bool:
+        """True when any given person has an absence overlapping [start, end).
+        events_between already restricts to overlapping events, so any all-day
+        hit is an absence on that window (plan §6/§19)."""
+        if not person_ids:
+            return False
+        for other in self.events_between(start, end, person_ids=person_ids,
+                                         calendar_ids=calendar_ids):
+            if other.all_day:
+                return True
+        return False
+
+    def collision(self, ev: CalendarEvent) -> CalendarEvent | None:
+        """First overlapping timed appointment sharing a participant, or None.
+        (Backward-compatible helper; absences never collide, plan §6.)"""
+        others = self.overlaps(ev)
+        return others[0] if others else None
 
 
 # ------------------------------------------------------------ pure solver part
@@ -585,6 +741,33 @@ class CalendarStore:
 def event_overlaps(a: CalendarEvent, b: CalendarEvent) -> bool:
     """Half-open interval intersection: [start, end)."""
     return a.start < b.end and b.start < a.end
+
+
+def segment_event(ev: CalendarEvent, day: date
+                  ) -> tuple[datetime, datetime] | None:
+    """Pure projection (plan §8): clip a timed event to one calendar day using
+    half-open bounds [00:00, next 00:00). Returns the segment or None when the
+    event does not actually touch that day. One event -> at most one segment/day.
+    All-day events are NOT projected here (they live in the header layer)."""
+    day_start = datetime.combine(day, time(0, 0))
+    day_end = day_start + timedelta(days=1)
+    seg_start, seg_end = max(ev.start, day_start), min(ev.end, day_end)
+    if seg_start >= seg_end:
+        return None
+    return seg_start, seg_end
+
+
+def allday_span(ev: CalendarEvent) -> tuple[date, date]:
+    """Inclusive (first_day, last_day) of an all-day event (plan §7)."""
+    return ev.start.date(), ev.end.date() - timedelta(days=1)
+
+
+def covers_day(ev: CalendarEvent, day: date) -> bool:
+    """Does ev touch the given calendar day? Half-open for all-day, clipped for
+    timed events (same semantics as segment_event)."""
+    if ev.all_day:
+        return ev.start.date() <= day < ev.end.date()
+    return segment_event(ev, day) is not None
 
 
 def create_event(store: CalendarStore, title: str, start: datetime, end: datetime,
@@ -628,12 +811,14 @@ def busy_intervals(store: CalendarStore, persons: list[str],
     return sorted(out)
 
 
-def find_free_slots(store: CalendarStore, persons: list[str],
-                    first_day: date, last_day: date, duration_min: int = 60,
-                    work_start: time = WORK_START,
-                    work_end: time = WORK_END) -> list[tuple[datetime, datetime]]:
-    """Free intervals (>= duration) inside the work window, as intersection of all
-    participants' availabilities. Interval-based; swappable for bitsets later."""
+def free_slots_from_busy(busy: list[tuple[datetime, datetime]],
+                         first_day: date, last_day: date, duration_min: int = 60,
+                         work_start: time = WORK_START,
+                         work_end: time = WORK_END
+                         ) -> list[tuple[datetime, datetime]]:
+    """Pure interval solver (plan §25): free windows >= duration inside the work
+    window, given a pre-computed busy union. No DB access — callers may feed the
+    exact same intervals they already read (plan §10: one read, one truth)."""
     duration = timedelta(minutes=max(5, duration_min))
     slots: list[tuple[datetime, datetime]] = []
     day = first_day
@@ -643,7 +828,10 @@ def find_free_slots(store: CalendarStore, persons: list[str],
             day_end = datetime.combine(day, work_end)
             if day_start < day_end:
                 cursor = day_start
-                for b_start, b_end in busy_intervals(store, persons, day_start, day_end):
+                for b_start, b_end in busy:
+                    b_start, b_end = max(b_start, day_start), min(b_end, day_end)
+                    if b_end <= day_start or b_start >= day_end:
+                        continue
                     if b_start - cursor >= duration:
                         slots.append((cursor, b_start))
                     cursor = max(cursor, b_end)
@@ -653,6 +841,57 @@ def find_free_slots(store: CalendarStore, persons: list[str],
                     slots.append((cursor, day_end))
         day += timedelta(days=1)
     return slots[:5]
+
+
+def find_free_slots(store: CalendarStore, persons: list[str],
+                    first_day: date, last_day: date, duration_min: int = 60,
+                    work_start: time = WORK_START,
+                    work_end: time = WORK_END) -> list[tuple[datetime, datetime]]:
+    """Free intervals (>= duration) inside the work window, as intersection of all
+    participants' availabilities. Interval-based; swappable for bitsets later."""
+    busy: list[tuple[datetime, datetime]] = []
+    day = first_day
+    while day <= last_day:
+        ds = datetime.combine(day, work_start)
+        de = datetime.combine(day, work_end)
+        busy += busy_intervals(store, persons, ds, de)
+        day += timedelta(days=1)
+    return free_slots_from_busy(busy, first_day, last_day, duration_min,
+                                work_start, work_end)
+
+
+def busy_intervals_for_people(store: CalendarStore, person_ids: list[int],
+                              calendar_ids: list[int], start: datetime,
+                              end: datetime) -> list[tuple[datetime, datetime]]:
+    """Busy union for people resolved by ID within an explicit calendar scope
+    (plan §18): private = the personal calendar; group = members' personal
+    calendars + the current group calendar. Absences count as busy (plan §19),
+    even though they never block a manual timed write (plan §6)."""
+    out: list[tuple[datetime, datetime]] = []
+    if not person_ids or not calendar_ids:
+        return out
+    for pid in person_ids:
+        for ev in store.events_between(start, end, person_ids=[pid],
+                                       calendar_ids=calendar_ids):
+            s, e = max(ev.start, start), min(ev.end, end)
+            if s < e:
+                out.append((s, e))
+    return sorted(out)
+
+
+def find_free_slots_for_people(store: CalendarStore, person_ids: list[int],
+                               calendar_ids: list[int], first_day: date,
+                               last_day: date, duration_min: int = 60,
+                               work_start: time = WORK_START,
+                               work_end: time = WORK_END) -> list[tuple[datetime, datetime]]:
+    """Exact interval solver (plan §18/§25), ID-based and scoped. The bit-set
+    kernel stays a renderer detail; this remains the domain truth."""
+    busy = busy_intervals_for_people(
+        store, person_ids, calendar_ids,
+        datetime.combine(first_day, work_start),
+        datetime.combine(last_day + timedelta(days=1), work_start))
+    return free_slots_from_busy(busy, first_day, last_day, duration_min,
+                                work_start, work_end)
 
 
 _PERIOD_STRIP = re.compile(
@@ -1031,16 +1270,19 @@ def _fmt_time(dt: datetime) -> str:
 
 
 def render_events(events: list[CalendarEvent]) -> str:
-    """Markdown rendering: absences as range blocks, timed entries under day headers."""
+    """German Markdown rendering: absences as range banners, timed entries under
+    day headers. This is a presentation helper (plan §17); the structured
+    ReadResult keeps text and image on the same data (plan §10/§11)."""
     if not events:
-        return "No entries."
+        return "Keine Termine."
     lines: list[str] = []
     for ev in sorted((e for e in events if e.all_day), key=lambda e: e.start):
         last = ev.end.date() - timedelta(days=1)
         span = (f"{_fmt_day(ev.start)} – {_fmt_day(datetime.combine(last, time()))}"
                 if last > ev.start.date() else _fmt_day(ev.start))
         who = f" ({', '.join(ev.participants)})" if ev.participants else ""
-        lines.append(f"🚫 **{ev.title}**{who}: {span}")
+        title = ev.title or "Abwesenheit"
+        lines.append(f"🏖 **{title}**{who}: {span}")
     if lines:
         lines.append("")
     timed = sorted((e for e in events if not e.all_day), key=lambda e: e.start)
@@ -1058,8 +1300,8 @@ def render_events(events: list[CalendarEvent]) -> str:
 
 def render_slots(slots: list[tuple[datetime, datetime]]) -> str:
     if not slots:
-        return "No common free slots found."
-    lines = ["Free slots:"]
+        return "Keine gemeinsamen freien Zeiten gefunden."
+    lines = ["Freie Zeiten:"]
     for s, e in slots:
         lines.append(f"• {_fmt_day(s)} {_fmt_time(s)}–{_fmt_time(e)}")
     return "\n".join(lines)

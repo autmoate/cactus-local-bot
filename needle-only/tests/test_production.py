@@ -243,8 +243,11 @@ def test_interpret_serialized_by_lock(tmp_path):
 # --------------------------------------------------------- §23 availability
 def _group_with_members(store):
     a = resolve_group(store, 500, 111, "Anna")
-    store.add_member(a.target_calendar_id, store.ensure_person("Ben", 222))
-    store.add_member(a.target_calendar_id, store.ensure_person("Cara", 333))
+    store.ensure_personal_calendar(a.actor_person_id)
+    for uid, name in ((222, "Ben"), (333, "Cara")):
+        pid = store.ensure_person(name, uid)
+        store.ensure_personal_calendar(pid)
+        store.add_member(a.target_calendar_id, pid)
     a.member_person_ids = store.members_of(a.target_calendar_id)
     return a
 

@@ -47,6 +47,7 @@ class Decision:
     proposal: dict | None = None
     calls: list = field(default_factory=list)
     resolved: dict = field(default_factory=dict)
+    warnings: list = field(default_factory=list)
 
 
 class AtomicService:
@@ -114,7 +115,8 @@ class AtomicService:
                                    target_id, fp, context=text, ttl_seconds=TTL_SECONDS)
         return Decision("write_proposal", tool=name, message=out["message"],
                         proposal={"token": token, "tool": name, "args": args,
-                                  "resolved": resolved}, resolved=resolved)
+                                  "resolved": resolved}, resolved=resolved,
+                        warnings=list(out.get("warnings") or []))
 
     def confirm(self, token: str, ctx: RequestContext) -> dict:
         p = self.store.get_proposal(token)
@@ -146,9 +148,11 @@ class AtomicService:
 
 
 def preview_lines(decision: Decision, store, ctx: RequestContext) -> list[str]:
-    """User-facing preview for a write proposal (plan §12)."""
+    """User-facing preview for a write proposal (plan §12/§26). Warnings inform
+    but never block confirm — the confirm button stays available."""
     name, r = decision.tool, decision.resolved
     cal_name = "Gruppe" if ctx.is_group else "Persönlich"
+    out: list[str]
     if name == "calendar_create":
         who = r.get("participants") or []
         title = r.get("title", "")
@@ -156,14 +160,17 @@ def preview_lines(decision: Decision, store, ctx: RequestContext) -> list[str]:
         out = [head, title, _when(r), f"Kalender: {cal_name}"]
         if who:
             out.append("Teilnehmer: " + ", ".join(who))
-        return out
-    if name == "calendar_move":
+    elif name == "calendar_move":
         b, a = r.get("before", {}), r.get("after", {})
-        return ["📌 Termin verschieben", b.get("title", ""),
-                f"{_when(b)} → {_when(a)}"]
-    if name == "calendar_delete":
-        return ["📌 Termin löschen", r.get("title", ""), _when(r)]
-    return ["📌 Vorschlag"]
+        out = ["📌 Termin verschieben", b.get("title", ""),
+               f"{_when(b)} → {_when(a)}"]
+    elif name == "calendar_delete":
+        out = ["📌 Termin löschen", r.get("title", ""), _when(r)]
+    else:
+        out = ["📌 Vorschlag"]
+    for warning in (decision.warnings or []):
+        out.append(f"⚠️ {warning}")
+    return out
 
 
 def _when(meta: dict) -> str:

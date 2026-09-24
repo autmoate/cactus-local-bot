@@ -19,6 +19,41 @@ User (de/en) ──▶ [hybrid: Gemma → kanonische EN-Instruction]
                   Execute (SQLite)
 ```
 
+## Production: Kalender-Pin 📌 (Telegram V1, eingefroren)
+
+Der produktive Einsatz ist ein lokaler **Telegram**-Kalenderbot. Der Modell-/
+Write-Pfad ist abgeschlossen und bleibt eingefroren:
+
+```
+Telegram → Needle 2 (N2-FT seed44) → maximal EINE atomare Aktion
+        → Python resolve / scope / verify / permissions
+        → READ  sofort   ·   WRITE  Preview → Confirm → revalidate → SQLite
+```
+
+Kein Training, kein Gemma, kein Needle 3, kein v5-Decomposer im Produktionspfad
+(Gemma/N3 bleiben Research unter `experiments/ft/`). Details, Scope/Privacy,
+Deployment und Limitationen: **`docs/telegram.md`**.
+
+Betrieb:
+
+```sh
+cd needle-only
+uv sync --extra telegram
+NEEDLE_WEIGHTS=experiments/ft/models/sa-r16-lr1e-4-e8-seed44.cact \
+  uv run local-calendar-telegram --mode needle
+```
+
+Round-2-Prinzipien (kurz): interne Identität ist `person_id` (idempotente
+Owner-Reconciliation des Legacy-„Ich"); `move`/`delete` sind strikt auf den
+aktuellen Kalender gescoped; **Absence blockiert keine manuellen Termine**,
+zählt aber weiterhin als busy für `find_slot`; Overlaps sind Warnungen, kein Hard
+Reject; All-Day/Absence ist Header, timed Events sind pro Tag geklippte Segmente;
+ein Natural-Language-Read = **eine** Query, Text und PNG aus demselben
+`ReadResult`; `/day [Datum]` und `/week [Datum]` sind deterministisch; `/status`
+(owner-only) zeigt Build/Modell/Schema ohne Secrets. **SQL/exakte Intervalle =
+Wahrheit**, Views/Telegram = deterministische Projektion (X=Tage, Y=Zeit,
+Z=Personen).
+
 ## Install (Raspberry Pi 5)
 
 ```sh
@@ -110,8 +145,10 @@ Nutzungs-Feedback-Schleife (Plan §22-24), nicht über Regex.
 
 Speichermodell: halboffene Intervalle `[start, end)`; All-Day = Datum 00:00 bis
 exklusiv Folgetag 00:00 (mehrtägig entsprechend); `until` ist inklusiv und wird
-+1 Tag gespeichert. Zwei Kinds: `appointment` (terminiert, kollidiert ±30 min mit
-Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence.
++1 Tag gespeichert. Zwei Kinds: `appointment` (terminiert) und `absence`
+(ganztägig) — Urlaub ist eine Absence. Round-2-Regel: Overlaps sind Warnungen
+(kein Hard Reject), und eine Absence blockiert keine manuellen Termine; sie zählt
+nur als busy für die Verfügbarkeit (`find_slot`).
 
 ## Gemessene Erkenntnisse (Basis Needle 2, ohne Fine-Tuning)
 
@@ -128,9 +165,9 @@ Terminen) und `absence` (ganztägig, kollidiert nie) — Urlaub ist eine Absence
 - **Keine Zeitangabe im Text → ganztägig**: das Modell erfindet Zeiten; ohne
   Zeit-Signal (HH:MM/Uhr/at/Perioden) wird die erfundene Zeit verworfen.
   Grenze: „Ich habe morgen Urlaub" ohne DD.MM bleibt timed (dokumentierte Schwäche).
-- **Collision ist participant-aware**: nur gemeinsame Teilnehmer kollidieren;
-  eine Absence blockiert Termine derselben Person (konsistent mit den freien
-  Slots), das Anlegen einer Absence selbst kollidiert nie.
+- **Overlaps sind participant-aware Warnungen** (Round 2): nur gemeinsame
+  Teilnehmer werden gemeldet; eine Absence blockiert keine manuellen Termine,
+  zählt aber als busy in den freien Slots (zwei getrennte Konzepte).
 - **Confidence ist unkalibriert auf dieser Domäne**: abgelehnte (off-topic) Requests
   scoren hoch (~0.99), valide Calls teils sehr niedrig (~0.00–0.5). Das Floor-Default
   ist deshalb 0; `NEEDLE_CONFIDENCE_FLOOR`/`NEEDLE_CONFIDENCE_THRESHOLD` sind

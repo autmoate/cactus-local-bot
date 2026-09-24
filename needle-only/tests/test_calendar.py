@@ -215,16 +215,20 @@ def test_collision_participants_and_absences(store):
     b = ev("Max Meeting", dt(2026, 9, 14, 10, 30), dt(2026, 9, 14, 11, 30),
            participants=["Max"])
     assert store.collision(b) is None
-    # appointment vs appointment WITH shared participant: collision
+    # appointment vs appointment WITH shared participant: overlap is reported
+    # as a warning source (never a hard reject, plan §6)
     c = ev("Ich Meeting", dt(2026, 9, 14, 10, 30), dt(2026, 9, 14, 11, 30),
            participants=["Ich", "Lisa"])
     assert store.collision(c).title == "Lisa Zahnarzt"
-    # appointment inside one's own vacation: collision (consistent with free slots)
+    # appointment inside one's own vacation: NO collision — an absence never
+    # blocks a manual timed appointment (plan §6), but it stays availability-busy
     vac = create_event(store, "Urlaub", dt(2026, 9, 21), dt(2026, 9, 26), True,
                        ["Ich"], kind="absence")
     appt = ev("Meeting", dt(2026, 9, 22, 10), dt(2026, 9, 22, 11),
               participants=["Ich"])
-    assert store.collision(appt) is not None
+    assert store.collision(appt) is None
+    assert store.is_absent([store.ensure_person("Ich")],
+                           appt.start, appt.end) is True
     # creating an absence itself never collides
     assert store.collision(vac) is None
     # Lisa's vacation does not block Max

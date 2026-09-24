@@ -1,4 +1,4 @@
-"""Telegram adapter for Kalender-Pin 📌 (V1, plan §2/§3/§9/§12/§21/§24).
+"""Telegram adapter for Kalender-Pin 📌 (V1, plan §2/§3/§9/§12/§15/§28/§34).
 
 Thin transport: Telegram Update -> RequestContext -> AtomicService ->
 Response/View/Proposal -> Telegram rendering. No calendar logic lives here.
@@ -6,27 +6,33 @@ Security (plan §8): user id and chat id are separate; groups need chat AND
 sender allowed plus an explicit address (mention/reply); unknown actors never
 reach the model. The bot username is read from Telegram (getMe) — never
 hardcoded, so a rename to @kalender_pin_bot needs no code change.
+
+Reads are rendered from the SAME structured ReadResult that produced the text
+(plan §10): no second, differently-scoped DB query.
 """
 
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import os
+import subprocess
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
-from telegram import (InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto,
-                      Update)
+from telegram import (InlineKeyboardButton, InlineKeyboardMarkup, Update)
 from telegram.ext import (Application, CallbackQueryHandler, CommandHandler,
                           ContextTypes, MessageHandler, filters)
 
 from . import calendar as cal
-from . import render, views
+from . import render, temporal, views
 from .calendar import CalendarStore
 from .identity import AuthConfig, resolve_group, resolve_private
 from .service import AtomicService, preview_lines
 
 _ENV_PATH: Path | None = None
+READ_TOOLS = {"calendar_list", "calendar_find_slot"}
 
 
 def _load_env() -> Path | None:
@@ -55,15 +61,51 @@ def _cfg_from_env() -> AuthConfig:
     )
 
 
+def _git_sha() -> str:
+    """Best-effort build id for /status (plan §28). Never raises."""
+    try:
+        out = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                             cwd=Path(__file__).resolve().parents[3],
+                             capture_output=True, text=True, timeout=3)
+        return out.stdout.strip() or "unknown"
+    except Exception:
+        return "unknown"
+
+
+def _weights_label(weights: str | None) -> str:
+    if not weights:
+        return "base"
+    name = Path(weights).name
+    tag = "n2-ft" if "seed44" in name or "n2" in name.lower() else "custom"
+    try:
+        h = hashlib.sha256(Path(weights).read_bytes()).hexdigest()[:8]
+        return f"{tag} ({name}, {h})"
+    except OSError:
+        return f"{tag} ({name})"
+
+
+def _events_from_data(data: list[dict]):
+    return [cal.CalendarEvent(id=d.get("id"), title=d.get("title", ""),
+                              kind=d.get("kind", "appointment"),
+                              start=cal.datetime.fromisoformat(d["start"]),
+                              end=cal.datetime.fromisoformat(d["end"]),
+                              all_day=bool(d.get("all_day")),
+                              participants=list(d.get("participants") or []),
+                              calendar_id=d.get("calendar_id"))
+            for d in (data or [])]
+
+
 class KalenderPinBot:
-    def __init__(self, service: AtomicService, store: CalendarStore, auth: AuthConfig):
+    def __init__(self, service: AtomicService, store: CalendarStore, auth: AuthConfig,
+                 mode: str = "needle", weights: str | None = None):
         self.service = service
         self.store = store
         self.auth = auth
+        self.mode = mode
+        self.weights = weights
         self.username = ""          # set from getMe at startup
         self.bot_id: int | None = None
-        self.week_offset: dict[int, int] = {}
-        self.day_offset: dict[int, int] = {}
+        self.started = time.time()
 
     # ----------------------------------------------------- addressing (§9)
     def _stripped_mention(self, message) -> tuple[bool, str]:
@@ -91,13 +133,15 @@ class KalenderPinBot:
             return None
         if not self.auth.is_authorized(user.id, chat.id, chat.type):
             return None
+        is_owner = (user.id == self.auth.owner_user_id) or \
+            (self.auth.owner_user_id is None and chat.id == self.auth.owner_chat_id)
         private = chat.type == "private"
         if private:
             return resolve_private(self.store, user.id, chat.id,
-                                   user.full_name or str(user.id))
+                                   user.full_name or str(user.id), owner=is_owner)
         return resolve_group(self.store, chat.id, user.id,
                              user.full_name or str(user.id),
-                             chat.title or "Gruppe")
+                             chat.title or "Gruppe", owner=is_owner)
 
     # --------------------------------------------------------- message flow
     async def on_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -117,9 +161,9 @@ class KalenderPinBot:
                 return
         await msg.chat.send_action("typing")
         decision = await asyncio.to_thread(self.service.prepare, text, ctx)
-        await self._render_decision(msg, ctx, decision)
+        await self._render_decision(msg, ctx, decision, text)
 
-    async def _render_decision(self, msg, ctx, decision):
+    async def _render_decision(self, msg, ctx, decision, text=""):
         if decision.kind == "read":
             await self._render_read(msg, ctx, decision)
             return
@@ -132,25 +176,42 @@ class KalenderPinBot:
                                      callback_data=f"cnl:{decision.proposal['token']}")]])
             await msg.reply_text("\n".join(lines), reply_markup=kb)
             return
-        await msg.reply_text(decision.message or "…")
+        # Failed read (plan §16): short German message, NO misleading widget.
+        # If the text named a date, offer a deterministic day button (no model).
+        day = cal.extract_date_from_text(text, roll=False) if text else None
+        kb = None
+        if decision.tool in READ_TOOLS and day is not None:
+            kb = InlineKeyboardMarkup([[
+                InlineKeyboardButton(f"📅 {day:%d.%m.} anzeigen",
+                                     callback_data=f"day:{day:%Y-%m-%d}")]])
+        await msg.reply_text(decision.message or "…", reply_markup=kb)
 
     async def _render_read(self, msg, ctx, decision):
         await msg.reply_text(decision.message[:4000] or "…")
+        read = decision.read or {}
+        resolved = read.get("resolved", {})
         if decision.tool == "calendar_list":
-            first = decision.read.get("resolved", {}).get("first_day")
+            events = _events_from_data(read.get("data"))
             try:
-                day = cal.date.fromisoformat(first) if first else cal.now().date()
-            except ValueError:
-                day = cal.now().date()
-            monday = day - cal.timedelta(days=day.weekday())
-            view = await asyncio.to_thread(views.build_week_view, self.store, ctx, monday)
-            await msg.reply_photo(render.render_week_view(view))
+                first = cal.date.fromisoformat(resolved["first_day"])
+                last = cal.date.fromisoformat(resolved["last_day"])
+            except (KeyError, ValueError):
+                return
+            if first == last:
+                view = views.build_day_view_from_events(self.store, ctx, first, events)
+                png = render.render_day_view(view)
+            elif (last - first).days <= 6:
+                view = views.build_range_view_from_events(self.store, ctx, first,
+                                                          last, events)
+                png = render.render_week_view(view)
+            else:
+                return  # > 7 days: text only, no misleading compact view (plan §13)
+            await msg.reply_photo(png)
         elif decision.tool == "calendar_find_slot":
-            resolved = decision.read.get("resolved", {})
-            day = cal.now().date()
-            png = await asyncio.to_thread(
-                render.render_availability_png, self.store,
-                resolved.get("persons", []), day, resolved)
+            if resolved.get("slots") is None:
+                return  # solver produced no result -> never render a widget
+            png = render.render_availability_png(
+                self.store, resolved.get("persons", []), None, resolved)
             await msg.reply_photo(png)
 
     async def on_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -169,6 +230,13 @@ class KalenderPinBot:
         elif action == "cnl":
             await asyncio.to_thread(self.service.cancel, token, ctx)
             await query.edit_message_text("📌 Abgebrochen — keine Änderung.")
+        elif action == "day":
+            try:
+                day = cal.date.fromisoformat(token)
+            except ValueError:
+                return
+            await self._send_view(query.message, ctx, day, week=False,
+                                  edit=True)
 
     # ------------------------------------------------------------- commands
     async def cmd_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -179,7 +247,7 @@ class KalenderPinBot:
             "Kalender-Pin 📌\n"
             "Eine Kalenderaktion pro Nachricht, freie natürliche Sprache.\n"
             "• Reads sofort · Änderungen erst nach Bestätigung.\n"
-            "• /today · /week · /cancel\n"
+            "• /today · /day [Datum] · /week [Datum] · /cancel\n"
             "• In Gruppen nur bei direkter Ansprache (@… oder Reply).")
 
     async def cmd_help(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -191,14 +259,25 @@ class KalenderPinBot:
         await update.message.reply_text("📌 Offene Vorschläge verfallen automatisch "
                                         "(5 Minuten) oder per ✖ Abbrechen.")
 
-    async def _send_view(self, target, ctx, day: cal.date, week: bool):
+    async def _send_view(self, target, ctx, day: cal.date, week: bool,
+                         edit: bool = False):
         if week:
             first = day - cal.timedelta(days=day.weekday())
             view = await asyncio.to_thread(views.build_week_view, self.store, ctx, first)
-            await target.reply_photo(render.render_week_view(view))
+            png = render.render_week_view(view)
         else:
             view = await asyncio.to_thread(views.build_day_view, self.store, ctx, day)
-            await target.reply_photo(render.render_day_view(view))
+            png = render.render_day_view(view)
+        if edit and hasattr(target, "edit_media"):
+            from telegram import InputMediaPhoto
+            await target.edit_media(InputMediaPhoto(png))
+        else:
+            await target.reply_photo(png)
+
+    def _nav_day(self, context) -> cal.date:
+        arg = " ".join(context.args or []).strip()
+        d = temporal.parse_nav_date(arg, cal.now().date())
+        return d or cal.now().date()
 
     async def cmd_today(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         ctx = await asyncio.to_thread(self._context, update)
@@ -206,11 +285,32 @@ class KalenderPinBot:
             return
         await self._send_view(update.message, ctx, cal.now().date(), week=False)
 
+    async def cmd_day(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        ctx = await asyncio.to_thread(self._context, update)
+        if ctx is None:
+            return
+        await self._send_view(update.message, ctx, self._nav_day(context), week=False)
+
     async def cmd_week(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         ctx = await asyncio.to_thread(self._context, update)
         if ctx is None:
             return
-        await self._send_view(update.message, ctx, cal.now().date(), week=True)
+        await self._send_view(update.message, ctx, self._nav_day(context), week=True)
+
+    async def cmd_status(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        user = update.effective_user
+        if user is None or user.id != self.auth.owner_user_id:
+            return  # owner-only (plan §28)
+        up = int(time.time() - self.started)
+        await update.message.reply_text(
+            "Kalender-Pin 📌\n"
+            f"build: {_git_sha()}\n"
+            f"mode: {self.mode}\n"
+            f"model: {_weights_label(self.weights)}\n"
+            f"schema: {self.store.SCHEMA_VERSION}\n"
+            f"events: {self.store.event_count()}\n"
+            f"uptime: {up // 3600}h {up % 3600 // 60}m\n"
+            "service: ready")
 
     async def cmd_debug(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user = update.effective_user
@@ -234,13 +334,16 @@ def main() -> None:
 
     store = CalendarStore(args.db)
     service = AtomicService(store, weights=args.weights)
-    bot = KalenderPinBot(service, store, _cfg_from_env())
+    bot = KalenderPinBot(service, store, _cfg_from_env(), mode=args.mode,
+                         weights=args.weights)
 
     app = Application.builder().token(token).build()
     app.add_handler(CommandHandler("start", bot.cmd_start))
     app.add_handler(CommandHandler("help", bot.cmd_help))
     app.add_handler(CommandHandler("today", bot.cmd_today))
+    app.add_handler(CommandHandler("day", bot.cmd_day))
     app.add_handler(CommandHandler("week", bot.cmd_week))
+    app.add_handler(CommandHandler("status", bot.cmd_status))
     app.add_handler(CommandHandler("cancel", bot.cmd_cancel))
     app.add_handler(CommandHandler("debug", bot.cmd_debug))
     app.add_handler(CallbackQueryHandler(bot.on_callback))

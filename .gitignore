@@ -27,3 +27,6 @@ needle-only/experiments/ft/data/train_v3_sub*.jsonl
 # v4-Preservation-Dataset (deterministisch via build_v4.py regenerierbar)
 needle-only/experiments/ft/data/train_v4.jsonl
 needle-only/experiments/ft/data/validation_v4.jsonl
+
+# Render-Regression-Gallery (dev-only, synthetische Fixtures)
+needle-only/artifacts/render-regression/

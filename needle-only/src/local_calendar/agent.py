@@ -17,6 +17,8 @@ import needle
 from pydantic import BaseModel
 
 from . import calendar as cal
+from . import temporal
+from .identity import resolve_name, resolve_read_person
 
 CACTUS_BASE_URL = os.environ.get("CACTUS_BASE_URL", "http://127.0.0.1:8080/v1").rstrip("/")
 # Confidence policy (plan §20). Measured on base needle2 (NOT universally valid):
@@ -247,6 +249,67 @@ def execute_call(store: cal.CalendarStore, name: str, args: dict,
                 "checks": [], "resolved": {}}
 
 
+def _resolve_participants(store, scope, value) -> list[str]:
+    """Canonical participant names (plan §4): '' or 'Ich' map to the actor, never
+    to a separate 'Ich' people row."""
+    names = cal.parse_persons(value)
+    if scope is None:
+        return names
+    actor = (store.people_names([scope.actor_person_id]) or ["Ich"])[0]
+    return [actor if n == "Ich" else n for n in names]
+
+
+def _participant_ids(store, scope, names: list[str]) -> list[int]:
+    ids: list[int] = []
+    members = scope.member_person_ids if scope else []
+    for n in names:
+        if scope and n == (store.people_names([scope.actor_person_id]) or [""])[0]:
+            ids.append(scope.actor_person_id)
+            continue
+        pid, status = resolve_name(store, n, members)
+        if pid is not None:
+            ids.append(pid)
+    if scope and scope.actor_person_id not in ids:
+        ids.append(scope.actor_person_id)
+    return ids
+
+
+def _create_warnings(store, ev: cal.CalendarEvent, scope) -> list[str]:
+    """Preview warnings (plan §6/§26). Never blocks confirm. Respects group
+    privacy: other members' private titles are never named."""
+    if ev.all_day:
+        return []  # requesting an absence itself never warns
+    warnings: list[str] = []
+    pids = _participant_ids(store, scope, ev.participants)
+    cids = scope.busy_calendar_ids(store) if scope else None
+    if pids and store.is_absent(pids, ev.start, ev.end, calendar_ids=cids):
+        warnings.append("Eine teilnehmende Person ist an diesem Tag abwesend."
+                        if (scope is not None and scope.is_group)
+                        else "Du bist an diesem Tag als abwesend markiert.")
+    overlaps = store.overlaps(ev)
+    if overlaps:
+        if scope is not None and scope.is_group:
+            shared = [o for o in overlaps
+                      if o.calendar_id == scope.target_calendar_id]
+            warnings.append(f"Überschneidet sich mit '{shared[0].title}'."
+                            if shared else
+                            "Eine teilnehmende Person ist zu dieser Zeit "
+                            "bereits belegt.")
+        else:
+            warnings.append(f"Überschneidet sich mit Termin "
+                            f"'{overlaps[0].title}'.")
+    return warnings
+
+
+def _event_dict(store, ev: cal.CalendarEvent) -> dict:
+    """Structured list entry (plan §11): text and image are built from THIS."""
+    return {"id": ev.id, "calendar_id": ev.calendar_id, "title": ev.title,
+            "kind": ev.kind, "start": ev.start.isoformat(),
+            "end": ev.end.isoformat(), "all_day": ev.all_day,
+            "participants": list(ev.participants),
+            "participant_ids": store.participant_ids(ev.id) if ev.id else []}
+
+
 def _do_create(store: cal.CalendarStore, args: dict, context: str = "",
                commit: bool = True, scope=None) -> dict:
     checks: list = []
@@ -316,23 +379,18 @@ def _do_create(store: cal.CalendarStore, args: dict, context: str = "",
                        "value": f"{wd:%d.%m.%Y}"})
     checks.append({"check": "Zeit aufgelöst", "ok": True,
                    "value": f"{start:%d.%m.%Y %H:%M} – {end:%d.%m.%Y %H:%M}"})
+    participants = _resolve_participants(store, scope, args.get("participants", ""))
     ev = cal.CalendarEvent(
         title=title, kind="absence" if all_day else "appointment",
-        start=start, end=end, all_day=all_day,
-        participants=cal.parse_persons(args.get("participants", "")))
-    clash = store.collision(ev)
-    checks.append({"check": "Kollision", "ok": clash is None,
-                   "value": clash.title if clash else "keine"})
-    if clash:
-        reason = ("Abwesenheit blockiert diesen Termin"
-                  if clash.kind == "absence"
-                  else f"belegt bereits {cal._fmt_day(clash.start)} "
-                       f"{cal._fmt_time(clash.start)}")
-        return {"ok": False, "checks": checks, "resolved": ev.model_dump(mode="json"),
-                "message": (f"⚠️ Kollision: '{clash.title}' {reason}. "
-                            "Anderen Zeitpunkt wählen?")}
+        start=start, end=end, all_day=all_day, participants=participants)
+    # Collision policy (plan §6): overlaps are WARNINGS, never a hard reject.
+    # An absence never blocks a manual timed appointment.
+    warnings = _create_warnings(store, ev, scope)
+    if warnings:
+        checks.append({"check": "Hinweis", "ok": False,
+                       "value": "; ".join(warnings)})
     if not commit:
-        return {"ok": True, "dry_run": True, "checks": checks,
+        return {"ok": True, "dry_run": True, "checks": checks, "warnings": warnings,
                 "resolved": ev.model_dump(mode="json"),
                 "message": f"📌 Neuer Termin: {_describe(ev)}"}
     ev = store.add(ev, calendar_id=(scope.target_calendar_id if scope else None),
@@ -378,8 +436,12 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "",
                            "value": f"{text_time:%H:%M}"})
         else:
             new_time = None
-    # Event resolution: ambiguity must ask, never guess (plan §2)
-    candidates, status = store.resolve_event(str(args.get("title", "")))
+    # Event resolution: ambiguity must ask, never guess (plan §2). Scoped to the
+    # current calendar (plan §5): a same-named event elsewhere must never cause
+    # ambiguity or be moved.
+    scope_ids = [scope.target_calendar_id] if scope else None
+    candidates, status = store.resolve_event(str(args.get("title", "")),
+                                             calendar_ids=scope_ids)
     if status != "unique":
         if status == "not_found":
             return {"ok": False, "checks": checks, "resolved": {},
@@ -406,23 +468,19 @@ def _do_move(store: cal.CalendarStore, args: dict, context: str = "",
     else:
         new_end = new_start + (ev.end - ev.start)
     candidate = ev.model_copy(update={"start": new_start, "end": new_end})
-    clash = store.collision(candidate)
-    checks.append({"check": "Kollision", "ok": clash is None,
-                   "value": clash.title if clash else "keine"})
-    if clash:
-        return {"ok": False, "checks": checks,
-                "resolved": candidate.model_dump(mode="json"),
-                "message": (f"⚠️ Kollision: '{clash.title}' belegt bereits "
-                            f"{cal._fmt_day(clash.start)} {cal._fmt_time(clash.start)}. "
-                            "Nicht verschoben.")}
+    warnings = _create_warnings(store, candidate, scope)
+    if warnings:
+        checks.append({"check": "Hinweis", "ok": False,
+                       "value": "; ".join(warnings)})
     if not commit:
-        return {"ok": True, "dry_run": True, "checks": checks,
+        return {"ok": True, "dry_run": True, "checks": checks, "warnings": warnings,
                 "resolved": {"before": ev.model_dump(mode="json"),
                              "after": candidate.model_dump(mode="json")},
                 "message": (f"📌 Termin verschieben: {ev.title} "
                             f"{_describe(ev)} → {_describe(candidate)}")}
     moved = cal.move_event(store, ev, new_start, new_end)
-    return {"ok": True, "checks": checks, "resolved": moved.model_dump(mode="json"),
+    return {"ok": True, "checks": checks, "warnings": warnings,
+            "resolved": moved.model_dump(mode="json"),
             "message": f"✏️ Verschoben: {_describe(moved)}"}
 
 
@@ -439,8 +497,10 @@ def _do_delete(store: cal.CalendarStore, args: dict, context: str = "",
     # filter — 'Lösch Meeting am 12.9.' must never delete the 17.9. meeting.
     t_time = cal.resolve_time(date_expr) \
         or (cal.extract_time_from_text(context) if context else None)
+    scope_ids = [scope.target_calendar_id] if scope else None
     candidates, status = store.resolve_event(str(args.get("title", "")) or None,
-                                             day=near, t=t_time)
+                                             day=near, t=t_time,
+                                             calendar_ids=scope_ids)
     if status == "not_found":
         if near is not None:
             return {"ok": False, "checks": checks, "resolved": {},
@@ -466,37 +526,28 @@ def _do_delete(store: cal.CalendarStore, args: dict, context: str = "",
 
 def _do_list(store: cal.CalendarStore, args: dict, context: str = "",
              commit: bool = True, scope=None) -> dict:
-    horizon = str(args.get("horizon", "week")).lower()
-    days = {"today": 1, "week": 7, "month": 31}.get(horizon, 7)
-    person = str(args.get("person", "")).strip()
-    who = cal._canonical_person(person) if person else "Ich"
-    date_expr = str(args.get("date", "")).strip()
-    until_expr = str(args.get("until", "")).strip()
-    if date_expr:
-        # read queries allow the past as written (plan: no silent rolling)
-        first = cal.resolve_date(date_expr, roll=False)
-        if first is None:
-            first = cal.extract_date_from_text(date_expr, roll=False)
-        last = cal.resolve_date(until_expr, roll=False) if until_expr \
-            else (cal.extract_date_from_text(until_expr, roll=False) if until_expr else None)
-        if first is None:
+    """ONE scoped read -> ONE structured ReadResult (plan §10/§11/§12): text and
+    image are later rendered from the same events. The user text overrides the
+    model for the time window (deterministic calendar arithmetic)."""
+    window = temporal.resolve_read_window(context, args)
+    first, last = window.first_day, window.last_day
+    person_arg = str(args.get("person", "")).strip()
+    pids = None
+    if person_arg and scope is not None:
+        pids, status = resolve_read_person(store, scope, person_arg)
+        if status not in ("ok",):
             return {"ok": False, "checks": [], "resolved": {},
-                    "message": f"❌ Datum nicht verstanden: {date_expr!r}"}
-        if last is not None and last < first:
-            return {"ok": False, "checks": [], "resolved": {},
-                    "message": "❌ 'until' liegt vor dem Startdatum."}
-        start = cal.datetime.combine(first, cal.time(0, 0))
-        end = (cal.datetime.combine(last, cal.time(0, 0)) + cal.timedelta(days=1)
-               if last else start + cal.timedelta(days=1))
-        resolved = {"person": who, "range": f"{start:%d.%m.%Y} – {end:%d.%m.%Y}",
-                    "first_day": f"{first:%Y-%m-%d}"}
-    else:
-        start = cal.now()
-        end = start + cal.timedelta(days=days)
-        resolved = {"person": who, "days": days}
-    events = store.events_between(start, end, person=(person or None),
-                                  calendar_ids=(scope.read_calendar_ids if scope else None))
-    return {"ok": True, "checks": [], "resolved": resolved,
+                    "message": f"❌ Person nicht eindeutig: {person_arg!r}"}
+    start = cal.datetime.combine(first, cal.time(0, 0))
+    end = cal.datetime.combine(last, cal.time(0, 0)) + cal.timedelta(days=1)
+    cal_ids = scope.read_calendar_ids if scope else None
+    events = store.events_between(start, end, person_ids=pids, calendar_ids=cal_ids)
+    data = [_event_dict(store, ev) for ev in events]
+    resolved = {"first_day": f"{first:%Y-%m-%d}", "last_day": f"{last:%Y-%m-%d}",
+                "person_ids": pids, "calendar_ids": cal_ids,
+                "source": window.source,
+                "range": f"{first:%d.%m.%Y} – {last:%d.%m.%Y}"}
+    return {"ok": True, "checks": [], "resolved": resolved, "data": data,
             "message": cal.render_events(events)}
 
 
@@ -506,10 +557,10 @@ def _do_find_slot(store: cal.CalendarStore, args: dict, context: str = "",
     if not raw:
         return {"ok": False, "checks": [], "resolved": {},
                 "message": "❌ Keine Personen angegeben."}
-    persons = cal.parse_persons(raw)
+    names = cal.parse_persons(raw)
     if scope is not None:
-        actor_name = (store.people_names([scope.actor_person_id]) or ["Ich"])[0]
-        persons = [actor_name if p == "Ich" else p for p in persons]
+        actor = (store.people_names([scope.actor_person_id]) or ["Ich"])[0]
+        names = [actor if n == "Ich" else n for n in names]
     duration = max(5, _to_int(args.get("duration_min"), 60))
     date_expr = str(args.get("date", "")).strip()
     until_expr = str(args.get("until", "")).strip()
@@ -530,12 +581,29 @@ def _do_find_slot(store: cal.CalendarStore, args: dict, context: str = "",
     period = cal._period_of(date_expr)
     work_start, work_end = cal.PERIOD_WINDOWS.get(
         period, (cal.WORK_START, cal.WORK_END))
-    slots = cal.find_free_slots(store, persons, first, last, duration,
-                                work_start, work_end)
-    # Phase 6.6: the executed solver result is the truth — Telegram renders
-    # exactly these data, it never re-schedules with different defaults.
+    # ID-based, scoped solver (plan §18): group = members' personal + group
+    # calendar; private = own calendar. Never a global name lookup.
+    pids: list[int] | None = None
+    if scope is not None:
+        pids = []
+        for n in names:
+            pid, status = resolve_name(store, n, scope.member_person_ids)
+            if pid is None:
+                return {"ok": False, "checks": [], "resolved": {},
+                        "message": f"❌ Person nicht gefunden: {n!r}"}
+            pids.append(pid)
+        slots = cal.find_free_slots_for_people(
+            store, pids, scope.busy_calendar_ids(store),
+            first, last, duration, work_start, work_end)
+        persons = store.people_names(pids)
+    else:
+        persons = names
+        slots = cal.find_free_slots(store, persons, first, last, duration,
+                                    work_start, work_end)
+    # The executed solver result is the truth — Telegram renders exactly these
+    # data (plan §15), it never re-schedules or shows today instead.
     return {"ok": True, "checks": [],
-            "resolved": {"persons": persons,
+            "resolved": {"persons": persons, "person_ids": pids,
                          "first_day": f"{first:%Y-%m-%d}",
                          "last_day": f"{last:%Y-%m-%d}",
                          "duration_min": duration,
