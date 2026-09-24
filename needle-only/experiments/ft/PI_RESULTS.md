@@ -12,30 +12,44 @@ Modelle (ethereum-verifiziert via HF etag): n2-FT `ba3212ab…` (HF
 
 | Pipeline | Full goal | Wrong mut | Escalation/Gemma | p50 | p95 | Peak RAM |
 |---|---|---|---|---|---|---|
-| **P0 Gemma→N2** | 0.654 | **15** | 100 % | **13 492 ms** | 23 566 ms | 46 MB¹ |
+| P0 Gemma→N2 (one-shot canonicalize) | 0.654 | 15 | 100 % | 13 492 ms | 23 566 ms | 46 MB¹ |
+| **P0-controller (echter `Agent` hybrid)** | **0.286** | **19** | 100 % | **120 031 ms** | 120 104 ms | 45 MB |
 | **P1 N3-only** | 0.662 | **6** | 0 % | **2 122 ms** | 3 638 ms | 47 MB |
 | P2 N3 + Eskalation (N3-venv, no-gemma) | 0.662 | 6 | 14.3 % | 2 183 ms | 4 076 ms | 46 MB |
-| **P2 N3→P0 Fallback (komponiert)** | **0.699** | **6** | 14.3 % | ~4 000 ms² | ~9 000 ms² | 46 MB |
+| P2 N3→P0 one-shot Fallback (komponiert) | 0.699 | 6 | 14.3 % | ~4 000 ms | ~9 000 ms | 46 MB |
+| **P2 N3→P0-controller Fallback (komponiert)** | **0.737** | **6** | 14.3 % | — ² | — ² | 45 MB |
 
-¹ N2/N3-Prozess (Gemma läuft separat im `serve`: resident ≈ Bundle-Größe, s. u.).
-² komponiert (N3-Zeit bzw. N3 + P0-Zeit bei Eskalation); P0 allein s. o.
+¹ N2/N3-Prozess. **Gemma-`serve` resident = 2576 MB** (separater Prozess, dauerhaft).
+² Fallback-Latenz wäre ~120 s/Turn beim Controller → auf dem Pi nicht deploybar.
 
-**P2-Obergrenze neu:** (autonom korrekt 88 + eskaliert 19)/133 = **0.805** — die
-alte 80.5 % bleibt zufällig gleich, aber jetzt auf gehärteter Read-/Mutations-
-Metrik. Real löst P0 nur **5 von 19** eskalierten Fällen → P2 = 0.699.
+**P2-Obergrenze:** (autonom korrekt 88 + eskaliert 19)/133 = **0.805**.
+Der one-shot-Fallback rettet 5/19, der **Controller-Fallback rettet 10/19** —
+exakt die Ambiguitätsklasse (er fragt nach).
 
-## Familien (P0 / komponiertes P2)
+### P0-controller (echter Agent, iterativ) — warum so schlecht
 
-| Familie | n | P0 ok | P2 ok | P2 esc | P2 wrong_mut |
+Der echte `Agent(mode="hybrid")` (`_controller_loop`: Gemma decide → N2 →
+execute → Observation, wiederholt) erreicht auf dem Pi nur **0.286** bei
+**p50/p95 = 120 s/Case** und **19 wrong_mutations**. `gemma_turns_mean = 1.35`
+(98× 1 Turn, 27× 2) — die Latenz kommt **nicht** von vielen Turns, sondern von
+**~120 s pro Turn**: der Controller-Prompt (System + Goal + Observations +
+Kalender-Kontext) ist auf CPU sehr teuer (Prefill + 240 Tokens). Als Default-Pfad
+ist die bestehende Hybrid-Architektur auf dem Pi damit **unbrauchbar** —
+schlechter und ~60× langsamer als N3-only. Einziger klarer Mehrwert: die
+**Rückfrage-Klasse** (ambiguous 10/10), die als Fallback wirkt.
+
+## Familien (one-shot P0 / Controller-P0 / komponiertes P2-controller)
+
+| Familie | n | P0 one-shot | P0-controller | P2ctrl ok | P2ctrl esc |
 |---|---|---|---|---|---|
-| atomic_read | 20 | 17 | **20** | 0 | 0 |
-| atomic_write | 30 | 27 | 29 | 4 | 1 |
-| indep_multi | 25 | 14 | 13 | 0 | 5 |
-| bullet_list | 15 | 7 | 11 | 0 | 0 |
-| mixed | 15 | 11 | 9 | 0 | 0 |
-| ambiguous | 10 | 0 | 0 | **10** | 0 |
-| dependent | 8 | 3 | 1 | 5 | 0 |
-| offtopic | 10 | 8 | 10 | 0 | 0 |
+| atomic_read | 20 | 17 | 5 | **20** | 0 |
+| atomic_write | 30 | 27 | 11 | 25 | 4 |
+| indep_multi | 25 | 14 | 2 | 13 | 0 |
+| bullet_list | 15 | 7 | 0 | 11 | 0 |
+| mixed | 15 | 11 | 0 | 9 | 0 |
+| ambiguous | 10 | 0 | **10** | 10 | 10 |
+| dependent | 8 | 3 | 0 | 0 | 5 |
+| offtopic | 10 | 8 | 10 | 10 | 0 |
 
 ## A1 atomic — n2-FT auf dem Pi (`base_eval.py --tag n2ft-pi`)
 
@@ -74,24 +88,33 @@ harmlos (mutating 0), verliert aber Writes.
 
 ## Interpretation (Business)
 
-1. **Gemma-first lohnt auf dem Pi nicht.** P0 (Gemma→N2) ist bei 0.654 **schlechter**
-   als N3-only (0.662), erzeugt **mehr** Falsch-Mutationen (15 vs 6) und kostet
-   **6×** Latenz (13.5 s vs 2.1 s). Gemma E2B auf CPU ist als vorgeschalteter
-   Canonicalizer/Planner zu schwach und zu teuer.
-2. **N3-only (P1) ist der starke Kompromiss:** 0.662 goal bei 2.1 s, 6 wrong_mutations,
-   46 MB, kein LLM. Kandidat für ein **Core/Lite-Profil**. Reads (atomic_read 20/20)
-   und Off-Topic (10/10) sind solide; Schwächen bei Multi/Bullet/Mixed/Dependent.
-3. **P2 (N3→Gemma→N2) bringt nur +0.037** (0.699) bei 14.3 % Eskalation und rettet
-   5/19. Der zusätzliche Gemma-Pfad ist teuer (Latenz) für wenig Gewinn.
-4. **Silent Omission bleibt der Deckel** (44 missed in allen Pipelines): Python
-   erkennt fehlende Aktionen nicht. Das ist der Hebel — nicht weitere Modelle.
+1. **Gemma-first ist auf dem Pi endgültig widerlegt** — in beiden Varianten:
+   one-shot-canonicalize (0.654) **und** der echte iterative Controller (0.286)
+   sind schlechter als N3-only (0.662). Der Controller kostet zusätzlich **120 s
+   pro Turn** und 2,6 GB resident RAM. Gemma E2B auf CPU ist weder schnell noch
+   als Planner zuverlässig genug.
+2. **N3-only (P1) ist der starke Kompromiss:** 0.662 goal bei 2.1 s, 6
+   wrong_mutations, 46 MB, kein LLM → **Core/Lite-Profil**. Reads (atomic_read
+   20/20) und Off-Topic (10/10) solide; Schwächen bei Multi/Bullet/Mixed/Dependent.
+3. **Der Controller hat genau einen Mehrwert: die Rückfrage-Klasse.** Als
+   Eskalations-Fallback (P2-controller = 0.737) rettet er **10/19** — alle 10
+   ambiguen Fälle (er fragt nach, statt zu mutieren). Als Default-Pfad ist er
+   wegen 120 s/Turn aber **nicht deploybar**. Der Wert ist architektonisch
+   übersetzbar: **Ambiguität → Rückfrage** (statt Gemma-Controller).
+4. **Silent Omission bleibt der Deckel** (44 missed in allen N3-Pipelines;
+   157 beim Controller). Python erkennt fehlende Aktionen nicht — der Hebel ist
+   **explizite Zerlegung (v5-Decomposer)**, nicht weitere Modelle.
 5. **Capability-Split per Toolset ist unsicher** (write-on-read 97 %). Routing
-   muss vor der Modellwahl passieren.
+   muss vor der Modellwahl passieren — oder N3↔N2 bestätigen sich gegenseitig.
+6. **Gemma resident = 2576 MB**, auch bei nur 14 % Nutzung → ein Full-Profil
+   kostet dauerhaft RAM; Core/Lite (N3-only) braucht ~50 MB.
 
-**Fazit:** Kein Gemma-first, kein Write-FT. Der nächste Forschungshebel ist
-**Completeness/Zerlegung** (v5-Decomposer: Intent-Recall statt exact-output),
-mit N3-only als Core/Lite-Fallback. Der Pi zeigt klar: Modelle sind gut genug im
-Atomaren (n2-FT 0.978), die Orchestrierung ist das Problem.
+**Fazit:** Kein Gemma-first, kein Write-FT. Atomic sind die Modelle gut genug
+(n2-FT 0.978); das Problem ist **Intent-Erkennung, Zerlegung und
+Referenzbindung**. Nächster Schritt: **v5-Decomposer** — N3 bekommt keine
+mutierenden Tools mehr, liefert nur `read_step`/`write_step`/`dependent_write_step`
+(verbatim), N2 macht die atomaren Calls, Python bindet Resultate und erzwingt den
+Capability-Konsens (N3 sagt WRITE, N2 sieht READ → keine Mutation).
 
 ## Reproduktion (Pi)
 

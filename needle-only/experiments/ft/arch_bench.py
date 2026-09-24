@@ -39,7 +39,7 @@ sys.path.insert(0, str(HERE.parents[1] / "src"))
 
 import needle  # noqa: E402
 from local_calendar import calendar as cal  # noqa: E402
-from local_calendar.agent import build_tools, Gemma  # noqa: E402
+from local_calendar.agent import Agent, build_tools, Gemma  # noqa: E402
 from local_calendar.calendar import CalendarStore  # noqa: E402
 from arch_cases import build_cases, _iso  # noqa: E402
 import eval_mutations as mut  # noqa: E402
@@ -160,6 +160,55 @@ def _canonical(gemma, goal: str) -> tuple[str, bool]:
     return c, True
 
 
+def _agent_steps_trace(trace: dict) -> list[dict]:
+    """Convert an Agent-handle trace into the (tool, result) shape _check reads."""
+    out = []
+    for s in (trace or {}).get("steps", []):
+        if s.get("name", "").startswith("execute "):
+            tool = s["name"][len("execute "):]
+            o = s.get("output")
+            msg = o.get("message", "") if isinstance(o, dict) else (o or "")
+            out.append({"tool": tool, "args": {}, "result": str(msg)})
+    return out
+
+
+def run_case_controller(case) -> dict:
+    """P0-controller: the real Agent(mode="hybrid") — iterative Gemma decide →
+    instruction → N2 → execute → observation. NEEDLE_WEIGHTS selects the N2 FT."""
+    td = Path(tempfile.mkdtemp())
+    store = CalendarStore(td / "arch.db")
+    raw = build_tools(store)
+    for (title, day, hm, p) in case["fixture"]:
+        raw["calendar_create"](title=title, date=day, time=hm, participants=p)
+    before = mut.snapshot(store)
+    agent = Agent(store, mode="hybrid")
+    t0 = time.perf_counter()
+    trace = None
+    try:
+        for trace in agent.handle(case["goal"], session_id=case["id"]):
+            pass
+    except Exception as exc:  # noqa: BLE001
+        trace = trace or {"steps": [], "result": f"{type(exc).__name__}: {exc}"}
+    ms = round((time.perf_counter() - t0) * 1000)
+    after = mut.snapshot(store)
+    atrace = _agent_steps_trace(trace)
+    chk = _check(case["expect"], before, after, atrace)
+    turns = sum(1 for s in trace.get("steps", [])
+                if s.get("name", "").startswith("controller "))
+    writes = [t["tool"] for t in atrace if t["tool"] in WRITES]
+    failed = [t for t in atrace if t["tool"] in WRITES and _failed(t)]
+    return {"id": case["id"], "family": case["family"], "goal": case["goal"],
+            "calls": [t["tool"] for t in atrace], "escalated": False,
+            "gemma_used": True, "gemma_turns": turns, "esc_reason": "controller",
+            "goal_ok": chk["ok"], "missed": chk["missed"],
+            "correct_mutations": chk["correct_mutations"],
+            "wrong_mutations": chk["wrong_mutations"],
+            "successful_mutations": chk["correct_mutations"] + chk["wrong_mutations"],
+            "write_attempts": len(writes), "failed_write_attempts": len(failed),
+            "ms": ms, "why": chk["why"], "result": trace.get("result", ""),
+            "writes": writes}
+
+
 def run_case(case, pipeline, weights, gemma=None) -> dict:
     td = Path(tempfile.mkdtemp())
     store = CalendarStore(td / "arch.db")
@@ -240,7 +289,7 @@ def run_case(case, pipeline, weights, gemma=None) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pipeline", choices=["direct", "fallback", "hybrid"], required=True)
+    ap.add_argument("--pipeline", choices=["direct", "fallback", "hybrid", "controller"], required=True)
     ap.add_argument("--tag", required=True)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--no-gemma", action="store_true",
@@ -249,7 +298,13 @@ def main() -> int:
     args = ap.parse_args()
     weights = os.environ.get("NEEDLE_WEIGHTS") or None
     gemma = None
-    if args.pipeline in ("hybrid", "fallback") and not args.no_gemma:
+    if args.pipeline == "controller":
+        g = Gemma()
+        if not g.available():
+            raise SystemExit("controller braucht laufendes `cactus serve`")
+        gemma = g
+        print(f"Controller/Gemma available ({g.model_id()})")
+    elif args.pipeline in ("hybrid", "fallback") and not args.no_gemma:
         g = Gemma()
         if g.available():
             gemma = g
@@ -262,7 +317,10 @@ def main() -> int:
     cases = build_cases()
     if args.limit:
         cases = cases[:args.limit]
-    rows = [run_case(c, args.pipeline, weights, gemma) for c in cases]
+    if args.pipeline == "controller":
+        rows = [run_case_controller(c) for c in cases]
+    else:
+        rows = [run_case(c, args.pipeline, weights, gemma) for c in cases]
     n = len(rows)
 
     def pct(sel):
@@ -295,6 +353,8 @@ def main() -> int:
                "peak_rss_mb": round(resource.getrusage(
                    resource.RUSAGE_SELF).ru_maxrss / 1024),
                "gemma_available": gemma is not None,
+               "gemma_turns_mean": round(
+                   sum(r.get("gemma_turns", 0) for r in rows) / n, 2),
                "families": fams, "rows": rows}
     out = HERE / "reports" / f"arch_{args.tag}_{args.pipeline}.json"
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=1))
