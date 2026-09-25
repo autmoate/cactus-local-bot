@@ -1,0 +1,4676 @@
+{
+  "backend": "n3",
+  "model": "n3-base",
+  "n_cases": 60,
+  "groups": {
+    "message": {
+      "n": 60,
+      "final_event_ok": 0.1,
+      "approval_ready": 0.1,
+      "count_ok": 0.8167,
+      "event_detection_recall": 1.0,
+      "title_ok": 0.8491,
+      "start_ok": 0.1321,
+      "end_ok": 0.0943,
+      "temporal_ok": 0.0943,
+      "location_ok": 0.9057,
+      "final_event_ok_positive": 0.0943,
+      "approval_ready_positive": 0.0943,
+      "false_positive_rate": 0.8571,
+      "latency_p50_ms": 600,
+      "latency_p95_ms": 1012
+    },
+    "selection": {
+      "n": 10,
+      "final_event_ok": 0.0,
+      "approval_ready": 0.0,
+      "count_ok": 1.0,
+      "event_detection_recall": 1.0,
+      "title_ok": 0.3,
+      "start_ok": 0.0,
+      "end_ok": 0.0,
+      "temporal_ok": 0.0,
+      "location_ok": 0.9,
+      "final_event_ok_positive": 0.0,
+      "approval_ready_positive": 0.0,
+      "latency_p50_ms": 507,
+      "latency_p95_ms": 558
+    }
+  },
+  "categories": {
+    "all_day": {
+      "message": {
+        "n": 5,
+        "final_event_ok": 0.4,
+        "approval_ready": 0.4,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 0.8,
+        "end_ok": 0.4,
+        "temporal_ok": 0.4,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 0.4,
+        "approval_ready_positive": 0.4,
+        "latency_p50_ms": 540,
+        "latency_p95_ms": 663
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "explicit_single": {
+      "message": {
+        "n": 20,
+        "final_event_ok": 0.05,
+        "approval_ready": 0.05,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 0.05,
+        "end_ok": 0.05,
+        "temporal_ok": 0.05,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 0.05,
+        "approval_ready_positive": 0.05,
+        "latency_p50_ms": 592,
+        "latency_p95_ms": 723
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "location": {
+      "message": {
+        "n": 8,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "latency_p50_ms": 640,
+        "latency_p95_ms": 703
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "multi": {
+      "message": {
+        "n": 5,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 0.6,
+        "event_detection_recall": 1.0,
+        "title_ok": 0.0,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 0.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "latency_p50_ms": 1005,
+        "latency_p95_ms": 1298
+      },
+      "selection": {
+        "n": 5,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 0.2,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "latency_p50_ms": 503,
+        "latency_p95_ms": 558
+      }
+    },
+    "negative": {
+      "message": {
+        "n": 7,
+        "final_event_ok": 0.1429,
+        "approval_ready": 0.1429,
+        "count_ok": 0.1429,
+        "false_positive_rate": 0.8571,
+        "latency_p50_ms": 553,
+        "latency_p95_ms": 656
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "relative": {
+      "message": {
+        "n": 10,
+        "final_event_ok": 0.2,
+        "approval_ready": 0.2,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 0.2,
+        "end_ok": 0.2,
+        "temporal_ok": 0.2,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 0.2,
+        "approval_ready_positive": 0.2,
+        "latency_p50_ms": 580,
+        "latency_p95_ms": 732
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "selection": {
+      "message": {
+        "n": 5,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 0.4,
+        "event_detection_recall": 1.0,
+        "title_ok": 0.4,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "latency_p50_ms": 845,
+        "latency_p95_ms": 1024
+      },
+      "selection": {
+        "n": 5,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 0.4,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 0.8,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "latency_p50_ms": 509,
+        "latency_p95_ms": 526
+      }
+    }
+  },
+  "rows": [
+    {
+      "candidate_count": 1,
+      "latency_ms": 678.1823350029299,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e01",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Projektreview",
+        "start": "2026-10-12T14:00:00",
+        "end": "2026-10-12T15:00:00",
+        "location": "Raum 3.14"
+      },
+      "got": [
+        {
+          "title": "Projektreview",
+          "start": "2027-09-12T14:00:00",
+          "end": "2027-09-12T15:00:00",
+          "all_day": false,
+          "location": "Raum 3.14",
+          "source_message_id": "e01",
+          "source_text": "Der Projektreview findet am 12.10. um 14 Uhr in Raum 3.14 statt.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.991,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Projektreview",
+            "when": "2026-09-12 14:00",
+            "location": "Raum 3.14"
+          }
+        }
+      ],
+      "prompt": "Betreff: Projektreview\n\nDer Projektreview findet am 12.10. um 14 Uhr in Raum 3.14 statt.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 466.78081899881363,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e02",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Meeting",
+        "start": "2026-10-12T14:00:00",
+        "end": "2026-10-12T15:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Meeting",
+          "start": "2026-10-12T00:00:00",
+          "end": "2026-10-13T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "e02",
+          "source_text": "Das Meeting ist am 12.10. um 14 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.6442,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Meeting",
+            "when": "12.10."
+          }
+        }
+      ],
+      "prompt": "Betreff: Meeting\n\nDas Meeting ist am 12.10. um 14 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 640.9711869928287,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e03",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Workshop",
+        "start": "2026-11-04T10:00:00",
+        "end": "2026-11-04T16:00:00",
+        "location": "Konferenzraum Berlin"
+      },
+      "got": [
+        {
+          "title": "Workshop",
+          "start": "2026-11-04T00:00:00",
+          "end": "2026-11-05T00:00:00",
+          "all_day": true,
+          "location": "Berlin",
+          "source_message_id": "e03",
+          "source_text": "Am 4. November von 10 bis 16 Uhr ist der Workshop, Konferenzraum Berlin.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5657,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Workshop",
+            "when": "2026-11-04",
+            "location": "Berlin"
+          }
+        }
+      ],
+      "prompt": "Betreff: Workshop\n\nAm 4. November von 10 bis 16 Uhr ist der Workshop, Konferenzraum Berlin.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 614.7066669946071,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e04",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Zahnarzttermin",
+        "start": "2026-10-20T08:30:00",
+        "end": "2026-10-20T09:30:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Zahnarzttermin",
+          "start": "2026-10-20T00:00:00",
+          "end": "2026-10-21T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "e04",
+          "source_text": "Bitte notieren: Zahnarzttermin am 20.10.2026 um 08:30 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.6954,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Zahnarzttermin",
+            "when": "20.10.2026"
+          }
+        }
+      ],
+      "prompt": "Betreff: Zahnarzttermin\n\nBitte notieren: Zahnarzttermin am 20.10.2026 um 08:30 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 608.4033990046009,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e05",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Jahresabschluss",
+        "start": "2026-12-15T18:00:00",
+        "end": "2026-12-15T19:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Jahresabschluss",
+          "start": "2027-09-15T18:00:00",
+          "end": "2027-09-15T19:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "e05",
+          "source_text": "Der Jahresabschluss ist für den 15.12. um 18 Uhr geplant.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9675,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Jahresabschluss",
+            "when": "2026-09-15 18:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Jahresabschluss\n\nDer Jahresabschluss ist für den 15.12. um 18 Uhr geplant.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 693.3741350076161,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e06",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Quartalsmeeting",
+        "start": "2026-11-05T09:00:00",
+        "end": "2026-11-05T11:00:00",
+        "location": "Besprechungsraum A"
+      },
+      "got": [
+        {
+          "title": "Quartalsmeeting",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "Besprechungsraum A",
+          "source_message_id": "e06",
+          "source_text": "Quartalsmeeting am 5.11. von 09:00 bis 11:00 in Besprechungsraum A.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9924,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Quartalsmeeting",
+            "when": "09:00",
+            "location": "Besprechungsraum A"
+          }
+        }
+      ],
+      "prompt": "Betreff: Quartalsmeeting\n\nQuartalsmeeting am 5.11. von 09:00 bis 11:00 in Besprechungsraum A.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 436.60908899619244,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e07",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Klausurtagung",
+        "start": "2026-10-09T13:00:00",
+        "end": "2026-10-09T14:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Klausurtagung",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "e07",
+          "source_text": "Die Klausurtagung findet am 9.10. um 13 Uhr statt.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.981,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Klausurtagung",
+            "when": "09:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Klausurtagung\n\nDie Klausurtagung findet am 9.10. um 13 Uhr statt.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 714.947869986645,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e08",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Prüfung",
+        "start": "2026-12-03T10:00:00",
+        "end": "2026-12-03T11:00:00",
+        "location": "Hörsaal 1"
+      },
+      "got": [
+        {
+          "title": "Prüfung",
+          "start": "2027-09-03T10:00:00",
+          "end": "2027-09-03T11:00:00",
+          "all_day": false,
+          "location": "Hörsaal 1",
+          "source_message_id": "e08",
+          "source_text": "Prüfung am 3.12. um 10 Uhr, Hörsaal 1.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9867,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Prüfung",
+            "when": "2026-09-03 10:00",
+            "location": "Hörsaal 1"
+          }
+        }
+      ],
+      "prompt": "Betreff: Prüfung\n\nPrüfung am 3.12. um 10 Uhr, Hörsaal 1.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 574.8413679975783,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e09",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Kick-off",
+        "start": "2026-10-14T16:30:00",
+        "end": "2026-10-14T17:30:00",
+        "location": "Raum 5.01"
+      },
+      "got": [
+        {
+          "title": "Kick-off",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "Raum 5.01",
+          "source_message_id": "e09",
+          "source_text": "Am 14.10. um 16:30 Uhr steigt das Kick-off im Raum 5.01.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9574,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kick-off",
+            "when": "16:30",
+            "location": "Raum 5.01"
+          }
+        }
+      ],
+      "prompt": "Betreff: Kick-off\n\nAm 14.10. um 16:30 Uhr steigt das Kick-off im Raum 5.01.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 403.76816999923903,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e10",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Vortrag",
+        "start": "2026-10-22T17:00:00",
+        "end": "2026-10-22T18:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Vortrag",
+          "start": "2026-10-22T00:00:00",
+          "end": "2026-10-23T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "e10",
+          "source_text": "Der Vortrag ist am 22. Oktober um 17 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9797,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Vortrag",
+            "when": "2026-10-22"
+          }
+        }
+      ],
+      "prompt": "Betreff: Vortrag\n\nDer Vortrag ist am 22. Oktober um 17 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 538.8124250021065,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e11",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Interviewtermin",
+        "start": "2026-11-11T15:00:00",
+        "end": "2026-11-11T16:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Interviewtermin",
+          "start": "2026-11-01T00:00:00",
+          "end": "2026-11-02T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "e11",
+          "source_text": "Bitte den Interviewtermin am 11.11. um 15 Uhr vormerken.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9907,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Interviewtermin",
+            "when": "2026-11-01"
+          }
+        }
+      ],
+      "prompt": "Betreff: Interviewtermin\n\nBitte den Interviewtermin am 11.11. um 15 Uhr vormerken.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 562.3367560037877,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e12",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Retrospektive-Meeting",
+        "start": "2026-10-30T11:00:00",
+        "end": "2026-10-30T12:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Retrospektive-Meeting",
+          "start": "2026-10-30T00:00:00",
+          "end": "2026-10-31T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "e12",
+          "source_text": "Am 30.10. findet um 11:00 das Retrospektive-Meeting statt.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.7752,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Retrospektive-Meeting",
+            "when": "30.10."
+          }
+        }
+      ],
+      "prompt": "Betreff: Retrospektive-Meeting\n\nAm 30.10. findet um 11:00 das Retrospektive-Meeting statt.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 621.7819369921926,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e13",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Team-Workshop",
+        "start": "2026-10-06T09:00:00",
+        "end": "2026-10-06T10:00:00",
+        "location": "Raum 2.02"
+      },
+      "got": [
+        {
+          "title": "Team-Workshop",
+          "start": "2026-10-06T00:00:00",
+          "end": "2026-10-07T00:00:00",
+          "all_day": true,
+          "location": "Raum 2.02",
+          "source_message_id": "e13",
+          "source_text": "Der Team-Workshop startet am 6.10. um 9 Uhr in Raum 2.02.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5157,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Team-Workshop",
+            "when": "6.10.",
+            "location": "Raum 2.02"
+          }
+        }
+      ],
+      "prompt": "Betreff: Team-Workshop\n\nDer Team-Workshop startet am 6.10. um 9 Uhr in Raum 2.02.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 413.87366599519737,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e14",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Lunch",
+        "start": "2026-10-13T12:30:00",
+        "end": "2026-10-13T13:30:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Lunch",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "e14",
+          "source_text": "Wir treffen uns am 13.10. um 12:30 Uhr zum Lunch.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9423,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Lunch",
+            "when": "12:30"
+          }
+        }
+      ],
+      "prompt": "Betreff: Lunch\n\nWir treffen uns am 13.10. um 12:30 Uhr zum Lunch.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 517.0110600010958,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e15",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Betriebsversammlung",
+        "start": "2026-10-18T08:00:00",
+        "end": "2026-10-18T09:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Betriebsversammlung",
+          "start": "2026-10-18T00:00:00",
+          "end": "2026-10-19T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "e15",
+          "source_text": "Am 18.10. um 8 Uhr ist die Betriebsversammlung.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.7788,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Betriebsversammlung",
+            "when": "18.10."
+          }
+        }
+      ],
+      "prompt": "Betreff: Betriebsversammlung\n\nAm 18.10. um 8 Uhr ist die Betriebsversammlung.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 553.1234649970429,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e16",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Design-Review",
+        "start": "2026-10-21T15:00:00",
+        "end": "2026-10-21T17:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Design-Review",
+          "start": "2027-09-21T15:00:00",
+          "end": "2027-09-21T16:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "e16",
+          "source_text": "Der Design-Review ist am 21.10. von 15 bis 17 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.7173,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Design-Review",
+            "when": "2026-09-21 15:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Design-Review\n\nDer Design-Review ist am 21.10. von 15 bis 17 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 620.8727869961876,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "e17",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Security-Audit",
+        "start": "2026-11-02T09:00:00",
+        "end": "2026-11-02T10:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Security-Audit",
+          "start": "2026-11-02T09:00:00",
+          "end": "2026-11-02T10:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "e17",
+          "source_text": "Am 2.11.2026 um 09:00 Uhr ist der Security-Audit.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9866,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Security-Audit",
+            "when": "2026-11-02 09:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Security-Audit\n\nAm 2.11.2026 um 09:00 Uhr ist der Security-Audit.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 722.8727520123357,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e18",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Kundentermin",
+        "start": "2026-10-25T13:30:00",
+        "end": "2026-10-25T14:30:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Kundentermin",
+          "start": "2026-09-25T13:30:00",
+          "end": "2026-09-25T14:30:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "e18",
+          "source_text": "Kundentermin am 25.10. um 13:30 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9772,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kundentermin",
+            "when": "2026-09-25 13:30"
+          }
+        }
+      ],
+      "prompt": "Betreff: Kundentermin\n\nKundentermin am 25.10. um 13:30 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 637.4025890108896,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e19",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Gehaltsgespräch",
+        "start": "2026-10-28T10:30:00",
+        "end": "2026-10-28T11:30:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Gehaltsgespräch",
+          "start": "2026-09-28T10:30:00",
+          "end": "2026-09-28T11:30:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "e19",
+          "source_text": "Geplant: Gehaltsgespräch am 28.10. um 10:30 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9606,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Gehaltsgespräch",
+            "when": "2026-09-28 10:30"
+          }
+        }
+      ],
+      "prompt": "Betreff: Gehaltsgespräch\n\nGeplant: Gehaltsgespräch am 28.10. um 10:30 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 458.92147299309727,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "e20",
+      "mode": "message",
+      "category": "explicit_single",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Elternabend",
+        "start": "2026-11-07T19:00:00",
+        "end": "2026-11-07T20:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Elternabend",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "e20",
+          "source_text": "Der Elternabend ist am 7.11. um 19 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9475,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Elternabend",
+            "when": "19:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Elternabend\n\nDer Elternabend ist am 7.11. um 19 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 572.8398630017182,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "r01",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Team-Meeting",
+        "start": "2026-09-26T09:30:00",
+        "end": "2026-09-26T10:30:00",
+        "location": "Raum 204"
+      },
+      "got": [
+        {
+          "title": "Team-Meeting",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "Raum 204",
+          "source_message_id": "r01",
+          "source_text": "Das Team-Meeting findet morgen um 9:30 Uhr im Raum 204 statt.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9312,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Team-Meeting",
+            "when": "09:30",
+            "location": "Raum 204"
+          }
+        }
+      ],
+      "prompt": "Betreff: Team-Meeting\n\nDas Team-Meeting findet morgen um 9:30 Uhr im Raum 204 statt.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 331.1084890010534,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "r02",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Kaffeeklatsch",
+        "start": "2026-09-27T14:00:00",
+        "end": "2026-09-27T15:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Kaffeeklatsch",
+          "start": "2026-09-26T14:00:00",
+          "end": "2026-09-26T15:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r02",
+          "source_text": "Der Kaffeeklatsch ist übermorgen um 14 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.7175,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kaffeeklatsch",
+            "when": "2026-09-26 14:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Kaffeeklatsch\n\nDer Kaffeeklatsch ist übermorgen um 14 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 731.5156350086909,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "r03",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Arzttermin",
+        "start": "2026-09-29T08:00:00",
+        "end": "2026-09-29T09:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Arzttermin",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r03",
+          "source_text": "Der Arzttermin ist nächsten Dienstag um 8 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.7794,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Arzttermin",
+            "when": "08:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Arzttermin\n\nDer Arzttermin ist nächsten Dienstag um 8 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 502.71424200036563,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "r04",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Planning",
+        "start": "2026-10-02T10:00:00",
+        "end": "2026-10-02T11:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Planning",
+          "start": "2026-09-27T10:00:00",
+          "end": "2026-09-27T11:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r04",
+          "source_text": "Am kommenden Freitag um 10 Uhr ist das Planning.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9831,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Planning",
+            "when": "2026-09-27 10:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Planning\n\nAm kommenden Freitag um 10 Uhr ist das Planning.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 586.6427730070427,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "r05",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Demo",
+        "start": "2026-09-25T16:00:00",
+        "end": "2026-09-25T17:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Demo",
+          "start": "2026-09-25T16:00:00",
+          "end": "2026-09-25T17:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r05",
+          "source_text": "Die Demo ist heute um 16 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5953,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Demo",
+            "when": "2026-09-25 16:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Demo\n\nDie Demo ist heute um 16 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 563.1806829915149,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "r06",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Budgetbesprechung",
+        "start": "2026-09-26T11:00:00",
+        "end": "2026-09-26T12:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Budgetbesprechung",
+          "start": "2026-09-26T11:00:00",
+          "end": "2026-09-26T12:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r06",
+          "source_text": "Die Budgetbesprechung ist morgen um 11 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.513,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Budgetbesprechung",
+            "when": "morgen um 11 Uhr"
+          }
+        }
+      ],
+      "prompt": "Betreff: Budgetbesprechung\n\nDie Budgetbesprechung ist morgen um 11 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 631.9698579900432,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "r07",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Onboarding",
+        "start": "2026-09-28T09:00:00",
+        "end": "2026-09-28T10:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Onboarding",
+          "start": "2026-09-26T09:00:00",
+          "end": "2026-09-26T10:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r07",
+          "source_text": "Nächsten Montag um 9 Uhr startet das Onboarding.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9445,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Onboarding",
+            "when": "2026-09-26 09:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Onboarding\n\nNächsten Montag um 9 Uhr startet das Onboarding.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 715.5099259980489,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "r08",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Jour fixe",
+        "start": "2026-10-01T13:00:00",
+        "end": "2026-10-01T14:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Jour fixe",
+          "start": "2026-09-26T13:00:00",
+          "end": "2026-09-26T14:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r08",
+          "source_text": "Der Jour fixe ist am kommenden Donnerstag um 13 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9734,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Jour fixe",
+            "when": "2026-09-26 13:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Jour fixe\n\nDer Jour fixe ist am kommenden Donnerstag um 13 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 484.6526039909804,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "r09",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Teambesprechung",
+        "start": "2026-09-27T10:30:00",
+        "end": "2026-09-27T11:30:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Teambesprechung",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r09",
+          "source_text": "Übermorgen findet um 10:30 Uhr die Teambesprechung statt.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9851,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Teambesprechung",
+            "when": "10:30"
+          }
+        }
+      ],
+      "prompt": "Betreff: Teambesprechung\n\nÜbermorgen findet um 10:30 Uhr die Teambesprechung statt.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 605.2448920090683,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "r10",
+      "mode": "message",
+      "category": "relative",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Abgabetermin",
+        "start": "2026-09-30T15:00:00",
+        "end": "2026-09-30T16:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Abgabetermin",
+          "start": "2026-09-26T15:00:00",
+          "end": "2026-09-26T16:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "r10",
+          "source_text": "Nächsten Mittwoch um 15 Uhr ist der Abgabetermin.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9336,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Abgabetermin",
+            "when": "2026-09-26 15:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Abgabetermin\n\nNächsten Mittwoch um 15 Uhr ist der Abgabetermin.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 703.3732600102667,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "l01",
+      "mode": "message",
+      "category": "location",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Projektreview",
+        "start": "2026-10-12T14:00:00",
+        "end": "2026-10-12T16:00:00",
+        "location": "Raum 3.14"
+      },
+      "got": [
+        {
+          "title": "Projektreview",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "Raum 3.14",
+          "source_message_id": "l01",
+          "source_text": "Der Projektreview findet am 12. Oktober von 14 bis 16 Uhr in Raum 3.14 statt.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.4175,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Projektreview",
+            "when": "Raum 3.14",
+            "location": "Raum 3.14"
+          }
+        }
+      ],
+      "prompt": "Betreff: Projektreview\n\nDer Projektreview findet am 12. Oktober von 14 bis 16 Uhr in Raum 3.14 statt.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 639.4314619974466,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "l02",
+      "mode": "message",
+      "category": "location",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Workshop",
+        "start": "2026-11-04T10:00:00",
+        "end": "2026-11-04T16:00:00",
+        "location": "Konferenzraum Berlin"
+      },
+      "got": [
+        {
+          "title": "Workshop",
+          "start": "2026-11-04T00:00:00",
+          "end": "2026-11-05T00:00:00",
+          "all_day": true,
+          "location": "Konferenzraum Berlin",
+          "source_message_id": "l02",
+          "source_text": "Workshop am 4. November von 10 bis 16 Uhr, Konferenzraum Berlin.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.6141,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Workshop",
+            "when": "2026-11-04",
+            "location": "Konferenzraum Berlin"
+          }
+        }
+      ],
+      "prompt": "Betreff: Workshop\n\nWorkshop am 4. November von 10 bis 16 Uhr, Konferenzraum Berlin.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 690.3578509954968,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "l03",
+      "mode": "message",
+      "category": "location",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Meeting",
+        "start": "2026-10-09T11:00:00",
+        "end": "2026-10-09T12:00:00",
+        "location": "Besprechungsraum Ost"
+      },
+      "got": [
+        {
+          "title": "Meeting",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "Besprechungsraum Ost",
+          "source_message_id": "l03",
+          "source_text": "Das Meeting ist am 9.10. um 11 Uhr im Besprechungsraum Ost.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9919,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Meeting",
+            "when": "09:00",
+            "location": "Besprechungsraum Ost"
+          }
+        }
+      ],
+      "prompt": "Betreff: Meeting\n\nDas Meeting ist am 9.10. um 11 Uhr im Besprechungsraum Ost.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 526.8211649963632,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "l04",
+      "mode": "message",
+      "category": "location",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Videocall",
+        "start": "2026-10-10T09:00:00",
+        "end": "2026-10-10T10:00:00",
+        "location": "online"
+      },
+      "got": [
+        {
+          "title": "Videocall",
+          "start": "2027-09-10T09:00:00",
+          "end": "2027-09-10T10:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "l04",
+          "source_text": "Der Videocall findet am 10.10. um 9 Uhr online statt.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9528,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Videocall",
+            "when": "2026-09-10 09:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Videocall\n\nDer Videocall findet am 10.10. um 9 Uhr online statt.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 700.034866007627,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "l05",
+      "mode": "message",
+      "category": "location",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Vorlesung",
+        "start": "2026-10-16T13:00:00",
+        "end": "2026-10-16T14:00:00",
+        "location": "Hörsaal 2"
+      },
+      "got": [
+        {
+          "title": "Vorlesung",
+          "start": "2027-09-16T13:00:00",
+          "end": "2027-09-16T14:00:00",
+          "all_day": false,
+          "location": "Hörsaal 2",
+          "source_message_id": "l05",
+          "source_text": "Am 16.10. um 13 Uhr im Hörsaal 2: die Vorlesung.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9892,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Vorlesung",
+            "when": "2026-09-16 13:00",
+            "location": "Hörsaal 2"
+          }
+        }
+      ],
+      "prompt": "Betreff: Vorlesung\n\nAm 16.10. um 13 Uhr im Hörsaal 2: die Vorlesung.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 599.6044399944367,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "l06",
+      "mode": "message",
+      "category": "location",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Mittagessen",
+        "start": "2026-10-17T12:00:00",
+        "end": "2026-10-17T13:00:00",
+        "location": "Cafeteria"
+      },
+      "got": [
+        {
+          "title": "Mittagessen",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "Cafeteria",
+          "source_message_id": "l06",
+          "source_text": "Das Mittagessen ist am 17.10. um 12 Uhr in der Cafeteria.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9473,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Mittagessen",
+            "when": "12:00",
+            "location": "Cafeteria"
+          }
+        }
+      ],
+      "prompt": "Betreff: Mittagessen\n\nDas Mittagessen ist am 17.10. um 12 Uhr in der Cafeteria.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 560.3296219924232,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "l07",
+      "mode": "message",
+      "category": "location",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Meeting",
+        "start": "2026-10-23T14:00:00",
+        "end": "2026-10-23T15:00:00",
+        "location": "Zimmer 12"
+      },
+      "got": [
+        {
+          "title": "Meeting",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "Zimmer 12",
+          "source_message_id": "l07",
+          "source_text": "Am 23.10. um 14 Uhr Meeting in Zimmer 12.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 1.0,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Meeting",
+            "when": "14:00",
+            "location": "Zimmer 12"
+          }
+        }
+      ],
+      "prompt": "Betreff: Meeting\n\nAm 23.10. um 14 Uhr Meeting in Zimmer 12.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 641.2158719904255,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "l08",
+      "mode": "message",
+      "category": "location",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Schulung",
+        "start": "2026-10-24T10:00:00",
+        "end": "2026-10-24T11:00:00",
+        "location": "Schulungsraum Nord"
+      },
+      "got": [
+        {
+          "title": "Schulung",
+          "start": "2027-09-24T10:00:00",
+          "end": "2027-09-24T11:00:00",
+          "all_day": false,
+          "location": "Schulungsraum Nord",
+          "source_message_id": "l08",
+          "source_text": "Die Schulung ist am 24.10. um 10 Uhr im Schulungsraum Nord.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9994,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Schulung",
+            "when": "2026-09-24 10:00",
+            "location": "Schulungsraum Nord"
+          }
+        }
+      ],
+      "prompt": "Betreff: Schulung\n\nDie Schulung ist am 24.10. um 10 Uhr im Schulungsraum Nord.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 540.0888699950883,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "a01",
+      "mode": "message",
+      "category": "all_day",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Tagung",
+        "start": "2026-10-07T00:00:00",
+        "end": "2026-10-09T00:00:00",
+        "location": "",
+        "all_day": true
+      },
+      "got": [
+        {
+          "title": "Tagung",
+          "start": "2027-09-07T00:00:00",
+          "end": "2027-09-08T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "a01",
+          "source_text": "Die Tagung findet am 7. und 8. Oktober statt.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5137,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Tagung",
+            "when": "2026-09-07"
+          }
+        }
+      ],
+      "prompt": "Betreff: Tagung\n\nDie Tagung findet am 7. und 8. Oktober statt.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 468.9919319935143,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "a02",
+      "mode": "message",
+      "category": "all_day",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Betriebsausflug",
+        "start": "2026-10-02T00:00:00",
+        "end": "2026-10-03T00:00:00",
+        "location": "",
+        "all_day": true
+      },
+      "got": [
+        {
+          "title": "Betriebsausflug",
+          "start": "2026-10-02T00:00:00",
+          "end": "2026-10-03T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "a02",
+          "source_text": "Betriebsausflug am 2.10.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5962,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Betriebsausflug",
+            "when": "2.10."
+          }
+        }
+      ],
+      "prompt": "Betreff: Betriebsausflug\n\nBetriebsausflug am 2.10.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 626.9336830009706,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "a03",
+      "mode": "message",
+      "category": "all_day",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Messe",
+        "start": "2026-10-05T00:00:00",
+        "end": "2026-10-07T00:00:00",
+        "location": "",
+        "all_day": true
+      },
+      "got": [
+        {
+          "title": "Messe",
+          "start": "2026-10-05T00:00:00",
+          "end": "2026-10-06T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "a03",
+          "source_text": "Die Messe ist vom 5. bis 6. Oktober.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9558,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Messe",
+            "when": "2026-10-05"
+          }
+        }
+      ],
+      "prompt": "Betreff: Messe\n\nDie Messe ist vom 5. bis 6. Oktober.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 491.3834279868752,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "a04",
+      "mode": "message",
+      "category": "all_day",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Urlaub",
+        "start": "2026-10-26T00:00:00",
+        "end": "2026-10-31T00:00:00",
+        "location": "",
+        "all_day": true
+      },
+      "got": [
+        {
+          "title": "Urlaub",
+          "start": "2026-10-26T00:00:00",
+          "end": "2026-10-27T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "a04",
+          "source_text": "Urlaub vom 26.10. bis 30.10.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5879,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Urlaub",
+            "when": "26.10."
+          }
+        }
+      ],
+      "prompt": "Betreff: Urlaub\n\nUrlaub vom 26.10. bis 30.10.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 663.3067919901805,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "a05",
+      "mode": "message",
+      "category": "all_day",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Konferenz",
+        "start": "2026-11-03T00:00:00",
+        "end": "2026-11-04T00:00:00",
+        "location": "",
+        "all_day": true
+      },
+      "got": [
+        {
+          "title": "Konferenz",
+          "start": "2026-11-03T00:00:00",
+          "end": "2026-11-04T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "a05",
+          "source_text": "Die Konferenz läuft am 3.11. den ganzen Tag.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.9923,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Konferenz",
+            "when": "2026-11-03"
+          }
+        }
+      ],
+      "prompt": "Betreff: Konferenz\n\nDie Konferenz läuft am 3.11. den ganzen Tag.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 424.32664400257636,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": true,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "false_positive"
+      ],
+      "id": "n01",
+      "mode": "message",
+      "category": "negative",
+      "positive": false,
+      "status": "candidate",
+      "expected": {
+        "event_count": 0
+      },
+      "got": [
+        {
+          "title": "Kurze Frage",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "n01",
+          "source_text": "Kannst du mir bitte die Präsentation schicken?",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.1863,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kurze Frage",
+            "when": "none"
+          }
+        }
+      ],
+      "prompt": "Betreff: Kurze Frage\n\nKannst du mir bitte die Präsentation schicken?",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 552.953759994125,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": true,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "false_positive"
+      ],
+      "id": "n02",
+      "mode": "message",
+      "category": "negative",
+      "positive": false,
+      "status": "candidate",
+      "expected": {
+        "event_count": 0
+      },
+      "got": [
+        {
+          "title": "Kurze Frage",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "n02",
+          "source_text": "Vielen Dank für deine schnelle Antwort!",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.4131,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kurze Frage",
+            "when": ""
+          }
+        }
+      ],
+      "prompt": "Betreff: Kurze Frage\n\nVielen Dank für deine schnelle Antwort!",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 656.1427820124663,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": true,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "false_positive"
+      ],
+      "id": "n03",
+      "mode": "message",
+      "category": "negative",
+      "positive": false,
+      "status": "candidate",
+      "expected": {
+        "event_count": 0
+      },
+      "got": [
+        {
+          "title": "Kurze Frage",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "n03",
+          "source_text": "Wir müssen den Bericht noch überarbeiten.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.6348,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kurze Frage",
+            "when": ""
+          }
+        }
+      ],
+      "prompt": "Betreff: Kurze Frage\n\nWir müssen den Bericht noch überarbeiten.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 591.8809280119603,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": true,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "false_positive"
+      ],
+      "id": "n04",
+      "mode": "message",
+      "category": "negative",
+      "positive": false,
+      "status": "candidate",
+      "expected": {
+        "event_count": 0
+      },
+      "got": [
+        {
+          "title": "Kurze Frage",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "n04",
+          "source_text": "Hast du die Datei im Anhang gesehen?",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.2527,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kurze Frage",
+            "when": ""
+          }
+        }
+      ],
+      "prompt": "Betreff: Kurze Frage\n\nHast du die Datei im Anhang gesehen?",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 599.8034950025612,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": true,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "false_positive"
+      ],
+      "id": "n05",
+      "mode": "message",
+      "category": "negative",
+      "positive": false,
+      "status": "candidate",
+      "expected": {
+        "event_count": 0
+      },
+      "got": [
+        {
+          "title": "Kurze Frage",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "n05",
+          "source_text": "Schönes Wochenende und viele Grüße",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.554,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kurze Frage",
+            "when": ""
+          }
+        }
+      ],
+      "prompt": "Betreff: Kurze Frage\n\nSchönes Wochenende und viele Grüße",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 448.0176419892814,
+      "event_detected": false,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "id": "n06",
+      "mode": "message",
+      "category": "negative",
+      "positive": false,
+      "status": "none",
+      "expected": {
+        "event_count": 0
+      },
+      "got": [],
+      "raw_calls": [
+        {
+          "name": "no_event",
+          "arguments": {}
+        }
+      ],
+      "prompt": "Betreff: Kurze Frage\n\nBitte prüfe, ob das Dokument korrekt ist.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 482.9278599936515,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": true,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "false_positive"
+      ],
+      "id": "n07",
+      "mode": "message",
+      "category": "negative",
+      "positive": false,
+      "status": "candidate",
+      "expected": {
+        "event_count": 0
+      },
+      "got": [
+        {
+          "title": "Kurze Frage",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "n07",
+          "source_text": "Ich rufe dich später an.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.2986,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Kurze Frage",
+            "when": ""
+          }
+        }
+      ],
+      "prompt": "Betreff: Kurze Frage\n\nIch rufe dich später an.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 573.6507529945811,
+      "event_detected": true,
+      "count_ok": false,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [],
+      "temporal_ok": false,
+      "id": "m01",
+      "mode": "message",
+      "category": "multi",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 3,
+        "events": [
+          {
+            "title": "Kickoff",
+            "start": "2026-09-28T10:00:00",
+            "end": "2026-09-28T11:00:00",
+            "location": ""
+          },
+          {
+            "title": "Review",
+            "start": "2026-09-30T14:00:00",
+            "end": "2026-09-30T15:00:00",
+            "location": ""
+          },
+          {
+            "title": "Abschluss",
+            "start": "2026-10-02T09:00:00",
+            "end": "2026-10-02T10:00:00",
+            "location": ""
+          }
+        ]
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "m01",
+          "source_text": "Kickoff Montag 10 Uhr, Review Mittwoch 14 Uhr, Abschluss Freitag 9 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5504,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "10:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nKickoff Montag 10 Uhr, Review Mittwoch 14 Uhr, Abschluss Freitag 9 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 480.84091299097054,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "m01",
+      "mode": "selection",
+      "category": "multi",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Review",
+        "start": "2026-09-30T14:00:00",
+        "end": "2026-09-30T15:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Review Mittwoch 14 Uhr",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "m01",
+          "source_text": "Review Mittwoch 14 Uhr",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.7281,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Review Mittwoch 14 Uhr",
+            "when": ""
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nReview Mittwoch 14 Uhr",
+      "error": ""
+    },
+    {
+      "candidate_count": 2,
+      "latency_ms": 1005.0762769969879,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [],
+      "temporal_ok": false,
+      "id": "m02",
+      "mode": "message",
+      "category": "multi",
+      "positive": true,
+      "status": "multiple",
+      "expected": {
+        "event_count": 2,
+        "events": [
+          {
+            "title": "Planning",
+            "start": "2026-10-12T09:00:00",
+            "end": "2026-10-12T10:00:00",
+            "location": ""
+          },
+          {
+            "title": "Retro",
+            "start": "2026-10-13T15:00:00",
+            "end": "2026-10-13T16:00:00",
+            "location": ""
+          }
+        ]
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "9 Uhr",
+          "source_message_id": "m02",
+          "source_text": "Das Planning ist am 12.10. um 9 Uhr und das Retro am 13.10. um 15 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.6248,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        },
+        {
+          "title": "Retro",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "15 Uhr",
+          "source_message_id": "m02",
+          "source_text": "Das Planning ist am 12.10. um 9 Uhr und das Retro am 13.10. um 15 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.6248,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "9 Uhr",
+            "location": "9 Uhr"
+          }
+        },
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Retro",
+            "when": "15 Uhr",
+            "location": "15 Uhr"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nDas Planning ist am 12.10. um 9 Uhr und das Retro am 13.10. um 15 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 505.9532449959079,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "m02",
+      "mode": "selection",
+      "category": "multi",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Retro",
+        "start": "2026-10-13T15:00:00",
+        "end": "2026-10-13T16:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": "2027-09-13T15:00:00",
+          "end": "2027-09-13T16:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "m02",
+          "source_text": "das Retro am 13.10. um 15 Uhr",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.9936,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "2026-09-13 15:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\ndas Retro am 13.10. um 15 Uhr",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 579.1957979963627,
+      "event_detected": true,
+      "count_ok": false,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [],
+      "temporal_ok": false,
+      "id": "m03",
+      "mode": "message",
+      "category": "multi",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 2,
+        "events": [
+          {
+            "title": "Sitzung",
+            "start": "2026-10-14T10:00:00",
+            "end": "2026-10-14T11:00:00",
+            "location": ""
+          },
+          {
+            "title": "Follow-up",
+            "start": "2026-10-15T11:00:00",
+            "end": "2026-10-15T12:00:00",
+            "location": ""
+          }
+        ]
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "m03",
+          "source_text": "Am 14.10. um 10 Uhr ist die Sitzung, am 15.10. um 11 Uhr das Follow-up.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.3788,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "10:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nAm 14.10. um 10 Uhr ist die Sitzung, am 15.10. um 11 Uhr das Follow-up.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 347.8898639878025,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "m03",
+      "mode": "selection",
+      "category": "multi",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Follow-up",
+        "start": "2026-10-15T11:00:00",
+        "end": "2026-10-15T12:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "m03",
+          "source_text": "am 15.10. um 11 Uhr das Follow-up",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.9536,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "11:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nam 15.10. um 11 Uhr das Follow-up",
+      "error": ""
+    },
+    {
+      "candidate_count": 2,
+      "latency_ms": 1011.58180499624,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [],
+      "temporal_ok": false,
+      "id": "m04",
+      "mode": "message",
+      "category": "multi",
+      "positive": true,
+      "status": "multiple",
+      "expected": {
+        "event_count": 2,
+        "events": [
+          {
+            "title": "Workshop",
+            "start": "2026-10-20T09:00:00",
+            "end": "2026-10-20T12:00:00",
+            "location": ""
+          },
+          {
+            "title": "Meeting",
+            "start": "2026-10-21T14:00:00",
+            "end": "2026-10-21T15:00:00",
+            "location": ""
+          }
+        ]
+      },
+      "got": [
+        {
+          "title": "Workshop",
+          "start": "2027-09-20T00:00:00",
+          "end": "2027-09-21T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "m04",
+          "source_text": "Bitte notiere: Workshop am 20.10. von 9 bis 12 Uhr und Meeting am 21.10. von 14 bis 15 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5407,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        },
+        {
+          "title": "Meeting",
+          "start": "2027-09-21T00:00:00",
+          "end": "2027-09-22T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "m04",
+          "source_text": "Bitte notiere: Workshop am 20.10. von 9 bis 12 Uhr und Meeting am 21.10. von 14 bis 15 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5407,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Workshop",
+            "when": "2026-09-20"
+          }
+        },
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Meeting",
+            "when": "2026-09-21"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nBitte notiere: Workshop am 20.10. von 9 bis 12 Uhr und Meeting am 21.10. von 14 bis 15 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 503.2901490048971,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "m04",
+      "mode": "selection",
+      "category": "multi",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Meeting",
+        "start": "2026-10-21T14:00:00",
+        "end": "2026-10-21T15:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": "2027-09-21T14:15:00",
+          "end": "2027-09-21T15:15:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "m04",
+          "source_text": "Meeting am 21.10. von 14 bis 15 Uhr",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.8778,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "2026-09-21 14:15"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nMeeting am 21.10. von 14 bis 15 Uhr",
+      "error": ""
+    },
+    {
+      "candidate_count": 2,
+      "latency_ms": 1297.601393001969,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [],
+      "temporal_ok": false,
+      "id": "m05",
+      "mode": "message",
+      "category": "multi",
+      "positive": true,
+      "status": "multiple",
+      "expected": {
+        "event_count": 2,
+        "events": [
+          {
+            "title": "Zahnarzttermin",
+            "start": "2026-10-19T16:00:00",
+            "end": "2026-10-19T17:00:00",
+            "location": ""
+          },
+          {
+            "title": "Friseurtermin",
+            "start": "2026-10-22T08:00:00",
+            "end": "2026-10-22T09:00:00",
+            "location": ""
+          }
+        ]
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "m05",
+          "source_text": "Der Zahnarzttermin am 19.10. um 16 Uhr und der Friseurtermin am 22.10. um 8 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.3353,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        },
+        {
+          "title": "Friseurtermin am 22.10. um 8 Uhr",
+          "start": "2026-10-22T00:00:00",
+          "end": "2026-10-23T00:00:00",
+          "all_day": true,
+          "location": "Friseurtermin am 22.10",
+          "source_message_id": "m05",
+          "source_text": "Der Zahnarzttermin am 19.10. um 16 Uhr und der Friseurtermin am 22.10. um 8 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.3353,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "16 Uhr"
+          }
+        },
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Friseurtermin am 22.10. um 8 Uhr",
+            "when": "22.10.",
+            "location": "Friseurtermin am 22.10"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nDer Zahnarzttermin am 19.10. um 16 Uhr und der Friseurtermin am 22.10. um 8 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 557.7225440065376,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "m05",
+      "mode": "selection",
+      "category": "multi",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Friseurtermin",
+        "start": "2026-10-22T08:00:00",
+        "end": "2026-10-22T09:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": "2027-09-22T08:00:00",
+          "end": "2027-09-22T09:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "m05",
+          "source_text": "der Friseurtermin am 22.10. um 8 Uhr",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.9141,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "2026-09-22 08:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nder Friseurtermin am 22.10. um 8 Uhr",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 845.3461330063874,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s01",
+      "mode": "message",
+      "category": "selection",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Review",
+        "start": "2026-09-30T14:00:00",
+        "end": "2026-09-30T15:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s01",
+          "source_text": "Kickoff Montag 10 Uhr, Review Mittwoch 14 Uhr, Abschluss Freitag 9 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5504,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "10:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nKickoff Montag 10 Uhr, Review Mittwoch 14 Uhr, Abschluss Freitag 9 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 437.0895699976245,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s01",
+      "mode": "selection",
+      "category": "selection",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Review",
+        "start": "2026-09-30T14:00:00",
+        "end": "2026-09-30T15:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Review Mittwoch 14 Uhr",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s01",
+          "source_text": "Review Mittwoch 14 Uhr",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.7281,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Review Mittwoch 14 Uhr",
+            "when": ""
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nReview Mittwoch 14 Uhr",
+      "error": ""
+    },
+    {
+      "candidate_count": 2,
+      "latency_ms": 699.7240859927842,
+      "event_detected": true,
+      "count_ok": false,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s02",
+      "mode": "message",
+      "category": "selection",
+      "positive": true,
+      "status": "multiple",
+      "expected": {
+        "event_count": 1,
+        "title": "Review",
+        "start": "2026-10-13T14:00:00",
+        "end": "2026-10-13T15:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": "2027-09-12T10:00:00",
+          "end": "2027-09-12T11:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s02",
+          "source_text": "Kickoff am 12.10. um 10 Uhr und Review am 13.10. um 14 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.6302,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        },
+        {
+          "title": "Review",
+          "start": "2027-09-13T14:00:00",
+          "end": "2027-09-13T15:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s02",
+          "source_text": "Kickoff am 12.10. um 10 Uhr und Review am 13.10. um 14 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.6302,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "2026-09-12 10:00"
+          }
+        },
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Review",
+            "when": "2026-09-13 14:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nKickoff am 12.10. um 10 Uhr und Review am 13.10. um 14 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 509.43900999845937,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s02",
+      "mode": "selection",
+      "category": "selection",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Review",
+        "start": "2026-10-13T14:00:00",
+        "end": "2026-10-13T15:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Review",
+          "start": "2027-09-13T14:00:00",
+          "end": "2027-09-13T15:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s02",
+          "source_text": "Review am 13.10. um 14 Uhr",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.9917,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Review",
+            "when": "2026-09-13 14:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nReview am 13.10. um 14 Uhr",
+      "error": ""
+    },
+    {
+      "candidate_count": 2,
+      "latency_ms": 1023.8441189867444,
+      "event_detected": true,
+      "count_ok": false,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s03",
+      "mode": "message",
+      "category": "selection",
+      "positive": true,
+      "status": "multiple",
+      "expected": {
+        "event_count": 1,
+        "title": "Workshop",
+        "start": "2026-11-04T10:00:00",
+        "end": "2026-11-04T16:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Workshop",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s03",
+          "source_text": "Es gibt zwei Termine: Workshop am 4. November von 10 bis 16 Uhr und Meeting am 5. November um 9 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5515,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        },
+        {
+          "title": "Meeting",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s03",
+          "source_text": "Es gibt zwei Termine: Workshop am 4. November von 10 bis 16 Uhr und Meeting am 5. November um 9 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.5515,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Workshop",
+            "when": "10:00"
+          }
+        },
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Meeting",
+            "when": "09:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nEs gibt zwei Termine: Workshop am 4. November von 10 bis 16 Uhr und Meeting am 5. November um 9 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 508.9745270088315,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end",
+        "location"
+      ],
+      "temporal_ok": false,
+      "id": "s03",
+      "mode": "selection",
+      "category": "selection",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Workshop",
+        "start": "2026-11-04T10:00:00",
+        "end": "2026-11-04T16:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": "2026-11-04T00:00:00",
+          "end": "2026-11-05T00:00:00",
+          "all_day": true,
+          "location": "10:00",
+          "source_message_id": "s03",
+          "source_text": "Workshop am 4. November von 10 bis 16 Uhr",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.4915,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "2026-11-04",
+            "location": "10:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nWorkshop am 4. November von 10 bis 16 Uhr",
+      "error": ""
+    },
+    {
+      "candidate_count": 2,
+      "latency_ms": 860.7408969983226,
+      "event_detected": true,
+      "count_ok": false,
+      "false_positive": false,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s04",
+      "mode": "message",
+      "category": "selection",
+      "positive": true,
+      "status": "multiple",
+      "expected": {
+        "event_count": 1,
+        "title": "Tagung",
+        "start": "2026-10-07T00:00:00",
+        "end": "2026-10-09T00:00:00",
+        "location": "",
+        "all_day": true
+      },
+      "got": [
+        {
+          "title": "Tagung",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s04",
+          "source_text": "Die Tagung findet am 7. und 8. Oktober statt, das Meeting am 9. Oktober um 10 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.2282,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        },
+        {
+          "title": "Meeting",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s04",
+          "source_text": "Die Tagung findet am 7. und 8. Oktober statt, das Meeting am 9. Oktober um 10 Uhr.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.2282,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "mehrere Termine erkannt"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Tagung",
+            "when": "09:00"
+          }
+        },
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Meeting",
+            "when": "10:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nDie Tagung findet am 7. und 8. Oktober statt, das Meeting am 9. Oktober um 10 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 525.9226630005287,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s04",
+      "mode": "selection",
+      "category": "selection",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Tagung",
+        "start": "2026-10-07T00:00:00",
+        "end": "2026-10-09T00:00:00",
+        "location": "",
+        "all_day": true
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": "2027-09-07T00:00:00",
+          "end": "2027-09-08T00:00:00",
+          "all_day": true,
+          "location": "",
+          "source_message_id": "s04",
+          "source_text": "Die Tagung am 7. und 8. Oktober",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.6696,
+          "status": "candidate",
+          "needs_review": false,
+          "review_reasons": [],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "2026-09-07"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nDie Tagung am 7. und 8. Oktober",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 508.1385630037403,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s05",
+      "mode": "message",
+      "category": "selection",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Follow-up",
+        "start": "2026-10-15T11:00:00",
+        "end": "2026-10-15T12:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s05",
+          "source_text": "Am 14.10. um 10 Uhr ist die Sitzung, am 15.10. um 11 Uhr das Follow-up.",
+          "extraction_mode": "message",
+          "model": "n3-base",
+          "confidence": 0.3788,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "10:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\nAm 14.10. um 10 Uhr ist die Sitzung, am 15.10. um 11 Uhr das Follow-up.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 514.1523860074813,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title",
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "s05",
+      "mode": "selection",
+      "category": "selection",
+      "positive": true,
+      "status": "candidate",
+      "expected": {
+        "event_count": 1,
+        "title": "Follow-up",
+        "start": "2026-10-15T11:00:00",
+        "end": "2026-10-15T12:00:00",
+        "location": ""
+      },
+      "got": [
+        {
+          "title": "Termine",
+          "start": "2027-09-15T11:00:00",
+          "end": "2027-09-15T12:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "s05",
+          "source_text": "das Follow-up am 15.10. um 11 Uhr",
+          "extraction_mode": "selection",
+          "model": "n3-base",
+          "confidence": 0.8491,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "title": "Termine",
+            "when": "2026-09-15 11:00"
+          }
+        }
+      ],
+      "prompt": "Betreff: Termine\n\ndas Follow-up am 15.10. um 11 Uhr",
+      "error": ""
+    }
+  ]
+}
