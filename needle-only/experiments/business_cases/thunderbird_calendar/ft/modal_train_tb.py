@@ -105,11 +105,32 @@ def train(run_name: str, dataset: str, tools: list, system: str, epochs: int,
     return manifest
 
 
+MAX_FULL_RUNS = 3
+SMOKE_TIMEOUT_S = 3600
+BUDGET_FILE = FT / "reports" / "modal_budget.json"
+
+
+def _record(entry: dict) -> None:
+    """Append one job result to the local budget ledger (no secrets)."""
+    BUDGET_FILE.parent.mkdir(parents=True, exist_ok=True)
+    data = json.loads(BUDGET_FILE.read_text()) if BUDGET_FILE.exists() else []
+    data.append(entry)
+    BUDGET_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=1),
+                           encoding="utf-8")
+
+
 @app.local_entrypoint()
 def main(runs: str = "smoke", plan: str = "", epochs: int = 1,
          batch_size: int = 8, max_len: int = 1024, rank: int = 16,
          lr: float = 1e-4, seeds: str = "42", gpu: str = GPU_DEFAULT,
-         qat_bits: str = "auto", budget_hours: float = 3.0):
+         qat_bits: str = "auto", budget_hours: float = 6.0,
+         reserve_minutes: float = 15.0, per_run_hours: float = 2.0):
+    """STRICTLY SERIAL. Hard AGGREGATE GPU budget across all jobs.
+
+    budget_hours is a total GPU-time cap (not wall-clock with parallelism).
+    Jobs run one at a time; a new job starts only while total elapsed GPU time
+    is below (budget - reserve). Never starts a 4th full run.
+    """
     tools = json.loads((FT / "tools_tb.json").read_text(encoding="utf-8"))
     system = json.loads((FT / "manifest.json").read_text(
         encoding="utf-8"))["system_facts"]
@@ -126,21 +147,53 @@ def main(runs: str = "smoke", plan: str = "", epochs: int = 1,
             for seed in seed_list:
                 jobs.append((f"n2-{ds}-r{rank}-e{epochs}-s{seed}", ds, seed,
                              rank, epochs))
-    print(f"start {len(jobs)} job(s) on {gpu}: {[j[0] for j in jobs]}")
-    deadline = time.time() + budget_hours * 3600
+
+    is_smoke = bool(jobs) and all(j[1] == "smoke" for j in jobs)
+    if not is_smoke and len(jobs) > MAX_FULL_RUNS:
+        raise SystemExit(f"refuse: {len(jobs)} full jobs > {MAX_FULL_RUNS} "
+                         "(hard cap; no 4th run)")
+
+    budget_s = budget_hours * 3600
+    cutoff_s = budget_s - reserve_minutes * 60
+    per_run_s = SMOKE_TIMEOUT_S if is_smoke else per_run_hours * 3600
+    print(f"serial run, {len(jobs)} job(s) on {gpu}: {[j[0] for j in jobs]}")
+    print(f"aggregate budget {budget_hours:.2f}h, cutoff {cutoff_s/3600:.2f}h, "
+          f"per-run cap {per_run_s/3600:.2f}h (smoke={is_smoke})")
+
     fn = train.with_options(gpu=gpu)
-    handles = [fn.spawn(name, ds, tools, system, ep, batch_size, max_len, rk,
-                        lr, seed, qat_bits)
-               for name, ds, seed, rk, ep in jobs]
-    ok = True
-    for h in handles:
+    total = 0.0
+    for name, ds, seed, rk, ep in jobs:
+        remaining = cutoff_s - total
+        if remaining <= 0:
+            print(f"STOP: total {total/3600:.2f}h >= cutoff {cutoff_s/3600:.2f}h")
+            break
+        timeout = min(per_run_s, remaining)
+        print(f"START {name} (timeout {timeout/60:.0f}min)", flush=True)
+        t0 = time.time()
+        handle = fn.spawn(name, ds, tools, system, ep, batch_size, max_len, rk,
+                          lr, seed, qat_bits)
         try:
-            m = h.get(timeout=max(1, int(deadline - time.time())))
-            print("OK", m["run_name"], m["train_s"], "s",
-                  m["cact_bytes"] // 1000000, "MB")
+            m = handle.get(timeout=timeout)
         except TimeoutError:
-            print("!! budget exhausted — cancelling", h.object_id)
-            h.cancel()
-            ok = False
-    if not ok:
-        raise SystemExit("budget limit reached — remaining jobs cancelled")
+            handle.cancel()
+            elapsed = time.time() - t0
+            total += elapsed
+            _record({"run": name, "dataset": ds, "rank": rk, "epochs": ep,
+                     "seed": seed, "status": "timeout",
+                     "elapsed_s": round(elapsed, 1),
+                     "cumulative_s": round(total, 1)})
+            print(f"!! TIMEOUT {name} after {elapsed/60:.1f}min — cancelled")
+            break
+        elapsed = time.time() - t0
+        total += elapsed
+        _record({"run": name, "dataset": ds, "rank": rk, "epochs": ep,
+                 "seed": seed, "status": "ok",
+                 "train_s": m.get("train_s"), "cact_bytes": m.get("cact_bytes"),
+                 "elapsed_s": round(elapsed, 1),
+                 "cumulative_s": round(total, 1)})
+        print(f"OK {name}: {elapsed/60:.1f}min, cumulative {total/3600:.2f}h",
+              flush=True)
+    print(f"TOTAL aggregate GPU time: {total/3600:.2f}h "
+          f"(<= {budget_hours:.2f}h budget)")
+    if total > budget_s:
+        raise SystemExit("aggregate budget exceeded")
