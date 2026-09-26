@@ -83,8 +83,9 @@ extract_event(title: str, when: str, location: str = "")   # one tool only
   convention for refusals), so the `no_event` tool is gone.
 - **Selection mode sends the selected text only** — the subject is never passed
   to the model. It is used only afterwards, by Python, as a title fallback.
-- Argument order is still a probe knob (`TB_CONTRACT_ORDER=title|when`,
-  default `title`) until the order probe has run against the realism set.
+- Argument order is **frozen to when-first** after the fair `contract_dev`
+  probe (`ft/BASELINE.md`); `TB_CONTRACT_ORDER=title` is kept only to reproduce
+  the probe.
 
 Needle never emits year/month/day/start_hour/duration/timezone/participants/
 organizer/emails. Python compiles the span.

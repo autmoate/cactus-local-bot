@@ -55,8 +55,9 @@ def _make_tools():
     (`workflow.clean_subject`). `when` asks for the complete verbatim temporal
     phrase; date-only is valid (all-day), so it is no longer "date AND clock".
 
-    Argument order stays a probe knob until the order probe has run against the
-    realism set: TB_CONTRACT_ORDER=title (default, current evidence) | when.
+    Argument order is FROZEN to when-first after the contract_dev probe (fair
+    requiredness). TB_CONTRACT_ORDER=when is the default; =title is kept only so
+    the probe stays reproducible.
     """
     import needle
 
@@ -64,7 +65,11 @@ def _make_tools():
     # isolates ORDER, not requiredness. Python enforces `when`: an empty `when`
     # yields status=incomplete/invalid downstream (temporal.compile_when), never
     # the tool schema.
-    order = os.environ.get("TB_CONTRACT_ORDER", "title").lower()
+    #
+    # FROZEN ORDER = when-first. Contract_dev probe (35 cases, Base N2, fair
+    # requiredness): when-first message supported_final 0.43 / selection 0.56
+    # vs title-first 0.24 / 0.00 (reports/n2_dev_when.json vs n2_dev_title.json).
+    order = os.environ.get("TB_CONTRACT_ORDER", "when").lower()
 
     if order == "when":
         @needle.tool

@@ -106,10 +106,10 @@ ohne `no_event` 100 % FP — deshalb existierte das Tool; das FT lernt `[]`
 direkt, die frühere v2-Produktion belegt das.) Der Runtime-Handler behandelt
 `[]` bereits als `status=none`.
 
-**Argumentreihenfolge:** In einem kleinen Probe-Set gegen die neue
-Realism-Kollektion testen (`title`-first vs `when`-first), **bevor** eingefroren
-wird. Der alte Spike sagt title-first; das war auf dem alten, sauberen Set —
-nicht blind übernehmen.
+**Argumentreihenfolge — eingefroren: `when`-first.** Fairer Probe (gleiche
+Requiredness) auf `contract_dev` (35): when-first supported_final 0.43 / 0.56
+(message/selection) vs title-first 0.24 / 0.00. Details: `ft/BASELINE.md`.
+`TB_CONTRACT_ORDER=title` bleibt nur zur Reproduktion.
 
 **Title-Last reduzieren:** `title` wird optional. Echter Fall: Subject „Re:
 Projekt Alpha", Body „Dienstag 14 Uhr passt." → Needle liefert keinen
