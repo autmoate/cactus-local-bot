@@ -1,0 +1,15 @@
+{
+ "run_name": "n2-train-r16-e5-s42",
+ "dataset": "train",
+ "rows": 7000,
+ "epochs": 5,
+ "batch": 8,
+ "max_len": 1024,
+ "rank": 16,
+ "lr": 0.0001,
+ "seed": 42,
+ "qat_bits": "auto",
+ "needle_pkg": "cactus-needle[train,gpu]==2.0.13",
+ "train_s": 591.8,
+ "cact_bytes": 13737807
+}

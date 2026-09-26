@@ -1,0 +1,1484 @@
+{
+  "backend": "n2",
+  "model": "n2:n2-train-r8-e8-s42.cact",
+  "n_cases": 20,
+  "groups": {
+    "message": {
+      "n": 20,
+      "final_event_ok": 0.45,
+      "approval_ready": 0.45,
+      "count_ok": 0.65,
+      "event_detection_recall": 0.6316,
+      "title_ok": 0.5789,
+      "start_ok": 0.4737,
+      "end_ok": 0.4737,
+      "temporal_ok": 0.4737,
+      "location_ok": 0.6316,
+      "final_event_ok_positive": 0.4211,
+      "approval_ready_positive": 0.4211,
+      "evidence_grounded_rate": 0.5789,
+      "supported_final_event_ok": 0.5714,
+      "supported_approval_ready": 0.5714,
+      "review_routing_ok": 0.6,
+      "false_positive_rate": 0.0,
+      "false_positive_by_category": {
+        "hard_tentative": 0.0
+      },
+      "latency_p50_ms": 658,
+      "latency_p95_ms": 1224
+    },
+    "selection": {
+      "n": 0
+    }
+  },
+  "categories": {
+    "hard_ab": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 1.0,
+        "approval_ready": 1.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 1.0,
+        "end_ok": 1.0,
+        "temporal_ok": 1.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 1.0,
+        "approval_ready_positive": 1.0,
+        "evidence_grounded_rate": 1.0,
+        "supported_final_event_ok": 1.0,
+        "supported_approval_ready": 1.0,
+        "latency_p50_ms": 623,
+        "latency_p95_ms": 623
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_confirmed": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 0.0,
+        "event_detection_recall": 0.0,
+        "title_ok": 0.0,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 0.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "evidence_grounded_rate": 0.0,
+        "supported_final_event_ok": 0.0,
+        "supported_approval_ready": 0.0,
+        "latency_p50_ms": 299,
+        "latency_p95_ms": 299
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_footer": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 1.0,
+        "approval_ready": 1.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 1.0,
+        "end_ok": 1.0,
+        "temporal_ok": 1.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 1.0,
+        "approval_ready_positive": 1.0,
+        "evidence_grounded_rate": 1.0,
+        "supported_final_event_ok": 1.0,
+        "supported_approval_ready": 1.0,
+        "latency_p50_ms": 937,
+        "latency_p95_ms": 937
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_format": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 1.0,
+        "approval_ready": 1.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 1.0,
+        "end_ok": 1.0,
+        "temporal_ok": 1.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 1.0,
+        "approval_ready_positive": 1.0,
+        "evidence_grounded_rate": 1.0,
+        "supported_final_event_ok": 1.0,
+        "supported_approval_ready": 1.0,
+        "latency_p50_ms": 991,
+        "latency_p95_ms": 991
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_fuzzy": {
+      "message": {
+        "n": 5,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 0.6,
+        "event_detection_recall": 0.6,
+        "title_ok": 0.6,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 0.6,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "evidence_grounded_rate": 0.6,
+        "review_routing_ok": 0.6,
+        "latency_p50_ms": 603,
+        "latency_p95_ms": 786
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_invoice": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 0.0,
+        "event_detection_recall": 0.0,
+        "title_ok": 0.0,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 0.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "evidence_grounded_rate": 0.0,
+        "supported_final_event_ok": 0.0,
+        "supported_approval_ready": 0.0,
+        "latency_p50_ms": 501,
+        "latency_p95_ms": 501
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_link": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 1.0,
+        "approval_ready": 1.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 1.0,
+        "end_ok": 1.0,
+        "temporal_ok": 1.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 1.0,
+        "approval_ready_positive": 1.0,
+        "evidence_grounded_rate": 1.0,
+        "supported_final_event_ok": 1.0,
+        "supported_approval_ready": 1.0,
+        "latency_p50_ms": 864,
+        "latency_p95_ms": 864
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_mixed": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 1.0,
+        "approval_ready": 1.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 1.0,
+        "end_ok": 1.0,
+        "temporal_ok": 1.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 1.0,
+        "approval_ready_positive": 1.0,
+        "evidence_grounded_rate": 0.0,
+        "supported_final_event_ok": 1.0,
+        "supported_approval_ready": 1.0,
+        "latency_p50_ms": 756,
+        "latency_p95_ms": 756
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_numbers": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 0.0,
+        "event_detection_recall": 0.0,
+        "title_ok": 0.0,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 0.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "evidence_grounded_rate": 0.0,
+        "supported_final_event_ok": 0.0,
+        "supported_approval_ready": 0.0,
+        "latency_p50_ms": 346,
+        "latency_p95_ms": 346
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_prefix": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 0.0,
+        "event_detection_recall": 0.0,
+        "title_ok": 0.0,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 0.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "evidence_grounded_rate": 0.0,
+        "supported_final_event_ok": 0.0,
+        "supported_approval_ready": 0.0,
+        "latency_p50_ms": 453,
+        "latency_p95_ms": 453
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_quoted": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 0.0,
+        "approval_ready": 0.0,
+        "count_ok": 0.0,
+        "event_detection_recall": 0.0,
+        "title_ok": 0.0,
+        "start_ok": 0.0,
+        "end_ok": 0.0,
+        "temporal_ok": 0.0,
+        "location_ok": 0.0,
+        "final_event_ok_positive": 0.0,
+        "approval_ready_positive": 0.0,
+        "evidence_grounded_rate": 0.0,
+        "supported_final_event_ok": 0.0,
+        "supported_approval_ready": 0.0,
+        "latency_p50_ms": 477,
+        "latency_p95_ms": 477
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_reply": {
+      "message": {
+        "n": 2,
+        "final_event_ok": 0.5,
+        "approval_ready": 0.5,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 0.5,
+        "start_ok": 1.0,
+        "end_ok": 1.0,
+        "temporal_ok": 1.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 0.5,
+        "approval_ready_positive": 0.5,
+        "evidence_grounded_rate": 1.0,
+        "supported_final_event_ok": 0.5,
+        "supported_approval_ready": 0.5,
+        "latency_p50_ms": 1145,
+        "latency_p95_ms": 1224
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_signature": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 1.0,
+        "approval_ready": 1.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 1.0,
+        "end_ok": 1.0,
+        "temporal_ok": 1.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 1.0,
+        "approval_ready_positive": 1.0,
+        "evidence_grounded_rate": 1.0,
+        "supported_final_event_ok": 1.0,
+        "supported_approval_ready": 1.0,
+        "latency_p50_ms": 998,
+        "latency_p95_ms": 998
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_subject": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 1.0,
+        "approval_ready": 1.0,
+        "count_ok": 1.0,
+        "event_detection_recall": 1.0,
+        "title_ok": 1.0,
+        "start_ok": 1.0,
+        "end_ok": 1.0,
+        "temporal_ok": 1.0,
+        "location_ok": 1.0,
+        "final_event_ok_positive": 1.0,
+        "approval_ready_positive": 1.0,
+        "evidence_grounded_rate": 1.0,
+        "supported_final_event_ok": 1.0,
+        "supported_approval_ready": 1.0,
+        "latency_p50_ms": 1003,
+        "latency_p95_ms": 1003
+      },
+      "selection": {
+        "n": 0
+      }
+    },
+    "hard_tentative": {
+      "message": {
+        "n": 1,
+        "final_event_ok": 1.0,
+        "approval_ready": 1.0,
+        "count_ok": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positive_by_category": {
+          "hard_tentative": 0.0
+        },
+        "latency_p50_ms": 613,
+        "latency_p95_ms": 613
+      },
+      "selection": {
+        "n": 0
+      }
+    }
+  },
+  "rows": [
+    {
+      "candidate_count": 1,
+      "latency_ms": 1224.0388244390488,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "h001",
+      "mode": "message",
+      "category": "hard_reply",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Sommerfest",
+        "span": "am 12.9. um 17 Uhr",
+        "location": "Vereinsheim",
+        "start": "2026-09-12T17:00:00",
+        "end": "2026-09-12T18:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Re: Sommerfest",
+          "start": "2026-09-12T17:00:00",
+          "end": "2026-09-12T18:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h001",
+          "source_text": "Kurz und knapp: Wir treffen uns am 12.9. um 17 Uhr vor dem Vereinsheim.\n\nAm 10.9. schrieb Max:\n> Passt euch der 12.9.?\n\nAm 9.9. schrieb Anna:\n> Oder lieber der 13.9.?\n\nAm 8.9. schrieb Lisa:\n> Am 11.9. kann ich nicht.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 12.9. um 17 Uhr vor dem Vereinsheim",
+            "title": "Re: Sommerfest"
+          }
+        }
+      ],
+      "prompt": "Betreff: Re: Re: Sommerfest\n\nKurz und knapp: Wir treffen uns am 12.9. um 17 Uhr vor dem Vereinsheim.\n\nAm 10.9. schrieb Max:\n> Passt euch der 12.9.?\n\nAm 9.9. schrieb Anna:\n> Oder lieber der 13.9.?\n\nAm 8.9. schrieb Lisa:\n> Am 11.9. kann ich nicht.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 1066.773310303688,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": false,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "title"
+      ],
+      "temporal_ok": true,
+      "id": "h002",
+      "mode": "message",
+      "category": "hard_reply",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Kickoff",
+        "span": "am 5.10. um 9 Uhr",
+        "location": "Raum 1",
+        "start": "2026-10-05T09:00:00",
+        "end": "2026-10-05T10:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Projekt",
+          "start": "2026-10-05T09:00:00",
+          "end": "2026-10-05T10:00:00",
+          "all_day": false,
+          "location": "Raum 1",
+          "source_message_id": "h002",
+          "source_text": "Hallo,\n\ndanke für die vielen Termine. Aktuell gilt: Kickoff am 5.10. um 9 Uhr im Raum 1.\n\n> Am 2.10. um 14 Uhr wäre auch möglich.\n> Am 3.10. um 16 Uhr ginge bei mir.\n> Was meinst du, 1.10. oder 2.10.?",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 5.10. um 9 Uhr",
+            "title": "Projekt",
+            "location": "Raum 1"
+          }
+        }
+      ],
+      "prompt": "Betreff: AW: WG: Projekt\n\nHallo,\n\ndanke für die vielen Termine. Aktuell gilt: Kickoff am 5.10. um 9 Uhr im Raum 1.\n\n> Am 2.10. um 14 Uhr wäre auch möglich.\n> Am 3.10. um 16 Uhr ginge bei mir.\n> Was meinst du, 1.10. oder 2.10.?",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 936.6074576973915,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "h003",
+      "mode": "message",
+      "category": "hard_footer",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Terminbestätigung",
+        "span": "am 14.10. um 10 Uhr",
+        "location": "",
+        "start": "2026-10-14T10:00:00",
+        "end": "2026-10-14T11:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Terminbestätigung",
+          "start": "2026-10-14T10:00:00",
+          "end": "2026-10-14T11:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h003",
+          "source_text": "Hallo,\n\nder Termin ist am 14.10. um 10 Uhr.\n\n--\nPraxis Muster\nÖffnungszeiten: Mo 8-12, Di 14-18, Do 8-12\nTel: 0341 111\nFax: 0341 112",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 14.10. um 10 Uhr",
+            "title": "Terminbestätigung"
+          }
+        }
+      ],
+      "prompt": "Betreff: Terminbestätigung\n\nHallo,\n\nder Termin ist am 14.10. um 10 Uhr.\n\n--\nPraxis Muster\nÖffnungszeiten: Mo 8-12, Di 14-18, Do 8-12\nTel: 0341 111\nFax: 0341 112",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 500.54820626974106,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "missing_event"
+      ],
+      "id": "h004",
+      "mode": "message",
+      "category": "hard_invoice",
+      "positive": true,
+      "status": "none",
+      "evidence_grounded": false,
+      "expected": {
+        "event_count": 1,
+        "title": "Beratungstermin",
+        "span": "am 7.10. um 15 Uhr",
+        "location": "",
+        "start": "2026-10-07T15:00:00",
+        "end": "2026-10-07T16:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [],
+      "raw_calls": [],
+      "prompt": "Betreff: Rechnung und Termin\n\nGuten Tag,\n\nRechnung Nr. 2026-4711 vom 30.09. ist beglichen. Ihr Beratungstermin ist am 7.10. um 15 Uhr.\n\nViele Grüße",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 346.19197249412537,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "missing_event"
+      ],
+      "id": "h005",
+      "mode": "message",
+      "category": "hard_numbers",
+      "positive": true,
+      "status": "none",
+      "evidence_grounded": false,
+      "expected": {
+        "event_count": 1,
+        "title": "Rückruf",
+        "span": "am 9.10. um 11 Uhr",
+        "location": "",
+        "start": "2026-10-09T11:00:00",
+        "end": "2026-10-09T12:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [],
+      "raw_calls": [],
+      "prompt": "Betreff: Rückruf\n\nRufen Sie uns unter 030 111 oder 030 222 an. Ihr Termin ist am 9.10. um 11 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 477.29868441820145,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "missing_event"
+      ],
+      "id": "h006",
+      "mode": "message",
+      "category": "hard_quoted",
+      "positive": true,
+      "status": "none",
+      "evidence_grounded": false,
+      "expected": {
+        "event_count": 1,
+        "title": "Termin",
+        "span": "Dienstag 14 Uhr",
+        "location": "",
+        "start": "2026-09-29T14:00:00",
+        "end": "2026-09-29T15:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [],
+      "raw_calls": [],
+      "prompt": "Betreff: Re: Termin\n\nDienstag 14 Uhr passt.\n\nAm 24.09. schrieb Lisa:\n> Wie wäre Dienstag 14 Uhr oder Mittwoch 10 Uhr?\nAm 23.09. schrieb Tim:\n> Montag 16 Uhr?",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 1002.9962956905365,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "h007",
+      "mode": "message",
+      "category": "hard_subject",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Team-Meeting",
+        "span": "am 18.10. um 13 Uhr",
+        "location": "",
+        "start": "2026-10-18T13:00:00",
+        "end": "2026-10-18T14:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Team-Meeting",
+          "start": "2026-10-18T13:00:00",
+          "end": "2026-10-18T14:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h007",
+          "source_text": "Liebe Leser,\n\nunser Team-Meeting ist am 18.10. um 13 Uhr. Alle Infos unten im Newsletter.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 18.10. um 13 Uhr",
+            "title": "Team-Meeting"
+          }
+        }
+      ],
+      "prompt": "Betreff: Newsletter 09/2026\n\nLiebe Leser,\n\nunser Team-Meeting ist am 18.10. um 13 Uhr. Alle Infos unten im Newsletter.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 997.9243203997612,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "h008",
+      "mode": "message",
+      "category": "hard_signature",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Statusupdate",
+        "span": "am 3.11. um 10 Uhr",
+        "location": "",
+        "start": "2026-11-03T10:00:00",
+        "end": "2026-11-03T11:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Statusupdate",
+          "start": "2026-11-03T10:00:00",
+          "end": "2026-11-03T11:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h008",
+          "source_text": "Das Meeting ist am 3.11. um 10 Uhr.\n\n--\nDiese Mail wurde maschinell erstellt und gilt auch ohne Unterschrift. Terminänderungen bitte bis morgen melden.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 3.11. um 10 Uhr",
+            "title": "Statusupdate"
+          }
+        }
+      ],
+      "prompt": "Betreff: Statusupdate\n\nDas Meeting ist am 3.11. um 10 Uhr.\n\n--\nDiese Mail wurde maschinell erstellt und gilt auch ohne Unterschrift. Terminänderungen bitte bis morgen melden.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 863.9699667692184,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "h009",
+      "mode": "message",
+      "category": "hard_link",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Meeting-Link",
+        "span": "am 6.10. um 9 Uhr",
+        "location": "",
+        "start": "2026-10-06T09:00:00",
+        "end": "2026-10-06T10:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Meeting-Link",
+          "start": "2026-10-06T09:00:00",
+          "end": "2026-10-06T10:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h009",
+          "source_text": "Hier der Link: https://meet.example/abc. Wir sprechen uns am 6.10. um 9 Uhr.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 6.10. um 9 Uhr",
+            "title": "Meeting-Link"
+          }
+        }
+      ],
+      "prompt": "Betreff: Meeting-Link\n\nHier der Link: https://meet.example/abc. Wir sprechen uns am 6.10. um 9 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 756.425678730011,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "h010",
+      "mode": "message",
+      "category": "hard_mixed",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": false,
+      "expected": {
+        "event_count": 1,
+        "title": "Review",
+        "span": "am Dienstag um 14 Uhr",
+        "location": "",
+        "start": "2026-09-29T14:00:00",
+        "end": "2026-09-29T15:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Das Review",
+          "start": "2026-09-29T14:00:00",
+          "end": "2026-09-29T15:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h010",
+          "source_text": "Hi, quick update: das Review ist am Dienstag um 14 Uhr.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am Dienstag um 14 Uhr",
+            "title": "Das Review"
+          }
+        }
+      ],
+      "prompt": "Betreff: Weekly\n\nHi, quick update: das Review ist am Dienstag um 14 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 622.8818967938423,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "h011",
+      "mode": "message",
+      "category": "hard_ab",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Kurs",
+        "span": "am 8.10. ab 14 Uhr",
+        "location": "",
+        "start": "2026-10-08T14:00:00",
+        "end": "2026-10-08T15:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Kurs",
+          "start": "2026-10-08T14:00:00",
+          "end": "2026-10-08T15:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h011",
+          "source_text": "Der Kurs startet am 8.10. ab 14 Uhr.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 8.10. ab 14 Uhr",
+            "title": "Kurs"
+          }
+        }
+      ],
+      "prompt": "Betreff: Kurs\n\nDer Kurs startet am 8.10. ab 14 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 303.1453266739845,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": false,
+      "expected_incomplete": true,
+      "review_routed": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "missing_event"
+      ],
+      "id": "h012",
+      "mode": "message",
+      "category": "hard_fuzzy",
+      "positive": true,
+      "status": "none",
+      "evidence_grounded": false,
+      "expected": {
+        "event_count": 1,
+        "title": "Treffen",
+        "span": "am 11.10. gegen 14 Uhr",
+        "location": "",
+        "start": null,
+        "end": null,
+        "all_day": false,
+        "incomplete": true
+      },
+      "got": [],
+      "raw_calls": [],
+      "prompt": "Betreff: Treffen\n\nWir treffen uns am 11.10. gegen 14 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 786.0535085201263,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": true,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "h013",
+      "mode": "message",
+      "category": "hard_fuzzy",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Wartungsfenster",
+        "span": "am 12.10. zwischen 14 und 15 Uhr",
+        "location": "",
+        "start": null,
+        "end": null,
+        "all_day": false,
+        "incomplete": true
+      },
+      "got": [
+        {
+          "title": "Wartungsfenster",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h013",
+          "source_text": "Das Fenster ist am 12.10. zwischen 14 und 15 Uhr.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 12.10. zwischen 14 und 15 Uhr",
+            "title": "Wartungsfenster"
+          }
+        }
+      ],
+      "prompt": "Betreff: Wartungsfenster\n\nDas Fenster ist am 12.10. zwischen 14 und 15 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 303.08789014816284,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": false,
+      "expected_incomplete": true,
+      "review_routed": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "missing_event"
+      ],
+      "id": "h014",
+      "mode": "message",
+      "category": "hard_fuzzy",
+      "positive": true,
+      "status": "none",
+      "evidence_grounded": false,
+      "expected": {
+        "event_count": 1,
+        "title": "Beginn",
+        "span": "am 13.10. ca. 10 Uhr",
+        "location": "",
+        "start": null,
+        "end": null,
+        "all_day": false,
+        "incomplete": true
+      },
+      "got": [],
+      "raw_calls": [],
+      "prompt": "Betreff: Beginn\n\nBeginn ist am 13.10. ca. 10 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 693.162813782692,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": true,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "h015",
+      "mode": "message",
+      "category": "hard_fuzzy",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Mittag",
+        "span": "am 14.10. nach dem Mittagessen",
+        "location": "",
+        "start": null,
+        "end": null,
+        "all_day": false,
+        "incomplete": true
+      },
+      "got": [
+        {
+          "title": "Mittag",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h015",
+          "source_text": "Wir sehen uns am 14.10. nach dem Mittagessen.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "Titel aus Betreff"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 14.10. nach dem Mittagessen"
+          }
+        }
+      ],
+      "prompt": "Betreff: Mittag\n\nWir sehen uns am 14.10. nach dem Mittagessen.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 603.420190513134,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": true,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": true,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "start",
+        "end"
+      ],
+      "temporal_ok": false,
+      "id": "h016",
+      "mode": "message",
+      "category": "hard_fuzzy",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Vormittags",
+        "span": "morgen Vormittag",
+        "location": "",
+        "start": null,
+        "end": null,
+        "all_day": false,
+        "incomplete": true
+      },
+      "got": [
+        {
+          "title": "Vormittags",
+          "start": null,
+          "end": null,
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h016",
+          "source_text": "Der Termin ist morgen Vormittag.",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "incomplete",
+          "needs_review": true,
+          "review_reasons": [
+            "Zeitpunkt unvollständig",
+            "Titel aus Betreff"
+          ],
+          "used_default_duration": false,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "morgen Vormittag"
+          }
+        }
+      ],
+      "prompt": "Betreff: Vormittags\n\nDer Termin ist morgen Vormittag.",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 612.6173436641693,
+      "event_detected": false,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "id": "h017",
+      "mode": "message",
+      "category": "hard_tentative",
+      "positive": false,
+      "status": "none",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 0,
+        "title": "",
+        "span": "",
+        "location": "",
+        "start": null,
+        "end": null,
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [],
+      "raw_calls": [],
+      "prompt": "Betreff: Re: Ausflug\n\nAm 20.09. schrieb Lisa:\n> Treffen wir uns am 1.10. um 9 Uhr?\n> Oder am 2.10. um 14 Uhr?\n\nHast du dich schon entschieden?",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 453.0126824975014,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "missing_event"
+      ],
+      "id": "h018",
+      "mode": "message",
+      "category": "hard_prefix",
+      "positive": true,
+      "status": "none",
+      "evidence_grounded": false,
+      "expected": {
+        "event_count": 1,
+        "title": "Jour fixe",
+        "span": "am 15.10. um 8:30 Uhr",
+        "location": "",
+        "start": "2026-10-15T08:30:00",
+        "end": "2026-10-15T09:30:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [],
+      "raw_calls": [],
+      "prompt": "Betreff: AW: Re: Fwd: WG: Protokoll\n\nDer Jour fixe ist am 15.10. um 8:30 Uhr.",
+      "error": ""
+    },
+    {
+      "candidate_count": 1,
+      "latency_ms": 991.0635501146317,
+      "event_detected": true,
+      "count_ok": true,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": true,
+      "title_ok": true,
+      "start_ok": true,
+      "end_ok": true,
+      "location_ok": true,
+      "final_event_ok": true,
+      "approval_ready": true,
+      "fields_needing_edit": [],
+      "temporal_ok": true,
+      "id": "h019",
+      "mode": "message",
+      "category": "hard_format",
+      "positive": true,
+      "status": "candidate",
+      "evidence_grounded": true,
+      "expected": {
+        "event_count": 1,
+        "title": "Team",
+        "span": "am 16.10. um 9 Uhr",
+        "location": "",
+        "start": "2026-10-16T09:00:00",
+        "end": "2026-10-16T10:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [
+        {
+          "title": "Team",
+          "start": "2026-10-16T09:00:00",
+          "end": "2026-10-16T10:00:00",
+          "all_day": false,
+          "location": "",
+          "source_message_id": "h019",
+          "source_text": "Hallo&nbsp;Team,<br><br>der Termin ist am 16.10. um 9 Uhr.<br>",
+          "extraction_mode": "message",
+          "model": "n2:n2-train-r8-e8-s42.cact",
+          "confidence": null,
+          "status": "candidate",
+          "needs_review": true,
+          "review_reasons": [
+            "Defaultdauer verwendet"
+          ],
+          "used_default_duration": true,
+          "rsvp": false
+        }
+      ],
+      "raw_calls": [
+        {
+          "name": "extract_event",
+          "arguments": {
+            "when": "am 16.10. um 9 Uhr",
+            "title": "Team"
+          }
+        }
+      ],
+      "prompt": "Betreff: Team\n\nHallo&nbsp;Team,<br><br>der Termin ist am 16.10. um 9 Uhr.<br>",
+      "error": ""
+    },
+    {
+      "candidate_count": 0,
+      "latency_ms": 298.88712614774704,
+      "event_detected": false,
+      "count_ok": false,
+      "false_positive": false,
+      "expected_incomplete": false,
+      "review_routed": false,
+      "title_ok": false,
+      "start_ok": false,
+      "end_ok": false,
+      "location_ok": false,
+      "final_event_ok": false,
+      "approval_ready": false,
+      "fields_needing_edit": [
+        "missing_event"
+      ],
+      "id": "h020",
+      "mode": "message",
+      "category": "hard_confirmed",
+      "positive": true,
+      "status": "none",
+      "evidence_grounded": false,
+      "expected": {
+        "event_count": 1,
+        "title": "Terminbestätigung",
+        "span": "am 17.10. um 11 Uhr",
+        "location": "",
+        "start": "2026-10-17T11:00:00",
+        "end": "2026-10-17T12:00:00",
+        "all_day": false,
+        "incomplete": false
+      },
+      "got": [],
+      "raw_calls": [],
+      "prompt": "Betreff: Terminbestätigung\n\nTermin wie besprochen am 17.10. um 11 Uhr.",
+      "error": ""
+    }
+  ]
+}

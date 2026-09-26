@@ -87,9 +87,17 @@ def train(run_name: str, dataset: str, tools: list, system: str, epochs: int,
     train_s = time.time() - t0
     if r.returncode != 0 or not Path(adapter).exists():
         raise RuntimeError(f"{run_name}: finetune failed (rc={r.returncode})")
+    # N2 `needle build` requires the base checkpoint as a positional arg.
+    checkpoint = next(
+        (p for p in ("/artifacts/checkpoints/needle2.pkl",
+                     "checkpoints/needle2.pkl",
+                     "/root/checkpoints/needle2.pkl") if Path(p).exists()), None)
+    if not checkpoint:
+        raise RuntimeError(f"{run_name}: base checkpoint needle2.pkl not found")
     with open(log, "ab") as fh:
-        rb = subprocess.run(["needle", "build", "--lora", adapter, "--out", cact],
-                            stdout=fh, stderr=subprocess.STDOUT)
+        rb = subprocess.run(
+            ["needle", "build", checkpoint, "--lora", adapter, "--out", cact],
+            stdout=fh, stderr=subprocess.STDOUT)
     if rb.returncode != 0 or not Path(cact).exists():
         raise RuntimeError(f"{run_name}: build failed (rc={rb.returncode})")
     manifest = {"run_name": run_name, "dataset": dataset, "rows": rows,

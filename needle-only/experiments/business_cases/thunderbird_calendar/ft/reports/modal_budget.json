@@ -1,0 +1,50 @@
+[
+ {
+  "run": "n2-smoke-r16-e1-s42",
+  "dataset": "smoke",
+  "rank": 16,
+  "epochs": 1,
+  "seed": 42,
+  "status": "ok",
+  "train_s": 50.2,
+  "cact_bytes": 13737807,
+  "elapsed_s": 69.1,
+  "cumulative_s": 69.1
+ },
+ {
+  "run": "n2-train-r16-e5-s42",
+  "dataset": "train",
+  "rank": 16,
+  "epochs": 5,
+  "seed": 42,
+  "status": "ok",
+  "train_s": 591.8,
+  "cact_bytes": 13737807,
+  "elapsed_s": 606.8,
+  "cumulative_s": 606.8
+ },
+ {
+  "run": "n2-train-r16-e8-s42",
+  "dataset": "train",
+  "rank": 16,
+  "epochs": 8,
+  "seed": 42,
+  "status": "ok",
+  "train_s": 917.8,
+  "cact_bytes": 13737807,
+  "elapsed_s": 930.3,
+  "cumulative_s": 1537.1
+ },
+ {
+  "run": "n2-train-r8-e8-s42",
+  "dataset": "train",
+  "rank": 8,
+  "epochs": 8,
+  "seed": 42,
+  "status": "ok",
+  "train_s": 917.8,
+  "cact_bytes": 13737807,
+  "elapsed_s": 930.7,
+  "cumulative_s": 2467.8
+ }
+]
