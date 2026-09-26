@@ -7,11 +7,14 @@ outbox) are checked here. Model behaviour lives in eval.py, not in these tests.
 
 from __future__ import annotations
 
+import json
 import sys
 from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+CASE_FILE = Path(__file__).resolve().parents[1] / "cases.jsonl"
 
 from models import MailMessage, ParticipantCandidate  # noqa: E402
 from temporal import compile_when  # noqa: E402
@@ -150,3 +153,32 @@ def test_compiler_all_day_span_and_default_duration():
     assert timed.end == datetime(2026, 10, 12, 15, 0)
     incomplete = compile_when("14:00", ref)
     assert incomplete.incomplete and incomplete.start is None
+
+
+def test_trailing_period_keeps_time_range():
+    """Regression: a sentence-final '.' must not be mistaken for a day dot."""
+    ref = datetime(2026, 9, 25, 10, 0)
+    with_dot = compile_when("am 21.10. von 15 bis 17 Uhr.", ref)
+    assert with_dot.start == datetime(2026, 10, 21, 15, 0)
+    assert with_dot.end == datetime(2026, 10, 21, 17, 0)
+    assert not with_dot.used_default_duration
+
+
+def test_compiler_matches_gold_spans():
+    """Locks the 'compiler parses the authored spans correctly' claim: for every
+    single-event authored mail, the deterministic compiler must reproduce the
+    fixture's gold start/end from the mail body."""
+    cases = [json.loads(ln) for ln in
+             CASE_FILE.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    single = [c for c in cases
+              if c["category"] in {"explicit_single", "relative", "location",
+                                   "all_day"}
+              and c["expected"]["event_count"] == 1]
+    assert len(single) == 43
+    for case in single:
+        expected = case["expected"]
+        timing = compile_when(case["message"]["body"],
+                              datetime.fromisoformat(case["message"]["received_at"]))
+        got = (timing.start.strftime("%Y-%m-%dT%H:%M:%S") if timing.start else "",
+               timing.end.strftime("%Y-%m-%dT%H:%M:%S") if timing.end else "")
+        assert got == (expected["start"], expected["end"]), case["id"]

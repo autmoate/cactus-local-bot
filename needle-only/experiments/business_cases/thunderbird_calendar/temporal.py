@@ -74,13 +74,17 @@ def _resolve_time(h, minute, meridiem):
 def parse_time_range(text: str) -> tuple[time | None, time | None]:
     """First 'HH[:MM] (Uhr) bis/to HH[:MM] (Uhr)' range, or (None, None).
 
-    A date range like '5. bis 6. Oktober' is rejected: the end number is
-    immediately followed by a '.' (day dot) rather than a time marker."""
+    A bare date range like '14-16.' is rejected: the end number is immediately
+    followed by a '.' (day dot) rather than a time marker. A trailing sentence
+    period is NOT a day dot: a range that carries a clock marker (':', 'Uhr' or
+    am/pm) keeps its meaning even when the sentence ends there
+    ('... von 15 bis 17 Uhr.' -> 15:00-17:00)."""
     if not text:
         return None, None
     for m in _TIME_RANGE.finditer(text):
-        after = text[m.end():m.end() + 2]
-        if after.lstrip().startswith("."):
+        tail = text[m.start():m.end()].lower()
+        is_clock = ":" in tail or "uhr" in tail or m[3] or m[6]
+        if not is_clock and text[m.end():m.end() + 2].lstrip().startswith("."):
             continue
         start = _resolve_time(m[1], m[2], m[3])
         end = _resolve_time(m[4], m[5], m[6] or m[3])

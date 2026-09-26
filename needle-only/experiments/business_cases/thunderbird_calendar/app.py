@@ -231,9 +231,11 @@ def build_app(backend: str) -> gr.Blocks:
                       "candidates": cands, "participants": parts,
                       "message": message.to_dict(),
                       "raw": extraction.get("raw", {})}
-            pick = gr.update(
-                choices=[f"{i}: {c['title']} – {c['start']} – {c['location'] or '–'}"
-                         for i, c in enumerate(cands)], value=0)
+            choices = [(f"{i}: {c['title']} – {c['start']} – "
+                        f"{c['location'] or '–'}", str(i))
+                       for i, c in enumerate(cands)]
+            pick = gr.update(choices=choices,
+                             value=str(0) if choices else None)
             form = _fmt_candidate(EventCandidate.from_dict(cands[0]) if cands
                                   else None)
             trace = (trace or []) + [{
