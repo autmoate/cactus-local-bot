@@ -228,9 +228,11 @@ class LocalNeedleHost:
         ok, why = self.available()
         if not ok:
             raise RuntimeError(why)
+        cmd = [self.python, str(Path(__file__)), "--worker"]
+        if self.weights:
+            cmd += ["--weights", str(self.weights)]
         self._proc = subprocess.Popen(
-            [self.python, str(Path(__file__)), "--worker"],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, text=True, bufsize=1,
             env={**os.environ, "PYTHONPATH": str(HERE)})
         threading.Thread(target=self._drain_stderr, daemon=True).start()
