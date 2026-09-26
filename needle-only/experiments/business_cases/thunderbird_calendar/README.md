@@ -56,29 +56,35 @@ frozen date/time parsing helpers; it is never modified.
 - **Human approval is structural**: `extract` only proposes; `commit`,
   `prepare_invitation` and `send_invitation` run only from UI buttons.
 
-## Extraction contract (a key result)
+## Extraction contract
 
-The contract was not taken as given: a small upfront probe compared candidates.
-Findings that materially changed the score:
+> **The results in this README predate the v2 contract revision** and are kept
+> as the historical spike evidence. The current contract and the FT design are
+> specified in `ft/FT_PLAN.md` (v2). Code and this section now follow v2.
 
-1. **An explicit `no_event` tool is essential.** With only `extract_event`,
-   Base Needle called it for **100 % of negative mails** (false-positive rate
-   `1.00`) by echoing the subject as the event title. Adding `no_event` brought
-   N2 false positives down to `0.14` with reliable refusals.
-2. **Argument order and wording matter.** `title`-first with a `when` described
-   as a verbatim *date AND clock-time* phrase avoids both ISO computation and
-   the failure mode where `when` receives the event title. A `when`-first
-   variant scored better on a few explicit mails but catastrophically echoed the
-   title for most. Both variants are reproducible via `TB_CONTRACT=K|G`
-   (`reports/n3_whenfirst.json` shows N3 under the alternative).
+Historical probe findings (pre-v2):
 
-Final contract (`K`):
+1. An explicit `no_event` tool was decisive for *Base* Needle: with only
+   `extract_event` it called it for **100 % of negative mails** (FP `1.00`) by
+   echoing the subject. `no_event` brought N2 FP down to `0.14`.
+2. Argument order/wording matters: `title`-first with a verbatim `when` avoided
+   ISO computation and the title-into-`when` collapse; a `when`-first variant
+   echoed the title for most cases.
+
+Current contract (v2, `FT_PLAN.md` §4):
 
 ```python
-extract_event(when: str, title: str, location: str = "")
-# when = verbatim date AND clock time phrase, e.g. "9.10. um 13 Uhr"
-no_event()
+extract_event(title: str, when: str, location: str = "")   # one tool only
+# title: verbatim event name, or empty -> Python falls back to cleaned subject
+# when:  complete verbatim temporal phrase; date-only is valid (all-day)
 ```
+
+- **Negatives are the canonical empty call `[]`** (needle's own finetune
+  convention for refusals), so the `no_event` tool is gone.
+- **Selection mode sends the selected text only** — the subject is never passed
+  to the model. It is used only afterwards, by Python, as a title fallback.
+- Argument order is still a probe knob (`TB_CONTRACT_ORDER=title|when`,
+  default `title`) until the order probe has run against the realism set.
 
 Needle never emits year/month/day/start_hour/duration/timezone/participants/
 organizer/emails. Python compiles the span.

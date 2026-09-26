@@ -16,10 +16,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 CASE_FILE = Path(__file__).resolve().parents[1] / "cases.jsonl"
 
+from extractor import _extract  # noqa: E402
 from models import MailMessage, ParticipantCandidate  # noqa: E402
 from temporal import compile_when  # noqa: E402
-from workflow import (CalendarSpike, participants_from_message,  # noqa: E402
-                      parse_address)
+from workflow import (CalendarSpike, clean_subject,  # noqa: E402
+                      participants_from_message, parse_address)
 
 MY = ("me@example.org",)
 
@@ -153,6 +154,71 @@ def test_compiler_all_day_span_and_default_duration():
     assert timed.end == datetime(2026, 10, 12, 15, 0)
     incomplete = compile_when("14:00", ref)
     assert incomplete.incomplete and incomplete.start is None
+
+
+class FakeEngine:
+    """Captures the exact prompt the worker would hand to Needle (§3)."""
+
+    def __init__(self, args=None):
+        self.prompts = []
+        self._args = args or {"title": "Review", "when": "13.10. um 14 Uhr",
+                              "location": ""}
+
+    def reset(self):
+        return None
+
+    def complete(self, prompt):
+        self.prompts.append(prompt)
+        return {"function_calls": [{"name": "extract_event",
+                                    "arguments": self._args}],
+                "confidence": None}
+
+
+def test_selection_mode_sends_selected_text_only():
+    engine = FakeEngine()
+    _extract(engine, {"text": "Dienstag 14 Uhr passt.",
+                      "subject": "Re: Projekt Alpha", "mode": "selection"})
+    assert engine.prompts[-1] == "Dienstag 14 Uhr passt."
+    assert "Betreff" not in engine.prompts[-1]
+
+
+def test_message_mode_includes_subject():
+    engine = FakeEngine()
+    _extract(engine, {"text": "Dienstag 14 Uhr passt.",
+                      "subject": "Projekt Alpha", "mode": "message"})
+    assert engine.prompts[-1] == "Betreff: Projekt Alpha\n\nDienstag 14 Uhr passt."
+
+
+def test_clean_subject_strips_reply_prefixes():
+    assert clean_subject("Re: Projekt Alpha") == "Projekt Alpha"
+    assert clean_subject("AW:  Fwd: Workshop") == "Workshop"
+    assert clean_subject("WG: Termin") == "Termin"
+    assert clean_subject("") == ""
+
+
+def test_empty_model_title_falls_back_to_subject():
+    host = FakeHost(_candidate(title=""))
+    spike = CalendarSpike(host, my_addresses=MY)
+    message = MailMessage(id="m2", subject="Re: Projekt Alpha",
+                          sender="Lisa <lisa@example.org>",
+                          to=["me@example.org"],
+                          received_at=datetime(2026, 9, 25, 10, 0),
+                          body_text="Dienstag 14 Uhr passt.")
+    cand = spike.extract(message, mode="message")["candidates"][0]
+    assert cand.title == "Projekt Alpha"
+    assert "Titel aus Betreff" in cand.review_reasons
+
+
+def test_explicit_model_title_wins_over_subject():
+    host = FakeHost(_candidate(title="Projektgespräch"))
+    spike = CalendarSpike(host, my_addresses=MY)
+    message = MailMessage(id="m3", subject="Re: Projekt Alpha",
+                          sender="Lisa <lisa@example.org>",
+                          to=["me@example.org"],
+                          received_at=datetime(2026, 9, 25, 10, 0),
+                          body_text="Projektgespräch Dienstag 14 Uhr.")
+    cand = spike.extract(message, mode="message")["candidates"][0]
+    assert cand.title == "Projektgespräch"
 
 
 def test_trailing_period_keeps_time_range():

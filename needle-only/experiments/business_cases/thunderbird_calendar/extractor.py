@@ -46,55 +46,58 @@ def interpreter_for(backend: str) -> str:
 
 
 def _make_tools():
-    """Language-near contract (§5), tuned in a small upfront probe.
+    """Frozen v2 extraction contract (FT_PLAN.md §4).
 
-    Two decisions mattered for Base Needle (N2/N3), both found in a small
-    upfront contract probe (details in README):
-      * argument order and wording: `title` first, and `when` described as a
-        verbatim date AND clock-time phrase with examples — this keeps the model
-        from computing ISO dates, dropping the clock time, or echoing the title
-        into `when`;
-      * an explicit `no_event` tool turns the negative class from a 100 %
-        false-positive rate into reliable refusals.
+    One tool only. Negatives are the canonical empty call `[]` — needle's own
+    finetune generator uses `"answers": []` for refusals, so the former
+    `no_event` tool is gone (see FT_PLAN.md §4, Problem B). `title` is optional:
+    when the text does not state one, Python falls back to the cleaned subject
+    (`workflow.clean_subject`). `when` asks for the complete verbatim temporal
+    phrase; date-only is valid (all-day), so it is no longer "date AND clock".
+
+    Argument order stays a probe knob until the order probe has run against the
+    realism set: TB_CONTRACT_ORDER=title (default, current evidence) | when.
     """
     import needle
 
-    @needle.tool
-    def no_event() -> str:
-        """Use when the email contains no appointment and no date."""
-        return ""
+    order = os.environ.get("TB_CONTRACT_ORDER", "title").lower()
 
-    variant = os.environ.get("TB_CONTRACT", "K").upper()
-
-    if variant == "G":  # alternative probed contract: `when` first, verbatim
+    if order == "when":
         @needle.tool
-        def extract_event(when: str, title: str, location: str = "") -> str:
-            """Use when the email announces an appointment.
+        def extract_event(when: str, title: str = "", location: str = "") -> str:
+            """Use only when the message contains one concrete new calendar event
+            that is already agreed, confirmed or announced.
 
             Args:
-                when: the full date and time phrase copied character for
-                    character, including the end time when given; never ISO
-                title: the event name exactly as written
-                location: the place exactly as written; empty if none
+                when: the complete temporal phrase copied character for
+                    character; include all date, clock-time, end-time and
+                    timezone evidence present; date-only is valid for all-day
+                    events; never ISO or calculated
+                title: the event name copied exactly as written, or empty if the
+                    text does not state one explicitly
+                location: the place or meeting medium exactly as written; empty
+                    if none
             """
             return ""
-        return [extract_event, no_event]
+        return [extract_event]
 
     @needle.tool
     def extract_event(title: str, when: str, location: str = "") -> str:
-        """Use when the email announces an appointment.
+        """Use only when the message contains one concrete new calendar event
+        that is already agreed, confirmed or announced.
 
         Args:
-            title: the event title exactly as written
-            when: the date AND clock time phrase copied character for character,
-                e.g. "9.10. um 13 Uhr" or "4. November von 10 bis 16 Uhr";
-                always include the clock time and the end time when they appear;
-                never ISO or calculated
-            location: the place exactly as written; empty if none
+            title: the event name copied exactly as written, or empty if the
+                text does not state one explicitly
+            when: the complete temporal phrase copied character for character;
+                include all date, clock-time, end-time and timezone evidence
+                present; date-only is valid for all-day events; never ISO or
+                calculated
+            location: the place or meeting medium exactly as written; empty if
+                none
         """
         return ""
-
-    return [extract_event, no_event]
+    return [extract_event]
 
 
 def _build_needle(weights: str | None = None):
@@ -109,7 +112,13 @@ def _build_needle(weights: str | None = None):
 def _extract(engine, req: dict) -> dict:
     text = (req.get("text") or "").strip()
     subject = (req.get("subject") or "").strip()
-    prompt = f"Betreff: {subject}\n\n{text}" if subject else text
+    mode = req.get("mode") or "message"
+    if mode == "selection":
+        # Selection-only: the model must never see the subject. The subject is
+        # only used later, by Python, as a title fallback (workflow.clean_subject).
+        prompt = text
+    else:
+        prompt = f"Betreff: {subject}\n\n{text}" if subject else text
     started = time.perf_counter()
     try:
         engine.reset()
@@ -127,8 +136,7 @@ def _extract(engine, req: dict) -> dict:
         candidates.append({"title": str(args.get("title") or "").strip(),
                            "when": str(args.get("when") or "").strip(),
                            "location": str(args.get("location") or "").strip()})
-    names = {str(c.get("name")) for c in calls}
-    if not calls or names <= {"no_event"}:
+    if not calls:
         status = "none"
     elif len(candidates) == 1:
         status = "candidate"

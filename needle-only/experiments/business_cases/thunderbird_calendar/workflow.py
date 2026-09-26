@@ -8,12 +8,22 @@ Needle and never from body regexes.
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from email.utils import parseaddr
 
 from models import (EventCandidate, InvitationDraft, MailMessage, OutboxEntry,
                     ParticipantCandidate)
 from temporal import compile_when
+
+_SUBJECT_PREFIX = re.compile(
+    r"^\s*(?:(?:re|aw|antw|antwort|fwd|fw|wg|fyi)\s*:\s*)+", re.IGNORECASE)
+
+
+def clean_subject(subject: str) -> str:
+    """Generic subject cleanup only (strip Re/AW/Fwd/WG prefixes). No semantic
+    title generation — the model supplies the title when the text states one."""
+    return _SUBJECT_PREFIX.sub("", subject or "").strip()
 
 
 def parse_address(entry: str) -> tuple[str, str]:
@@ -136,6 +146,7 @@ class CalendarSpike:
                  source: str, mode: str, response: dict) -> list[EventCandidate]:
         ref = message.received_at or datetime.now()
         multiple = len(raw_candidates) > 1
+        subject_title = clean_subject(message.subject)
         out: list[EventCandidate] = []
         for raw in raw_candidates:
             timing = compile_when(raw.get("when", ""), ref)
@@ -146,8 +157,11 @@ class CalendarSpike:
                 reasons.append("Defaultdauer verwendet")
             if multiple:
                 reasons.append("mehrere Termine erkannt")
+            model_title = (raw.get("title") or "").strip()
+            if not model_title and subject_title:
+                reasons.append("Titel aus Betreff")
             out.append(EventCandidate(
-                title=raw.get("title", ""),
+                title=model_title or subject_title,
                 start=timing.start,
                 end=timing.end,
                 all_day=timing.all_day,
