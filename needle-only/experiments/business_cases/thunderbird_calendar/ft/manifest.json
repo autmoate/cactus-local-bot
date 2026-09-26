@@ -1,0 +1,30 @@
+{
+ "generated_at": "2026-09-26T18:30:39.481723+00:00",
+ "generated_at_commit": "b648edea0981d9ee5400125a44a63da3ec6dd1fd",
+ "provenance": {
+  "build_dataset_tb_sha256": "8c44332fd1fcb781553e597e360a59de820f82a5e579c35b6f23f825b38de529",
+  "dataset_spec_tb_sha256": "05f371797930b7daf332860d760c717f52023d6db5c95fc278428b290be87fd1",
+  "schema_sha256": "3b2af8acaa0bd5ee3d317a90ca5af86819533d50b9546c4643cd65e0c7e7f336",
+  "seed": 42
+ },
+ "counts": {
+  "train": 7000,
+  "validation": 800,
+  "test": 1400
+ },
+ "target_mix": {
+  "message_pos": 0.55,
+  "selection_pos": 0.22,
+  "near_miss": 0.18,
+  "offtopic": 0.05
+ },
+ "file_sha256": {
+  "train.jsonl": "2413cdcdc8a5a1b6e96389eb399444e45fd8394d021337dfe3c08965feff7521",
+  "validation.jsonl": "1c3db87ad09f616b51b8d1ad59d02108025ff63d0a07b2e399db43ca614039c8",
+  "test.jsonl": "283a509337d1ac1623aa2e41908754ec62880e4af5e48253f99bd6212ac36508",
+  "smoke.jsonl": "59b8bdc544b4cb043b1f32d29e69e6545b9925bae524e167b9091905e935e00d"
+ },
+ "system_facts": "locale: de-DE",
+ "tool_name": "extract_event",
+ "gold_convention": "sparse + verbatim: when always; title/location only when literally present; negatives = empty call []"
+}

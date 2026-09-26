@@ -143,6 +143,26 @@ def score_case(expected: dict, candidates: list, latency_ms: float = 0.0) -> dic
     return row
 
 
+def evidence_grounded(result: dict, expected: dict) -> bool:
+    """All emitted string args are verbatim substrings of the model input (XAI)."""
+    if expected.get("event_count", 0) == 0:
+        return True
+    raw = result.get("raw") or {}
+    prompt = raw.get("prompt", "")
+    calls = [c for c in (raw.get("raw") or []) if c.get("name") == "extract_event"]
+    if not calls:
+        return False
+    args = calls[0].get("arguments") or {}
+    when = args.get("when", "")
+    if not when or when not in prompt:
+        return False
+    for field in ("title", "location"):
+        value = args.get(field)
+        if value and value not in prompt:
+            return False
+    return True
+
+
 def _expected_for(case: dict, mode: str) -> dict | None:
     if mode == "selection":
         if not case.get("selection"):
@@ -172,7 +192,8 @@ def aggregate(rows: list[dict]) -> dict:
                     "temporal_ok": mean("temporal_ok", pos),
                     "location_ok": mean("location_ok", pos),
                     "final_event_ok_positive": mean("final_event_ok", pos),
-                    "approval_ready_positive": mean("approval_ready", pos)})
+                    "approval_ready_positive": mean("approval_ready", pos),
+                    "evidence_grounded_rate": mean("evidence_grounded", pos)})
         # Split hard-resolvable from deliberately-unresolved (timezone/fuzzy):
         # the latter must be routed to review, not scored as a hard failure.
         supported = [r for r in pos if not r.get("expected_incomplete")]
@@ -223,7 +244,8 @@ def run_backend(backend: str, cases: list[dict], python: str | None,
                 row.update({"id": case["id"], "mode": mode,
                             "category": case["category"],
                             "positive": expected.get("event_count", 0) > 0,
-                            "status": result["status"]})
+                            "status": result["status"],
+                            "evidence_grounded": evidence_grounded(result, expected)})
                 rows.append(row)
                 detail.append({**row, "expected": expected,
                                "got": [c.to_dict() for c in result["candidates"]],

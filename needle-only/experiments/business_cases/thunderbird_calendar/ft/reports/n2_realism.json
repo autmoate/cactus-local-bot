@@ -16,6 +16,7 @@
       "location_ok": 0.871,
       "final_event_ok_positive": 0.4086,
       "approval_ready_positive": 0.4086,
+      "evidence_grounded_rate": 0.6129,
       "supported_final_event_ok": 0.4419,
       "supported_approval_ready": 0.4419,
       "review_routing_ok": 0.8571,
@@ -26,8 +27,8 @@
         "deadline": 1.0,
         "unrelated": 0.3333
       },
-      "latency_p50_ms": 1301,
-      "latency_p95_ms": 3498
+      "latency_p50_ms": 920,
+      "latency_p95_ms": 1409
     },
     "selection": {
       "n": 43,
@@ -42,10 +43,11 @@
       "location_ok": 0.8605,
       "final_event_ok_positive": 0.4186,
       "approval_ready_positive": 0.4186,
+      "evidence_grounded_rate": 0.4884,
       "supported_final_event_ok": 0.4186,
       "supported_approval_ready": 0.4186,
-      "latency_p50_ms": 935,
-      "latency_p95_ms": 2672
+      "latency_p50_ms": 679,
+      "latency_p95_ms": 964
     }
   },
   "categories": {
@@ -63,10 +65,11 @@
         "location_ok": 1.0,
         "final_event_ok_positive": 0.6667,
         "approval_ready_positive": 0.6667,
+        "evidence_grounded_rate": 0.75,
         "supported_final_event_ok": 0.6667,
         "supported_approval_ready": 0.6667,
-        "latency_p50_ms": 2062,
-        "latency_p95_ms": 2972
+        "latency_p50_ms": 1237,
+        "latency_p95_ms": 1678
       },
       "selection": {
         "n": 0
@@ -82,8 +85,8 @@
         "false_positive_by_category": {
           "cancel_reschedule": 1.0
         },
-        "latency_p50_ms": 1053,
-        "latency_p95_ms": 1678
+        "latency_p50_ms": 677,
+        "latency_p95_ms": 1185
       },
       "selection": {
         "n": 0
@@ -99,8 +102,8 @@
         "false_positive_by_category": {
           "deadline": 1.0
         },
-        "latency_p50_ms": 935,
-        "latency_p95_ms": 1070
+        "latency_p50_ms": 527,
+        "latency_p95_ms": 629
       },
       "selection": {
         "n": 0
@@ -120,10 +123,11 @@
         "location_ok": 0.9412,
         "final_event_ok_positive": 0.2353,
         "approval_ready_positive": 0.2353,
+        "evidence_grounded_rate": 0.4118,
         "supported_final_event_ok": 0.2353,
         "supported_approval_ready": 0.2353,
-        "latency_p50_ms": 1228,
-        "latency_p95_ms": 1745
+        "latency_p50_ms": 952,
+        "latency_p95_ms": 1252
       },
       "selection": {
         "n": 0
@@ -143,10 +147,11 @@
         "location_ok": 0.7143,
         "final_event_ok_positive": 0.4286,
         "approval_ready_positive": 0.4286,
+        "evidence_grounded_rate": 0.7619,
         "supported_final_event_ok": 0.4286,
         "supported_approval_ready": 0.4286,
-        "latency_p50_ms": 1269,
-        "latency_p95_ms": 1727
+        "latency_p50_ms": 1091,
+        "latency_p95_ms": 1254
       },
       "selection": {
         "n": 21,
@@ -161,10 +166,11 @@
         "location_ok": 0.8095,
         "final_event_ok_positive": 0.4286,
         "approval_ready_positive": 0.4286,
+        "evidence_grounded_rate": 0.4286,
         "supported_final_event_ok": 0.4286,
         "supported_approval_ready": 0.4286,
-        "latency_p50_ms": 857,
-        "latency_p95_ms": 1343
+        "latency_p50_ms": 775,
+        "latency_p95_ms": 983
       }
     },
     "long_signature": {
@@ -181,10 +187,11 @@
         "location_ok": 0.5714,
         "final_event_ok_positive": 0.4286,
         "approval_ready_positive": 0.4286,
+        "evidence_grounded_rate": 0.5714,
         "supported_final_event_ok": 0.4286,
         "supported_approval_ready": 0.4286,
-        "latency_p50_ms": 3315,
-        "latency_p95_ms": 4834
+        "latency_p50_ms": 1582,
+        "latency_p95_ms": 2040
       },
       "selection": {
         "n": 0
@@ -204,10 +211,11 @@
         "location_ok": 1.0,
         "final_event_ok_positive": 0.5,
         "approval_ready_positive": 0.5,
+        "evidence_grounded_rate": 0.4,
         "supported_final_event_ok": 0.5,
         "supported_approval_ready": 0.5,
-        "latency_p50_ms": 2260,
-        "latency_p95_ms": 5256
+        "latency_p50_ms": 1044,
+        "latency_p95_ms": 1259
       },
       "selection": {
         "n": 10,
@@ -222,10 +230,11 @@
         "location_ok": 1.0,
         "final_event_ok_positive": 0.5,
         "approval_ready_positive": 0.5,
+        "evidence_grounded_rate": 0.6,
         "supported_final_event_ok": 0.5,
         "supported_approval_ready": 0.5,
-        "latency_p50_ms": 1689,
-        "latency_p95_ms": 2695
+        "latency_p50_ms": 685,
+        "latency_p95_ms": 941
       }
     },
     "relative_time": {
@@ -242,10 +251,11 @@
         "location_ok": 1.0,
         "final_event_ok_positive": 0.4286,
         "approval_ready_positive": 0.4286,
+        "evidence_grounded_rate": 0.5714,
         "supported_final_event_ok": 0.4286,
         "supported_approval_ready": 0.4286,
-        "latency_p50_ms": 1322,
-        "latency_p95_ms": 1731
+        "latency_p50_ms": 822,
+        "latency_p95_ms": 951
       },
       "selection": {
         "n": 0
@@ -265,10 +275,11 @@
         "location_ok": 0.9167,
         "final_event_ok_positive": 0.5,
         "approval_ready_positive": 0.5,
+        "evidence_grounded_rate": 0.5833,
         "supported_final_event_ok": 0.5,
         "supported_approval_ready": 0.5,
-        "latency_p50_ms": 1211,
-        "latency_p95_ms": 3332
+        "latency_p50_ms": 742,
+        "latency_p95_ms": 914
       },
       "selection": {
         "n": 12,
@@ -283,10 +294,11 @@
         "location_ok": 0.8333,
         "final_event_ok_positive": 0.3333,
         "approval_ready_positive": 0.3333,
+        "evidence_grounded_rate": 0.5,
         "supported_final_event_ok": 0.3333,
         "supported_approval_ready": 0.3333,
-        "latency_p50_ms": 882,
-        "latency_p95_ms": 3217
+        "latency_p50_ms": 652,
+        "latency_p95_ms": 964
       }
     },
     "tentative_slots": {
@@ -299,8 +311,8 @@
         "false_positive_by_category": {
           "tentative_slots": 1.0
         },
-        "latency_p50_ms": 1196,
-        "latency_p95_ms": 2903
+        "latency_p50_ms": 839,
+        "latency_p95_ms": 1248
       },
       "selection": {
         "n": 0
@@ -320,9 +332,10 @@
         "location_ok": 0.8571,
         "final_event_ok_positive": 0.0,
         "approval_ready_positive": 0.0,
+        "evidence_grounded_rate": 0.8571,
         "review_routing_ok": 0.8571,
-        "latency_p50_ms": 1231,
-        "latency_p95_ms": 1676
+        "latency_p50_ms": 815,
+        "latency_p95_ms": 1211
       },
       "selection": {
         "n": 0
@@ -338,8 +351,8 @@
         "false_positive_by_category": {
           "unrelated": 0.3333
         },
-        "latency_p50_ms": 493,
-        "latency_p95_ms": 721
+        "latency_p50_ms": 258,
+        "latency_p95_ms": 405
       },
       "selection": {
         "n": 0
@@ -349,7 +362,7 @@
   "rows": [
     {
       "candidate_count": 1,
-      "latency_ms": 4987.350910902023,
+      "latency_ms": 1135.1230069994926,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -372,6 +385,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Mittagessen",
@@ -418,7 +432,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1343.3754295110703,
+      "latency_ms": 982.9977974295616,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -442,6 +456,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Mittagessen",
@@ -487,7 +502,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 881.2563270330429,
+      "latency_ms": 1012.5638619065285,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -506,6 +521,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Wochenplanung",
@@ -551,7 +567,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 623.8965466618538,
+      "latency_ms": 775.0411555171013,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -570,6 +586,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Wochenplanung",
@@ -615,7 +632,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1155.7251140475273,
+      "latency_ms": 1253.9011761546135,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -634,6 +651,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Kaffee mit Jonas",
@@ -680,7 +698,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 935.2363795042038,
+      "latency_ms": 1039.9387404322624,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -701,6 +719,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Kaffee mit Jonas",
@@ -747,7 +766,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1268.5911506414413,
+      "latency_ms": 1097.3158851265907,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -770,6 +789,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Team-Sync",
@@ -815,7 +835,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 706.7169919610023,
+      "latency_ms": 636.4552229642868,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -834,6 +854,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Team-Sync",
@@ -879,7 +900,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1292.9695546627045,
+      "latency_ms": 1201.1686190962791,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -898,6 +919,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Laufrunde",
@@ -944,7 +966,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 897.6433649659157,
+      "latency_ms": 920.3758165240288,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -967,6 +989,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Laufrunde",
@@ -1012,7 +1035,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1125.928446650505,
+      "latency_ms": 884.366936981678,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1033,6 +1056,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Buchclub",
@@ -1079,7 +1103,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 607.0866659283638,
+      "latency_ms": 594.9089452624321,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1098,6 +1122,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Buchclub",
@@ -1143,7 +1168,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1207.4196711182594,
+      "latency_ms": 850.217804312706,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1162,6 +1187,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Steuerunterlagen",
@@ -1207,7 +1233,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 856.7372113466263,
+      "latency_ms": 643.795058131218,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1226,6 +1252,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Steuerunterlagen",
@@ -1273,7 +1300,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1190.6883344054222,
+      "latency_ms": 893.1494653224945,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1292,6 +1319,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Elternabend",
@@ -1338,7 +1366,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1131.7903622984886,
+      "latency_ms": 925.6613478064537,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1357,6 +1385,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Elternabend",
@@ -1403,7 +1432,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1284.8880663514137,
+      "latency_ms": 1174.9616637825966,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1422,6 +1451,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Sportkurs",
@@ -1468,7 +1498,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1034.9720567464828,
+      "latency_ms": 863.042302429676,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1489,6 +1519,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Sportkurs",
@@ -1535,7 +1566,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1386.3977864384651,
+      "latency_ms": 1246.2155148386955,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1557,6 +1588,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Wochenendausflug",
@@ -1603,7 +1635,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 993.3860749006271,
+      "latency_ms": 814.4976422190666,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1624,6 +1656,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Wochenendausflug",
@@ -1669,7 +1702,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1154.5105576515198,
+      "latency_ms": 1158.2046374678612,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1688,6 +1721,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Geburtstag Tim",
@@ -1733,7 +1767,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 712.1192738413811,
+      "latency_ms": 631.1139538884163,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1752,6 +1786,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Geburtstag Tim",
@@ -1797,7 +1832,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1234.857253730297,
+      "latency_ms": 1006.8235844373703,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1816,6 +1851,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Fahrgemeinschaft",
@@ -1861,7 +1897,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1081.6462635993958,
+      "latency_ms": 938.3914992213249,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1883,6 +1919,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Fahrgemeinschaft",
@@ -1929,7 +1966,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1463.6892676353455,
+      "latency_ms": 1091.0933017730713,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -1948,6 +1985,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Kino",
@@ -1994,7 +2032,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1167.381227016449,
+      "latency_ms": 847.6043716073036,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2017,6 +2055,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Kino",
@@ -2062,7 +2101,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 752.4526566267014,
+      "latency_ms": 650.233805179596,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2084,6 +2123,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Chorprobe",
@@ -2128,7 +2168,7 @@
     },
     {
       "candidate_count": 0,
-      "latency_ms": 435.5435445904732,
+      "latency_ms": 243.32114309072495,
       "event_detected": false,
       "count_ok": false,
       "false_positive": false,
@@ -2148,6 +2188,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "none",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Chorprobe",
@@ -2165,7 +2206,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1505.1115304231644,
+      "latency_ms": 1222.8491231799126,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2186,6 +2227,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Umzug",
@@ -2232,7 +2274,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 799.771398305893,
+      "latency_ms": 744.147278368473,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2251,6 +2293,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Umzug",
@@ -2296,7 +2339,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1303.4007921814919,
+      "latency_ms": 1020.8988338708878,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2318,6 +2361,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Abendessen",
@@ -2364,7 +2408,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1326.0020464658737,
+      "latency_ms": 837.1029645204544,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2383,6 +2427,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Abendessen",
@@ -2429,7 +2474,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1545.856423676014,
+      "latency_ms": 1156.8626090884209,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2451,6 +2496,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Prüfung",
@@ -2497,7 +2543,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1802.5896549224854,
+      "latency_ms": 776.6925394535065,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2516,6 +2562,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Prüfung",
@@ -2562,7 +2609,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1727.3689284920692,
+      "latency_ms": 1302.4882897734642,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2583,6 +2630,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Gartenaktion",
@@ -2629,7 +2677,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 568.4530586004257,
+      "latency_ms": 543.4346199035645,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2652,6 +2700,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Gartenaktion",
@@ -2696,7 +2745,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 763.4965553879738,
+      "latency_ms": 696.002297103405,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2718,6 +2767,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Interview",
@@ -2764,7 +2814,7 @@
     },
     {
       "candidate_count": 0,
-      "latency_ms": 302.62475460767746,
+      "latency_ms": 193.50416213274002,
       "event_detected": false,
       "count_ok": false,
       "false_positive": false,
@@ -2784,6 +2834,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "none",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Interview",
@@ -2801,7 +2852,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1015.4315456748009,
+      "latency_ms": 888.8153210282326,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2823,6 +2874,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Wartungstermin",
@@ -2869,7 +2921,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 813.1834045052528,
+      "latency_ms": 636.3057047128677,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2891,6 +2943,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Wartungstermin",
@@ -2937,7 +2990,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1320.5154463648796,
+      "latency_ms": 1032.7636748552322,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -2960,6 +3013,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Spieleabend",
@@ -3006,7 +3060,7 @@
     },
     {
       "candidate_count": 0,
-      "latency_ms": 375.3727078437805,
+      "latency_ms": 268.4676721692085,
       "event_detected": false,
       "count_ok": false,
       "false_positive": false,
@@ -3026,6 +3080,7 @@
       "category": "informal_confirm",
       "positive": true,
       "status": "none",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Spieleabend",
@@ -3043,7 +3098,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1363.590568304062,
+      "latency_ms": 1251.7914772033691,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3065,6 +3120,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Projektbesprechung",
@@ -3111,7 +3167,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 957.8559026122093,
+      "latency_ms": 853.9220690727234,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3133,6 +3189,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Ihr Beratungstermin",
@@ -3179,7 +3236,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1146.0537016391754,
+      "latency_ms": 1127.2801384329796,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3201,6 +3258,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Terminbuchung bestätigt",
@@ -3247,7 +3305,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1724.148377776146,
+      "latency_ms": 1109.562262892723,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3268,6 +3326,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Ihre Reservierung",
@@ -3313,7 +3372,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1117.2960326075554,
+      "latency_ms": 846.2049439549446,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3334,6 +3393,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Augenarzt Bestätigung",
@@ -3379,7 +3439,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1689.6953731775284,
+      "latency_ms": 1196.699433028698,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3398,6 +3458,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Terminbestätigung Kfz-Werkstatt",
@@ -3444,7 +3505,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 828.4435644745827,
+      "latency_ms": 807.3475360870361,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3466,6 +3527,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Onboarding-Termin bestätigt",
@@ -3510,7 +3572,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1745.3243359923363,
+      "latency_ms": 1137.6991868019104,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3529,6 +3591,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Terminbestätigung Notariat",
@@ -3575,7 +3638,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1417.750172317028,
+      "latency_ms": 894.8420435190201,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3597,6 +3660,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Ihr Termin im Center",
@@ -3643,7 +3707,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1334.87156778574,
+      "latency_ms": 1000.7820650935173,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3662,6 +3726,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Bestätigung Steuerberatung",
@@ -3708,7 +3773,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1062.8475174307823,
+      "latency_ms": 1041.0604551434517,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3730,6 +3795,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Terminbestätigung Sozialamt",
@@ -3776,7 +3842,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1222.3468273878098,
+      "latency_ms": 894.2020609974861,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3798,6 +3864,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Reha-Termin",
@@ -3842,7 +3909,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1131.5693855285645,
+      "latency_ms": 836.995504796505,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3864,6 +3931,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Elterngespräch",
@@ -3910,7 +3978,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1169.1729798913002,
+      "latency_ms": 826.0880559682846,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -3932,6 +4000,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Ihr Rückruftermin",
@@ -3978,7 +4047,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1228.0043810606003,
+      "latency_ms": 975.3144532442093,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4002,6 +4071,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Terminbestätigung Versicherung",
@@ -4047,7 +4117,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1287.6493856310844,
+      "latency_ms": 887.5669986009598,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4069,6 +4139,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Impfung bestätigt",
@@ -4115,7 +4186,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1539.097473025322,
+      "latency_ms": 952.0218372344971,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4134,6 +4205,7 @@
       "category": "formal_confirm",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Vorstellungsgespräch",
@@ -4180,7 +4252,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1666.2614792585373,
+      "latency_ms": 1326.8804103136063,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4199,6 +4271,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Firmenlauf",
@@ -4245,7 +4318,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2379.6879053115845,
+      "latency_ms": 1677.7180880308151,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4264,6 +4337,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Jahresabschluss-Feier",
@@ -4310,7 +4384,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1604.7590896487236,
+      "latency_ms": 1207.0949226617813,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4329,6 +4403,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Schulkonzert",
@@ -4375,7 +4450,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1391.5415108203888,
+      "latency_ms": 1268.44322681427,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4397,6 +4472,7 @@
       "category": "announcement",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Vortrag KI",
@@ -4442,7 +4518,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1958.2100883126259,
+      "latency_ms": 1313.4984225034714,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4461,6 +4537,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Flohmarkt",
@@ -4507,7 +4584,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2251.0530427098274,
+      "latency_ms": 1135.2399662137032,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4526,6 +4603,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Konzert",
@@ -4572,7 +4650,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1768.988698720932,
+      "latency_ms": 1369.4217279553413,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4591,6 +4669,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Mitgliederversammlung",
@@ -4637,7 +4716,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1271.7513740062714,
+      "latency_ms": 446.6554597020149,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4659,6 +4738,7 @@
       "category": "announcement",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Sommerfest",
@@ -4703,7 +4783,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2856.000617146492,
+      "latency_ms": 1041.9222265481949,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4725,6 +4805,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Theateraufführung",
@@ -4771,7 +4852,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2166.6418239474297,
+      "latency_ms": 899.5141014456749,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4790,6 +4871,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Erste-Hilfe-Kurs",
@@ -4834,7 +4916,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2971.7993661761284,
+      "latency_ms": 890.611469745636,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4856,6 +4938,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Ausstellung",
@@ -4902,7 +4985,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2894.727312028408,
+      "latency_ms": 1267.4009054899216,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4921,6 +5004,7 @@
       "category": "announcement",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Marathon",
@@ -4967,7 +5051,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2374.6373802423477,
+      "latency_ms": 743.0454269051552,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -4989,6 +5073,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Mittag",
@@ -5034,7 +5119,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1657.746560871601,
+      "latency_ms": 647.6815044879913,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5053,6 +5138,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Mittag",
@@ -5100,7 +5186,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 3331.8695202469826,
+      "latency_ms": 764.5697742700577,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5119,6 +5205,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Abstimmung",
@@ -5164,7 +5251,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2549.7652366757393,
+      "latency_ms": 814.003698527813,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5185,6 +5272,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Abstimmung",
@@ -5231,7 +5319,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1447.5884065032005,
+      "latency_ms": 507.6726973056793,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5253,6 +5341,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Wann?",
@@ -5297,7 +5386,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 3216.520220041275,
+      "latency_ms": 678.9598762989044,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5318,6 +5407,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Wann?",
@@ -5364,7 +5454,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2211.9584754109383,
+      "latency_ms": 854.3306738138199,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5387,6 +5477,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Doodle",
@@ -5433,7 +5524,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2671.530067920685,
+      "latency_ms": 963.8367369771004,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5454,6 +5545,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Doodle",
@@ -5500,7 +5592,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 867.4143180251122,
+      "latency_ms": 712.5466763973236,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5522,6 +5614,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Planung",
@@ -5566,7 +5659,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 397.84564822912216,
+      "latency_ms": 788.4667441248894,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5589,6 +5682,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Planung",
@@ -5635,7 +5729,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1301.0034635663033,
+      "latency_ms": 871.1229637265205,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5654,6 +5748,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Interview",
@@ -5700,7 +5795,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 755.6133046746254,
+      "latency_ms": 833.0903127789497,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5723,6 +5818,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Interview",
@@ -5768,7 +5864,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1120.1391369104385,
+      "latency_ms": 914.447084069252,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5790,6 +5886,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Kaffeepause",
@@ -5834,7 +5931,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 554.1713088750839,
+      "latency_ms": 584.0588435530663,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5855,6 +5952,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Kaffeepause",
@@ -5900,7 +5998,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1111.438162624836,
+      "latency_ms": 887.2082754969597,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5919,6 +6017,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Teamrunde",
@@ -5965,7 +6064,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 782.6729565858841,
+      "latency_ms": 411.91351413726807,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -5988,6 +6087,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Teamrunde",
@@ -6032,7 +6132,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 807.2818592190742,
+      "latency_ms": 678.2205179333687,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6051,6 +6151,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Vorlesung",
@@ -6096,7 +6197,7 @@
     },
     {
       "candidate_count": 0,
-      "latency_ms": 201.3397291302681,
+      "latency_ms": 185.27472764253616,
       "event_detected": false,
       "count_ok": false,
       "false_positive": false,
@@ -6116,6 +6217,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "none",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Vorlesung",
@@ -6133,7 +6235,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1119.3911954760551,
+      "latency_ms": 688.9059171080589,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6152,6 +6254,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Lernrunde",
@@ -6198,7 +6301,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1072.227105498314,
+      "latency_ms": 526.8655493855476,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6217,6 +6320,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Lernrunde",
@@ -6262,7 +6366,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1544.368252158165,
+      "latency_ms": 704.337865114212,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6281,6 +6385,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Konferenz",
@@ -6326,7 +6431,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 780.7711362838745,
+      "latency_ms": 655.5113941431046,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6345,6 +6450,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Konferenz",
@@ -6390,7 +6496,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 829.1302546858788,
+      "latency_ms": 740.6488433480263,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6412,6 +6518,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Treffen",
@@ -6458,7 +6565,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 980.4249778389931,
+      "latency_ms": 510.41265577077866,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6477,6 +6584,7 @@
       "category": "short_accept",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Treffen",
@@ -6522,7 +6630,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 829.9381881952286,
+      "latency_ms": 579.3769657611847,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6544,6 +6652,7 @@
       "category": "relative_time",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Abgabe-Vorbereitung",
@@ -6588,7 +6697,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1303.881473839283,
+      "latency_ms": 815.6077712774277,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6607,6 +6716,7 @@
       "category": "relative_time",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Jahresgespräch",
@@ -6653,7 +6763,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1653.2098054885864,
+      "latency_ms": 821.6921836137772,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6672,6 +6782,7 @@
       "category": "relative_time",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Wartung",
@@ -6717,7 +6828,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1369.270198047161,
+      "latency_ms": 919.5041880011559,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6739,6 +6850,7 @@
       "category": "relative_time",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Kennenlernen",
@@ -6785,7 +6897,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1731.1370894312859,
+      "latency_ms": 950.7985189557076,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6804,6 +6916,7 @@
       "category": "relative_time",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Ausflug",
@@ -6849,7 +6962,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1177.9696270823479,
+      "latency_ms": 551.934227347374,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6871,6 +6984,7 @@
       "category": "relative_time",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Rückgabe",
@@ -6915,7 +7029,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1321.7740207910538,
+      "latency_ms": 919.7254925966263,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -6937,6 +7051,7 @@
       "category": "relative_time",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Teammeeting",
@@ -6983,7 +7098,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1676.4536574482918,
+      "latency_ms": 1211.37173473835,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7005,6 +7120,7 @@
       "category": "timezone",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Partner Call",
@@ -7051,7 +7167,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1336.3429754972458,
+      "latency_ms": 980.6581363081932,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7074,6 +7190,7 @@
       "category": "timezone",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Board Meeting",
@@ -7120,7 +7237,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1159.820333123207,
+      "latency_ms": 814.6168068051338,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7142,6 +7259,7 @@
       "category": "timezone",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Interviews",
@@ -7188,7 +7306,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1426.166407763958,
+      "latency_ms": 923.8609597086906,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7210,6 +7328,7 @@
       "category": "timezone",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Design Review",
@@ -7256,7 +7375,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1189.8876950144768,
+      "latency_ms": 690.9488290548325,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7278,6 +7397,7 @@
       "category": "timezone",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Standup",
@@ -7324,7 +7444,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1118.8391596078873,
+      "latency_ms": 612.157054245472,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7346,6 +7466,7 @@
       "category": "timezone",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Retro",
@@ -7392,7 +7513,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1230.5303290486336,
+      "latency_ms": 660.9783992171288,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7414,6 +7535,7 @@
       "category": "timezone",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Demo",
@@ -7458,7 +7580,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2630.566358566284,
+      "latency_ms": 1675.9557202458382,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7477,6 +7599,7 @@
       "category": "long_signature",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Einarbeitung",
@@ -7523,7 +7646,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 3497.940868139267,
+      "latency_ms": 1902.380995452404,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7542,6 +7665,7 @@
       "category": "long_signature",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Klassenfahrt",
@@ -7588,7 +7712,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 3755.390726029873,
+      "latency_ms": 2039.9451032280922,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7607,6 +7731,7 @@
       "category": "long_signature",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Strategieworkshop",
@@ -7651,7 +7776,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2809.7061663866043,
+      "latency_ms": 1409.1855362057686,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7674,6 +7799,7 @@
       "category": "long_signature",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Vorsorgeuntersuchung",
@@ -7720,7 +7846,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 3314.8582726716995,
+      "latency_ms": 1245.9595203399658,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7742,6 +7868,7 @@
       "category": "long_signature",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Mietvertrag",
@@ -7788,7 +7915,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 3145.333096385002,
+      "latency_ms": 1218.1815430521965,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7811,6 +7938,7 @@
       "category": "long_signature",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Präsentation",
@@ -7857,7 +7985,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 4834.416851401329,
+      "latency_ms": 1582.390658557415,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7878,6 +8006,7 @@
       "category": "long_signature",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Nachhilfe",
@@ -7924,7 +8053,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2301.2447506189346,
+      "latency_ms": 709.7497135400772,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -7947,6 +8076,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Urlaub",
@@ -7991,7 +8121,7 @@
     },
     {
       "candidate_count": 2,
-      "latency_ms": 2694.9404031038284,
+      "latency_ms": 824.1556957364082,
       "event_detected": true,
       "count_ok": false,
       "false_positive": false,
@@ -8013,6 +8143,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "multiple",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Urlaub",
@@ -8085,7 +8216,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2803.8787618279457,
+      "latency_ms": 1222.4692553281784,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8104,6 +8235,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Termin",
@@ -8150,7 +8282,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2140.2196437120438,
+      "latency_ms": 674.1075366735458,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8172,6 +8304,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Termin",
@@ -8218,7 +8351,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2902.60861068964,
+      "latency_ms": 1211.742214858532,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -8238,6 +8371,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -8284,7 +8418,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 3194.3997144699097,
+      "latency_ms": 1103.823721408844,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8303,6 +8437,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Abendessen",
@@ -8349,7 +8484,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2655.327968299389,
+      "latency_ms": 940.6388252973557,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8368,6 +8503,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Abendessen",
@@ -8414,7 +8550,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2218.1969732046127,
+      "latency_ms": 668.7610968947411,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8436,6 +8572,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Fußball",
@@ -8480,7 +8617,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1237.5850155949593,
+      "latency_ms": 497.0828965306282,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8503,6 +8640,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Fußball",
@@ -8547,7 +8685,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 5256.147861480713,
+      "latency_ms": 937.0045363903046,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8569,6 +8707,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Anreise",
@@ -8614,7 +8753,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2452.098287642002,
+      "latency_ms": 836.3885283470154,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8633,6 +8772,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Anreise",
@@ -8680,7 +8820,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 4719.082221388817,
+      "latency_ms": 1258.640967309475,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8703,6 +8843,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Vorbereitung",
@@ -8749,7 +8890,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 2629.8369467258453,
+      "latency_ms": 696.8274936079979,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8768,6 +8909,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Vorbereitung",
@@ -8813,7 +8955,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1046.6425344347954,
+      "latency_ms": 1180.543638765812,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8832,6 +8974,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Rückfrage",
@@ -8878,7 +9021,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 682.9707771539688,
+      "latency_ms": 718.1321457028389,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8899,6 +9042,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Rückfrage",
@@ -8944,7 +9088,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1086.7457166314125,
+      "latency_ms": 985.028326511383,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -8963,6 +9107,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Präsentation",
@@ -9009,7 +9154,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 622.1001893281937,
+      "latency_ms": 669.0494939684868,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -9028,6 +9173,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Präsentation",
@@ -9073,7 +9219,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1163.1491035223007,
+      "latency_ms": 1167.672336101532,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -9092,6 +9238,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 1,
         "title": "Team-Sync",
@@ -9138,7 +9285,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1064.6967068314552,
+      "latency_ms": 576.2351676821709,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -9157,6 +9304,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "candidate",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Team-Sync",
@@ -9202,7 +9350,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1172.9271933436394,
+      "latency_ms": 867.5848096609116,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -9224,6 +9372,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Ausflug",
@@ -9268,7 +9417,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 876.0794773697853,
+      "latency_ms": 563.1110295653343,
       "event_detected": true,
       "count_ok": true,
       "false_positive": false,
@@ -9291,6 +9440,7 @@
       "category": "quoted_thread",
       "positive": true,
       "status": "invalid",
+      "evidence_grounded": false,
       "expected": {
         "event_count": 1,
         "title": "Ausflug",
@@ -9337,7 +9487,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1777.6939049363136,
+      "latency_ms": 1247.7544471621513,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9357,6 +9507,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9402,7 +9553,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 936.084620654583,
+      "latency_ms": 838.66236358881,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9422,6 +9573,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9466,7 +9618,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1195.6219598650932,
+      "latency_ms": 953.4560143947601,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9486,6 +9638,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9531,7 +9684,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 957.1638330817223,
+      "latency_ms": 771.7108950018883,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9551,6 +9704,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9595,7 +9749,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 846.1908623576164,
+      "latency_ms": 782.8164920210838,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9615,6 +9769,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9661,7 +9816,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1450.7996737957,
+      "latency_ms": 968.881867825985,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9681,6 +9836,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9726,7 +9882,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1249.214768409729,
+      "latency_ms": 611.1055389046669,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9746,6 +9902,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9790,7 +9947,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 893.6323523521423,
+      "latency_ms": 534.0895280241966,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9810,6 +9967,7 @@
       "category": "tentative_slots",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9854,7 +10012,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 962.7823829650879,
+      "latency_ms": 596.435084939003,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9874,6 +10032,7 @@
       "category": "cancel_reschedule",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9918,7 +10077,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1052.6415035128593,
+      "latency_ms": 552.0733818411827,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -9938,6 +10097,7 @@
       "category": "cancel_reschedule",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -9982,7 +10142,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 874.8635351657867,
+      "latency_ms": 677.0154610276222,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10002,6 +10162,7 @@
       "category": "cancel_reschedule",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10048,7 +10209,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 910.4193896055222,
+      "latency_ms": 594.2226052284241,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10068,6 +10229,7 @@
       "category": "cancel_reschedule",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10112,7 +10274,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1096.3195785880089,
+      "latency_ms": 746.511846780777,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10132,6 +10294,7 @@
       "category": "cancel_reschedule",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10176,7 +10339,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1597.6782068610191,
+      "latency_ms": 1082.8697010874748,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10196,6 +10359,7 @@
       "category": "cancel_reschedule",
       "positive": false,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10242,7 +10406,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1678.209401667118,
+      "latency_ms": 1185.4858696460724,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10262,6 +10426,7 @@
       "category": "cancel_reschedule",
       "positive": false,
       "status": "candidate",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10308,7 +10473,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 857.9758852720261,
+      "latency_ms": 628.734789788723,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10328,6 +10493,7 @@
       "category": "deadline",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10372,7 +10538,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 934.8610788583755,
+      "latency_ms": 526.7209559679031,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10392,6 +10558,7 @@
       "category": "deadline",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10436,7 +10603,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 1069.8022097349167,
+      "latency_ms": 484.9519357085228,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10456,6 +10623,7 @@
       "category": "deadline",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10500,7 +10668,7 @@
     },
     {
       "candidate_count": 1,
-      "latency_ms": 720.6663191318512,
+      "latency_ms": 404.5798107981682,
       "event_detected": false,
       "count_ok": false,
       "false_positive": true,
@@ -10520,6 +10688,7 @@
       "category": "unrelated",
       "positive": false,
       "status": "invalid",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10564,7 +10733,7 @@
     },
     {
       "candidate_count": 0,
-      "latency_ms": 375.1195818185806,
+      "latency_ms": 258.33307206630707,
       "event_detected": false,
       "count_ok": true,
       "false_positive": false,
@@ -10582,6 +10751,7 @@
       "category": "unrelated",
       "positive": false,
       "status": "none",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",
@@ -10599,7 +10769,7 @@
     },
     {
       "candidate_count": 0,
-      "latency_ms": 492.58919060230255,
+      "latency_ms": 247.5794404745102,
       "event_detected": false,
       "count_ok": true,
       "false_positive": false,
@@ -10617,6 +10787,7 @@
       "category": "unrelated",
       "positive": false,
       "status": "none",
+      "evidence_grounded": true,
       "expected": {
         "event_count": 0,
         "title": "",

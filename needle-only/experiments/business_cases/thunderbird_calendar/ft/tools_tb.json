@@ -1,0 +1,23 @@
+[
+ {
+  "name": "extract_event",
+  "description": "Use only when the message contains one concrete new calendar event that is already agreed, confirmed or announced.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "when": {
+     "type": "string",
+     "description": "the complete temporal phrase copied character for"
+    },
+    "title": {
+     "type": "string",
+     "description": "the event name copied exactly as written, or empty if the"
+    },
+    "location": {
+     "type": "string",
+     "description": "the place or meeting medium exactly as written; empty"
+    }
+   }
+  }
+ }
+]
