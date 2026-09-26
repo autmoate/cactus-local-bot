@@ -251,9 +251,13 @@ def main() -> int:
     ap.add_argument("--n3-python", default=None)
     ap.add_argument("--weights", default=None)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--cases", default=None,
+                    help="Case-JSONL (Default: cases.jsonl; z.B. "
+                         "ft/realism_challenge.jsonl)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
-    cases = load_cases(CASE_FILE)
+    cases_path = Path(args.cases) if args.cases else CASE_FILE
+    cases = load_cases(cases_path)
     backends = ["n2", "n3"] if args.backend == "both" else [args.backend]
     for backend in backends:
         python = args.n2_python if backend == "n2" else args.n3_python
