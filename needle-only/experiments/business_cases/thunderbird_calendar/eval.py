@@ -82,6 +82,8 @@ def score_case(expected: dict, candidates: list, latency_ms: float = 0.0) -> dic
     row = {"candidate_count": n, "latency_ms": latency_ms,
            "event_detected": n >= 1, "count_ok": n == exp_count,
            "false_positive": bool(exp_count == 0 and n > 0),
+           "expected_incomplete": bool(expected.get("incomplete")),
+           "review_routed": False,
            "title_ok": False, "start_ok": False, "end_ok": False,
            "location_ok": False, "final_event_ok": False,
            "approval_ready": False, "fields_needing_edit": []}
@@ -103,6 +105,8 @@ def score_case(expected: dict, candidates: list, latency_ms: float = 0.0) -> dic
         row.update(checks)
         row["temporal_ok"] = checks["start_ok"] and checks["end_ok"]
         row["final_event_ok"] = all(checks.values())
+        row["review_routed"] = bool(candidates[0].needs_review
+                                    or candidates[0].status == "incomplete")
         mandatory = candidates[0].needs_review and (
             candidates[0].status == "incomplete" or "mehrere Termine erkannt"
             in candidates[0].review_reasons)
@@ -169,9 +173,24 @@ def aggregate(rows: list[dict]) -> dict:
                     "location_ok": mean("location_ok", pos),
                     "final_event_ok_positive": mean("final_event_ok", pos),
                     "approval_ready_positive": mean("approval_ready", pos)})
+        # Split hard-resolvable from deliberately-unresolved (timezone/fuzzy):
+        # the latter must be routed to review, not scored as a hard failure.
+        supported = [r for r in pos if not r.get("expected_incomplete")]
+        review = [r for r in pos if r.get("expected_incomplete")]
+        if supported:
+            out["supported_final_event_ok"] = mean("final_event_ok", supported)
+            out["supported_approval_ready"] = mean("approval_ready", supported)
+        if review:
+            out["review_routing_ok"] = mean("review_routed", review)
     if neg:
         out["false_positive_rate"] = round(
             sum(1 for r in neg if r["false_positive"]) / len(neg), 4)
+        by_cat: dict[str, list] = {}
+        for r in neg:
+            by_cat.setdefault(r.get("category", "?"), []).append(r)
+        out["false_positive_by_category"] = {
+            k: round(sum(1 for x in v if x["false_positive"]) / len(v), 4)
+            for k, v in by_cat.items()}
     if lats:
         out["latency_p50_ms"] = round(st.median(lats))
         out["latency_p95_ms"] = round(lats[min(len(lats) - 1, int(len(lats) * 0.95))])
@@ -242,6 +261,13 @@ def _print_report(report: dict) -> None:
               f"fp={m.get('false_positive_rate',0):.2f} "
               f"title={m.get('title_ok',0):.2f} temporal={m.get('temporal_ok',0):.2f} "
               f"loc={m.get('location_ok',0):.2f} p50={m.get('latency_p50_ms','?')}ms")
+        if "supported_final_event_ok" in m:
+            print(f"          supported_final={m['supported_final_event_ok']:.2f} "
+                  f"review_routing={m.get('review_routing_ok', 0):.2f}")
+        if m.get("false_positive_by_category"):
+            cats = ", ".join(f"{k}={v:.2f}"
+                             for k, v in sorted(m["false_positive_by_category"].items()))
+            print(f"          near-miss FP by category: {cats}")
 
 
 def main() -> int:

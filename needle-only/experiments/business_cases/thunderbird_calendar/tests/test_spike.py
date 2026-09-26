@@ -221,6 +221,21 @@ def test_explicit_model_title_wins_over_subject():
     assert cand.title == "Projektgespräch"
 
 
+def test_extract_without_when_is_invalid():
+    engine = FakeEngine(args={"title": "Irgendwas", "when": "", "location": ""})
+    resp = _extract(engine, {"text": "Kein Datum hier.", "mode": "message"})
+    assert resp["status"] == "invalid"
+
+
+def test_timezone_and_fuzzy_spans_route_to_review():
+    ref = datetime(2026, 9, 25, 10, 0)
+    for span in ("Thursday at 3pm CET", "am 11.10. gegen 14 Uhr",
+                 "am 12.10. zwischen 14 und 15 Uhr", "morgen Vormittag",
+                 "am 14.10. nach dem Mittagessen"):
+        timing = compile_when(span, ref)
+        assert timing.incomplete and timing.start is None, span
+
+
 def test_trailing_period_keeps_time_range():
     """Regression: a sentence-final '.' must not be mistaken for a day dot."""
     ref = datetime(2026, 9, 25, 10, 0)

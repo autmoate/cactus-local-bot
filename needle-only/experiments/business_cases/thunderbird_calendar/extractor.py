@@ -60,11 +60,16 @@ def _make_tools():
     """
     import needle
 
+    # Requiredness is identical across both orders (all optional) so the probe
+    # isolates ORDER, not requiredness. Python enforces `when`: an empty `when`
+    # yields status=incomplete/invalid downstream (temporal.compile_when), never
+    # the tool schema.
     order = os.environ.get("TB_CONTRACT_ORDER", "title").lower()
 
     if order == "when":
         @needle.tool
-        def extract_event(when: str, title: str = "", location: str = "") -> str:
+        def extract_event(when: str = "", title: str = "",
+                          location: str = "") -> str:
             """Use only when the message contains one concrete new calendar event
             that is already agreed, confirmed or announced.
 
@@ -82,7 +87,8 @@ def _make_tools():
         return [extract_event]
 
     @needle.tool
-    def extract_event(title: str, when: str, location: str = "") -> str:
+    def extract_event(title: str = "", when: str = "",
+                      location: str = "") -> str:
         """Use only when the message contains one concrete new calendar event
         that is already agreed, confirmed or announced.
 
@@ -138,12 +144,16 @@ def _extract(engine, req: dict) -> dict:
                            "location": str(args.get("location") or "").strip()})
     if not calls:
         status = "none"
+    elif not candidates:
+        status = "invalid"
+    elif all(not c["when"] for c in candidates):
+        # A call without temporal evidence is not a usable event (Python
+        # enforces `when`; the schema keeps it optional for a fair order probe).
+        status = "invalid"
     elif len(candidates) == 1:
         status = "candidate"
-    elif len(candidates) > 1:
-        status = "multiple"
     else:
-        status = "invalid"
+        status = "multiple"
     return {"status": status, "candidates": candidates,
             "confidence": response.get("confidence"), "latency_ms": latency,
             "type": response.get("type"), "raw": calls, "prompt": prompt}

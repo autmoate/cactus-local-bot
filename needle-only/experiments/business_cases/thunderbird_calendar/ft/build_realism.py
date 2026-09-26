@@ -41,14 +41,18 @@ def _norm(text: str) -> str:
 
 
 def c(cid, cat, subj, frm, to, recv, body, *, title="", span="", loc="",
-      count=1, sel=None, stitle=None, sspan=None, sloc=None):
+      count=1, sel=None, stitle=None, sspan=None, sloc=None,
+      incomplete=False):
     """One hand-authored case. `stitle/sspan/sloc` default to the whole-mail
-    gold for the selection variant when `sel` is given."""
+    gold for the selection variant when `sel` is given. `incomplete=True` marks
+    a temporal phrase the compiler deliberately does not resolve (e.g. a
+    timezone or fuzzy time) -> human review routing, not a hard failure."""
     return {
         "id": cid, "category": cat,
         "message": {"subject": subj, "from": [frm], "to": list(to),
                     "cc": [], "received_at": recv, "body": body},
         "selection": sel,
+        "incomplete": incomplete,
         "gold": {"event_count": count, "title": title, "span": span,
                  "location": loc},
         "selection_gold": None if sel is None else {
@@ -117,9 +121,9 @@ CASES = [
     c("r016", "informal_confirm", "Probe", LISA, [ME], "2026-09-25T14:20:00",
       "Die Chorprobe ist diesen Donnerstag um 18 Uhr.", span="diesen Donnerstag um 18 Uhr",
       title="Chorprobe", sel="diesen Donnerstag um 18 Uhr"),
-    c("r017", "informal_confirm", "Rückruf", MAX, [ME], "2026-09-25T10:55:00",
-      "Passt dir morgen 11 Uhr für ein kurzes Telefonat?", span="morgen 11 Uhr",
-      title="Rückruf", sel="morgen 11 Uhr"),
+    # Request, not an agreed event -> no create (semantic boundary, review).
+    c("r017", "tentative_slots", "Rückruf", MAX, [ME], "2026-09-25T10:55:00",
+      "Passt dir morgen 11 Uhr für ein kurzes Telefonat?", count=0),
     c("r018", "informal_confirm", "Umzug", ANNA, [ME], "2026-09-25T15:35:00",
       "Wir packen am 24.10. ab 10 Uhr. Helfer willkommen.", span="24.10. ab 10 Uhr",
       title="Umzug", sel="am 24.10. ab 10 Uhr"),
@@ -485,11 +489,11 @@ CASES = [
       "Dann machen wir den 15.10. um 9 Uhr.\n\nAm 22.09. schrieb Anna:\n"
       "> Vorschlag: 14.10. oder 15.10.?",
       span="den 15.10. um 9 Uhr", title="Termin", sel="den 15.10. um 9 Uhr"),
-    c("r109", "quoted_thread", "Re: Planungstreffen", LISA, [ME],
+    # Confirmation-seeking question, not a settled event -> no create.
+    c("r109", "tentative_slots", "Re: Planungstreffen", LISA, [ME],
       "2026-09-25T10:00:00",
       "Bleibt es bei Donnerstag 11 Uhr?\n\nAm 21.09. schrieb Lisa:\n"
-      "> Können wir Donnerstag 11 Uhr?",
-      span="Donnerstag 11 Uhr", title="Planungstreffen", sel="Donnerstag 11 Uhr"),
+      "> Können wir Donnerstag 11 Uhr?", count=0),
     c("r110", "quoted_thread", "Re: Workshop", MAX, [ME], "2026-09-25T10:00:00",
       "Der Workshop ist am 8.11. von 10 bis 16 Uhr.\n\nAm 19.09. schrieb Max:\n"
       "> Wann passt der Workshop?",
@@ -532,10 +536,10 @@ CASES = [
       "Wir fahren am 4.10. um 8 Uhr los.\n\nAm 19.09. schrieb Max:\n"
       "> Ausflug am 4. oder 5.10.?",
       span="am 4.10. um 8 Uhr", title="Ausflug", sel="am 4.10. um 8 Uhr"),
-    c("r120", "quoted_thread", "Re: Sprechstunde", ANNA, [ME], "2026-09-25T10:00:00",
+    # Slot offered ("ist frei"), not agreed -> no create.
+    c("r120", "tentative_slots", "Re: Sprechstunde", ANNA, [ME], "2026-09-25T10:00:00",
       "Komm vorbei, Dienstag 13 Uhr ist frei.\n\nAm 18.09. schrieb Anna:\n"
-      "> Hast du Dienstag Zeit?",
-      span="Dienstag 13 Uhr", title="Sprechstunde", sel="Dienstag 13 Uhr"),
+      "> Hast du Dienstag Zeit?", count=0),
 
     # --------------------------------------------------------- tentative_slots (10)
     c("r121", "tentative_slots", "Terminabstimmung", LISA, [ME, MAX],
@@ -614,33 +618,144 @@ CASES = [
       "Das Meeting vom 12.10. war sehr produktiv, danke für die Orga.", count=0),
 ]
 
+# ---------------------------------------------------------------- hard inbox
+# Deliberately messy inbox stress. Mixed supported / needs_review / no_event.
+HARD_CASES = [
+    c("h001", "hard_reply", "Re: Re: Sommerfest", MAX, [ME, ANNA],
+      "2026-09-05T10:00:00",
+      "Kurz und knapp: Wir treffen uns am 12.9. um 17 Uhr vor dem Vereinsheim.\n\n"
+      "Am 10.9. schrieb Max:\n> Passt euch der 12.9.?\n\nAm 9.9. schrieb Anna:\n"
+      "> Oder lieber der 13.9.?\n\nAm 8.9. schrieb Lisa:\n> Am 11.9. kann ich nicht.",
+      span="am 12.9. um 17 Uhr", title="Sommerfest", loc="Vereinsheim"),
+    c("h002", "hard_reply", "AW: WG: Projekt", LISA, [ME], "2026-09-30T10:00:00",
+      "Hallo,\n\ndanke für die vielen Termine. Aktuell gilt: Kickoff am 5.10. "
+      "um 9 Uhr im Raum 1.\n\n> Am 2.10. um 14 Uhr wäre auch möglich.\n"
+      "> Am 3.10. um 16 Uhr ginge bei mir.\n> Was meinst du, 1.10. oder 2.10.?",
+      span="am 5.10. um 9 Uhr", title="Kickoff", loc="Raum 1"),
+    c("h003", "hard_footer", "Terminbestätigung", "praxis@muster.example", [ME],
+      "2026-10-01T10:00:00",
+      "Hallo,\n\nder Termin ist am 14.10. um 10 Uhr.\n\n--\nPraxis Muster\n"
+      "Öffnungszeiten: Mo 8-12, Di 14-18, Do 8-12\nTel: 0341 111\nFax: 0341 112",
+      span="am 14.10. um 10 Uhr", title="Terminbestätigung"),
+    c("h004", "hard_invoice", "Rechnung und Termin", "office@firma.example", [ME],
+      "2026-09-28T10:00:00",
+      "Guten Tag,\n\nRechnung Nr. 2026-4711 vom 30.09. ist beglichen. Ihr "
+      "Beratungstermin ist am 7.10. um 15 Uhr.\n\nViele Grüße",
+      span="am 7.10. um 15 Uhr", title="Beratungstermin"),
+    c("h005", "hard_numbers", "Rückruf", "service@firma.example", [ME],
+      "2026-09-29T10:00:00",
+      "Rufen Sie uns unter 030 111 oder 030 222 an. Ihr Termin ist am 9.10. "
+      "um 11 Uhr.", span="am 9.10. um 11 Uhr", title="Rückruf"),
+    c("h006", "hard_quoted", "Re: Termin", LISA, [ME], "2026-09-25T10:00:00",
+      "Dienstag 14 Uhr passt.\n\nAm 24.09. schrieb Lisa:\n> Wie wäre Dienstag "
+      "14 Uhr oder Mittwoch 10 Uhr?\nAm 23.09. schrieb Tim:\n> Montag 16 Uhr?",
+      span="Dienstag 14 Uhr", title="Termin"),
+    c("h007", "hard_subject", "Newsletter 09/2026", "news@firma.example", [ME],
+      "2026-10-02T10:00:00",
+      "Liebe Leser,\n\nunser Team-Meeting ist am 18.10. um 13 Uhr. Alle Infos "
+      "unten im Newsletter.", span="am 18.10. um 13 Uhr", title="Team-Meeting"),
+    c("h008", "hard_signature", "Statusupdate", "kollege@firma.example", [ME],
+      "2026-10-01T10:00:00",
+      "Das Meeting ist am 3.11. um 10 Uhr.\n\n--\nDiese Mail wurde maschinell "
+      "erstellt und gilt auch ohne Unterschrift. Terminänderungen bitte bis "
+      "morgen melden.", span="am 3.11. um 10 Uhr", title="Statusupdate"),
+    c("h009", "hard_link", "Meeting-Link", MAX, [ME], "2026-10-01T10:00:00",
+      "Hier der Link: https://meet.example/abc. Wir sprechen uns am 6.10. um "
+      "9 Uhr.", span="am 6.10. um 9 Uhr", title="Meeting-Link"),
+    c("h010", "hard_mixed", "Weekly", LISA, [ME], "2026-09-25T10:00:00",
+      "Hi, quick update: das Review ist am Dienstag um 14 Uhr.",
+      span="am Dienstag um 14 Uhr", title="Review"),
+    c("h011", "hard_ab", "Kurs", "schule@example.org", [ME], "2026-10-01T10:00:00",
+      "Der Kurs startet am 8.10. ab 14 Uhr.", span="am 8.10. ab 14 Uhr",
+      title="Kurs"),
+    c("h012", "hard_fuzzy", "Treffen", MAX, [ME], "2026-10-01T10:00:00",
+      "Wir treffen uns am 11.10. gegen 14 Uhr.", span="am 11.10. gegen 14 Uhr",
+      title="Treffen", incomplete=True),
+    c("h013", "hard_fuzzy", "Wartungsfenster", "it@firma.example", [ME],
+      "2026-10-01T10:00:00",
+      "Das Fenster ist am 12.10. zwischen 14 und 15 Uhr.",
+      span="am 12.10. zwischen 14 und 15 Uhr", title="Wartungsfenster",
+      incomplete=True),
+    c("h014", "hard_fuzzy", "Beginn", LISA, [ME], "2026-10-01T10:00:00",
+      "Beginn ist am 13.10. ca. 10 Uhr.", span="am 13.10. ca. 10 Uhr",
+      title="Beginn", incomplete=True),
+    c("h015", "hard_fuzzy", "Mittag", ANNA, [ME], "2026-10-01T10:00:00",
+      "Wir sehen uns am 14.10. nach dem Mittagessen.",
+      span="am 14.10. nach dem Mittagessen", title="Mittag", incomplete=True),
+    c("h016", "hard_fuzzy", "Vormittags", LISA, [ME], "2026-09-25T10:00:00",
+      "Der Termin ist morgen Vormittag.", span="morgen Vormittag",
+      title="Vormittags", incomplete=True),
+    c("h017", "hard_tentative", "Re: Ausflug", ANNA, [ME], "2026-09-20T10:00:00",
+      "Am 20.09. schrieb Lisa:\n> Treffen wir uns am 1.10. um 9 Uhr?\n"
+      "> Oder am 2.10. um 14 Uhr?\n\nHast du dich schon entschieden?", count=0),
+    c("h018", "hard_prefix", "AW: Re: Fwd: WG: Protokoll", LISA, [ME],
+      "2026-10-01T10:00:00",
+      "Der Jour fixe ist am 15.10. um 8:30 Uhr.", span="am 15.10. um 8:30 Uhr",
+      title="Jour fixe"),
+    c("h019", "hard_format", "Team", MAX, [ME], "2026-10-01T10:00:00",
+      "Hallo&nbsp;Team,<br><br>der Termin ist am 16.10. um 9 Uhr.<br>",
+      span="am 16.10. um 9 Uhr", title="Team"),
+    c("h020", "hard_confirmed", "Terminbestätigung", "office@firma.example", [ME],
+      "2026-10-02T10:00:00",
+      "Termin wie besprochen am 17.10. um 11 Uhr.",
+      span="am 17.10. um 11 Uhr", title="Terminbestätigung"),
+]
+
 
 def _resolve(text: str, ref_iso: str, span: str, loc: str, title: str,
-             *, source: str, cid: str) -> dict:
+             *, source: str, cid: str, force_incomplete: bool = False) -> dict:
     from datetime import datetime
     ref = datetime.fromisoformat(ref_iso)
     if not span:
-        return {"start": None, "end": None, "all_day": False, "incomplete": False}
+        return {"start": None, "end": None, "all_day": False,
+                "incomplete": bool(force_incomplete)}
     timing = compile_when(span, ref)
-    incomplete = timing.incomplete or bool(TZ_RE.search(span))
+    incomplete = bool(force_incomplete) or timing.incomplete or bool(
+        TZ_RE.search(span))
     src = _norm(source)
     if _norm(span) not in src:
         raise SystemExit(f"{cid}: gold span {span!r} not a substring of source")
     if loc and _norm(loc) not in src:
         raise SystemExit(f"{cid}: gold location {loc!r} not a substring of source")
+    if incomplete:
+        # Deliberately unresolved (timezone / fuzzy time): no hard start/end,
+        # the workflow must route this to human review instead.
+        return {"start": None, "end": None, "all_day": timing.all_day,
+                "incomplete": True}
     return {"start": timing.start.isoformat() if timing.start else None,
             "end": timing.end.isoformat() if timing.end else None,
-            "all_day": timing.all_day, "incomplete": incomplete}
+            "all_day": timing.all_day, "incomplete": False}
 
 
-def build() -> list[dict]:
+# IDs reserved for contract/order/wording development. These are written to
+# contract_dev.jsonl and MUST NOT be used as the final gate (FT_PLAN.md §7/§9):
+# choosing a contract on the challenge set would leak it.
+DEV_IDS = {
+    "r001", "r010", "r019",            # informal_confirm
+    "r026", "r034", "r041",            # formal_confirm
+    "r046", "r053", "r056",            # announcement
+    "r061", "r068", "r072",            # short_accept
+    "r076", "r082", "r085",            # relative_time
+    "r086", "r091", "r095",            # timezone
+    "r096", "r101", "r105",            # long_signature
+    "r106", "r110", "r115",            # quoted_thread
+    "r017", "r121", "r125", "r130",    # tentative_slots (incl. reclassified)
+    "r131", "r135", "r140",            # cancel_reschedule
+    "r141", "r145",                    # deadline
+    "r146", "r150",                    # unrelated
+}
+
+
+def build(cases: list[dict]) -> list[dict]:
     out = []
-    for case in CASES:
+    for case in cases:
         ref = case["message"]["received_at"]
         body = case["message"]["body"]
+        force = case.get("incomplete", False)
         gold = dict(case["gold"])
         gold.update(_resolve(body, ref, gold["span"], gold["location"],
-                             gold["title"], source=body, cid=case["id"]))
+                             gold["title"], source=body, cid=case["id"],
+                             force_incomplete=force))
         entry = {"id": case["id"], "category": case["category"],
                  "message": case["message"], "selection": case["selection"],
                  "expected": gold, "selection_expected": None}
@@ -653,28 +768,35 @@ def build() -> list[dict]:
                 sg["location"] = ""
             sg.update(_resolve(case["selection"], ref, sg["span"], sg["location"],
                                sg["title"], source=case["selection"],
-                               cid=case["id"] + "/sel"))
+                               cid=case["id"] + "/sel",
+                               force_incomplete=force))
             entry["selection_expected"] = sg
         out.append(entry)
     return out
 
 
-def main() -> int:
-    rows = build()
-    path = HERE / "realism_challenge.jsonl"
+def _write(name: str, rows: list[dict]) -> None:
+    path = HERE / name
     with open(path, "w", encoding="utf-8") as fh:
         for row in rows:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
     cats: dict[str, int] = {}
     for r in rows:
         cats[r["category"]] = cats.get(r["category"], 0) + 1
-    sel = sum(1 for r in rows if r["selection_expected"])
     positive = sum(1 for r in rows if r["expected"]["event_count"] == 1)
-    tz = sum(1 for r in rows if r["expected"].get("incomplete"))
-    print(f"wrote {len(rows)} cases -> {path.name}")
-    print(f"  positive {positive} · selection {sel} · timezone/incomplete {tz}")
+    sel = sum(1 for r in rows if r["selection_expected"])
+    rev = sum(1 for r in rows if r["expected"].get("incomplete"))
+    print(f"wrote {len(rows):>3} -> {name}  (pos {positive}, sel {sel}, review {rev})")
     for k in sorted(cats):
-        print(f"  {k:18} {cats[k]}")
+        print(f"      {k:18} {cats[k]}")
+
+
+def main() -> int:
+    dev = [c for c in CASES if c["id"] in DEV_IDS]
+    frozen = [c for c in CASES if c["id"] not in DEV_IDS]
+    _write("contract_dev.jsonl", build(dev))
+    _write("realism_challenge.jsonl", build(frozen))
+    _write("hard_challenge.jsonl", build(HARD_CASES))
     return 0
 
 

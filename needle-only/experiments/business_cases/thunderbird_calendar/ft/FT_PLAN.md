@@ -174,19 +174,26 @@ history". Gehört ins Dataset (Thread-Familien mit alten Terminen im Quote).
 Wenn das Modell es nicht zuverlässig löst → Selection-Fallback. **Multi-Call
 (Agenda mit Mo/Di/Fr) wird in V1 nicht trainiert** — Selection deckt es ab.
 
-### Umfang / Reihenfolge (Problem D)
-Erst **`ft/realism_challenge.jsonl`, ~150 handgeschriebene, NICHT generierte
-Fälle** (Verteilung unten). Danach Base-Baseline darauf. Erst wenn die
-Taxonomie steht, ~6–10 k synthetische Trainingsbeispiele **entlang dieser
-Distribution** bauen. 8 k vom falschen Problem < 2 k richtige.
+### Umfang / Reihenfolge (Problem D) — drei getrennte, handgeschriebene Sets
+- `ft/contract_dev.jsonl` (35): **nur** für Contract-/Order-/Wording-Probe.
+- `ft/realism_challenge.jsonl` (115): **eingefroren**, niemals zur Contract-
+  Wahl benutzen — finales Base/FT-Gate.
+- `ft/hard_challenge.jsonl` (20): hässliche Inbox-Härte (Reply-Ketten,
+  Footer, Rechnungsdatum, irreführender Betreff, Disclaimor-„morgen",
+  Meeting-Link, EN/DE, `gegen`/`ca.`/`zwischen`/`nach dem Mittagessen`).
 
-Realism-Verteilung (~150):
-klare informelle Bestätigung 25 · formelle Bestätigung ohne ICS 20 ·
-Event-/Workshop-Ankündigung 15 · kurze Zusage nach Abstimmung 15 · relative
-Zeit 10 · Zeitzonen 10 · langer Body + Signatur 10 · quoted thread mit alten
-Terminen 15 · mehrere Slots/Abstimmung 10 · Absage/Verschiebung 10 ·
-Deadline/Datum ohne Meeting 5 · ohne Kalenderbezug 5. Davon Selection-Variante
-min. 50–100 Fälle.
+Der Split verhindert den methodischen Leak „Set dient gleichzeitig zur
+Contract-Wahl und als Zertifizierung". Erst wenn Taxonomie/Contract stehen,
+~6–10 k synthetische Trainingsbeispiele **entlang dieser Distribution** bauen.
+8 k vom falschen Problem < 2 k richtige.
+
+Verteilung (150 Basis-Fälle, IDs r001–r150 partitioniert):
+informelle Bestätigung 24 · formelle Bestätigung ohne ICS 20 ·
+Event-/Workshop-Ankündigung 15 · kurze Zusage 15 · relative Zeit 10 ·
+Zeitzonen 10 · langer Body + Signatur 10 · quoted thread 13 ·
+Abstimmung/Slot-Angebot 13 · Absage/Verschiebung 10 · Deadline 5 ·
+ohne Kalenderbezug 5. Selection-Varianten 55. Semantisch strenge Gold-Regel:
+Frage-/Bestätigungssuche oder Slot-Angebot = **kein Create**, auch mit Datum.
 
 ### Manifest
 `ft/manifest.json` mit Code-/Spec-Hash, Schema-Hash (1 Tool), seed,
@@ -207,12 +214,18 @@ file_sha256, counts, Klassen-/Sprach-/Discourse-Coverage, Gold-Konvention.
 
 | Kriterium | Base (alt) | Ziel |
 |---|---|---|
-| whole-mail `final_event_ok` | 0.667 | ≥ 0.85 |
+| `supported_final_event_ok` (ohne TZ/fuzzy) | 0.667 | ≥ 0.85 |
 | `false_positive_rate` (Near-miss separat) | 0.143 | ≤ 0.05 |
+| `false_positive_by_category` (tentative/cancel/deadline/past) | – | je ≤ 0.05 |
 | selection `final_event_ok` (n ≥ 50) | 0.40 | ≥ 0.90 |
-| `approval_ready` | 0.633 | ≥ 0.80 |
+| `supported_approval_ready` | 0.633 | ≥ 0.80 |
+| `review_routing_ok` (TZ/fuzzy → Review) | – | ≥ 0.90 |
 | `evidence_grounded_rate` | – | neu, ≥ 0.95 |
 | `event_detection_recall` | 1.00 | keine Regression |
+
+Timezones/fuzzy werden **nicht** in `supported_final_event_ok` bestraft, sondern
+über `review_routing_ok` bewertet (bewusstes Human-Review statt Rate-Datetime).
+Near-Miss-FP wird **pro Klasse** berichtet, nicht nur global.
 
 - **GO**: Gate hält → Add-on-Prototyp planen.
 - **PROMISING**: whole-mail 0.65–0.85 **und** selection ≥ 0.90 → selection-first V1.
@@ -229,9 +242,11 @@ Approval nutzt `needs_review`/`status`.
 2. Selection-Semantik ändern: `selected_text` only; Subject nur Python-Fallback.
 3. Contract-Doku korrigieren: date-only zulässig; `title` optional.
 4. Negativ-Gold eindeutig: `answers: []` (entschieden, §4).
-5. `realism_challenge.jsonl` (~150 handschriftlich) erstellen.
-6. **N2 Base erneut dagegen laufen lassen** (Baseline neu einfrieren).
-7. Argumentreihenfolge-Probe (title-first vs when-first).
+5. Drei handgeschriebene Sets erstellen: `contract_dev` (35),
+   `realism_challenge` (115, eingefroren), `hard_challenge` (20).
+6. **N2 Base auf allen drei Sets** laufen lassen (Baseline neu einfrieren).
+7. Argumentreihenfolge-Probe **nur auf `contract_dev`** (fair: gleiche
+   Requiredness); danach Contract einfrieren. Das Challenge-Set bleibt unberührt.
 8. Erst dann Generator auf die Distribution ausrichten, 6–10 k bauen.
 9. N2 Smoke + max. drei N2-LoRA-Runs (Modal).
 10. `eval.py --weights` + `gate_tb.py`; Bericht GO/PROMISING/WEAK.
@@ -241,5 +256,5 @@ Approval nutzt `needs_review`/`status`.
 2. Freigabe, das eingefrorene Spike-Verhalten zu ändern (Selection-only,
    `no_event` raus, `title` optional) — die alten 60er-Base-Zahlen gelten dann
    nicht mehr; wir frieren neue Baselines auf dem Realism-Set ein.
-3. Go für die ~150 handgeschriebenen Realism-Mails (Schritt 5).
+3. Go für die handgeschriebenen Sets dev/challenge/hard (Schritt 5).
 4. Modal/Budget erst nach Schritt 8.

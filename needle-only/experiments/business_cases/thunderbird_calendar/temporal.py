@@ -38,6 +38,15 @@ _TIME_RANGE = re.compile(
     r"(?:bis|-|–|—|to)\s*"
     r"(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*(?:uhr)?", re.I)
 _PAST_MARKER = re.compile(r"\b(letzt|vergangen|last|gestern|yesterday)\w*", re.I)
+# Temporal evidence the compiler deliberately does not hard-resolve: a timezone
+# or a fuzzy time expression must route to human review, never to a guessed
+# datetime (FT_PLAN.md §5/§9).
+_TZ_RE = re.compile(
+    r"\b(CET|CEST|ET|EST|EDT|BST|GMT|UTC|PT|PST|PDT|Europe/Berlin|Pacific)\b",
+    re.I)
+_FUZZY_RE = re.compile(
+    r"\b(gegen|circa|ca\.|zwischen|vormittag|nachmittag|abend|"
+    r"nach dem mittag\w*)\b", re.I)
 
 
 def _relative_day(text: str, ref_date):
@@ -100,6 +109,10 @@ def compile_when(when: str, ref: datetime | None = None,
     ref = ref or cal.now()
     if not when:
         return Timing(None, None, False, incomplete=True, note="empty when")
+
+    if _TZ_RE.search(when) or _FUZZY_RE.search(when):
+        return Timing(None, None, False, incomplete=True,
+                      note="temporal not fully resolvable (timezone/fuzzy)")
 
     dates = _all_dates(when, ref.date())
     if not dates:
