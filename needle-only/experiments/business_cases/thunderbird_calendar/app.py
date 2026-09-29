@@ -8,6 +8,7 @@ all business logic stays outside. Mail content in manual mode is kept in RAM onl
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from datetime import date, datetime, time
@@ -115,8 +116,8 @@ def _trace_md(trace: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def build_app(backend: str) -> gr.Blocks:
-    host = LocalNeedleHost(backend)
+def build_app(backend: str, weights: str | None = None) -> gr.Blocks:
+    host = LocalNeedleHost(backend, weights=weights)
     spike = CalendarSpike(host, my_addresses=MY_ADDRESSES)
     cases = [json.loads(ln) for ln in (HERE / "cases.jsonl").read_text(
         encoding="utf-8").splitlines() if ln.strip()]
@@ -125,9 +126,21 @@ def build_app(backend: str) -> gr.Blocks:
     def rows() -> list[list]:
         return spike.store.rows()
 
+    def _weight_note() -> str:
+        if not weights:
+            return "Base (keine Gewichte) — explizit N2 Base"
+        sha = ""
+        try:
+            sha = " · sha256:" + hashlib.sha256(
+                Path(weights).read_bytes()).hexdigest()[:12]
+        except OSError:
+            sha = " · Datei nicht lesbar"
+        return f"FT-Gewichte: {weights}{sha}"
+
     with gr.Blocks(title="Thunderbird → Calendar Spike") as app:
         gr.Markdown(f"# 📧 Thunderbird → Local Calendar — Feasibility Spike  \n"
-                    f"Backend: **{backend}** ({host.model}) — kein echter Write, "
+                    f"Backend: **{backend}** ({host.model})  \n"
+                    f"Modell: {_weight_note()} — kein echter Write, "
                     f"kein Versand, Human Approval Pflicht.")
         result_state = gr.State({})
         draft_state = gr.State({})
@@ -331,8 +344,8 @@ def build_app(backend: str) -> gr.Blocks:
 
         def run_eval(be, limit):
             import eval as ev
-            report = ev.run_backend(be, ev.load_cases(ev.CASE_FILE), None, None,
-                                    int(limit) if limit else None)
+            report = ev.run_backend(be, ev.load_cases(ev.CASE_FILE), None,
+                                    weights, int(limit) if limit else None)
             lines = [f"### {be} — {report.get('model', '?')}"]
             for mode, m in report.get("groups", {}).items():
                 if m.get("n"):
@@ -361,12 +374,15 @@ def build_app(backend: str) -> gr.Blocks:
 def main() -> None:
     ap = argparse.ArgumentParser(prog="tb-calendar-spike")
     ap.add_argument("--backend", choices=["n2", "n3"], default="n2")
+    ap.add_argument("--weights", default=None,
+                    help="Pfad zur .cact-FT-Datei; ohne Angabe läuft explizit "
+                         "Base (kein stilles Verwechseln)")
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("--port", type=int, default=7861)
     ap.add_argument("--share", action="store_true")
     args = ap.parse_args()
-    build_app(args.backend).launch(server_name=args.host, server_port=args.port,
-                                   share=args.share)
+    build_app(args.backend, args.weights).launch(
+        server_name=args.host, server_port=args.port, share=args.share)
 
 
 if __name__ == "__main__":
