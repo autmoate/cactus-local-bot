@@ -117,8 +117,11 @@ contain a selection; DE with a few EN phrases; no attachments.
 From `needle-only/` (N2 venv). N3 defaults to the repo-root `.venv-ft3`.
 
 ```sh
-# Gradio (N2)
+# Gradio (N2 Base)
 uv run python experiments/business_cases/thunderbird_calendar/app.py --backend n2
+# Gradio with an FT candidate (explicit; no silent Base/FT mix-up)
+uv run python experiments/business_cases/thunderbird_calendar/app.py --backend n2 \
+    --weights experiments/business_cases/thunderbird_calendar/ft/models/n2-train-r16-e8-s42.cact
 # Gradio (N3)
 uv run python experiments/business_cases/thunderbird_calendar/app.py --backend n3
 
@@ -134,6 +137,10 @@ uv run pytest experiments/business_cases/thunderbird_calendar/tests -q
 
 Interpreter overrides: `TB_N2_PYTHON`, `TB_N3_PYTHON`. Missing N3 interpreter
 fails fast with a clear message instead of crashing the app.
+
+**Real Thunderbird (Phase 1, preview only):** `thunderbird_addon/` — a
+MailExtension toolbar button + a Native Messaging host that reuses this spike.
+See `thunderbird_addon/README.md`.
 
 ## Results
 

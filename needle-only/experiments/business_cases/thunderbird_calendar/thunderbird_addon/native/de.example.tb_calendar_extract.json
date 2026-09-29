@@ -1,0 +1,7 @@
+{
+  "name": "de.example.tb_calendar_extract",
+  "description": "Local Needle calendar extraction host (Thunderbird spike)",
+  "path": "__RUN_HOST__",
+  "type": "stdio",
+  "allowed_extensions": ["tb-calendar-spike@example.org"]
+}

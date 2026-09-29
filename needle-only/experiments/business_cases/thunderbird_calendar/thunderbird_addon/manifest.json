@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Local Calendar Prep (Spike)",
+  "version": "0.1.0",
+  "description": "Phase-1 spike: send the displayed mail to a local Needle host and preview a calendar-event candidate. No calendar write.",
+  "applications": {
+    "gecko": {
+      "id": "tb-calendar-spike@example.org",
+      "strict_min_version": "115.0"
+    }
+  },
+  "permissions": [
+    "messagesRead",
+    "nativeMessaging"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "message_display_action": {
+    "default_title": "Termin vorbereiten",
+    "default_icon": "icon.svg"
+  }
+}
